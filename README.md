@@ -9,11 +9,11 @@ The [Reuse Tool](https://reuse.software/) must be used for your samples project.
 3. The README.md file (this file):
 Please edit this file as it is the primary description file for your project. You can find some placeholder titles for sections below.
 
-# Session ID - Session Title
+# XP266 - Ship your own sandboxed AI operations agent to Kyma in two hours
 
 ## Description
 
-This repository contains the material for the SAP TechEd 2026 session called Session ID - Session Title.  
+This repository contains the material for the SAP TechEd 2026 session called XP266 - Ship your own sandboxed AI operations agent to Kyma in two hours.  
 
 ## Overview
 
