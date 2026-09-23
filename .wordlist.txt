@@ -239,6 +239,7 @@ TUI
 stdin
 DevTools
 localStorage
+k9s
 deprovision
 kubeAPIServer
 

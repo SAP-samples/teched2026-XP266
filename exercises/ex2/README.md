@@ -23,7 +23,7 @@ goose / claude ──▶ LiteLLM proxy :4001 ──▶ SAP AI Core
 
    Command:
    ```bash
-   goose --version && claude --version && kubectl version --client -o yaml | grep gitVersion && kyma version
+   goose --version && claude --version && kubectl version --client -o yaml | grep gitVersion && kyma version && k9s version -s
    ```
    Output (versions may differ):
    ```
@@ -31,7 +31,11 @@ goose / claude ──▶ LiteLLM proxy :4001 ──▶ SAP AI Core
    2.1.278 (Claude Code)
    gitVersion: v1.35.0
    3.5.0
+   v0.51.0
    ```
+
+> [!TIP]
+> Prefer a **visual** cluster browser to typing `kubectl`? Run **`k9s`** — a full-screen terminal UI. Arrow-key around namespaces, pods, logs, and YAML; press `:` to jump to a resource (e.g. `:pods`, `:cronjobs`), `d` to describe, `l` for logs, and `:q` to quit. Navigating and inspecting works freely; *mutating* actions (delete/scale) are blocked by the terminal's read-mostly permissions — that's [Exercise 6](../ex6/README.md)'s guardrails in action.
 
 > [!NOTE]
 > The terminal is **auto-authenticated**: a start-up script fetches the LiteLLM key from the `llm-proxy-credentials` Secret and exports the environment both agents need (`GOOSE_PROVIDER=litellm`, `ANTHROPIC_BASE_URL`, model tiers…). You never see or handle a key. The pod runs **non-root** with a **read-mostly** RBAC role (you'll prove that in [Exercise 6](../ex6/README.md)).
