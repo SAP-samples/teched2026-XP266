@@ -1,0 +1,75 @@
+# Exercise 8 - Behind the scenes: the one workflow that built your runtime
+
+Throughout this workshop you were told *"everything is already deployed for you."* This is the exercise where you see **how**. A single GitHub Actions workflow — **`all-fleets-admin`** — provisions and reconciles the *entire* stack you've been exploring: the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, the KRO resource graphs, the telemetry pipelines, the dashboards, and JupyterHub. In this exercise you **run it against your own runtime and explore every step** in the Actions log.
+
+Because it's `terraform apply` under the hood, running it on your already-provisioned `xp266-NNN` is an **idempotent reconcile** — it converges the cluster to the declared state, it does **not** tear anything down or rebuild it. Safe to run, and it shows you the whole assembly line.
+
+```mermaid
+flowchart TB
+  RUN["▶️ You: Run workflow<br/>shoots = xp266-NNN · oidc_provider = teched"]
+  SETUP["setup<br/>reads the fleet registry →<br/>builds the per-family shoot matrix"]
+  DEPLOY["deploy-gardener<br/>(_gardener-kyma-fleet-reusable)"]
+  OIDC["🔑 OIDC federated login<br/>gh-teched-xp266-NNN → your cluster<br/>(no long-lived kubeconfig)"]
+  TF["🌱 terraform apply<br/>the whole kyma-unplugged stack"]
+  STACK["LiteLLM · Goose/dev-toolbox · Chat agent<br/>KRO RGDs · Telemetry → SAP Cloud Logging<br/>JupyterHub · Busola extensions"]
+
+  RUN --> SETUP --> DEPLOY --> OIDC --> TF --> STACK
+```
+
+> [!NOTE]
+> ✅ **No terminal, no local tooling** — you run everything from the GitHub Actions UI in your browser.
+
+## Exercise 8.1 - Run the workflow
+
+1. Open **your fork** of the workshop repository (you forked it and enabled Actions per the [Requirements](../../README.md#requirements)) and go to the **Actions** tab.
+<br>![](images/08_01_0010.png)
+
+2. In the left list of workflows, select **`all-fleets-admin`**, then click **Run workflow** (top-right).
+<br>![](images/08_01_0020.png)
+
+3. Fill the inputs — only two change from their defaults:
+
+   | Input | Set it to | Why |
+   |---|---|---|
+   | **`shoots`** | your **`xp266-NNN`** | target *your* runtime only |
+   | **`oidc_provider`** | **`teched`** | mint the `gh-teched-xp266-NNN` OIDC token + use the public runner |
+   | `idp` | *(leave default)* | `kyma4signavio` |
+   | `kyma_version` | *(leave default)* | |
+   | `namespace` | *(leave default)* | |
+
+4. Click the green **Run workflow** button. A new run appears in the list — click it to open the live log.
+
+> [!NOTE]
+> **No secrets in your hands.** The workflow authenticates to your cluster with a short-lived **GitHub OIDC token** (`id-token: write`), federated as `gh-teched-<your-shoot>` — there is no kubeconfig or cloud credential to copy anywhere. This is the same upfront-federated-identity pattern that provisioned your runtime in the first place.
+
+## Exercise 8.2 - Explore the steps
+
+Expand the jobs and steps in the run and connect them to what you learned:
+
+1. **`setup` → "Build per-family shoot matrices"** — reads the fleet registry at runtime and works out that your `xp266-NNN` is a *gardener-teched* shoot, routing it to the Gardener reusable workflow. Open the **Fleet Reference** in the run **Summary** to see the whole fleet it *can* target.
+<br>![](images/08_02_0010.png)
+
+2. **`deploy-gardener` → the OIDC login step** — watch it exchange the GitHub OIDC token for cluster access. No password, no stored kubeconfig.
+
+3. **`deploy-gardener` → `terraform apply`** — this is the heart of it. Scroll the plan/apply output and spot the pieces you met:
+   - the **`litellm-proxy`** Deployment + config ([Exercise 1](../ex1/README.md))
+   - the **`dev-toolbox`** CronJobs and `ClusterHealthReport` CRD ([Exercise 3](../ex3/README.md))
+   - the **KRO** ResourceGraphDefinitions that assemble the chat agent ([Exercise 4](../ex4/README.md))
+   - the **Telemetry** `MetricPipeline` to SAP Cloud Logging ([Exercise 5](../ex5/README.md))
+   - the **JupyterHub** release ([Exercise 7](../ex7/README.md))
+
+> [!TIP]
+> On an already-provisioned runtime most resources report **no change** — that's the point of a declarative pipeline: the apply is a *reconcile*, so re-running is safe and mostly a no-op. If you tweaked something in an earlier exercise, watch `terraform` notice and converge it back.
+
+> [!IMPORTANT]
+> This is the "self-hosted AI ops" story end to end: **one workflow, one `terraform apply`, one federated identity** stands up an entire sandboxed AI-operations platform on SAP BTP, Kyma runtime — reproducibly, per student, with nothing hand-clicked. Everything else in this workshop was just exploring what this one run produced.
+
+## Summary
+
+You ran the `all-fleets-admin` workflow against your own `xp266-NNN` runtime, saw it federate in with a short-lived OIDC token, and explored the `terraform apply` steps that build every component you played with — the declarative, reproducible pipeline behind the whole workshop.
+
+---
+
+🎉 **That's the workshop.** You've met the whole self-hosted, sandboxed AI-ops stack — the LiteLLM gateway, the in-cluster agents, the autonomous diagnostic jobs, the interactive chat agent, the observability, the guardrails, the JupyterHub playground, and finally the one workflow that builds it all — running on **SAP BTP, Kyma runtime** and reasoning through **SAP AI Core**. Now you know how the pieces fit, and how to reproduce and build on them.
+
+Back to - [Overview](../../README.md)

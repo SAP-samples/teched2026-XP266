@@ -1,48 +1,87 @@
-# Containing Files
-
-1. The LICENSE file:
-In most cases, the license for SAP sample projects is `Apache 2.0`.
-
-2. The REUSE.toml file: 
-The [Reuse Tool](https://reuse.software/) must be used for your samples project. You can find the REUSE.toml in the project initial. Please replace the parts inside the single angle quotation marks < > by the specific information for your repository.
-
-3. The README.md file (this file):
-Please edit this file as it is the primary description file for your project. You can find some placeholder titles for sections below.
-
 # XP266 - Ship your own sandboxed AI operations agent to Kyma in two hours
 
 ## Description
 
-This repository contains the material for the SAP TechEd 2026 session called XP266 - Ship your own sandboxed AI operations agent to Kyma in two hours.  
+This repository contains the material for the SAP TechEd 2026 session **XP266 - Ship your own sandboxed AI operations agent to Kyma in two hours**.
 
 ## Overview
 
-This session introduces attendees to...
+Modern Kubernetes operations need more than dashboards — they need reasoning. In this hands-on you meet a **fully in-cluster, sandboxed AI operations agent** running on **SAP BTP, Kyma runtime** and talking to **SAP AI Core**: a [Goose](https://github.com/block/goose) agent with live `kubectl` access that investigates the cluster autonomously, writes its findings as Kubernetes custom resources you can see in Busola, and streams its LLM spend to SAP Cloud Logging — all routed through a **LiteLLM proxy** and deployed declaratively with **KRO**.
+
+Everything is **already deployed and wired up for you** on your personal Kyma runtime — the provisioning and bootstrapping are done. Your two hours are spent **understanding how the pieces fit and playing with the running system**: call SAP AI Core through the proxy, run agents in the in-cluster web terminal, tweak the autonomous diagnostic jobs and watch the reports change, chat with the interactive chat agent, read the spend dashboards, inspect the sandbox guardrails, explore SAP AI Core from Python in JupyterHub — and finally run the **GitHub Actions pipeline** that deployed all of it (deploying, when you do it, is a click, not a local tool-chain).
+
+This is the "self-hosted agent" layer (shown in pink) of the SAP AI landscape — everything below runs **inside your Kyma runtime** and reaches SAP AI Core through one proxy:
+
+```mermaid
+flowchart LR
+  subgraph KYMA["🌸 Your SAP BTP, Kyma runtime — all pre-deployed"]
+    direction TB
+    TERM["🖥️ Busola web terminal<br/>Goose · Claude Code"]
+    GOOSE["🔎 Goose diagnostic jobs<br/>autonomous kubectl"]
+    OC["💬 Chat UI<br/>interactive agent"]
+    JH["📓 JupyterHub<br/>Python + notebooks"]
+    LITELLM["🔀 LiteLLM proxy :4001<br/>tier aliases · drop_params"]
+    CHR["📄 ClusterHealthReport ·<br/>AuditLogCatalog · FleetStatus<br/>(Busola custom resources)"]
+    CLS["📊 Kyma Telemetry →<br/>SAP Cloud Logging<br/>spend dashboards"]
+  end
+  AICORE["☁️ SAP AI Core<br/>Claude · GPT · Mistral · Nova"]
+
+  TERM --> LITELLM
+  GOOSE --> LITELLM
+  OC --> LITELLM
+  JH --> LITELLM
+  LITELLM --> AICORE
+  GOOSE --> CHR
+  GOOSE -. hand-off .-> OC
+  GOOSE -. hand-off .-> JH
+  LITELLM --> CLS
+```
+
+> [!TIP]
+> The exercises follow the arrows: **call the proxy** (ex1) → **use the agents** (ex2–ex4) → **see the reports and spend** (ex3, ex5) → **inspect the guardrails** (ex6) → **explore from Python** (ex7) → **see how it was all built** (ex8).
 
 ## Requirements
 
-The requirements to follow the exercises in this repository are...
+> [!IMPORTANT]
+> Everything is **pre-provisioned and pre-deployed** for you — there is no infrastructure to install or configure. You only need:
+>
+> - ✅ The **provided TechEd laptop**, with the **Chrome browser** and a **public internet connection**.
+> - ✅ Your personal **SAP BTP, Kyma runtime** (`xp266-NNN`) — the **Busola URL** and single sign-on are handed out at the start of the session.
+> - ✅ A **GitHub account** — several exercises run as **GitHub Actions** workflows. If you don't have one, [sign up](https://github.com/signup) before the session (or at the very start).
+
+> [!IMPORTANT]
+> The session content is provided *exclusively* on the public **SAP-samples** GitHub, and several exercises are implemented as CI/CD [GitHub Actions workflows](https://docs.github.com/en/actions/get-started/understand-github-actions) (GHA). To run them you **fork this repository to your own GitHub account and enable GitHub Actions on your fork**. That is the only setup, it is all done in the browser, and it is **mandatory** for the GHA-based exercises.
+
+> [!IMPORTANT]
+> **Security is paramount — you never handle a credential.** The GHA exercises use GitHub's OIDC-delegated authentication, so there are **no Kubernetes or BTP credentials to copy anywhere** ([why OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect#benefits-of-using-oidc)):
+> - ✅ The GitHub Actions workflow acts as the [OIDC provider](https://docs.github.com/en/actions/concepts/security/openid-connect).
+> - ✅ Every Kyma runtime in the landscape is pre-configured to **trust GitHub's token issuer** (via the built-in Gardener OIDC shoot extension).
+> - ✅ **SAP Cloud Identity Services** (the BTP platform IDP) is federated with the GitHub Actions OIDC provider.
+> - ✅ As a result, **short-lived** [tokens](https://docs.github.com/en/actions/concepts/security/openid-connect#understanding-the-oidc-token) are fetched and rotated automatically on your behalf, for both Kubernetes and BTP operations.
+
+> [!WARNING]
+> Personal devices ought not to be used for this session — please use the **provided TechEd laptop**. The good news: you fork the repo and run the **GHA-based exercises** directly from your fork, in Chrome, on the provided laptop.
+
+> [!NOTE]
+> Every exercise runs in the browser — Busola, JupyterHub, and GitHub Actions. No local `kubectl`, no IDE, no cloud account, **nothing to install**. Where an exercise deploys something, you do it the same way the platform was built — by clicking **Run workflow** on a GitHub Actions pipeline (from your fork), never with local tooling.
 
 ## Exercises
 
-Provide the exercise content here directly in README.md using [markdown](https://guides.github.com/features/mastering-markdown/) and linking to the specific exercise pages, below is an example.
+- [Getting Started](exercises/ex0/) — access your Kyma runtime and tour the pre-deployed AI-ops stack
+- [Exercise 1 - The LLM gateway: LiteLLM and SAP AI Core](exercises/ex1/) — how the proxy routes to SAP AI Core, and call it yourself
+- [Exercise 2 - The Busola web terminal](exercises/ex2/) — run Goose and Claude Code against your cluster, in-browser
+- [Exercise 3 - Play with the autonomous Goose diagnostic jobs](exercises/ex3/) — tweak the parameters, trigger a run, read the Cluster Health Report
+- [Exercise 4 - Chat with the interactive agent](exercises/ex4/) — the interactive chat UI, and the hand-off from the diagnostic jobs
+- [Exercise 5 - Observability and spend](exercises/ex5/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards
+- [Exercise 6 - Sandbox and guardrails](exercises/ex6/) — how the agent is contained: non-root, scoped RBAC, network policy
+- [Exercise 7 - JupyterHub playground: SAP AI Core from Python](exercises/ex7/) — run the sample notebooks, do the guided exercises, create your own
+- [Exercise 8 - Behind the scenes: the workflow that built your runtime](exercises/ex8/) — run the `all-fleets-admin` pipeline and explore every deploy step
 
-- [Getting Started](exercises/ex0/)
-- [Exercise 1 - First Exercise Description](exercises/ex1/)
-    - [Exercise 1.1 - Exercise 1 Sub Exercise 1 Description](exercises/ex1#exercise-11-sub-exercise-1-description)
-    - [Exercise 1.2 - Exercise 1 Sub Exercise 2 Description](exercises/ex1#exercise-12-sub-exercise-2-description)
-- [Exercise 2 - Second Exercise Description](exercises/ex2/)
-    - [Exercise 2.1 - Exercise 2 Sub Exercise 1 Description](exercises/ex2#exercise-21-sub-exercise-1-description)
-    - [Exercise 2.2 - Exercise 2 Sub Exercise 2 Description](exercises/ex2#exercise-22-sub-exercise-2-description)
+> [!IMPORTANT]
+> **Every exercise can be completed entirely in the browser — no terminal experience required.** A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**; wherever one appears there is a UI (Busola) or **Run workflow** (GitHub Actions) way to reach the same result. Whatever your level, you can succeed with clicks alone.
 
-  
-**OR** Link to the Tutorial Navigator for example...
-
-Start the exercises [here](https://developers.sap.com/tutorials/abap-environment-trial-onboarding.html).
-
-**IMPORTANT**
-
-Your repo must contain the .reuse and LICENSES folder and the License section below. DO NOT REMOVE the section or folders/files. Also, remove all unused template assets(images, folders, etc) from the exercises folder. 
+> [!NOTE]
+> Every step is copy-paste ready — the two hours are short by design. If you fall behind, each exercise is self-contained; jump to whichever interests you most.
 
 ## Contributing
 Please read the [CONTRIBUTING.md](./CONTRIBUTING.md) to understand the contribution guidelines.
@@ -52,7 +91,7 @@ Please read the [SAP Open Source Code of Conduct](https://github.com/SAP-samples
 
 ## How to obtain support
 
-Support for the content in this repository is available during the actual time of the online session for which this content has been designed. Otherwise, you may request support via the [Issues](../../issues) tab.
+Support for the content in this repository is available during the actual time of the online session for which this content has been designed. Otherwise, you may request support via the [Issues](https://github.com/SAP-samples/teched2026-XP266/issues/new) tab.
 
 ## License
-Copyright (20xx-)20xx SAP SE or an SAP affiliate company and <your-project> contributors. Please see our [LICENSE](LICENSE) for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available [via the REUSE tool](https://api.reuse.software/info/github.com/SAP/<your-project>).
+Copyright 2026 SAP SE or an SAP affiliate company and teched2026-XP266 contributors. Please see our [LICENSE](LICENSE) for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available [via the REUSE tool](https://api.reuse.software/info/github.com/SAP-samples/teched2026-XP266).
