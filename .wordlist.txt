@@ -232,6 +232,11 @@ OIDC's
 OpenClaw
 openclaw
 ChatUI
+SRE
+HPA
+HorizontalPodAutoscaler
+TUI
+stdin
 deprovision
 kubeAPIServer
 

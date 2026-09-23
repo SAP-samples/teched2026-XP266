@@ -3,7 +3,7 @@
 > [!NOTE]
 > **This whole exercise is the optional "go deeper" track** — it's the most fun if you're comfortable with a shell, but **nothing here is required to finish the workshop**. If you'd rather stay UI-only, skip straight to [Exercise 3](../ex3/README.md): you'll see these same agents running *for* you, autonomously, with everything readable in Busola.
 
-Busola ships an **in-cluster web terminal** — a pod, in your browser, that already has **`goose`**, **`Claude Code`**, `kubectl`, and the `kyma` CLI installed and **pre-authenticated to the LiteLLM proxy**. No local install, no login, no API key. In this exercise you run both AI agents against your own cluster and see them answer via SAP AI Core.
+Busola ships an **in-cluster web terminal** — a pod, in your browser, that already has **`goose`**, **`Claude Code`**, `kubectl`, and the **`kyma`** CLI installed and **pre-authenticated to the LiteLLM proxy**. No local install, no login, no API key. In this exercise you drive the `kyma` CLI and both AI agents against your own cluster and see them answer via SAP AI Core.
 
 ```
 You (browser)
@@ -23,52 +23,108 @@ goose / claude ──▶ LiteLLM proxy :4001 ──▶ SAP AI Core
 
    Command:
    ```bash
-   goose --version && claude --version && kubectl version --client -o yaml | grep gitVersion
+   goose --version && claude --version && kubectl version --client -o yaml | grep gitVersion && kyma version
    ```
    Output (versions may differ):
    ```
    goose 1.49.0
    2.1.278 (Claude Code)
    gitVersion: v1.35.0
+   3.5.0
    ```
 
 > [!NOTE]
-> The terminal is **auto-authenticated**: a start-up script fetches the LiteLLM key from the `llm-proxy-credentials` Secret and exports the environment both agents need (`GOOSE_PROVIDER=litellm`, `ANTHROPIC_BASE_URL`, model tiers…). You never see or handle a key.
+> The terminal is **auto-authenticated**: a start-up script fetches the LiteLLM key from the `llm-proxy-credentials` Secret and exports the environment both agents need (`GOOSE_PROVIDER=litellm`, `ANTHROPIC_BASE_URL`, model tiers…). You never see or handle a key. The pod runs **non-root** with a **read-mostly** RBAC role (you'll prove that in [Exercise 6](../ex6/README.md)).
 
-## Exercise 2.2 - Ask Goose
+## Exercise 2.2 - Zoom: the `kyma` CLI
 
-Goose is an autonomous agent with shell-tool access. Give it a one-shot task:
+The [`kyma` CLI](https://github.com/kyma-project/cli) (v3) is your purpose-built lens on a Kyma runtime. In the terminal it is **pre-wired to your cluster** — the image bakes a `KUBECONFIG`, so commands just work with no setup. The star command for this workshop is **`kyma alpha diagnose`**: it snapshots the whole cluster — nodes, Kyma modules, workloads, events — into one structured report.
+
+Command:
+```bash
+kyma alpha diagnose cluster
+```
+This prints a human-readable health snapshot. Now get the **machine-readable** form — the exact input the autonomous jobs feed to Goose:
+
+Command:
+```bash
+kyma alpha diagnose cluster -f json | head -40
+```
+
+A few more workshop-relevant `kyma` commands to try:
+
+| Command | What it does |
+|---|---|
+| `kyma version` | the CLI version (and, in-cluster, the Kyma version) |
+| `kyma alpha diagnose cluster` | full cluster health snapshot (human-readable) |
+| `kyma alpha diagnose cluster -f json` | same, as JSON — the agents' input |
+| `kyma alpha diagnose istio` | focused Istio service-mesh diagnosis |
+| `kyma alpha --help` | discover the rest (modules, kubeconfig, app push…) |
+
+> [!IMPORTANT]
+> **`kyma alpha diagnose cluster` is exactly what the autonomous diagnostic jobs run** (Exercise 3): they capture this JSON and hand it to Goose, which reasons over it via SAP AI Core. Running it by hand here is you doing manually what the CronJobs do on a schedule.
+
+## Exercise 2.3 - Ask Goose
+
+Goose is an autonomous agent with shell-tool access. It does **not** read stdin — give it a file or embed the text. Give it a one-shot task with a bounded turn budget:
 
 Command:
 ```bash
 goose run --max-turns 3 --text "Using kubectl, how many namespaces are in this cluster, and which are not Active?"
 ```
-Goose will run `kubectl get ns`, reason over the result, and answer in prose — the reasoning happens on SAP AI Core via the proxy.
+
+More documented one-shots to try:
+```bash
+goose run --max-turns 1 --text "In one line, what is Kyma?"
+goose run --max-turns 8 --text "Using kubectl, list namespaces with any non-Running pods and summarize why."
+kyma alpha diagnose cluster -f json > /tmp/diag.json
+goose run --max-turns 4 --text "Read /tmp/diag.json and summarize cluster health in 3 bullets."
+```
 
 > [!TIP]
 > For a back-and-forth session instead of one-shot, run `goose session` and type your questions; `Ctrl-D` to exit.
 
-## Exercise 2.3 - Ask Claude Code, and pipe real cluster data
+## Exercise 2.4 - Ask Claude Code, and pipe real cluster data
 
-`claude -p` runs Claude Code headlessly. It shines when you **pipe cluster data into it**:
+`claude -p` runs Claude Code headlessly — the **most reliable** mode. It shines when you **pipe cluster data into it**:
 
 Command:
 ```bash
-kubectl get pods -A -o wide | claude -p "Which pods look unhealthy or mis-scheduled? Give a short table by severity."
+kyma alpha diagnose cluster -f json | claude -p "Summarize cluster health and flag any issues."
+kubectl get pods -A -o wide       | claude -p "Which pods look unhealthy or mis-scheduled? Table by severity."
+kubectl get pods -A -o json       | claude -p "List workloads with no CPU/memory requests and flag which block HPA scaling."
+claude -p "Read /tmp/diag.json and list the top issues"
 ```
 
-Or hand it a full Kyma diagnosis:
+> [!TIP]
+> The **interactive** `claude` TUI may show a one-time *"Streaming response ended … retrying without streaming"* — it's **harmless** (SAP AI Core's path is non-streaming) and recovers on retry. Headless `claude -p` and pipes don't hit it.
 
-Command:
-```bash
-kyma alpha diagnose cluster -f json | claude -p "Summarize this cluster's health in 3 bullets and flag anything risky."
+## Exercise 2.5 - A prompt library to try
+
+The interactive `claude` reads files and runs an **allowlisted, read-only** toolset (`kubectl get/describe/logs/top`, `kyma`, file reads) **without prompting** — so you can hand it an investigation and watch it work. Launch `claude`, then paste any of these:
+
+```text
+# Headline SRE demo
+You are an SRE doing a cluster health review. Run `kyma alpha diagnose cluster`, then use kubectl to inspect
+the nodes and any unhealthy or over-committed workloads. Produce a prioritized markdown report: the top 3 risks
+(each with concrete evidence — numbers, resource names, event counts) and for each a specific remediation (the
+exact kubectl/patch command). Finish with a one-line overall verdict.
+
+# Focused investigations
+Which workloads on this cluster are over their CPU/memory limits or have no requests set? Show a table sorted by
+risk, and flag anything that would block the HPA from scaling.
+
+Investigate why the `busola` HorizontalPodAutoscaler is failing, from first principles using kubectl — root cause
+plus the exact fix.
+
+Walk the `kyma-system` namespace: list the Kyma modules and their states, and flag any that are degraded or drifting.
 ```
 
 > [!IMPORTANT]
-> This is the **same LLM path** as Exercise 1 — the agents are just convenient front-ends over the LiteLLM proxy → SAP AI Core. In [Exercise 3](../ex3/README.md) you'll see this exact pattern (`kyma diagnose` → Goose) running **autonomously on a schedule**, writing its findings into Kubernetes.
+> This is the **same LLM path** as Exercise 1 — the agents are just convenient front-ends over the LiteLLM proxy → SAP AI Core. In [Exercise 3](../ex3/README.md) you'll see this exact pattern (`kyma alpha diagnose` → Goose) running **autonomously on a schedule**, writing its findings into Kubernetes.
 
 ## Summary
 
-You opened the in-cluster web terminal, confirmed Goose and Claude Code are pre-authenticated to the LiteLLM proxy, and ran both against your cluster — one-shot Goose, and Claude Code fed live `kubectl`/`kyma` output. Same proxy, same SAP AI Core, now driven by an agent.
+You opened the in-cluster web terminal, drove the `kyma` CLI (especially `kyma alpha diagnose cluster`), and ran both Goose and Claude Code against your cluster — one-shot, headless, and fed live `kubectl`/`kyma` output. Same proxy, same SAP AI Core, now driven interactively by you. Next, the same recipe runs on its own.
 
 Continue to - [Exercise 3 - Play with the autonomous Goose diagnostic jobs](../ex3/README.md)

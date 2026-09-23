@@ -1,1 +1,3 @@
 .DS_Store
+# Internal working notes — NEVER pushed to the public SAP-samples repo
+internal/
