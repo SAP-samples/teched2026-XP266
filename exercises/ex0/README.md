@@ -16,6 +16,9 @@ In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, 
 2. Sign in with the workshop identity provider when prompted (single sign-on). You land on the Busola **Cluster Overview** for your runtime.
 <br>![](images/00_01_0010.png)
 
+> [!TIP]
+> The **Cluster Overview** shows one or more **banner cards** with handy shortcut **buttons** into the workshop features (dashboards, quick actions). If you dismiss a card, it **stays hidden in that browser**. To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
+
 ## Exercise 0.2 - See what is already deployed
 
 Everything in the "pink" layer of the architecture — the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, JupyterHub, the telemetry and spend pipeline — was deployed for you declaratively with **KRO** (Kubernetes Resource Orchestrator) as a single unit. Let's confirm it's there.

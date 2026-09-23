@@ -237,6 +237,8 @@ HPA
 HorizontalPodAutoscaler
 TUI
 stdin
+DevTools
+localStorage
 deprovision
 kubeAPIServer
 
