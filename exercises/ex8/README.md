@@ -72,4 +72,10 @@ You ran the `all-fleets-admin` workflow against your own `xp266-NNN` runtime, sa
 
 🎉 **That's the workshop.** You've met the whole self-hosted, sandboxed AI-ops stack — the LiteLLM gateway, the in-cluster agents, the autonomous diagnostic jobs, the interactive chat agent, the observability, the guardrails, the JupyterHub playground, and finally the one workflow that builds it all — running on **SAP BTP, Kyma runtime** and reasoning through **SAP AI Core**. Now you know how the pieces fit, and how to reproduce and build on them.
 
+> [!TIP]
+> **Want to go one level deeper on isolation?** [Exercise 9](../ex9/README.md) 🔧 *(advanced / instructor-demo)* runs the
+> same tools image as a **runtime-isolated OpenShell `Sandbox`** with a contained LLM provider — the agent reasons
+> through SAP AI Core while the egress guardrail physically denies the apiserver and the internet. It needs the
+> `openshell` CLI + admin access, so it's an operator/instructor track — but it's the strongest containment tier in the stack.
+
 Back to - [Overview](../../README.md)

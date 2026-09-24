@@ -76,6 +76,7 @@ flowchart LR
 - [Exercise 6 - Sandbox and guardrails](exercises/ex6/) — how the agent is contained: non-root, scoped RBAC, network policy
 - [Exercise 7 - JupyterHub playground: SAP AI Core from Python](exercises/ex7/) — run the sample notebooks, do the guided exercises, create your own
 - [Exercise 8 - Behind the scenes: the workflow that built your runtime](exercises/ex8/) — run the `all-fleets-admin` pipeline and explore every deploy step
+- [Exercise 9 - Your own sandboxed agent: the OpenShell CLI dance](exercises/ex9/) 🔧 *(advanced / instructor-demo)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
 
 > [!IMPORTANT]
 > **Every exercise can be completed entirely in the browser — no terminal experience required.** A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**; wherever one appears there is a UI (Busola) or **Run workflow** (GitHub Actions) way to reach the same result. Whatever your level, you can succeed with clicks alone.
