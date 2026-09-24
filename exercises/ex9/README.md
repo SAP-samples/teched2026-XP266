@@ -1,10 +1,12 @@
 # Exercise 9 - Your own sandboxed agent: the OpenShell CLI dance 🔧 *(advanced — CLI + admin access)*
 
 > [!WARNING]
-> **This is a bonus / advanced exercise, and it is admin-gated.** Unlike ex0–ex8, it needs the **`openshell` CLI on
-> your laptop** and an account in the operators' group — the OpenShell gateway only admits the `openshell-admin` role.
-> If you don't have that access, **watch the instructor demo**: everything below is a live walk-through. Nothing here is
-> required to complete the workshop — you already finished it at [Exercise 8](../ex8/README.md).
+> **This is a bonus / advanced exercise, and it is admin-gated.** Unlike ex0–ex8, it needs the **`openshell` CLI** and an
+> account in the operators' group — the OpenShell gateway only admits the `openshell-admin` role. You can run the CLI
+> either from your laptop, or — handy on the Windows TechEd laptops with nothing to install — **from the Busola web
+> terminal** ([Exercise 2](../ex2/README.md)), which has `openshell` pre-installed. If you don't have gateway access,
+> **watch the instructor demo**: everything below is a live walk-through. Nothing here is required to complete the
+> workshop — you already finished it at [Exercise 8](../ex8/README.md).
 
 [Exercise 6](../ex6/README.md) showed how the Busola web terminal is *fenced in* with **RBAC + a NetworkPolicy** — but it
 still runs as an ordinary `exec` pod: those are guardrails *around* it, not kernel isolation. This exercise shows the next
