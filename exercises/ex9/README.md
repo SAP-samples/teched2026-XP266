@@ -174,6 +174,26 @@ Clean up when done:
 openshell sandbox delete mybox
 ```
 
+## Why this matters — what a contained sandbox is *for*
+
+This is **not** an ops shell — that's the Busola terminal ([Exercise 2](../ex2/README.md)), whose `kubectl` actually
+drives the cluster. The sandbox's superpower is the opposite: **containment for _execution_.** You can let an AI agent
+write and *run* code with no way to touch the cluster, other workloads, or the internet, and without ever handing it a
+credential. Rule of thumb: **Busola terminal = an agent that _does things to_ the cluster; sandbox = an agent that
+_computes things you don't fully trust_.** Where that's valuable:
+
+- **Code-interpreter / analysis backend** — the agent runs the code it writes, safely (data crunching, transforms, tests).
+- **Processing untrusted input** (docs, emails, tickets) — even a prompt-injected agent can't exfiltrate or pivot.
+- **Per-user isolation** — each session its own sandbox + quota + network namespace, auto-reaped after use.
+- **Reproducible, disposable runs** — fresh from a pinned image, gone after; no state leak.
+
+> [!NOTE]
+> **Using an agent inside the sandbox:** the image's auto-login only works where there's cluster access (the Busola
+> terminal). In the *contained* sandbox you point the agent at `inference.local` yourself — the `export …` block in
+> Exercise 9.3. **Claude Code works** that way (verified); **goose doesn't** (with no cluster access its config falls back
+> to `localhost:4000`, and it can't use the Anthropic-native `inference.local`) — so inside the sandbox use `claude` or
+> the raw `curl https://inference.local/v1/messages`.
+
 ## Summary
 
 You ran the workshop's tools image as a **runtime-isolated OpenShell `Sandbox`**, wired it to a **contained** inference
