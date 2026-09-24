@@ -194,6 +194,28 @@ _computes things you don't fully trust_.** Where that's valuable:
 > to `localhost:4000`, and it can't use the Anthropic-native `inference.local`) — so inside the sandbox use `claude` or
 > the raw `curl https://inference.local/v1/messages`.
 
+## The options on the table — three containment tiers
+
+OpenShell lets you dial *exactly* how much an agent can reach, per sandbox — from "compute-only" to "reads the cluster":
+
+| Tier | Egress | Cluster access | Good for |
+|---|---|---|---|
+| **Contained** (this exercise) | `inference.local` only | none | run/execute untrusted code + reason — zero blast radius |
+| **Scoped-ops** *(advanced/admin)* | + apiserver (read-only), still no internet | read-only `kubectl` | a diagnostic agent that *reads* the cluster and reasons |
+| **Busola terminal** ([Exercise 2](../ex2/README.md)) | full pod network | RBAC-scoped `kubectl` | an agent that *operates* the cluster |
+
+Tiers are set by the sandbox's **L7 network policy** (`openshell policy set`) plus auth: contained is the default; scoped-ops
+adds an apiserver rule + a short-lived **read-only** token (the agent can `kubectl get` but not mutate, and still can't reach
+the internet); the Busola terminal is a separate, RBAC-scoped surface. Same agent image, three trust levels.
+
+### How the credential injection works (why the agent never holds a key)
+The heart of the containment: the agent reasons via SAP AI Core **without ever seeing a credential**. The LLM **provider**
+(configured once, on the gateway) holds the real key. Inside the sandbox the agent sends its request to `https://inference.local`
+with a **placeholder** (`x-api-key: placeholder`). The sandbox's L7 proxy — which knows the provider's real credential, bound
+to that one endpoint — **rewrites the placeholder with the real key** at the last moment before forwarding upstream to the
+LiteLLM proxy → SAP AI Core. So the secret lives only in the gateway; compromise the agent and all you get is the placeholder.
+You proved exactly this in 9.3: an `x-api-key: placeholder` request still came back with a real `msg_bdrk_…` completion.
+
 ## Summary
 
 You ran the workshop's tools image as a **runtime-isolated OpenShell `Sandbox`**, wired it to a **contained** inference
