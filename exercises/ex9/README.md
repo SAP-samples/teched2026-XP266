@@ -99,8 +99,26 @@ Output:
 
 > [!TIP]
 > The `msg_bdrk_` id prefix is your proof the request round-tripped **SAP AI Core** (Bedrock). The agent sent a
-> placeholder; the gateway injected the real key. You can also drop into a shell — `openshell sandbox connect mybox` —
-> and run `goose` / `claude` interactively, exactly like the Busola terminal, but from inside the isolated Sandbox.
+> placeholder; the gateway injected the real key.
+
+Now drop into an interactive shell and drive **Claude Code** from *inside* the isolated sandbox. The box is contained,
+so you must point Claude at its one allowed endpoint (`inference.local`) — the image's baked config points at a host the
+sandbox can't reach:
+
+```bash
+openshell sandbox connect mybox          # → goose@default--mybox:~$
+
+# ...then, inside the sandbox, repoint Claude Code at the contained endpoint and use it:
+export ANTHROPIC_BASE_URL=https://inference.local
+export ANTHROPIC_AUTH_TOKEN=placeholder      # the gateway injects the real key; you send a placeholder
+export NODE_TLS_REJECT_UNAUTHORIZED=0        # inference.local is self-signed (same reason curl needs -k)
+claude -p "In one line, what is Kyma?"
+```
+
+> [!NOTE]
+> It's a **reasoning box, not an ops shell**: `kubectl` / `kyma` / `k9s` are installed but **inert** (no cluster token,
+> no route to the API server — you'll prove that in 9.4). For an agent whose `kubectl`/`kyma` actually reach the cluster,
+> use the Busola web terminal ([Exercise 2](../ex2/README.md)); the sandbox trades cluster access for hard isolation.
 
 ## Exercise 9.4 - See the guardrail hold
 
