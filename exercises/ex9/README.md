@@ -35,23 +35,24 @@ Two properties make this **contained**, not just isolated:
 
 ## Exercise 9.1 - Get the CLI and reach the gateway
 
-The gateway is **cluster-internal** (ClusterIP `:8080`, gRPC, TLS off) and **OIDC-gated**, so you port-forward to it.
+The gateway has a **stable HTTPS endpoint** — `openshell.<your-shoot>.<workshop-domain>` — so there's **no port-forward
+to run**. It is **OIDC-gated**: it validates your Keycloak token itself.
 
 1. Download the **`openshell`** CLI for your OS/arch from the [OpenShell releases](https://github.com/NVIDIA/OpenShell/releases)
    (match the deployed gateway version).
-2. Port-forward the gateway, then register it against Keycloak (a browser opens for single sign-on):
+2. Register the gateway against Keycloak (a browser opens for single sign-on):
    ```bash
-   kubectl -n openshell port-forward svc/openshell 8080:8080     # leave running in one terminal
-
-   openshell gateway add http://localhost:8080 \
+   openshell gateway add https://openshell.<your-shoot>.<workshop-domain> \
      --oidc-issuer https://keycloak.<your-shoot>.<workshop-domain>/realms/ateam-isveng \
-     --oidc-client-id quovadis-oidc
+     --oidc-client-id openshell-oidc
    #   already registered from a previous day? re-auth instead of add:
    #   openshell gateway login openshell
    ```
-   > A bare `http://` endpoint (or `--local`) registers as **plaintext** → the OIDC-gated gateway answers
-   > `missing authorization header`. Passing `--oidc-issuer` forces the browser login. Keycloak accepts the CLI's random
-   > loopback callback port (SAP IAS would not — that's why the gateway trusts Keycloak).
+   > The gateway validates the JWT itself, so there's no extra API-gateway auth in front of it — just `--oidc-issuer`
+   > to trigger the Keycloak browser login (Keycloak accepts the CLI's random loopback callback port; SAP IAS would not).
+   >
+   > *Fallback* — if your network can't reach the host: `kubectl -n openshell port-forward svc/openshell 8080:8080`, then
+   > `openshell gateway add http://localhost:8080 …` (not `--local`, which is plaintext → `missing authorization header`).
 
 ## Exercise 9.2 - Wire the contained inference provider *(one-time, per gateway)*
 
@@ -134,6 +135,14 @@ curl: (28) Resolving timed out after 5000 milliseconds
 direct=000
 exit=28
 ```
+
+**Probe C — the LLM key never enters the sandbox:**
+```bash
+openshell sandbox exec --name mybox -- printenv | grep -iE 'ANTHROPIC|_KEY|PROXY' || echo "no LLM credential in the sandbox env"
+```
+The real key is **absent** — the gateway injects it only at egress, so the agent only ever holds the placeholder. (With
+an admin kubeconfig you can also confirm the sandbox's service account can't read it:
+`kubectl auth can-i get secrets --as=system:serviceaccount:openshell:openshell-sandbox -n openshell` → **no**.)
 
 So the sandbox can reach **only** `inference.local` (→ LiteLLM → SAP AI Core) plus DNS *via the proxy* — the apiserver,
 other workloads, and the public internet are all unreachable, whether you go through the proxy (403) or try to skip it
