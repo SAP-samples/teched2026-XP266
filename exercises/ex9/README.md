@@ -2,11 +2,13 @@
 
 > [!WARNING]
 > **This is a bonus / advanced exercise, and it is admin-gated.** Unlike ex0–ex8, it needs the **`openshell` CLI** and an
-> account in the operators' group — the OpenShell gateway only admits the `openshell-admin` role. You can run the CLI
-> either from your laptop, or — handy on the Windows TechEd laptops with nothing to install — **from the Busola web
-> terminal** ([Exercise 2](../ex2/README.md)), which has `openshell` pre-installed. If you don't have gateway access,
-> **watch the instructor demo**: everything below is a live walk-through. Nothing here is required to complete the
-> workshop — you already finished it at [Exercise 8](../ex8/README.md).
+> account in the operators' group — the OpenShell gateway only admits the `openshell-admin` role. **Run the CLI from your
+> laptop** (it uses a browser-based login). If you're on a locked-down Windows laptop and can't install the CLI, or you
+> don't have gateway access, **watch the instructor demo** — everything below is a live walk-through. *(A future
+> convenience: the `openshell` CLI is already pre-installed in the [Busola web terminal](../ex2/README.md), but the
+> deployed gateway version can't yet complete a browser-less login from that pod — so for now the terminal isn't a usable
+> entry point.)* Nothing here is required to complete the workshop — you already finished it at
+> [Exercise 8](../ex8/README.md).
 
 [Exercise 6](../ex6/README.md) showed how the Busola web terminal is *fenced in* with **RBAC + a NetworkPolicy** — but it
 still runs as an ordinary `exec` pod: those are guardrails *around* it, not kernel isolation. This exercise shows the next
