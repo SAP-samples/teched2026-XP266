@@ -237,7 +237,7 @@ goose run --text "run 'kubectl get pods -A' and 'kyma alpha diagnose', then summ
 # answer conversationally and ask for context; telling it to RUN the commands makes it act like goose:
 claude -p 'Use kubectl to find unhealthy pods and explain why. Run: kubectl get pods -A, then kubectl describe pod / kubectl logs on anything not Running or Completed, and summarize the root causes (CrashLoopBackOff, ImagePullBackOff, OOMKilled, failing probes). Be concise.'
 ```
-Detach with **`Ctrl-P` `Ctrl-Q`** (the box keeps running — reconnect with `openshell sandbox connect <name>`);
+Type **`exit`** to leave — the sandbox keeps running (reconnect any time with `openshell sandbox connect <name>`);
 `openshell sandbox delete <name>` when you're done.
 
 ### Why it's still contained — just a little wider
