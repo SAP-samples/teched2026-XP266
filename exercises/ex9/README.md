@@ -205,6 +205,58 @@ Clean up when done:
 openshell sandbox delete mybox
 ```
 
+## Exercise 9.5 - Scoped-ops: an agent that *reads* the cluster (one command) 🔎
+
+The contained sandbox (9.3) is a pure **compute** box — zero cluster access. The **scoped-ops** tier adds exactly one
+capability: a **read-only** view of the cluster, so an agent can *diagnose* (never mutate). From the **Busola web
+terminal** it's a single command — **`scoped-ops`** — which creates the sandbox, applies the cluster-ops network policy,
+mints a short-lived **read-only** token, injects a kubeconfig + the LLM env, and drops you **inside** with `kubectl`,
+`goose`, and `claude` already wired:
+
+```bash
+scoped-ops                     # or give it a name:  scoped-ops mybox
+#   >> creating scoped-ops sandbox 'ops-…' …
+#   >> applying the cluster-ops L7 policy …
+#   >> minting a short-lived (2h) sandbox-viewer token + injecting creds …
+#   >> connecting …
+#   >> scoped-ops agent ready — read-only cluster + goose/claude via SAP AI Core.
+#      try:  kubectl get nodes   |   goose run --text '…'   |   claude -p '…'
+```
+You're now inside the box (`goose@default--…:~$`), env auto-loaded. Prove the read-only cluster access, then let the
+agents drive it:
+
+```bash
+kubectl get nodes                        # ✓ read-only (a write → 403, refused by RBAC)
+```
+```bash
+# goose — agentic by default: it runs kubectl / kyma itself and reasons over the output:
+goose run --text "run 'kubectl get pods -A' and 'kyma alpha diagnose', then summarize any unhealthy workloads and module issues"
+```
+```bash
+# claude — give it an IMPERATIVE, tool-directed prompt. A bare question ('which pods are unhealthy?') makes Claude
+# answer conversationally and ask for context; telling it to RUN the commands makes it act like goose:
+claude -p 'Use kubectl to find unhealthy pods and explain why. Run: kubectl get pods -A, then kubectl describe pod / kubectl logs on anything not Running or Completed, and summarize the root causes (CrashLoopBackOff, ImagePullBackOff, OOMKilled, failing probes). Be concise.'
+```
+Detach with **`Ctrl-P` `Ctrl-Q`** (the box keeps running — reconnect with `openshell sandbox connect <name>`);
+`openshell sandbox delete <name>` when you're done.
+
+### Why it's still contained — just a little wider
+- **Network (L7 policy):** exactly three egresses are allowed — the **apiserver** (read-only), the **LiteLLM proxy**
+  (for goose), and **`inference.local`** (for claude, key gateway-injected). The public internet and every other workload
+  stay denied — same guardrail you proved in 9.4, just with the apiserver added read-only.
+- **RBAC:** the injected token is a dedicated **read-only** identity — `get`/`list`/`watch` only, and **`secrets` are
+  excluded** — so `kubectl get`/`describe`/`logs` and `kyma alpha diagnose` work, but writes and secret-reads are refused.
+- **Honest trade-off vs 9.3:** to reach the apiserver an agent needs a *real* token, so scoped-ops **does** put a
+  credential in the box — but a deliberately **minimal, read-only, short-lived (2h)** one. The contained tier (9.3) holds
+  **no** cluster credential at all. Choose the tier by how much you trust the workload.
+
+> [!TIP]
+> **goose vs claude in one line:** `goose run` runs tools on its own; `claude -p` needs the imperative *"Run … then …"*
+> phrasing to act rather than ask. Both reason via SAP AI Core. The terminal image pre-allows read-only
+> `kubectl get/describe/logs/top` + `kyma` for Claude Code, so those run without a permission prompt. A deep
+> `kyma alpha diagnose istio` will *time out* — it reaches the mesh sidecars directly, which the sandbox's egress doesn't
+> allow; the apiserver-based diagnostics work fine.
+
 ## Why this matters — what a contained sandbox is *for*
 
 This is **not** an ops shell — that's the Busola terminal ([Exercise 2](../ex2/README.md)), whose `kubectl` actually
@@ -231,8 +283,8 @@ OpenShell lets you dial *exactly* how much an agent can reach, per sandbox — f
 
 | Tier | Egress | Cluster access | Good for |
 |---|---|---|---|
-| **Contained** (this exercise) | `inference.local` only | none | run/execute untrusted code + reason — zero blast radius |
-| **Scoped-ops** *(advanced/admin)* | + apiserver (read-only), still no internet | read-only `kubectl` | a diagnostic agent that *reads* the cluster and reasons |
+| **Contained** (9.1–9.4) | `inference.local` only | none | run/execute untrusted code + reason — zero blast radius |
+| **Scoped-ops** ([9.5](#exercise-95---scoped-ops-an-agent-that-reads-the-cluster-one-command-) — `scoped-ops`) | + apiserver (read-only), still no internet | read-only `kubectl` | a diagnostic agent that *reads* the cluster and reasons |
 | **Busola terminal** ([Exercise 2](../ex2/README.md)) | full pod network | RBAC-scoped `kubectl` | an agent that *operates* the cluster |
 
 Tiers are set by the sandbox's **L7 network policy** (`openshell policy set`) plus auth: contained is the default; scoped-ops
