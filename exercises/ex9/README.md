@@ -270,6 +270,16 @@ _computes things you don't fully trust_.** Where that's valuable:
 - **Per-user isolation** — each session its own sandbox + quota + network namespace, auto-reaped after use.
 - **Reproducible, disposable runs** — fresh from a pinned image, gone after; no state leak.
 
+It neutralises the familiar agent risks **by construction** — not by asking the model to behave:
+
+| Threat | What usually enables it | What the sandbox does instead |
+|---|---|---|
+| Data exfiltration | the agent has internet | **no route out** — nothing but the allow-listed LLM endpoint even resolves |
+| Credential theft | the agent holds an API key | **the key is never in the box** — placeholder in, real key injected at the edge |
+| Reading secrets | broad RBAC | a read-only identity with **`secrets` excluded** (scoped-ops tier) |
+| Mutating the cluster | a read-write token | the scoped-ops token is **read-only** (`get`/`list`/`watch`); writes → 403 |
+| Lateral movement | pod network access | the pod has **no path** to other pods or the API server unless the policy names it |
+
 > [!NOTE]
 > **Using an agent inside the sandbox:** the image's auto-login only works where there's cluster access (the Busola
 > terminal). In the *contained* sandbox you point the agent at `inference.local` yourself — the `export …` block in
@@ -299,6 +309,25 @@ to that one endpoint — **rewrites the placeholder with the real key** at the l
 LiteLLM proxy → SAP AI Core. So the secret lives only in the gateway; compromise the agent and all you get is the placeholder.
 You proved exactly this in 9.3: an `x-api-key: placeholder` request still came back with a real `msg_bdrk_…` completion.
 
+```
+  agent (in the box)        supervisor (egress proxy)        LLM proxy → SAP AI Core
+        │                            │                               │
+        │ POST inference.local       │                               │
+        │  x-api-key: placeholder    │                               │
+        │───────────────────────────►│                               │
+        │        allow-list: inference.local ✓                       │
+        │        swap placeholder → REAL key (held by the gateway)    │
+        │                            │ POST  x-api-key: REAL key      │
+        │                            │──────────────────────────────►│
+        │                       completion ✓                         │
+        │◄───────────────────────────────────────────────────────────│
+        │                            │                               │
+        │ POST api.anthropic.com  /  the API server                  │
+        │───────────────────────────►│                               │
+        │     403 — not on the allow-list ✗                          │
+        │◄───────────────────────────│                               │
+```
+
 ## Summary
 
 You ran the workshop's tools image as a **runtime-isolated OpenShell `Sandbox`**, wired it to a **contained** inference
@@ -306,5 +335,28 @@ provider (the agent never held the key), and proved the egress guardrail: the ap
 denied by the supervisor proxy's allowlist, with no direct route to bypass it — while the agent still reasons through SAP
 AI Core. This is the strongest containment tier in the stack — *the sandbox is the guardrail* — built entirely on the
 **stock** OpenShell chart, no custom fork and no extra network config.
+
+## Glossary
+
+| Term | What it means |
+|---|---|
+| **Sandbox / agent-sandbox** | The isolated pod the agent runs in, created from a `Sandbox` custom resource by the `agent-sandbox` controller. The pod itself *is* the boundary — no usable network route except the supervisor. |
+| **Supervisor** | A process injected into every sandbox that owns the box's single exit: it intercepts all outbound traffic, enforces the allow-list, and injects the real LLM key at the last hop. |
+| **L7 allow-list (network policy)** | The supervisor's deny-by-default rule set — names, at the application layer, exactly *which binary* may reach *which host:port* over *which protocol* (`openshell policy set`). |
+| **Credential injection / placeholder** | The agent sends a dummy `x-api-key: placeholder`; the supervisor swaps in the real key just before forwarding upstream. The key lives only in the gateway. |
+| **Device-code flow** | The browserless login (`OPENSHELL_NO_BROWSER=1`): the CLI prints a URL + short code you approve on another device — used from the Busola web terminal, which has no browser. |
+| **Scoped-ops** | The middle trust tier: a sandbox that additionally gets a short-lived, **read-only** cluster token so an agent can *inspect* the cluster — but never mutate it, read secrets, or reach the internet. |
+
+## References & links
+
+| What | Where |
+|---|---|
+| NVIDIA OpenShell | [github.com/NVIDIA/OpenShell](https://github.com/NVIDIA/OpenShell) |
+| agent-sandbox controller | [github.com/kubernetes-sigs/agent-sandbox](https://github.com/kubernetes-sigs/agent-sandbox) |
+| kyma CLI | [github.com/kyma-project/cli](https://github.com/kyma-project/cli) |
+| Kyma Istio module | [github.com/kyma-project/istio](https://github.com/kyma-project/istio) |
+| Kyma Telemetry module | [github.com/kyma-project/telemetry-manager](https://github.com/kyma-project/telemetry-manager) |
+| Keycloak | [keycloak.org](https://www.keycloak.org) |
+| LiteLLM (→ SAP AI Core) | [github.com/BerriAI/litellm](https://github.com/BerriAI/litellm) |
 
 Back to - [Overview](../../README.md)
