@@ -2,13 +2,12 @@
 
 > [!WARNING]
 > **This is a bonus / advanced exercise, and it is admin-gated.** Unlike ex0–ex8, it needs the **`openshell` CLI** and an
-> account in the operators' group — the OpenShell gateway only admits the `openshell-admin` role. **Run the CLI from your
-> laptop** (it uses a browser-based login). If you're on a locked-down Windows laptop and can't install the CLI, or you
-> don't have gateway access, **watch the instructor demo** — everything below is a live walk-through. *(A future
-> convenience: the `openshell` CLI is already pre-installed in the [Busola web terminal](../ex2/README.md), but the
-> deployed gateway version can't yet complete a browser-less login from that pod — so for now the terminal isn't a usable
-> entry point.)* Nothing here is required to complete the workshop — you already finished it at
-> [Exercise 8](../ex8/README.md).
+> account in the operators' group — the OpenShell gateway only admits the `openshell-admin` role. You can run the CLI two
+> ways: **(a) from your laptop** (a browser opens for single sign-on), or **(b) from the [Busola web terminal](../ex2/README.md)**,
+> where `openshell` is **pre-installed** — handy on locked-down Windows laptops with nothing to install; it uses a
+> **device-code login** since the terminal pod has no browser (see the two paths in 9.1). If you don't have the
+> `openshell-admin` role, **watch the instructor demo** — everything below is a live walk-through. Nothing here is required
+> to complete the workshop — you already finished it at [Exercise 8](../ex8/README.md).
 
 [Exercise 6](../ex6/README.md) showed how the Busola web terminal is *fenced in* with **RBAC + a NetworkPolicy** — but it
 still runs as an ordinary `exec` pod: those are guardrails *around* it, not kernel isolation. This exercise shows the next
@@ -57,6 +56,36 @@ to run**. It is **OIDC-gated**: it validates your Keycloak token itself.
    >
    > *Fallback* — if your network can't reach the host: `kubectl -n openshell port-forward svc/openshell 8080:8080`, then
    > `openshell gateway add http://localhost:8080 …` (not `--local`, which is plaintext → `missing authorization header`).
+
+### From the Busola web terminal instead — no local install (device-code login)
+
+If you can't (or don't want to) install the CLI locally — e.g. a locked-down Windows laptop — the **`openshell` CLI is
+pre-installed in the [Busola web terminal](../ex2/README.md)**. The terminal runs *inside* the cluster, so you target the
+gateway's in-cluster Service directly (no HTTPS host, no port-forward). Because the terminal pod has **no browser**, the
+loopback single-sign-on used above can't run there — so trigger the **device-code (headless) login** with `OPENSHELL_NO_BROWSER=1`:
+
+```bash
+OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \
+  --oidc-issuer https://keycloak.<your-shoot>.<workshop-domain>/realms/ateam-isveng \
+  --oidc-client-id openshell-oidc
+```
+
+It prints a verification URL and a short code, then waits:
+
+```
+To authenticate, visit:
+  https://keycloak.<your-shoot>.<workshop-domain>/realms/ateam-isveng/device?user_code=XXXX-XXXX
+Waiting for authorization...
+```
+
+Open that URL in your **laptop's** browser, sign in (you must hold the **`openshell-admin`** role), and the terminal unblocks:
+
+```
+✓ Authenticated via device code
+```
+
+Now `openshell sandbox list` works from the terminal — continue with 9.2 exactly as below. (Re-auth later with
+`OPENSHELL_NO_BROWSER=1 openshell gateway login openshell`.)
 
 ## Exercise 9.2 - Wire the contained inference provider *(one-time, per gateway)*
 
