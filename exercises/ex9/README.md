@@ -103,8 +103,14 @@ openshell provider create --name litellm --type anthropic \
   --credential ANTHROPIC_API_KEY="$KEY" \
   --config ANTHROPIC_BASE_URL=http://litellm-proxy.default.svc.cluster.local:4001
 
+# Second provider — for goose. goose can't use claude's /v1/messages route (it streams; the SAP path doesn't), so it
+# reaches the SAME proxy over the OpenAI-compat /v1/chat/completions path with bearer auth. Also keyless — the gateway
+# holds the key; the box gets only a sentinel. (Attached by scoped-ops in 9.5. See "Two providers, both keyless" below.)
+openshell provider profile import -f litellm-openai-provider.yaml --global
+openshell provider create --name litellm-openai --type litellm-openai --credential LITELLM_API_KEY="$KEY"
+
 openshell inference set --provider litellm --model anthropic--claude-4.7-opus --no-verify
-#   → Route: inference.local
+#   → Route: inference.local  (this default route is claude's; goose uses the litellm-openai endpoint directly)
 ```
 
 ## Exercise 9.3 - Create a sandbox from the tools image and use it
@@ -254,13 +260,15 @@ Type **`exit`** to leave — the sandbox keeps running (reconnect any time with 
 
 ### Why it's still contained — just a little wider
 - **Network (L7 policy):** exactly three egresses are allowed — the **apiserver** (read-only), the **LiteLLM proxy**
-  (for goose), and **`inference.local`** (for claude, key gateway-injected). The public internet and every other workload
+  (for goose, over the OpenAI-compat path), and **`inference.local`** (for claude). **Both LLM keys stay in the gateway** —
+  goose and claude each send only a placeholder/sentinel, injected at egress. The public internet and every other workload
   stay denied — same guardrail you proved in 9.4, just with the apiserver added read-only.
 - **RBAC:** the injected token is a dedicated **read-only** identity — `get`/`list`/`watch` only, and **`secrets` are
   excluded** — so `kubectl get`/`describe`/`logs` and `kyma alpha diagnose` work, but writes and secret-reads are refused.
-- **Honest trade-off vs 9.3:** to reach the apiserver an agent needs a *real* token, so scoped-ops **does** put a
-  credential in the box — but a deliberately **minimal, read-only, short-lived (2h)** one. The contained tier (9.3) holds
-  **no** cluster credential at all. Choose the tier by how much you trust the workload.
+- **Honest trade-off vs 9.3:** the **LLM keys never enter the box** (both agents are placeholder-contained). The one real
+  credential scoped-ops injects is the **kubectl token** — the apiserver needs a *real* token, so it's a deliberately
+  **minimal, read-only, short-lived (2h)** one. The contained tier (9.3) holds **no** cluster credential at all. Choose the
+  tier by how much you trust the workload.
 
 > [!TIP]
 > **goose vs claude in one line:** `goose run` runs tools on its own; `claude -p` needs the imperative *"Run … then …"*
@@ -339,6 +347,26 @@ You proved exactly this in 9.3: an `x-api-key: placeholder` request still came b
         │     403 — not on the allow-list ✗                          │
         │◄───────────────────────────│                               │
 ```
+
+### Two providers, both keyless — how goose reaches SAP AI Core too
+The same trick covers **both** agents, over the **two** providers you wired in 9.2:
+
+| Agent | Provider | Path | Auth header | In-box credential |
+|---|---|---|---|---|
+| **claude** | `litellm` (type `anthropic`) | `inference.local` → `/v1/messages` | `x-api-key` | sentinel |
+| **goose** | `litellm-openai` | LiteLLM proxy → `/v1/chat/completions` | `Authorization: Bearer` | sentinel |
+
+**Why two providers?** goose's Anthropic client **streams** and expects server-sent events — but the SAP AI Core backend
+doesn't stream the Anthropic-native `/v1/messages` endpoint, so goose over `inference.local` just returns an empty
+response. goose's **`litellm` provider is non-streaming** and speaks the OpenAI-compat `/v1/chat/completions` path, which
+works — it's the same path the platform's autonomous cluster-diagnostics use. So we expose that path as a second provider
+(`litellm-openai`, bearer auth) instead of forcing goose onto claude's route.
+
+**How goose stays keyless.** A scoped-ops sandbox attaches **both** providers (`--provider litellm --provider litellm-openai`
+— the flag is repeatable), and the supervisor injects the real key on **each** provider's endpoint. So neither agent ever
+holds the key — `printenv` inside the box shows only `openshell:resolve:env:…` **sentinels** for `ANTHROPIC_API_KEY` and
+`LITELLM_API_KEY`. Bonus: because goose dials its provider endpoint *directly* (not the pinned `inference.local`
+inference-route), goose's own request model is honored — so it runs on **sonnet**, not the gateway's default route model.
 
 ## Summary
 
