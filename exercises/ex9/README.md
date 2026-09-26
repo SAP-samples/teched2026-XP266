@@ -143,10 +143,22 @@ openshell sandbox connect mybox          # → goose@default--mybox:~$
 
 # ...then, inside the sandbox, repoint Claude Code at the contained endpoint and use it:
 export ANTHROPIC_BASE_URL=https://inference.local
-export ANTHROPIC_AUTH_TOKEN=placeholder      # the gateway injects the real key; you send a placeholder
+export ANTHROPIC_AUTH_TOKEN=placeholder      # sent as 'Authorization: Bearer'; the supervisor injects the real key at egress
+unset  ANTHROPIC_API_KEY                      # OpenShell set this to a resolve-sentinel; drop it so Claude uses the Bearer token (see TIP)
 export NODE_TLS_REJECT_UNAUTHORIZED=0        # inference.local is self-signed (same reason curl needs -k)
 claude -p "In one line, what is Kyma?"
 ```
+
+> [!TIP]
+> **Two Anthropic auth vars — use `ANTHROPIC_AUTH_TOKEN`, not `ANTHROPIC_API_KEY`.** A `--provider litellm` sandbox already
+> has `ANTHROPIC_API_KEY` set by OpenShell — but to an `openshell:resolve:env:<nonce>_…` **sentinel**, *not* a real key (the
+> supervisor swaps it for the real key at egress; echo it and you get only the token). The two vars differ solely in the HTTP
+> header Claude Code emits: **`ANTHROPIC_API_KEY` → `x-api-key`** (Anthropic's native scheme) vs **`ANTHROPIC_AUTH_TOKEN` →
+> `Authorization: Bearer`** (the gateway/proxy scheme — ours). Claude Code guards an `x-api-key` with an interactive
+> *"Detected a custom API key — use it?"* prompt (answer **No** → "not logged in"); the Bearer token has **no** prompt. So
+> **keep `ANTHROPIC_AUTH_TOKEN=placeholder` and `unset ANTHROPIC_API_KEY`** — clean and non-interactive (`claude -p` works
+> headless). Claude Code refuses both at once: *"Both … set · auth may not work."* Either resolves to a placeholder the
+> supervisor swaps, so both *work* — but only the Bearer path is prompt-free.
 
 > [!NOTE]
 > It's a **reasoning box, not an ops shell**: `kubectl` / `kyma` / `k9s` are installed but **inert** (no cluster token,
