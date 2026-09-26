@@ -368,6 +368,26 @@ holds the key — `printenv` inside the box shows only `openshell:resolve:env:�
 `LITELLM_API_KEY`. Bonus: because goose dials its provider endpoint *directly* (not the pinned `inference.local`
 inference-route), goose's own request model is honored — so it runs on **sonnet**, not the gateway's default route model.
 
+## Agent-Sandbox controller vs OpenShell — division of labour
+
+A fair question after all this: if the *sandbox* does the isolating, what is OpenShell actually **for**? They're different
+layers, and it's worth being precise:
+
+- **The agent-sandbox controller is the isolation runtime.** It's an upstream Kubernetes controller
+  ([kubernetes-sigs/agent-sandbox](https://github.com/kubernetes-sigs/agent-sandbox)) that turns a `Sandbox` resource into
+  one runtime-isolated pod. Every sandbox on this platform — including the one you just drove — is *its* pod. You can
+  create `Sandbox` resources **declaratively** (a YAML `kubectl apply` / a KRO resource), with **no CLI and no gateway** —
+  that's exactly how the platform's own *headless* agents run (the autonomous cluster-diagnostics job, the per-user
+  OpenClaw cells). They get the runtime isolation and nothing else; whoever creates them wires their own RBAC + networking.
+- **OpenShell is a control-plane + containment layer on top.** `openshell sandbox create` asks that **same** controller
+  for a pod — OpenShell brings no isolation of its own. What it adds is exactly what you used in this exercise:
+  1. a **gated front door** — you reached a box over OIDC-authenticated gRPC (9.1), with no `kubectl exec` / cluster RBAC;
+  2. **credential containment** — the gateway holds the key and injects it at egress (9.3), so the agent only ever holds a placeholder;
+  3. **L7 egress governance** — the default-deny allow-list you widened in 9.5 (per host / port / method / **binary**), finer than an L3/L4 `NetworkPolicy`.
+
+**Rule of thumb:** a headless, platform-owned agent → a plain `Sandbox` (declarative, no CLI). A *person* who wants an
+interactive shell into an untrusted agent that must never hold a key → OpenShell's gateway. Same isolation runtime underneath.
+
 ## Summary
 
 You ran the workshop's tools image as a **runtime-isolated OpenShell `Sandbox`**, wired it to a **contained** inference
