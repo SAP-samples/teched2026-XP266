@@ -474,6 +474,7 @@ the stock **agent-sandbox** runtime — no fork, no extra network config. *The s
 | What | Where |
 |---|---|
 | NVIDIA OpenShell | [github.com/NVIDIA/OpenShell](https://github.com/NVIDIA/OpenShell) · [docs: why](https://docs.nvidia.com/openshell/about/why-open-shell) · [docs: architecture](https://docs.nvidia.com/openshell/about/architecture) |
+| OpenShell driver for Kyma (alternative approach — "Path B") | [github.com/st-gr/openshell-driver-kyma](https://github.com/st-gr/openshell-driver-kyma) |
 | agent-sandbox controller | [github.com/kubernetes-sigs/agent-sandbox](https://github.com/kubernetes-sigs/agent-sandbox) |
 | kyma CLI | [github.com/kyma-project/cli](https://github.com/kyma-project/cli) |
 | Kyma Istio module | [github.com/kyma-project/istio](https://github.com/kyma-project/istio) |
