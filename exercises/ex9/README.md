@@ -1,4 +1,4 @@
-# Exercise 9 - Your own sandboxed agent: the OpenShell CLI dance 🔧 *(advanced — CLI + admin access)*
+# Exercise 9 - Your own sandboxed agent: OpenShell on Kyma 🔧 *(advanced — CLI + admin access)*
 
 > [!WARNING]
 > **This is a bonus / advanced exercise, and it is admin-gated.** Unlike ex0–ex8, it needs the **`openshell` CLI** and an
@@ -9,34 +9,87 @@
 > `openshell-admin` role, **watch the instructor demo** — everything below is a live walk-through. Nothing here is required
 > to complete the workshop — you already finished it at [Exercise 8](../ex8/README.md).
 
-[Exercise 6](../ex6/README.md) showed how the Busola web terminal is *fenced in* with **RBAC + a NetworkPolicy** — but it
-still runs as an ordinary `exec` pod: those are guardrails *around* it, not kernel isolation. This exercise shows the next
-step up: the **same tools image** (`goose` / Claude Code / kubectl / kyma / k9s) running **inside a runtime-isolated
-`Sandbox`** — and an agent that can reason via SAP AI Core while being **physically unable** to touch the cluster API or
-the public internet. **The sandbox itself is the guardrail.**
+**Contents:** [Why OpenShell](#why-openshell) · [Common risks & controls](#common-risks-and-controls) ·
+[Protection layers](#protection-layers-at-a-glance) · [Common use cases](#common-use-cases) —
+[Hands-on 9.1–9.5](#hands-on-the-openshell-cli-dance) — [Deep dive: Architecture](#deep-dive-architecture) ·
+[How components authenticate](#how-components-authenticate) · [Glossary](#glossary)
+
+---
+
+## Why OpenShell
+
+AI agents are most useful when they can read files, install packages, call APIs, and use credentials. **That same access
+is the risk.** [Exercise 6](../ex6/README.md) fenced the Busola web terminal with **RBAC + a NetworkPolicy** — but it's
+still an ordinary `exec` pod: those are guardrails *around* it, not isolation *of* it. OpenShell takes the next step —
+**preserve the agent's capability, but enforce explicit controls** — by running the **same tools image**
+(`goose` / Claude Code / kubectl / kyma / k9s) inside a **runtime-isolated `Sandbox`** where the agent can reason via SAP
+AI Core yet is **physically unable** to touch the cluster API or the public internet. **The sandbox itself is the guardrail.**
 
 ```
-You (openshell CLI, laptop)
-   │  OIDC-gated gRPC :8080  (port-forward)
+You (openshell CLI, laptop or Busola web terminal)
+   │  OIDC-gated gRPC  (Keycloak validates who you are)
    ▼
 OpenShell gateway ──creates──▶ Sandbox pod (agent-sandbox, isolated)
    holds the key                 │  dev-toolbox-bash (goose / claude)
                                   │  POST https://inference.local  (placeholder key)
                                   ▼
                      supervisor injects the REAL key ──▶ LiteLLM :4001 ──▶ SAP AI Core
-                                  ✗ apiserver   ✗ internet   ✗ other pods   (no direct route — proxy allowlist)
+                                  ✗ apiserver   ✗ internet   ✗ other pods   (no direct route — proxy allow-list)
 ```
 
-Two properties make this **contained**, not just isolated:
-1. **The agent never holds the LLM credential.** It POSTs a *placeholder* `x-api-key` to `https://inference.local`; the
-   OpenShell supervisor strips it, injects the real key (held by the gateway), and dials the proxy. Compromise the agent
-   and you still don't get the key.
-2. **Egress has exactly one exit, and it's an allowlist.** The sandbox runs in a network namespace with **no direct route
-   out** — its only path is the supervisor's egress proxy, which allowlists `inference.local` (→ LiteLLM) and **denies
-   everything else** (the apiserver, other workloads, the internet). This is built into the stock chart; there is no
-   extra NetworkPolicy to configure. You'll prove it in 9.4.
+Two properties make this **contained**, not merely isolated:
+1. **The agent never holds the LLM credential.** It POSTs a *placeholder* to `https://inference.local`; the OpenShell
+   supervisor swaps in the real key (held by the gateway) at egress. Compromise the agent and you still don't get the key.
+2. **Egress has exactly one exit, and it's an allow-list.** The pod runs in a network namespace with **no direct route
+   out**; its only path is the supervisor proxy, which allow-lists `inference.local` and **denies everything else**
+   (apiserver, other pods, internet). No extra NetworkPolicy — it's native to the stock chart. You'll prove it in 9.4.
 
-## Exercise 9.1 - Get the CLI and reach the gateway
+Rule of thumb for the whole workshop: **Busola terminal ([ex2](../ex2/README.md)) = an agent that *does things to* the
+cluster; OpenShell sandbox = an agent that *computes things you don't fully trust*.**
+
+### Common risks and controls
+
+OpenShell neutralises the familiar agent risks **by construction** — not by asking the model to behave:
+
+| Threat | Without controls | With OpenShell on Kyma |
+|---|---|---|
+| **Data exfiltration** | agent uploads code/context to any endpoint | **no route out** — the L7 allow-list resolves/permits only `inference.local` (→ LiteLLM → SAP AI Core); everything else 403s or fails to resolve (proved in 9.4) |
+| **Credential theft** | agent reads the LLM key, SSH keys, cloud creds | the LLM key is **never in the box** — placeholder in, real key injected at egress; `readOnlyRootFilesystem` + **Landlock** confine the filesystem to declared paths |
+| **Unauthorized API usage** | agent sends data to unapproved model providers | **provider profiles + policy** pin model traffic to our in-cluster LiteLLM → SAP AI Core |
+| **Privilege escalation** | `sudo`, setuid, dangerous syscalls | **non-root** identity (uid 1000), **drop ALL** capabilities, `seccomp: RuntimeDefault`, `allowPrivilegeEscalation: false` |
+| **Reading cluster secrets** | broad RBAC | contained tier holds **no cluster token at all**; scoped-ops tier is **read-only with `secrets` excluded** |
+| **Mutating the cluster** | a read-write token | scoped-ops injects a **read-only** token (`get`/`list`/`watch`); writes → 403 |
+
+### Protection layers at a glance
+
+OpenShell applies **defense in depth** across four policy domains — some locked at creation, some hot-reloadable:
+
+| Layer | Protection target | When applied | On our sandboxes |
+|---|---|---|---|
+| **Filesystem** | reads/writes outside allowed paths | locked at sandbox creation | `filesystem_policy` (read-only `/usr`,`/etc`,… · read-write `/sandbox`,`/tmp`) + **Landlock** (`best_effort`) + `readOnlyRootFilesystem` |
+| **Network** | unauthorized outbound connections | **hot-reloadable at runtime** | the L7 allow-list (`openshell policy set`) — `inference.local` (contained) → + apiserver/LiteLLM (scoped-ops) |
+| **Process** | privilege escalation, dangerous syscalls | locked at sandbox creation | non-root uid 1000, `drop [ALL]` caps, `seccomp: RuntimeDefault`, no privilege escalation |
+| **Provider credentials** | resolve credential placeholders **only** at profile-authorized endpoints | runtime (new vars need a new process) | the supervisor swaps the placeholder/sentinel for the real key **only** on the provider's declared endpoint |
+
+### Common use cases
+
+| Use case | What it looks like here |
+|---|---|
+| **Secure coding / reasoning agents** | run Claude Code or goose with constrained file + network access — a code-interpreter / analysis backend that runs the code it writes, safely |
+| **Processing untrusted input** | feed it docs / emails / tickets — even a prompt-injected agent can't exfiltrate (no egress but the LLM) or pivot (no cluster/creds) |
+| **Private / self-hosted models** | the agent reasons via the in-cluster **LiteLLM → SAP AI Core**, never the public internet |
+| **Compliance & audit** | the policy YAML (`sandbox-policy-*.yaml`) is **version-controlled security controls** — reviewable as a diff |
+| **Per-user isolation & reproducible runs** | each session its own sandbox + quota + network namespace, auto-reaped; fresh from a pinned image, gone after — no state leak |
+| **Scoped-ops diagnostics** | a read-only cluster view for an agent that *inspects* and reasons, but never mutates (9.5) |
+
+---
+
+## Hands-on: the OpenShell CLI dance
+
+You'll register the gateway (9.1), wire the contained inference provider once (9.2), create a contained sandbox and drive
+an agent inside it (9.3), prove the guardrail holds (9.4), then open the read-only **scoped-ops** tier (9.5).
+
+### 9.1 - Get the CLI and reach the gateway
 
 The gateway has a **stable HTTPS endpoint** — `openshell.<your-shoot>.<workshop-domain>` — so there's **no port-forward
 to run**. It is **OIDC-gated**: it validates your Keycloak token itself.
@@ -57,7 +110,7 @@ to run**. It is **OIDC-gated**: it validates your Keycloak token itself.
    > *Fallback* — if your network can't reach the host: `kubectl -n openshell port-forward svc/openshell 8080:8080`, then
    > `openshell gateway add http://localhost:8080 …` (not `--local`, which is plaintext → `missing authorization header`).
 
-### From the Busola web terminal instead — no local install (device-code login)
+#### From the Busola web terminal instead — no local install (device-code login)
 
 If you can't (or don't want to) install the CLI locally — e.g. a locked-down Windows laptop — the **`openshell` CLI is
 pre-installed in the [Busola web terminal](../ex2/README.md)**. The terminal runs *inside* the cluster, so you target the
@@ -87,7 +140,7 @@ Open that URL in your **laptop's** browser, sign in (you must hold the **`opensh
 Now `openshell sandbox list` works from the terminal — continue with 9.2 exactly as below. (Re-auth later with
 `OPENSHELL_NO_BROWSER=1 openshell gateway login openshell`.)
 
-## Exercise 9.2 - Wire the contained inference provider *(one-time, per gateway)*
+### 9.2 - Wire the contained inference provider *(one-time, per gateway)*
 
 This overrides the built-in `anthropic` provider to point at our in-cluster LiteLLM proxy, and hands the gateway the key.
 The provider persists on the gateway's PVC, so this is done **once**.
@@ -113,7 +166,7 @@ openshell inference set --provider litellm --model anthropic--claude-4.7-opus --
 #   → Route: inference.local  (this default route is claude's; goose uses the litellm-openai endpoint directly)
 ```
 
-## Exercise 9.3 - Create a sandbox from the tools image and use it
+### 9.3 - Create a sandbox from the tools image and use it
 
 ```bash
 openshell sandbox create --name mybox \
@@ -171,7 +224,7 @@ claude -p "In one line, what is Kyma?"
 > no route to the API server — you'll prove that in 9.4). For an agent whose `kubectl`/`kyma` actually reach the cluster,
 > use the Busola web terminal ([Exercise 2](../ex2/README.md)); the sandbox trades cluster access for hard isolation.
 
-## Exercise 9.4 - See the guardrail hold
+### 9.4 - See the guardrail hold
 
 The whole point: from **inside** the sandbox, the cluster API and the internet are unreachable. Two layers stack —
 (1) the sandbox has **no service-account token and no cluster CA**, so nothing can even *authenticate* to the API; and
@@ -223,7 +276,7 @@ Clean up when done:
 openshell sandbox delete mybox
 ```
 
-## Exercise 9.5 - Scoped-ops: an agent that *reads* the cluster (one command) 🔎
+### 9.5 - Scoped-ops: an agent that *reads* the cluster (one command) 🔎
 
 The contained sandbox (9.3) is a pure **compute** box — zero cluster access. The **scoped-ops** tier adds exactly one
 capability: a **read-only** view of the cluster, so an agent can *diagnose* (never mutate). From the **Busola web
@@ -258,7 +311,7 @@ claude -p 'Use kubectl to find unhealthy pods and explain why. Run: kubectl get 
 Type **`exit`** to leave — the sandbox keeps running (reconnect any time with `openshell sandbox connect <name>`);
 `openshell sandbox delete <name>` when you're done.
 
-### Why it's still contained — just a little wider
+#### Why it's still contained — just a little wider
 - **Network (L7 policy):** exactly three egresses are allowed — the **apiserver** (read-only), the **LiteLLM proxy**
   (for goose, over the OpenAI-compat path), and **`inference.local`** (for claude). **Both LLM keys stay in the gateway** —
   goose and claude each send only a placeholder/sentinel, injected at egress. The public internet and every other workload
@@ -277,57 +330,26 @@ Type **`exit`** to leave — the sandbox keeps running (reconnect any time with 
 > `kyma alpha diagnose istio` will *time out* — it reaches the mesh sidecars directly, which the sandbox's egress doesn't
 > allow; the apiserver-based diagnostics work fine.
 
-## Why this matters — what a contained sandbox is *for*
+---
 
-This is **not** an ops shell — that's the Busola terminal ([Exercise 2](../ex2/README.md)), whose `kubectl` actually
-drives the cluster. The sandbox's superpower is the opposite: **containment for _execution_.** You can let an AI agent
-write and *run* code with no way to touch the cluster, other workloads, or the internet, and without ever handing it a
-credential. Rule of thumb: **Busola terminal = an agent that _does things to_ the cluster; sandbox = an agent that
-_computes things you don't fully trust_.** Where that's valuable:
+## Deep dive: Architecture
 
-- **Code-interpreter / analysis backend** — the agent runs the code it writes, safely (data crunching, transforms, tests).
-- **Processing untrusted input** (docs, emails, tickets) — even a prompt-injected agent can't exfiltrate or pivot.
-- **Per-user isolation** — each session its own sandbox + quota + network namespace, auto-reaped after use.
-- **Reproducible, disposable runs** — fresh from a pinned image, gone after; no state leak.
+OpenShell separates **control-plane state** (who you are, your sandboxes, their policy and providers) from **sandbox
+enforcement** (the isolation boundary + the egress broker). Crucially, it brings **no isolation runtime of its own** — it
+drives the upstream **agent-sandbox controller** (see the division-of-labour note below).
 
-It neutralises the familiar agent risks **by construction** — not by asking the model to behave:
+| Component | Function (on Kyma) |
+|---|---|
+| **Gateway** | one pod in ns `openshell`, ClusterIP `:8080` gRPC. Checks who you are (OIDC / Keycloak `openshell-oidc`), **holds the secrets** (the real LLM key), delivers policy + settings, attaches providers, decides who can do what. |
+| **Compute runtime** — the [agent-sandbox controller](https://github.com/kubernetes-sigs/agent-sandbox) v0.5.5 | provisions the sandbox pod, starts the supervisor + workload, and builds the network fence. Turns a `Sandbox` CR into one isolated pod (runc today — gVisor optional, not enabled on this fleet). |
+| **Supervisor** | a **trusted** process *outside* the sandbox boundary. Checks each request against policy, supplies credentials, resolves DNS, and opens the approved connections. It is the sandbox's **only** way out (`HTTPS_PROXY=http://10.200.0.1:3128`). |
+| **`openshell-sandbox`** | runs *inside* the boundary with the agent. Identifies **which binary** made each request and applies the process controls; it reports activity but makes **no** policy decisions. |
+| **Outer network fence** | denies **all** egress from the workload except its protected channel to the supervisor — the pod's netns has no other usable route (proved in 9.4). |
+| **Policies** | define what the agent can access — files, processes, network destinations. Our `sandbox-policy-*.yaml`, hot-reloadable with `openshell policy set`. |
+| **Providers** | connect a service name to a stored credential; the supervisor hands that credential out **only** where policy allows. Ours: `litellm` (claude, `x-api-key`) + `litellm-openai` (goose, `Authorization: Bearer`). |
 
-| Threat | What usually enables it | What the sandbox does instead |
-|---|---|---|
-| Data exfiltration | the agent has internet | **no route out** — nothing but the allow-listed LLM endpoint even resolves |
-| Credential theft | the agent holds an API key | **the key is never in the box** — placeholder in, real key injected at the edge |
-| Reading secrets | broad RBAC | a read-only identity with **`secrets` excluded** (scoped-ops tier) |
-| Mutating the cluster | a read-write token | the scoped-ops token is **read-only** (`get`/`list`/`watch`); writes → 403 |
-| Lateral movement | pod network access | the pod has **no path** to other pods or the API server unless the policy names it |
-
-> [!NOTE]
-> **Using an agent inside the sandbox:** the image's auto-login only works where there's cluster access (the Busola
-> terminal). In the *contained* sandbox you point the agent at `inference.local` yourself — the `export …` block in
-> Exercise 9.3. **Claude Code works** that way (verified); **goose doesn't** (with no cluster access its config falls back
-> to `localhost:4000`, and it can't use the Anthropic-native `inference.local`) — so inside the sandbox use `claude` or
-> the raw `curl https://inference.local/v1/messages`.
-
-## The options on the table — three containment tiers
-
-OpenShell lets you dial *exactly* how much an agent can reach, per sandbox — from "compute-only" to "reads the cluster":
-
-| Tier | Egress | Cluster access | Good for |
-|---|---|---|---|
-| **Contained** (9.1–9.4) | `inference.local` only | none | run/execute untrusted code + reason — zero blast radius |
-| **Scoped-ops** ([9.5](#exercise-95---scoped-ops-an-agent-that-reads-the-cluster-one-command-) — `scoped-ops`) | + apiserver (read-only), still no internet | read-only `kubectl` | a diagnostic agent that *reads* the cluster and reasons |
-| **Busola terminal** ([Exercise 2](../ex2/README.md)) | full pod network | RBAC-scoped `kubectl` | an agent that *operates* the cluster |
-
-Tiers are set by the sandbox's **L7 network policy** (`openshell policy set`) plus auth: contained is the default; scoped-ops
-adds an apiserver rule + a short-lived **read-only** token (the agent can `kubectl get` but not mutate, and still can't reach
-the internet); the Busola terminal is a separate, RBAC-scoped surface. Same agent image, three trust levels.
-
-### How the credential injection works (why the agent never holds a key)
-The heart of the containment: the agent reasons via SAP AI Core **without ever seeing a credential**. The LLM **provider**
-(configured once, on the gateway) holds the real key. Inside the sandbox the agent sends its request to `https://inference.local`
-with a **placeholder** (`x-api-key: placeholder`). The sandbox's L7 proxy — which knows the provider's real credential, bound
-to that one endpoint — **rewrites the placeholder with the real key** at the last moment before forwarding upstream to the
-LiteLLM proxy → SAP AI Core. So the secret lives only in the gateway; compromise the agent and all you get is the placeholder.
-You proved exactly this in 9.3: an `x-api-key: placeholder` request still came back with a real `msg_bdrk_…` completion.
+**Inside the boundary + the network request flow.** The supervisor (trusted, makes policy calls) and `openshell-sandbox`
+(reports activity) sit on opposite sides of the isolation boundary. When the agent makes a request:
 
 ```
   agent (in the box)        supervisor (egress proxy)        LLM proxy → SAP AI Core
@@ -348,8 +370,20 @@ You proved exactly this in 9.3: an `x-api-key: placeholder` request still came b
         │◄───────────────────────────│                               │
 ```
 
+1. the agent opens a connection / DNS lookup → 2. `openshell-sandbox` identifies the calling binary → 3. the request
+crosses to the supervisor over the protected channel → 4. the supervisor checks policy and adds the permitted credential →
+5. it opens the real connection and relays traffic. You saw exactly this in 9.3 (placeholder in → `msg_bdrk_…` out).
+
+### Trust tiers — one image, three dials
+The policy + auth you attach set how far the agent reaches:
+
+| Tier | Egress | Cluster access | Good for |
+|---|---|---|---|
+| **Contained** (9.1–9.4) | `inference.local` only | none | run/execute untrusted code + reason — zero blast radius |
+| **Scoped-ops** (9.5 — `scoped-ops`) | + apiserver (read-only), still no internet | read-only `kubectl` | a diagnostic agent that *reads* the cluster and reasons |
+| **Busola terminal** ([ex2](../ex2/README.md)) | full pod network | RBAC-scoped `kubectl` | an agent that *operates* the cluster |
+
 ### Two providers, both keyless — how goose reaches SAP AI Core too
-The same trick covers **both** agents, over the **two** providers you wired in 9.2:
 
 | Agent | Provider | Path | Auth header | In-box credential |
 |---|---|---|---|---|
@@ -357,53 +391,80 @@ The same trick covers **both** agents, over the **two** providers you wired in 9
 | **goose** | `litellm-openai` | LiteLLM proxy → `/v1/chat/completions` | `Authorization: Bearer` | sentinel |
 
 **Why two providers?** goose's Anthropic client **streams** and expects server-sent events — but the SAP AI Core backend
-doesn't stream the Anthropic-native `/v1/messages` endpoint, so goose over `inference.local` just returns an empty
-response. goose's **`litellm` provider is non-streaming** and speaks the OpenAI-compat `/v1/chat/completions` path, which
-works — it's the same path the platform's autonomous cluster-diagnostics use. So we expose that path as a second provider
-(`litellm-openai`, bearer auth) instead of forcing goose onto claude's route.
+doesn't stream the Anthropic-native `/v1/messages` endpoint, so goose over `inference.local` returns an empty response.
+goose's **`litellm` provider is non-streaming** and speaks the OpenAI-compat `/v1/chat/completions` path, which works — the
+same path the platform's autonomous cluster-diagnostics use. So we expose that path as a second provider (`litellm-openai`,
+bearer auth) instead of forcing goose onto claude's route. A scoped-ops box attaches **both** (`--provider litellm
+--provider litellm-openai` — repeatable), and the supervisor injects the real key on **each** endpoint, so neither agent
+ever holds a key. Bonus: goose dials its endpoint directly (not the pinned inference-route), so its own request model is
+honored — it runs on **sonnet**.
 
-**How goose stays keyless.** A scoped-ops sandbox attaches **both** providers (`--provider litellm --provider litellm-openai`
-— the flag is repeatable), and the supervisor injects the real key on **each** provider's endpoint. So neither agent ever
-holds the key — `printenv` inside the box shows only `openshell:resolve:env:…` **sentinels** for `ANTHROPIC_API_KEY` and
-`LITELLM_API_KEY`. Bonus: because goose dials its provider endpoint *directly* (not the pinned `inference.local`
-inference-route), goose's own request model is honored — so it runs on **sonnet**, not the gateway's default route model.
+### Agent-Sandbox controller vs OpenShell — division of labour
+If the *sandbox* does the isolating, what is OpenShell **for**? Different layers:
+- **The agent-sandbox controller is the isolation runtime.** You can create `Sandbox` resources **declaratively** (YAML /
+  KRO, **no CLI, no gateway**) — that's how the platform's *headless* agents run (the autonomous cluster-diagnostics job,
+  the OpenClaw cells). They get runtime isolation and nothing else; you wire your own RBAC + networking.
+- **OpenShell is a control-plane + containment layer on the same controller.** It adds the three things you used here:
+  the **OIDC-gated front door** (9.1, no cluster RBAC needed), **credential containment** (9.3), and **L7 egress
+  governance** (9.5). Rule of thumb: headless/platform-owned → plain `Sandbox`; a *person* wanting an interactive shell
+  into an untrusted, keyless agent → OpenShell's gateway.
 
-## Agent-Sandbox controller vs OpenShell — division of labour
+### How components authenticate
 
-A fair question after all this: if the *sandbox* does the isolating, what is OpenShell actually **for**? They're different
-layers, and it's worth being precise:
+Two **different** auth stories meet at the gateway — don't conflate them:
 
-- **The agent-sandbox controller is the isolation runtime.** It's an upstream Kubernetes controller
-  ([kubernetes-sigs/agent-sandbox](https://github.com/kubernetes-sigs/agent-sandbox)) that turns a `Sandbox` resource into
-  one runtime-isolated pod. Every sandbox on this platform — including the one you just drove — is *its* pod. You can
-  create `Sandbox` resources **declaratively** (a YAML `kubectl apply` / a KRO resource), with **no CLI and no gateway** —
-  that's exactly how the platform's own *headless* agents run (the autonomous cluster-diagnostics job, the per-user
-  OpenClaw cells). They get the runtime isolation and nothing else; whoever creates them wires their own RBAC + networking.
-- **OpenShell is a control-plane + containment layer on top.** `openshell sandbox create` asks that **same** controller
-  for a pod — OpenShell brings no isolation of its own. What it adds is exactly what you used in this exercise:
-  1. a **gated front door** — you reached a box over OIDC-authenticated gRPC (9.1), with no `kubectl exec` / cluster RBAC;
-  2. **credential containment** — the gateway holds the key and injects it at egress (9.3), so the agent only ever holds a placeholder;
-  3. **L7 egress governance** — the default-deny allow-list you widened in 9.5 (per host / port / method / **binary**), finer than an L3/L4 `NetworkPolicy`.
+- **You → gateway (what you did in 9.1)** is a *human/operator* login: **Keycloak OIDC**, `openshell-admin` role required.
+- **The components → each other** is *machine-to-machine* and fully internal — you never touch it, but it's what makes the
+  containment trustworthy. Three connections:
 
-**Rule of thumb:** a headless, platform-owned agent → a plain `Sandbox` (declarative, no CLI). A *person* who wants an
-interactive shell into an untrusted agent that must never hold a key → OpenShell's gateway. Same isolation runtime underneath.
+| Connection | Who dials | Protection |
+|---|---|---|
+| Supervisor → gateway | supervisor dials out | **gateway JWT** over TLS |
+| Supervisor → `openshell-sandbox` | supervisor dials into the workload | **mutual TLS + sandbox JWT** |
+| Agent → supervisor | agent traffic relayed via the sandbox | covered by the supervisor↔sandbox channel |
+
+**Initial credential (Kubernetes driver).** On K8s the supervisor presents the **pod's ServiceAccount token** (SA
+`openshell-sandbox`); the gateway verifies it and **confirms the pod belongs to the expected sandbox** before issuing any
+JWTs. (On Docker/Podman/MicroVM the driver instead drops initial tokens in files only the supervisor can read.)
+
+**Two JWTs, per sandbox run.** The gateway then issues a pair:
+- **Gateway JWT** — sent with every supervisor→gateway call; scoped to just what a supervisor needs (fetch policy, push
+  logs, relay sessions).
+- **Sandbox JWT** — sent with every supervisor→`openshell-sandbox` call. `openshell-sandbox` holds **only the gateway's
+  public key**, so it can *verify* the token but can **never mint** one.
+
+Both bind to **one sandbox and one run (generation)** — restart the sandbox and you get fresh tokens + certs; the old ones
+expire. The supervisor keeps them in memory and renews before expiry, but **renewal only works while the sandbox exists**,
+so deleting the sandbox cuts the supervisor off.
+
+**Agent visibility.** The agent can **never** reach the gateway signing keys, the gateway JWTs, or the provider
+credentials. If the supervisor disconnects, the agent **freezes** — and only the *same* supervisor process can reconnect
+and resume; a new supervisor can't take over a running sandbox. That's the machine-side complement to the network fence
+you proved in 9.4.
+
+---
 
 ## Summary
 
-You ran the workshop's tools image as a **runtime-isolated OpenShell `Sandbox`**, wired it to a **contained** inference
-provider (the agent never held the key), and proved the egress guardrail: the apiserver and the internet are unreachable —
-denied by the supervisor proxy's allowlist, with no direct route to bypass it — while the agent still reasons through SAP
-AI Core. This is the strongest containment tier in the stack — *the sandbox is the guardrail* — built entirely on the
-**stock** OpenShell chart, no custom fork and no extra network config.
+You framed **why** a contained agent matters (capability *and* control), then ran the workshop's tools image as a
+**runtime-isolated OpenShell `Sandbox`**: wired the keyless inference providers (the agent never holds the key), proved the
+egress guardrail (apiserver + internet unreachable, no route to bypass), and opened the read-only **scoped-ops** tier for
+cluster diagnostics. Under the hood it's a **gated control plane + credential-injecting supervisor + L7 allow-list** riding
+the stock **agent-sandbox** runtime — no fork, no extra network config. *The sandbox is the guardrail.*
 
 ## Glossary
 
 | Term | What it means |
 |---|---|
 | **Sandbox / agent-sandbox** | The isolated pod the agent runs in, created from a `Sandbox` custom resource by the `agent-sandbox` controller. The pod itself *is* the boundary — no usable network route except the supervisor. |
-| **Supervisor** | A process injected into every sandbox that owns the box's single exit: it intercepts all outbound traffic, enforces the allow-list, and injects the real LLM key at the last hop. |
-| **L7 allow-list (network policy)** | The supervisor's deny-by-default rule set — names, at the application layer, exactly *which binary* may reach *which host:port* over *which protocol* (`openshell policy set`). |
-| **Credential injection / placeholder** | The agent sends a dummy `x-api-key: placeholder`; the supervisor swaps in the real key just before forwarding upstream. The key lives only in the gateway. |
+| **Gateway** | The OpenShell control plane: OIDC-gated, holds the LLM key, delivers policy/providers, issues the machine JWTs. |
+| **Supervisor** | The trusted process (outside the boundary) that owns the box's single exit: intercepts all outbound traffic, enforces the allow-list, and injects the real LLM key at the last hop. |
+| **`openshell-sandbox`** | The in-boundary agent-side component that identifies which binary made a request and applies process controls; verifies the sandbox JWT but can't mint one. |
+| **L7 allow-list (policy)** | The supervisor's deny-by-default rule set — names, at the application layer, exactly *which binary* may reach *which host:port* over *which protocol* (`openshell policy set`). |
+| **Landlock** | A Linux LSM the sandbox uses (`best_effort`) to confine filesystem access to declared paths — one of the protection layers. |
+| **Credential injection / placeholder** | The agent sends a dummy credential; the supervisor swaps in the real key just before forwarding upstream. The key lives only in the gateway. |
+| **Provider** | A named binding of a service to a stored credential (`litellm`, `litellm-openai`); the supervisor releases it only at the profile-authorized endpoint. |
+| **Gateway JWT / Sandbox JWT** | The paired machine tokens for one sandbox run — supervisor→gateway and supervisor→`openshell-sandbox` respectively; the sandbox can verify but not mint. |
 | **Device-code flow** | The browserless login (`OPENSHELL_NO_BROWSER=1`): the CLI prints a URL + short code you approve on another device — used from the Busola web terminal, which has no browser. |
 | **Scoped-ops** | The middle trust tier: a sandbox that additionally gets a short-lived, **read-only** cluster token so an agent can *inspect* the cluster — but never mutate it, read secrets, or reach the internet. |
 
@@ -411,7 +472,7 @@ AI Core. This is the strongest containment tier in the stack — *the sandbox is
 
 | What | Where |
 |---|---|
-| NVIDIA OpenShell | [github.com/NVIDIA/OpenShell](https://github.com/NVIDIA/OpenShell) |
+| NVIDIA OpenShell | [github.com/NVIDIA/OpenShell](https://github.com/NVIDIA/OpenShell) · [docs: why](https://docs.nvidia.com/openshell/about/why-open-shell) · [docs: architecture](https://docs.nvidia.com/openshell/about/architecture) |
 | agent-sandbox controller | [github.com/kubernetes-sigs/agent-sandbox](https://github.com/kubernetes-sigs/agent-sandbox) |
 | kyma CLI | [github.com/kyma-project/cli](https://github.com/kyma-project/cli) |
 | Kyma Istio module | [github.com/kyma-project/istio](https://github.com/kyma-project/istio) |
