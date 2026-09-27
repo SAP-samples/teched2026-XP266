@@ -251,8 +251,8 @@
         out = out.lstrip('\n')
         print(out.strip())
         " | tee /tmp/goose_report.md >> "$GITHUB_STEP_SUMMARY"
-    - "if": "always() && github.repository != 'fp-stakeholder-management/terraform-stories'"
-      "name": "Upload goose health report (github.com — v4; GHES uses the step summary)"
+    - "if": "always()"
+      "name": "Upload goose health report (v4)"
       "uses": "actions/upload-artifact@v4"
       "with":
         "if-no-files-found": "ignore"
@@ -265,16 +265,21 @@
       "run": |
         export PATH="$HOME/.local/bin:$PATH"
         HEALTH=$(sed 's/\x1B\[[0-9;]*[mGKHF]//g' /tmp/goose_out.txt)
-        if echo "$HEALTH" | grep -qiE 'critical|crashing|crashloop|failed module|connectivity outage|outage|error.*client|client.*error|bottleneck|overload|not found|unavailable'; then
+        # Fork-safe: a public fork has no GH_ISSUE_TOKEN secret → skip issue creation (report is still in the summary/artifact).
+        if [ -z "$GH_ISSUE_TOKEN" ]; then
+          echo "No GH_ISSUE_TOKEN (fork without secrets) — skipping issue creation"
+        elif echo "$HEALTH" | grep -qiE 'critical|crashing|crashloop|failed module|connectivity outage|outage|error.*client|client.*error|bottleneck|overload|not found|unavailable'; then
           TITLE="[$SHOOT_NAME] Critical cluster health findings — $(date -u +%Y-%m-%d)"
           BODY=$(printf '## Critical Cluster Health Findings\n\n**Cluster:** `%s`\n**IDP:** %s\n**Detected:** %s\n**Workflow run:** %s/%s/actions/runs/%s\n\n---\n\n%s' \
             "$SHOOT_NAME" "${{ steps.coords.outputs.idp }}" "$(date -u --iso-8601=seconds)" \
             "${{ github.server_url }}" "${{ github.repository }}" "${{ github.run_id }}" "$HEALTH")
+          # github.api_url is host-correct: https://api.github.com (github.com) / https://github.tools.sap/api/v3 (GHES).
           curl -fsSL -X POST \
             -H "Authorization: token $GH_ISSUE_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
-            "https://github.tools.sap/api/v3/repos/${{ github.repository }}/issues" \
-            -d "$(jq -n --arg title "$TITLE" --arg body "$BODY" '{title: $title, body: $body}')"
+            "${{ github.api_url }}/repos/${{ github.repository }}/issues" \
+            -d "$(jq -n --arg title "$TITLE" --arg body "$BODY" '{title: $title, body: $body}')" \
+            || echo "issue creation failed (non-fatal) — see the report in the step summary/artifact"
         else
           echo "No critical findings — skipping issue creation"
         fi
@@ -283,7 +288,8 @@
   "workflow_call":
     "inputs":
       "kyma_env_uuid":
-        "description": "Kyma env UUID — KEB kubeconfig key (server+CA)"
+        "description": "Kyma env UUID — KEB key on GHES; empty on github.com (static
+          bake)"
         "required": true
         "type": "string"
       "namespace":
@@ -299,7 +305,7 @@
         "required": true
         "type": "string"
       "subaccount_id":
-        "description": "BTP subaccount id — GitHub OIDC audience gh-teched-<id>"
+        "description": "BTP subaccount id"
         "required": true
         "type": "string"
     "secrets":

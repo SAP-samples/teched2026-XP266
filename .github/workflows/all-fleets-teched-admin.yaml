@@ -1,6 +1,7 @@
 "jobs":
   "deploy-teched":
-    "if": "${{ needs.setup.outputs.matrix != '' }}"
+    "if": "${{ needs.setup.outputs.matrix != '' && github.repository != 'fp-stakeholder-management/terraform-stories'
+      }}"
     "needs": "setup"
     "secrets":
       "GH_ISSUE_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
@@ -11,8 +12,23 @@
     "with":
       "kyma_env_uuid": "${{ matrix.kyma_env_uuid }}"
       "namespace": "${{ inputs.namespace }}"
-      "runner": "${{ github.repository == 'fp-stakeholder-management/terraform-stories'
-        && '[\"self-hosted\",\"solinas-ubuntu_22_04\"]' || '[\"ubuntu-latest\"]' }}"
+      "runner": "[\"ubuntu-latest\"]"
+      "shoot_name": "${{ matrix.shoot_name }}"
+      "subaccount_id": "${{ matrix.subaccount_id }}"
+  "deploy-teched-ghes":
+    "if": "${{ needs.setup.outputs.matrix != '' && github.repository == 'fp-stakeholder-management/terraform-stories'
+      }}"
+    "needs": "setup"
+    "secrets":
+      "GH_ISSUE_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+    "strategy":
+      "fail-fast": false
+      "matrix": "${{ fromJSON(needs.setup.outputs.matrix) }}"
+    "uses": "./.github/workflows/_gardener-teched-fleet-reusable-ghes.yaml"
+    "with":
+      "kyma_env_uuid": "${{ matrix.kyma_env_uuid }}"
+      "namespace": "${{ inputs.namespace }}"
+      "runner": "[\"self-hosted\",\"solinas-ubuntu_22_04\"]"
       "shoot_name": "${{ matrix.shoot_name }}"
       "subaccount_id": "${{ matrix.subaccount_id }}"
   "setup":
