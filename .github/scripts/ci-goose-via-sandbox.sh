@@ -24,8 +24,16 @@ PROMPT_SRC=${1:--}                                             # a file path, or
 IMAGE=${IMAGE:-localhost:32137/dev-toolbox-bash:latest}        # in-cluster registry NodePort ref (goose baked in)
 GOOSE_MODEL=${GOOSE_MODEL:-anthropic--claude-4.6-sonnet}       # SAP AI Core model via the proxy
 LITELLM_HOST=${LITELLM_HOST:-http://litellm-proxy.default.svc.cluster.local:4001}
-CLI_URL=${CLI_URL:-https://github.com/NVIDIA/OpenShell/releases/download/v0.1.1/openshell-x86_64-unknown-linux-musl.tar.gz}
-CLI_SHA256=${CLI_SHA256:-822e8e462944366cb1b3d3b023be20a675016714666124b05ad8699a03c43143}
+# CLI version: MATCH the cluster's deployed gateway (self-adapting to a per-shoot openshell_version) — read the gateway
+# StatefulSet image tag; fall back to 0.1.1. URL derived from the version; sha is best-effort (pin known versions, else
+# skip — the tarball is the official signed NVIDIA release over https).
+OPENSHELL_VER=${OPENSHELL_VER:-$(kubectl get statefulset openshell -n openshell -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null | sed 's#.*:##')}
+OPENSHELL_VER=${OPENSHELL_VER:-0.1.1}
+CLI_URL=${CLI_URL:-https://github.com/NVIDIA/OpenShell/releases/download/v${OPENSHELL_VER}/openshell-x86_64-unknown-linux-musl.tar.gz}
+case "$OPENSHELL_VER" in
+  0.1.1) CLI_SHA256=${CLI_SHA256:-822e8e462944366cb1b3d3b023be20a675016714666124b05ad8699a03c43143} ;;
+  *)     CLI_SHA256=${CLI_SHA256:-} ;;   # unknown version → skip the checksum pin
+esac
 NAME=${NAME:-ci-goose-$(date +%s)}; NAME=$(printf '%.19s' "$NAME")   # 19-char sandbox-name cap
 
 command -v kubectl >/dev/null || { echo "kubectl required (cluster-admin on an OpenShell shoot)" >&2; exit 2; }
@@ -45,12 +53,12 @@ fi
 # existing gateway entries). kubectl uses $KUBECONFIG (explicit), so this doesn't affect cluster access.
 export HOME; HOME=$(mktemp -d); trap 'rm -rf "$HOME"' EXIT
 
-# ── 1. openshell CLI (install pinned v0.1.1 if not on PATH) ───────────────────────
+# ── 1. openshell CLI (install if not on PATH; version matches the cluster gateway) ────────────────
 OS=$(command -v openshell || true)
 if [ -z "$OS" ]; then
-  echo "==> installing openshell CLI v0.1.1 …" >&2
+  echo "==> installing openshell CLI v$OPENSHELL_VER (matches cluster gateway) …" >&2
   curl -fsSL "$CLI_URL" -o "$HOME/os.tgz"
-  echo "$CLI_SHA256  $HOME/os.tgz" | sha256sum -c -
+  if [ -n "$CLI_SHA256" ]; then echo "$CLI_SHA256  $HOME/os.tgz" | sha256sum -c -; else echo "==> no pinned sha for v$OPENSHELL_VER — skipping checksum (official signed release)" >&2; fi
   tar -xzf "$HOME/os.tgz" -C "$HOME"
   OS="$(find "$HOME" -maxdepth 4 -type f -name openshell | head -1)"
   chmod +x "$OS"
