@@ -96,8 +96,32 @@ trap '"$OS" sandbox delete "$NAME" >/dev/null 2>&1 || true; rm -rf "$HOME"' EXIT
 # ── 6. pipe the prompt into the box, then run goose keyless (reads the prompt IN-box) ─────────────
 if [ "$PROMPT_SRC" = "-" ]; then cat; else cat "$PROMPT_SRC"; fi \
   | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/p'
+# Report extractor: goose --output-format json emits the whole agent session (tool calls + deliberations); this parses it
+# and prints ONLY the final report (all assistant text after the last tool-call). Written into the box (dev-toolbox has
+# python3) so there's no runner-side dependency.
+"$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/gr.py' <<'PYX'
+import json, sys
+raw = sys.stdin.read(); i = raw.find("{")
+try:
+    msgs = json.loads(raw[i:]).get("messages", [])
+    lt = -1
+    for idx, m in enumerate(msgs):
+        if any("tool" in (b.get("type", "").lower()) for b in m.get("content", [])):
+            lt = idx
+    tail = msgs[lt + 1:] if lt >= 0 else msgs
+    t = [b.get("text", "") for m in tail if m.get("role") == "assistant"
+         for b in m.get("content", []) if b.get("type") == "text"]
+    if not t:
+        a = [m for m in msgs if m.get("role") == "assistant"]
+        t = [b.get("text", "") for b in a[-1].get("content", []) if b.get("type") == "text"] if a else []
+    o = "\n".join(x for x in t if x).strip()
+    sys.stdout.write(o if o else raw)
+except Exception:
+    sys.stdout.write(raw)
+PYX
 echo "==> running goose (keyless via $LITELLM_HOST, model $GOOSE_MODEL) …" >&2
 # `env … sh -c '…$(cat /tmp/p)…'` runs IN the box: env sets goose's provider/model/host, sh -c reads the in-box prompt.
+# --output-format json + the extractor → stdout is the clean final report (no banner/deliberations/tool-call trail).
 "$OS" sandbox exec --name "$NAME" -- env \
   GOOSE_PROVIDER=litellm GOOSE_MODEL="$GOOSE_MODEL" LITELLM_HOST="$LITELLM_HOST" GOOSE_DISABLE_SESSION_NAMING=true \
-  sh -c 'goose run --text "$(cat /tmp/p)"'
+  sh -c 'goose run --quiet --output-format json --text "$(cat /tmp/p)" 2>/dev/null | python3 /tmp/gr.py'
