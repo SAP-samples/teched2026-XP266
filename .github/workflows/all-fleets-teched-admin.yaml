@@ -10,6 +10,8 @@
       "matrix": "${{ fromJSON(needs.setup.outputs.matrix) }}"
     "uses": "./.github/workflows/_gardener-teched-fleet-reusable.yaml"
     "with":
+      "goose_mode": "${{ inputs.goose_mode }}"
+      "keep_sandbox": "${{ inputs.keep_sandbox }}"
       "kyma_env_uuid": "${{ matrix.kyma_env_uuid }}"
       "namespace": "${{ inputs.namespace }}"
       "runner": "[\"ubuntu-latest\"]"
@@ -26,6 +28,8 @@
       "matrix": "${{ fromJSON(needs.setup.outputs.matrix) }}"
     "uses": "./.github/workflows/_gardener-teched-fleet-reusable-ghes.yaml"
     "with":
+      "goose_mode": "${{ inputs.goose_mode }}"
+      "keep_sandbox": "${{ inputs.keep_sandbox }}"
       "kyma_env_uuid": "${{ matrix.kyma_env_uuid }}"
       "namespace": "${{ inputs.namespace }}"
       "runner": "[\"self-hosted\",\"solinas-ubuntu_22_04\"]"
@@ -68,6 +72,20 @@
 "on":
   "workflow_dispatch":
     "inputs":
+      "goose_mode":
+        "default": "snapshot"
+        "description": "Goose mode: snapshot (interpret kyma-diagnose, no tools) or
+          live (read-only kubectl investigation in an OpenShell sandbox; skips where
+          OpenShell absent)"
+        "options":
+        - "snapshot"
+        - "live"
+        "type": "choice"
+      "keep_sandbox":
+        "default": false
+        "description": "Live mode only: keep the sandbox alive after the run so students
+          can inspect its logs (default: delete it)"
+        "type": "boolean"
       "namespace":
         "default": "quovadis-k3d"
         "description": "Target namespace"

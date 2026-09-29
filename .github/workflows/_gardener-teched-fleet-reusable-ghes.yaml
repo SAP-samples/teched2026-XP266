@@ -191,8 +191,22 @@
         "BTP_DEEPLINK": "${{ steps.cluster_info.outputs.BTP_DEEPLINK }}"
         "BTP_GLOBALACCOUNT": "${{ steps.cluster_info.outputs.GLOBALACCOUNT }}"
         "GOOSE_IDP": "${{ steps.coords.outputs.idp }}"
+        "GOOSE_MODE": "${{ inputs.goose_mode }}"
+        "KEEP_SANDBOX": "${{ inputs.keep_sandbox }}"
       "name": "Goose — interpret cluster health"
       "run": |2
+                # LIVE (Investigate) mode: goose drives read-only kubectl in an explicit-policy OpenShell sandbox (headless
+                # client-creds), via ci-goose-via-sandbox-live.sh which self-loads the CH v2 prompt from the dev-toolbox-prompts CM.
+                # The script skips cleanly where OpenShell/dev-toolbox aren't deployed, so a non-openshell shoot is a no-op.
+                if [ "$GOOSE_MODE" = "live" ]; then
+                  echo "## Cluster Health (LIVE investigate) — $SHOOT_NAME" >> "$GITHUB_STEP_SUMMARY"
+                  echo "" >> "$GITHUB_STEP_SUMMARY"
+                  KEEP_SANDBOX="$KEEP_SANDBOX" NAME="ci-goose-live-${{ github.run_id }}-${{ github.run_attempt }}" \
+                    "$GITHUB_WORKSPACE/.github/scripts/ci-goose-via-sandbox-live.sh" 2>/dev/null \
+                    | tee /tmp/goose_report.md >> "$GITHUB_STEP_SUMMARY" || true
+                  exit 0
+                fi
+                # ---- SNAPSHOT (Report) mode (default): goose interprets the kyma-diagnose snapshot, no tools ----
                 MAX_EVENTS_BYTES=51200
                 DIAGNOSE_BASE=$(jq 'del(.events)' /tmp/diagnose_dedup.json 2>/dev/null || echo "{}")
                 BASE_SIZE=${#DIAGNOSE_BASE}
@@ -287,6 +301,17 @@
 "on":
   "workflow_call":
     "inputs":
+      "goose_mode":
+        "default": "snapshot"
+        "description": "Goose mode: snapshot (interpret kyma-diagnose output, no tools)
+          OR live (read-only kubectl investigation in an OpenShell sandbox; skips
+          where OpenShell absent)"
+        "type": "string"
+      "keep_sandbox":
+        "default": false
+        "description": "Live mode only: keep the sandbox alive after the run so students
+          can inspect its logs (default: delete it)"
+        "type": "boolean"
       "kyma_env_uuid":
         "description": "Kyma env UUID — KEB key on GHES; empty on github.com (static
           bake)"
