@@ -80,7 +80,7 @@
     "inputs":
       "goose_mode":
         "default": "snapshot"
-        "description": "Goose reporting mode"
+        "description": "Agent (goose) reporting mode"
         "options":
         - "snapshot"
         - "live"
