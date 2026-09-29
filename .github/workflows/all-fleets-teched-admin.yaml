@@ -51,7 +51,13 @@
         # Two role dropdowns → one TARGET: the student's cluster wins; else the instructor's subaccount/'all'; else guide.
         SC="${{ inputs.student_cluster }}"; IS="${{ inputs.instructor_subaccount }}"
         if [ "$SC" != "none" ] && [ -n "$SC" ]; then TARGET="$SC"
-        elif [ "$IS" != "none" ] && [ -n "$IS" ]; then TARGET="$IS"
+        elif [ "$IS" != "none" ] && [ -n "$IS" ]; then
+          # Instructor mode (a subaccount = all its clusters, or 'all') is restricted to the UPSTREAM repos —
+          # student FORKS cannot run it (the input is still shown, but rejected here). Students use Student admin only.
+          case "${{ github.repository }}" in
+            SAP-samples/teched2026-XP266|fp-stakeholder-management/terraform-stories) TARGET="$IS" ;;
+            *) echo "::error::Instructor admin (teched-NN / all) is only available in the upstream repo — a fork can run Student admin (your own xp266-NNN) only."; exit 1 ;;
+          esac
         else echo "::error::Pick your cluster (Student admin = xp266-NNN) OR a subaccount (Instructor admin = teched-NN)."; exit 1
         fi
         if [ "${{ github.repository }}" = "fp-stakeholder-management/terraform-stories" ]; then
