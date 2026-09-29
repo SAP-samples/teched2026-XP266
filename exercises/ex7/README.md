@@ -116,6 +116,25 @@ print("connected:", [m.id for m in client.models.list().data][:5])
 > [!NOTE]
 > This is the same LLM path as every other exercise — the `openai` client simply points at the in-cluster LiteLLM proxy. Anything you prototype here uses the exact routing, auth, and cost-tracking that the production agents use.
 
+## Exercise 7.5 - The full notebook set (what else is pre-loaded)
+
+Beyond the SAP AI Core notebooks above, your JupyterHub is pre-loaded with the **OpenShell agent** notebooks — the Python
+twins of [Exercise 9](../ex9/README.md) — plus a few upstream JupyterLab samples.
+
+| Notebook | What it demonstrates |
+|---|---|
+| `00`–`03`, `Cluster_Health` | SAP AI Core from Python (the notebooks above). |
+| `04-OpenShell-Sandbox-SDK` | Drive an OpenShell sandbox (create → exec → delete) via the **Python SDK** — gateway registered with a CLI device-code login. |
+| `04b-OpenShell-Sandbox-SDK-Headless` | The same lifecycle, **pure SDK, no CLI** — connects straight to the in-cluster gateway (`tls=None` + a self-minted bearer token). |
+| `05-OpenShell-Goose-Diagnostics-Live` | An agent (**goose**) runs **live read-only kubectl** inside a scoped sandbox and writes a health report — the notebook twin of ex9's `scoped-ops`. |
+| `05b` / `05c` | The same live-goose investigation, headless (client-credentials) / via the **pure SDK**. |
+| `06` / `07` | goose over a **static** cluster snapshot / over the **baked** health reports from [Exercise 3](../ex3/README.md). |
+| `Lorenz`, `2013-12-03-Crank_Nicolson`, `Complex Location`, `Earthdata`, `JupyterLab APOD` | Upstream JupyterLab sample notebooks — a familiar playground (`Lorenz` is a nice "does my kernel work?" check). |
+
+> The `04`/`05` OpenShell notebooks are **advanced** and need OpenShell on your cluster — pair them with
+> [Exercise 9](../ex9/README.md). Full design notes for every notebook (gating, auth variants, us-vs-teched) live in the
+> platform repo: `docs/jupyterhub-notebooks-inventory.md`.
+
 ## Summary
 
 You signed in to JupyterHub, ran the pre-loaded SAP AI Core notebooks, did guided Python exercises (chat, embeddings, tool calling, and the diagnostic hand-off), and created your own notebook with a copy-paste connection snippet. You now have a full, safe Python playground against SAP AI Core running inside your own Kyma cluster.
