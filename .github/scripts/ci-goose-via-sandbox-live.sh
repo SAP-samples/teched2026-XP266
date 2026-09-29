@@ -185,6 +185,33 @@ except Exception:
     sys.stdout.write(raw)
 PYX
 
+# ── 8b. provenance header (agent / model / proxy) + the prompt used → for the GHA summary ──
+# Written to a runner-side file (NOT stdout, so it stays out of the report/grep input). The workflow prepends it
+# to $GITHUB_STEP_SUMMARY above the report.
+GOOSE_VER=$("$OS" sandbox exec --name "$NAME" -- goose --version 2>/dev/null | tr -d '\r' | head -1)
+GATEWAY_VER=$(kubectl get statefulset openshell -n openshell -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null | sed 's#.*:##')
+LITELLM_IMG=$(kubectl -n default get pods -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}' 2>/dev/null | grep -m1 -oE 'litellm[^"[:space:]]*' | head -1)
+HEADER_FILE=${GOOSE_HEADER_FILE:-/tmp/goose_live_header.md}
+{
+  echo "**Run provenance** — keyless, in an OpenShell sandbox (no LLM key on the runner or in the box)"
+  echo
+  echo "| Field | Value |"
+  echo "|---|---|"
+  echo "| Agent | goose \`${GOOSE_VER:-unknown}\` |"
+  echo "| Model | \`${GOOSE_MODEL}\` (SAP AI Core) |"
+  echo "| Proxy | \`${LITELLM_HOST}\` — LiteLLM \`${LITELLM_IMG:-litellm}\` → SAP AI Core |"
+  echo "| Sandbox | OpenShell \`${GATEWAY_VER:-?}\`, explicit-policy; live read-only kubectl via the \`sandbox-viewer\` SA |"
+  echo "| Mode | live (Investigate) |"
+  echo
+  echo "<details><summary>Prompt used — CH v2 (\`${PROMPT_KEY}\`, from the \`${PROMPT_CM}\` ConfigMap)</summary>"
+  echo
+  echo '```text'
+  printf '%s\n' "$PROMPT"
+  echo '```'
+  echo "</details>"
+  echo
+} > "$HEADER_FILE" 2>/dev/null || true
+
 # ── 9. run goose with LIVE read-only kubectl (keyless via litellm) ────────────────
 # Pass env via `env …` (NOT `source /tmp/scoped-ops.env`): the box's sh is dash, which has no `source` builtin, so a
 # sourced file silently no-ops and goose falls back to its litellm default (localhost:4000) → "connection refused".
