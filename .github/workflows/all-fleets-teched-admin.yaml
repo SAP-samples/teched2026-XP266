@@ -80,17 +80,14 @@
     "inputs":
       "goose_mode":
         "default": "snapshot"
-        "description": "Goose mode: snapshot (interpret kyma-diagnose, no tools) or
-          live (read-only kubectl investigation in an OpenShell sandbox; skips where
-          OpenShell absent)"
+        "description": "Goose reporting mode"
         "options":
         - "snapshot"
         - "live"
         "type": "choice"
       "instructor_subaccount":
         "default": "none"
-        "description": "Instructor admin — a subaccount (teched-NN, = all its clusters)
-          or 'all'"
+        "description": "Instructor admin — (teched-NN)"
         "options":
         - "none"
         - "all"
@@ -99,12 +96,11 @@
         "type": "choice"
       "keep_sandbox":
         "default": false
-        "description": "Live mode only: keep the sandbox alive after the run so students
-          can inspect its logs (default: delete it)"
+        "description": "keep the sandbox"
         "type": "boolean"
       "student_cluster":
         "default": "none"
-        "description": "Student admin — your cluster (xp266-NNN)"
+        "description": "Student admin (xp266-NNN)"
         "options":
         - "none"
         - "xp266-001"
