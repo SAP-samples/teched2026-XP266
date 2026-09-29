@@ -71,8 +71,8 @@ fi
 # ── 2. derive gateway host + Keycloak issuer from the cluster (no hardcoded values) ──
 VS_HOST=$(kubectl -n openshell get virtualservice -o jsonpath='{.items[0].spec.hosts[0]}' 2>/dev/null || true)
 [ -n "$VS_HOST" ] || { echo "ERROR: no openshell VirtualService in ns openshell" >&2; exit 2; }
-GW_URL="https://$VS_HOST"
-ISSUER="https://keycloak.${VS_HOST#openshell.}/realms/ateam-isveng"
+GW_URL="${GW_URL:-https://$VS_HOST}"
+ISSUER="${ISSUER:-https://keycloak.${VS_HOST#openshell.}/realms/ateam-isveng}"
 echo "==> gateway=$GW_URL  issuer=$ISSUER  shoot=$SHOOT" >&2
 
 # ── 3. read the confidential client secret + register client-credentials (headless) ──
