@@ -306,6 +306,12 @@ kubectl get nodes                        # ✓ read-only (a write → 403, refus
 goose run --text "run 'kubectl get pods -A' and 'kyma alpha diagnose', then summarize any unhealthy workloads and module issues"
 ```
 ```bash
+# Clean report only — strip goose's tool-call trail + deliberations and print just the final answer. `--output-format
+# json` emits the whole session; the tiny extractor keeps the assistant text AFTER the last tool call:
+goose run --quiet --output-format json --text 'which pods are unhealthy and why, any orphaned pvcs?' \
+| python3 -c 'import sys,json;m=json.load(sys.stdin).get("messages",[]);lt=max([-1]+[i for i,x in enumerate(m) if any("tool" in b.get("type","").lower() for b in x.get("content",[]))]);print("\n".join(b.get("text","") for x in m[lt+1:] if x.get("role")=="assistant" for b in x.get("content",[]) if b.get("type")=="text").strip())'
+```
+```bash
 # claude — give it an IMPERATIVE, tool-directed prompt. A bare question ('which pods are unhealthy?') makes Claude
 # answer conversationally and ask for context; telling it to RUN the commands makes it act like goose:
 claude -p 'Use kubectl to find unhealthy pods and explain why. Run: kubectl get pods -A, then kubectl describe pod / kubectl logs on anything not Running or Completed, and summarize the root causes (CrashLoopBackOff, ImagePullBackOff, OOMKilled, failing probes). Be concise.'
