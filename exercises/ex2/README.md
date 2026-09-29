@@ -131,4 +131,7 @@ Walk the `kyma-system` namespace: list the Kyma modules and their states, and fl
 
 You opened the in-cluster web terminal, drove the `kyma` CLI (especially `kyma alpha diagnose cluster`), and ran both Goose and Claude Code against your cluster — one-shot, headless, and fed live `kubectl`/`kyma` output. Same proxy, same SAP AI Core, now driven interactively by you. Next, the same recipe runs on its own.
 
+> [!TIP]
+> Want the same agents but **fenced inside a contained, read-only sandbox** (no internet, `secrets` excluded, writes → 403)? [**Exercise 9**](../ex9/README.md) (§9.5) runs Goose/Claude from *this same terminal* via one command — **`scoped-ops`** — which provisions an OpenShell sandbox with a short-lived read-only token and drops you inside.
+
 Continue to - [Exercise 3 - Play with the autonomous Goose diagnostic jobs](../ex3/README.md)
