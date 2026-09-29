@@ -186,6 +186,11 @@ except Exception:
 PYX
 
 # ── 9. run goose with LIVE read-only kubectl (keyless via litellm) ────────────────
+# Pass env via `env …` (NOT `source /tmp/scoped-ops.env`): the box's sh is dash, which has no `source` builtin, so a
+# sourced file silently no-ops and goose falls back to its litellm default (localhost:4000) → "connection refused".
+# KUBECONFIG is set here so goose's kubectl subprocess inherits the read-only sandbox-viewer config.
 echo "==> running goose LIVE (read-only kubectl, keyless via $LITELLM_HOST, model $GOOSE_MODEL) …" >&2
-"$OS" sandbox exec --name "$NAME" -- sh -c \
-  'source /tmp/scoped-ops.env; goose run --quiet --output-format json --text "$(cat /tmp/p)" 2>/dev/null | python3 /tmp/gr.py'
+"$OS" sandbox exec --name "$NAME" -- env \
+  KUBECONFIG=/tmp/sandbox-kubeconfig \
+  GOOSE_PROVIDER=litellm GOOSE_MODEL="$GOOSE_MODEL" LITELLM_HOST="$LITELLM_HOST" GOOSE_DISABLE_SESSION_NAMING=true \
+  sh -c 'goose run --quiet --output-format json --text "$(cat /tmp/p)" 2>/dev/null | python3 /tmp/gr.py'
