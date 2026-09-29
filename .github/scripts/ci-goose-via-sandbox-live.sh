@@ -61,7 +61,7 @@ OS=$(command -v openshell || true)
 if [ -z "$OS" ]; then
   echo "==> installing openshell CLI v$OPENSHELL_VER (matches cluster gateway) …" >&2
   curl -fsSL "$CLI_URL" -o "$HOME/os.tgz"
-  if [ -n "$CLI_SHA256" ]; then echo "$CLI_SHA256  $HOME/os.tgz" | sha256sum -c -; else echo "==> no pinned sha for v$OPENSHELL_VER — skipping checksum (official signed release)" >&2; fi
+  if [ -n "$CLI_SHA256" ]; then echo "$CLI_SHA256  $HOME/os.tgz" | sha256sum -c - >&2; else echo "==> no pinned sha for v$OPENSHELL_VER — skipping checksum (official signed release)" >&2; fi
   tar -xzf "$HOME/os.tgz" -C "$HOME"
   OS="$(find "$HOME" -maxdepth 4 -type f -name openshell | head -1)"
   chmod +x "$OS"
