@@ -42,7 +42,7 @@ case "$OPENSHELL_VER" in
   0.1.1) CLI_SHA256=${CLI_SHA256:-822e8e462944366cb1b3d3b023be20a675016714666124b05ad8699a03c43143} ;;
   *)     CLI_SHA256=${CLI_SHA256:-} ;;
 esac
-NAME=${NAME:-ci-goose-live-$(date +%s)}; NAME=$(printf '%.19s' "$NAME")   # 19-char sandbox-name cap
+NAME=${NAME:-ci-live-$(date +%s)}; NAME=$(printf '%.19s' "$NAME")   # 19-char cap: 'ci-live-'(8)+10-digit epoch=18 → full per-second uniqueness (v2-health + v3 share this script, run ~10min apart; the old 'ci-goose-live-' prefix left only 5 epoch digits → collision)
 
 command -v kubectl >/dev/null || { echo "kubectl required (cluster-admin on an OpenShell shoot)" >&2; exit 2; }
 
