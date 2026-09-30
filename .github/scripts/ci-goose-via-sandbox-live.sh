@@ -159,7 +159,7 @@ if [ "$PROMPT_SRC" = "-" ]; then
 elif [ -n "$PROMPT_SRC" ]; then
   PROMPT=$(cat "$PROMPT_SRC")
 else
-  PROMPT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$PROMPT_KEY}" 2>/dev/null | sed "s/__SHOOT__/$SHOOT/g")
+  PROMPT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$PROMPT_KEY}" 2>/dev/null | sed "s/__SHOOT__/$SHOOT/g; s/__NS__/$PROMPT_CM_NS/g")
   [ -n "$PROMPT" ] || { echo "ERROR: CH v2 prompt '$PROMPT_KEY' not in cm/$PROMPT_CM (ns $PROMPT_CM_NS)" >&2; exit 2; }
 fi
 printf '%s' "$PROMPT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/p'
