@@ -8,7 +8,7 @@
     - "name": "Check out Git repository"
       "uses": "actions/checkout@v4"
     - "name": "Install Helm"
-      "uses": "azure/setup-helm@v4"
+      "uses": "azure/setup-helm@v5"
     - "id": "coords"
       "name": "Resolve teched coords (GHES: KEB via kyma_env_uuid · github.com: baked
         static — fork-safe, no secret, no GUID)"
