@@ -32,6 +32,7 @@ KEEP_SANDBOX=${KEEP_SANDBOX:-false}                            # true → do NOT
 PROMPT_CM=${PROMPT_CM:-dev-toolbox-prompts}                    # CH v2 prompt source
 PROMPT_CM_NS=${PROMPT_CM_NS:-dev-toolbox-system}
 PROMPT_KEY=${PROMPT_KEY:-health-v2-report-first}
+REFORMAT_KEY=${REFORMAT_KEY:-reformat-remediation-guide}       # 2nd-pass reformat prompt (empty → skip reformat)
 SHOOT=${SHOOT_NAME:-$(kubectl config current-context 2>/dev/null || echo cluster)}
 # CLI version: MATCH the cluster's deployed gateway (self-adapting to a per-shoot openshell_version).
 OPENSHELL_VER=${OPENSHELL_VER:-$(kubectl get statefulset openshell -n openshell -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null | sed 's#.*:##')}
@@ -220,4 +221,36 @@ echo "==> running goose LIVE (read-only kubectl, keyless via $LITELLM_HOST, mode
 "$OS" sandbox exec --name "$NAME" -- env \
   KUBECONFIG=/tmp/sandbox-kubeconfig \
   GOOSE_PROVIDER=litellm GOOSE_MODEL="$GOOSE_MODEL" LITELLM_HOST="$LITELLM_HOST" GOOSE_DISABLE_SESSION_NAMING=true \
-  sh -c 'goose run --quiet --output-format json --text "$(cat /tmp/p)" 2>/dev/null | python3 /tmp/gr.py'
+  sh -c 'goose run --quiet --output-format json --text "$(cat /tmp/p)" 2>/dev/null | python3 /tmp/gr.py > /tmp/raw_report.md' </dev/null
+
+# ── 10. REFORMAT PASS — IN the sandbox, KEYLESS (no real secret in the box) ───────────────────────────
+# Polish goose's raw 15-section audit into a remediation guide via `claude -p` INSIDE the box. claude auths with
+# ANTHROPIC_AUTH_TOKEN=$ANTHROPIC_API_KEY — the OpenShell litellm-provider RESOLVE SENTINEL (the supervisor swaps
+# the real PROXY_API_KEY at egress), exactly like goose + scoped-ops → NO real key ever enters the sandbox. The
+# machine-readable '## Health Status: <STATUS>' line is prepended IN the box (grepped from the raw report) so the
+# pod-side status extractor + the Busola Badge keep working regardless of how claude restructures the body.
+# Graceful: if the reformat prompt is unset, or claude yields nothing, emit the raw goose report unchanged.
+# The final report is this step's STDOUT (the v3 CronJob captures it → /tmp/report.md on the pod).
+REFMT=""
+[ -n "$REFORMAT_KEY" ] && REFMT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$REFORMAT_KEY}" 2>/dev/null || true)
+if [ -n "$REFMT" ]; then
+  echo "==> reformatting the report IN the sandbox via claude -p (keyless; provider sentinel resolved at egress) …" >&2
+  printf '%s' "$REFMT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/refmt'
+  "$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc '
+    export ANTHROPIC_BASE_URL=http://litellm-proxy.default.svc.cluster.local:4001
+    export ANTHROPIC_AUTH_TOKEN="$ANTHROPIC_API_KEY"; unset ANTHROPIC_API_KEY
+    export ANTHROPIC_MODEL=anthropic--claude-4.7-opus CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1
+    ST=$(grep -m1 "^## Health Status:" /tmp/raw_report.md | grep -oiE "HEALTHY|WARNING|CRITICAL" | head -1 | tr "[:lower:]" "[:upper:]")
+    OUT=""
+    [ -s /tmp/raw_report.md ] && OUT=$(claude -p "$(cat /tmp/refmt)" < /tmp/raw_report.md 2>/dev/null)
+    if [ -n "$OUT" ]; then
+      [ -n "$ST" ] && printf "## Health Status: %s\n\n" "$ST"
+      printf "%s\n" "$OUT"
+      printf "\n\n<<<RAW-GOOSE-REPORT>>>\n\n"   # separator: the pod splits this into report (guide) + reportRaw (goose)
+      cat /tmp/raw_report.md
+    else
+      cat /tmp/raw_report.md    # reformat empty/failed → raw goose report (already carries ## Health Status:)
+    fi' </dev/null
+else
+  "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'cat /tmp/raw_report.md' </dev/null
+fi
