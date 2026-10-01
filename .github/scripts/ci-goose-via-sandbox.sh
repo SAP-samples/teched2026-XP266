@@ -24,6 +24,12 @@ PROMPT_SRC=${1:--}                                             # a file path, or
 IMAGE=${IMAGE:-localhost:32137/dev-toolbox-bash:latest}        # in-cluster registry NodePort ref (goose baked in)
 GOOSE_MODEL=${GOOSE_MODEL:-anthropic--claude-4.6-sonnet}       # SAP AI Core model via the proxy
 LITELLM_HOST=${LITELLM_HOST:-http://litellm-proxy.default.svc.cluster.local:4001}
+# Optional 2nd-pass reformat (EMPTY → skip, emit the raw goose report — the admin-GHA default, unchanged). When
+# set, the reformat prompt is read from the dev-toolbox-prompts CM via the OUTER kubectl, written into the box, and
+# `claude -p` runs IN the box (keyless) → emits <guide> + <<<RAW-GOOSE-REPORT>>> + <raw> for the caller to split.
+REFORMAT_KEY=${REFORMAT_KEY:-}
+PROMPT_CM=${PROMPT_CM:-dev-toolbox-prompts}
+PROMPT_CM_NS=${PROMPT_CM_NS:-dev-toolbox-system}
 # CLI version: MATCH the cluster's deployed gateway (self-adapting to a per-shoot openshell_version) — read the gateway
 # StatefulSet image tag; fall back to 0.1.1. URL derived from the version; sha is best-effort (pin known versions, else
 # skip — the tarball is the official signed NVIDIA release over https).
@@ -83,9 +89,32 @@ export OPENSHELL_OIDC_CLIENT_SECRET
 "$OS" gateway add "$GW_URL" --oidc-issuer "$ISSUER" \
   --oidc-client-id openshell-admin-sa --oidc-audience openshell-oidc >&2
 
-# ── 5. create a CONTAINED sandbox (LLM-only egress via the litellm-openai provider profile) ───────
-echo "==> creating contained sandbox '$NAME' from $IMAGE …" >&2
-"$OS" sandbox create --name "$NAME" --from "$IMAGE" --provider litellm-openai --detach -- sleep infinity >&2
+# ── 5. create the sandbox with an EXPLICIT EGRESS POLICY (LLM-only — litellm-proxy for goose + claude; NO k8s
+# apiserver → NO in-box kubectl: pure snapshot summarization). The policy is REQUIRED for the claude reformat:
+# openshell egress is BINARY-scoped, so the `claude` binary needs its own litellm-proxy endpoint entry. goose's
+# egress is wired by the litellm-openai provider, but claude's is NOT → ConnectionRefused without this policy.
+cat > "$HOME/pol.yaml" <<'POL'
+version: 1
+filesystem_policy:
+  include_workdir: true
+  read_only: [/usr, /bin, /sbin, /lib, /lib64, /etc, /opt, /proc, /dev/urandom, /var/log, /app]
+  read_write: [/sandbox, /tmp, /home, /run, /var/tmp, /dev/null]
+landlock:
+  compatibility: best_effort
+network_policies:
+  litellm:
+    name: litellm-proxy
+    endpoints:
+      - { host: litellm-proxy.default.svc.cluster.local, port: 4001, protocol: rest, enforcement: enforce, access: read-write }
+    binaries:
+      - { path: /usr/local/bin/claude }
+      - { path: /usr/local/lib/node_modules/@anthropic-ai/claude-code/bin/claude.exe }
+      - { path: /usr/local/bin/goose }
+      - { path: /usr/local/bin/node }
+      - { path: /usr/bin/curl }
+POL
+echo "==> creating explicit-policy sandbox '$NAME' from $IMAGE (LLM-only egress) …" >&2
+"$OS" sandbox create --name "$NAME" --from "$IMAGE" --provider litellm --provider litellm-openai --policy "$HOME/pol.yaml" --detach -- sleep infinity >&2
 for _ in $(seq 1 60); do "$OS" sandbox list 2>/dev/null | grep "$NAME" | grep -qiE 'ready|running' && break; sleep 2; done
 if ! "$OS" sandbox list 2>/dev/null | grep "$NAME" | grep -qiE 'ready|running'; then
   echo "ERROR: sandbox '$NAME' did not become ready" >&2; "$OS" sandbox delete "$NAME" >/dev/null 2>&1 || true; exit 1
@@ -121,7 +150,40 @@ except Exception:
 PYX
 echo "==> running goose (keyless via $LITELLM_HOST, model $GOOSE_MODEL) …" >&2
 # `env … sh -c '…$(cat /tmp/p)…'` runs IN the box: env sets goose's provider/model/host, sh -c reads the in-box prompt.
-# --output-format json + the extractor → stdout is the clean final report (no banner/deliberations/tool-call trail).
+# --output-format json + the extractor → the clean final report, captured to /tmp/raw_report.md in the box.
 "$OS" sandbox exec --name "$NAME" -- env \
   GOOSE_PROVIDER=litellm GOOSE_MODEL="$GOOSE_MODEL" LITELLM_HOST="$LITELLM_HOST" GOOSE_DISABLE_SESSION_NAMING=true \
-  sh -c 'goose run --quiet --output-format json --text "$(cat /tmp/p)" 2>/dev/null | python3 /tmp/gr.py'
+  sh -c 'goose run --quiet --output-format json --text "$(cat /tmp/p)" 2>/dev/null | python3 /tmp/gr.py > /tmp/raw_report.md' </dev/null
+
+# ── 7. OPTIONAL REFORMAT PASS — IN the box, KEYLESS (claude -p; provider sentinel resolved at egress) ──────────────
+# Mirrors ci-goose-via-sandbox-live.sh. EMPTY REFORMAT_KEY → emit the raw goose report unchanged (admin-GHA default).
+# When set: fetch the reformat prompt via the OUTER kubectl, write it into the box, run claude -p in-box, and emit
+# <guide> + <<<RAW-GOOSE-REPORT>>> + <raw> so the caller splits report (executive guide) + reportRaw (raw goose).
+# claude auths with ANTHROPIC_AUTH_TOKEN=$ANTHROPIC_API_KEY (the litellm-provider resolve sentinel) → NO real key in box.
+REFMT=""
+[ -n "$REFORMAT_KEY" ] && REFMT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$REFORMAT_KEY}" 2>/dev/null || true)
+if [ -n "$REFMT" ]; then
+  echo "==> reformatting the report IN the sandbox via claude -p (keyless) …" >&2
+  printf '%s' "$REFMT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/refmt'
+  "$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc '
+    # Point claude at litellm-proxy:4001 (the egress policy above lists the claude binary against that host) and
+    # auth with the resolve sentinel ($ANTHROPIC_API_KEY → ANTHROPIC_AUTH_TOKEN) → keyless, NO real key in the box.
+    # BOTH the policy AND these exports are needed: the policy opens the binary→host egress, the exports tell claude
+    # to use it (the provider does not inject a reachable anthropic endpoint on its own here).
+    export ANTHROPIC_BASE_URL=http://litellm-proxy.default.svc.cluster.local:4001
+    export ANTHROPIC_AUTH_TOKEN="$ANTHROPIC_API_KEY"; unset ANTHROPIC_API_KEY
+    export ANTHROPIC_MODEL=anthropic--claude-4.7-opus CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1
+    ST=$(grep -m1 "^## Health Status:" /tmp/raw_report.md | grep -oiE "HEALTHY|WARNING|CRITICAL" | head -1 | tr "[:lower:]" "[:upper:]")
+    OUT=""
+    [ -s /tmp/raw_report.md ] && OUT=$(claude -p "$(cat /tmp/refmt)" < /tmp/raw_report.md 2>/dev/null)
+    if [ -n "$OUT" ]; then
+      [ -n "$ST" ] && printf "## Health Status: %s\n\n" "$ST"
+      printf "%s\n" "$OUT"
+      printf "\n\n<<<RAW-GOOSE-REPORT>>>\n\n"   # separator: the caller splits this into report (guide) + reportRaw (goose)
+      cat /tmp/raw_report.md
+    else
+      cat /tmp/raw_report.md    # reformat empty/failed → raw goose report unchanged
+    fi' </dev/null
+else
+  "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'cat /tmp/raw_report.md' </dev/null
+fi
