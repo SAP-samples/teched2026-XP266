@@ -6,7 +6,7 @@
     "runs-on": "${{ fromJSON(inputs.runner) }}"
     "steps":
     - "name": "Check out Git repository"
-      "uses": "actions/checkout@v4"
+      "uses": "actions/checkout@v7"
     - "name": "Install Helm"
       "uses": "azure/setup-helm@v4"
     - "id": "coords"

@@ -43,7 +43,7 @@
       }}"
     "steps":
     - "name": "Check out repository (teched registry)"
-      "uses": "actions/checkout@v4"
+      "uses": "actions/checkout@v7"
     - "id": "m"
       "name": "Build teched subaccount × cluster matrix (GHES: teched.auto.tfvars
         · github.com: baked static — no GUID)"
