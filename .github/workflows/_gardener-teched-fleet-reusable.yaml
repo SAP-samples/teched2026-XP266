@@ -268,7 +268,7 @@
         print(out.strip())
         " | tee /tmp/goose_report.md >> "$GITHUB_STEP_SUMMARY"
     - "if": "always()"
-      "name": "Upload goose health report (v4)"
+      "name": "Upload goose health report (v7)"
       "uses": "actions/upload-artifact@v7"
       "with":
         "if-no-files-found": "ignore"
