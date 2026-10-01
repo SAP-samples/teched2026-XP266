@@ -40,7 +40,7 @@
         echo "idp=anuk8cmfw"    >> "$GITHUB_OUTPUT"
         echo "coords(teched): server=$SERVER audience=$AUD"
     - "name": "Setup Kube Context"
-      "uses": "azure/k8s-set-context@v4"
+      "uses": "azure/k8s-set-context@v5"
       "with":
         "kubeconfig": |
           "apiVersion": "v1"
