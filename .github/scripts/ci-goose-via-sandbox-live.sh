@@ -99,16 +99,9 @@ filesystem_policy:
 landlock:
   compatibility: best_effort
 network_policies:
-  litellm:
-    name: litellm-proxy
-    endpoints:
-      - { host: litellm-proxy.default.svc.cluster.local, port: 4001, protocol: rest, enforcement: enforce, access: read-write }
-    binaries:
-      - { path: /usr/local/bin/claude }
-      - { path: /usr/local/lib/node_modules/@anthropic-ai/claude-code/bin/claude.exe }
-      - { path: /usr/local/bin/goose }
-      - { path: /usr/local/bin/node }
-      - { path: /usr/bin/curl }
+  # NO `litellm` block: claude + goose egress to litellm-proxy:4001 is owned by the attached provider profiles
+  # (litellm=claude, incl. the resolved ELF; litellm-openai=goose). Only the k8s apiserver (live read-only kubectl,
+  # NOT provider-covered) stays as an explicit egress policy.
   k8s_api:
     name: k8s-apiserver
     endpoints:
@@ -120,7 +113,11 @@ POL
 
 echo "==> creating explicit-policy sandbox '$NAME' from $IMAGE …" >&2
 "$OS" sandbox create --name "$NAME" --from "$IMAGE" \
-  --provider litellm --provider litellm-openai --policy "$HOME/pol.yaml" --detach -- sleep infinity >&2
+  --provider litellm --provider litellm-openai --policy "$HOME/pol.yaml" \
+  --env ANTHROPIC_BASE_URL=http://litellm-proxy.default.svc.cluster.local:4001 \
+  --env ANTHROPIC_MODEL=anthropic--claude-4.7-opus \
+  --env CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1 \
+  --detach -- sleep infinity >&2
 for _ in $(seq 1 60); do "$OS" sandbox list 2>/dev/null | grep "$NAME" | grep -qiE 'ready|running' && break; sleep 2; done
 if ! "$OS" sandbox list 2>/dev/null | grep "$NAME" | grep -qiE 'ready|running'; then
   echo "ERROR: sandbox '$NAME' did not become ready" >&2; "$OS" sandbox delete "$NAME" >/dev/null 2>&1 || true; exit 1
@@ -237,9 +234,9 @@ if [ -n "$REFMT" ]; then
   echo "==> reformatting the report IN the sandbox via claude -p (keyless; provider sentinel resolved at egress) …" >&2
   printf '%s' "$REFMT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/refmt'
   "$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc '
-    export ANTHROPIC_BASE_URL=http://litellm-proxy.default.svc.cluster.local:4001
+    # ANTHROPIC_BASE_URL / ANTHROPIC_MODEL / the enforcement flag are injected at sandbox-create via --env (a
+    # provider never injects a base-URL env). Here we only map the provider-injected sentinel into the Bearer token.
     export ANTHROPIC_AUTH_TOKEN="$ANTHROPIC_API_KEY"; unset ANTHROPIC_API_KEY
-    export ANTHROPIC_MODEL=anthropic--claude-4.7-opus CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1
     ST=$(grep -m1 "^## Health Status:" /tmp/raw_report.md | grep -oiE "HEALTHY|WARNING|CRITICAL" | head -1 | tr "[:lower:]" "[:upper:]")
     OUT=""
     [ -s /tmp/raw_report.md ] && OUT=$(claude -p "$(cat /tmp/refmt)" < /tmp/raw_report.md 2>/dev/null)

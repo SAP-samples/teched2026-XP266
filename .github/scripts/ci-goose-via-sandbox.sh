@@ -89,10 +89,12 @@ export OPENSHELL_OIDC_CLIENT_SECRET
 "$OS" gateway add "$GW_URL" --oidc-issuer "$ISSUER" \
   --oidc-client-id openshell-admin-sa --oidc-audience openshell-oidc >&2
 
-# ── 5. create the sandbox with an EXPLICIT EGRESS POLICY (LLM-only — litellm-proxy for goose + claude; NO k8s
-# apiserver → NO in-box kubectl: pure snapshot summarization). The policy is REQUIRED for the claude reformat:
-# openshell egress is BINARY-scoped, so the `claude` binary needs its own litellm-proxy endpoint entry. goose's
-# egress is wired by the litellm-openai provider, but claude's is NOT → ConnectionRefused without this policy.
+# ── 5. create the sandbox: FILESYSTEM hardening via --policy; NETWORK egress owned by the attached providers ──────
+# The policy keeps ONLY filesystem_policy + landlock (read-only system dirs, read-write scratch) — the hardening we
+# must not lose. It deliberately has NO network_policies: egress is owned by the provider profiles (litellm-openai
+# covers goose; litellm covers claude, its `binaries` now including the RESOLVED claude ELF). The base URL + model
+# for the claude reformat are passed as --env (a provider injects only the credential sentinel + egress, never a
+# base-URL env — the docs-blessed way). No in-box kubectl (pure snapshot).
 cat > "$HOME/pol.yaml" <<'POL'
 version: 1
 filesystem_policy:
@@ -101,20 +103,15 @@ filesystem_policy:
   read_write: [/sandbox, /tmp, /home, /run, /var/tmp, /dev/null]
 landlock:
   compatibility: best_effort
-network_policies:
-  litellm:
-    name: litellm-proxy
-    endpoints:
-      - { host: litellm-proxy.default.svc.cluster.local, port: 4001, protocol: rest, enforcement: enforce, access: read-write }
-    binaries:
-      - { path: /usr/local/bin/claude }
-      - { path: /usr/local/lib/node_modules/@anthropic-ai/claude-code/bin/claude.exe }
-      - { path: /usr/local/bin/goose }
-      - { path: /usr/local/bin/node }
-      - { path: /usr/bin/curl }
 POL
-echo "==> creating explicit-policy sandbox '$NAME' from $IMAGE (LLM-only egress) …" >&2
-"$OS" sandbox create --name "$NAME" --from "$IMAGE" --provider litellm --provider litellm-openai --policy "$HOME/pol.yaml" --detach -- sleep infinity >&2
+echo "==> creating sandbox '$NAME' from $IMAGE (fs-hardened; LLM egress via providers) …" >&2
+"$OS" sandbox create --name "$NAME" --from "$IMAGE" \
+  --provider litellm --provider litellm-openai \
+  --policy "$HOME/pol.yaml" \
+  --env ANTHROPIC_BASE_URL=http://litellm-proxy.default.svc.cluster.local:4001 \
+  --env ANTHROPIC_MODEL=anthropic--claude-4.7-opus \
+  --env CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1 \
+  --detach -- sleep infinity >&2
 for _ in $(seq 1 60); do "$OS" sandbox list 2>/dev/null | grep "$NAME" | grep -qiE 'ready|running' && break; sleep 2; done
 if ! "$OS" sandbox list 2>/dev/null | grep "$NAME" | grep -qiE 'ready|running'; then
   echo "ERROR: sandbox '$NAME' did not become ready" >&2; "$OS" sandbox delete "$NAME" >/dev/null 2>&1 || true; exit 1
@@ -166,13 +163,10 @@ if [ -n "$REFMT" ]; then
   echo "==> reformatting the report IN the sandbox via claude -p (keyless) …" >&2
   printf '%s' "$REFMT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/refmt'
   "$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc '
-    # Point claude at litellm-proxy:4001 (the egress policy above lists the claude binary against that host) and
-    # auth with the resolve sentinel ($ANTHROPIC_API_KEY → ANTHROPIC_AUTH_TOKEN) → keyless, NO real key in the box.
-    # BOTH the policy AND these exports are needed: the policy opens the binary→host egress, the exports tell claude
-    # to use it (the provider does not inject a reachable anthropic endpoint on its own here).
-    export ANTHROPIC_BASE_URL=http://litellm-proxy.default.svc.cluster.local:4001
+    # ANTHROPIC_BASE_URL / ANTHROPIC_MODEL / the enforcement flag are injected at sandbox-create via --env (the
+    # provider never injects a base-URL env; egress is owned by the litellm provider profile). Here we only map the
+    # provider-injected sentinel ($ANTHROPIC_API_KEY) into ANTHROPIC_AUTH_TOKEN (Bearer) → keyless, no real key in box.
     export ANTHROPIC_AUTH_TOKEN="$ANTHROPIC_API_KEY"; unset ANTHROPIC_API_KEY
-    export ANTHROPIC_MODEL=anthropic--claude-4.7-opus CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1
     ST=$(grep -m1 "^## Health Status:" /tmp/raw_report.md | grep -oiE "HEALTHY|WARNING|CRITICAL" | head -1 | tr "[:lower:]" "[:upper:]")
     OUT=""
     [ -s /tmp/raw_report.md ] && OUT=$(claude -p "$(cat /tmp/refmt)" < /tmp/raw_report.md 2>/dev/null)
