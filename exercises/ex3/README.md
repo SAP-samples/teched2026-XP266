@@ -15,6 +15,17 @@ CronJob dev-toolbox-diagnose-v2   (daily, adaptive) ── kubectl/kyma ──�
 > [!IMPORTANT]
 > **Everyone (UI-only):** 3.1 and 3.2 — inspect the jobs and read a Cluster Health Report entirely in Busola. **🔧 Go deeper (optional, terminal):** 3.3 and 3.4 tweak parameters and trigger a run. You never *have* to trigger anything — the v1 job runs **every 10 minutes** on its own, so a fresh report is always waiting for you in Busola.
 
+> [!TIP]
+> **The three report generations at a glance** (this exercise focuses on v1 + v2; a third, **v3**, and a **security audit** also run). They are a spectrum of fidelity vs. cost — all run Goose *keyless inside an OpenShell sandbox* (→ LiteLLM → SAP AI Core), then a 2nd `claude -p` pass reformats the raw report into an executive guide:
+>
+> | Job | Report (Busola `ClusterHealthReport`) | Schedule | Report type |
+> |---|---|---|---|
+> | **v1** | `cluster-health` | every 10 min (Goose ~every 12 h) | **Snapshot** — Goose summarizes a precomputed `kyma diagnose` JSON; no live cluster access |
+> | **v2** | `cluster-health-v2` **+** `cluster-audit` | daily | health = **Live, bounded playbook** (15 fixed commands) · audit = **Live, adaptive** (free security investigation) |
+> | **v3** | `cluster-health-v3` | daily | **Live, real-time** — read-only `kubectl` in the sandbox, uncapped |
+>
+> *Snapshot* = cheap, deterministic, catches regressions between runs. *Live/bounded* = real data on a leash (predictable turn count). *Live/adaptive* = richest but can over-escalate stale findings — treat it as a lead list and confirm against live state. Full reference: `docs/cluster-health-jobs-inventory.md` in the runtime repo.
+
 ## Exercise 3.1 - Inspect the two pipelines
 
 1. In Busola, open **namespace `dev-toolbox-system` → Workloads → Cron Jobs**. You'll see the two diagnostic jobs and their schedules — click one to see its pod template, environment, and history.

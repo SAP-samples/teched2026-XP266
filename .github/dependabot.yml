@@ -4,3 +4,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # GHES (github.tools.sap) lacks the v4+ artifact-service backend, so _gardener-teched-fleet-reusable-ghes.yaml
+      # is deliberately pinned to actions/upload-artifact@v3 by the all-fleets generator (reusable_workflows.tf).
+      # Dependabot can't scope a bump per-file, so a v4+ PR would re-break the GHES reusable (as PR #15–18 did).
+      # The github.com reusable's v7 is generator-owned; bump upload-artifact via the generator, not Dependabot.
+      - dependency-name: "actions/upload-artifact"
+        versions: [">= 4.0.0"]
