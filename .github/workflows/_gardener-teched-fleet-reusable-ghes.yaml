@@ -322,57 +322,7 @@
                   # No internet in the box except openrouter.ai → the model can't read KRO's docs; teach it inline with a
                   # primer + a MINIMAL VALID RGD and its instance. (each ${...} below renders as a literal dollar-brace; the bash
                   # quoted heredoc <<'KRO' keeps it verbatim; the heredoc body is flush-left so the HCL <<- strip is a no-op.)
-                  KRO=$(cat <<'KRO'
-        KRO (Kube Resource Orchestrator): a ResourceGraphDefinition (RGD) (1) declares spec.schema — a NEW custom kind (KRO
-        generates its CRD; group kro.run, version = schema.apiVersion, kind = schema.kind) — and (2) lists spec.resources, the
-        Kubernetes objects to create, wired with CEL. You then create an INSTANCE of that kind; KRO renders the resources,
-        substituting the instance's inputs via ${schema.spec.<field>}, and writes CEL-derived values to the instance status.
-
-        spec.schema is KRO SIMPLE-SCHEMA, NOT OpenAPI. Under spec: each field is "name: type | markers" (types: string,
-        integer, float, boolean; markers: required=true, default=...). Under status: each field VALUE is a CEL string that
-        reads a resource by its id, e.g. ${weatherpod.status.phase}. There is NO properties:, NO required: list, NO x-kro.
-
-        MINIMAL VALID RGD:
-        apiVersion: kro.run/v1alpha1
-        kind: ResourceGraphDefinition
-        metadata:
-          name: weather
-        spec:
-          schema:
-            apiVersion: v1alpha1
-            kind: Weather
-            spec:
-              latitude: float | required=true
-              longitude: float | required=true
-            status:
-              podPhase: ${weatherpod.status.phase}
-              podIp: ${weatherpod.status.podIP}
-          resources:
-            - id: weatherpod
-              template:
-                apiVersion: v1
-                kind: Pod
-                metadata:
-                  name: weather-check
-                spec:
-                  restartPolicy: Never
-                  containers:
-                    - name: curl
-                      image: curlimages/curl:latest
-                      command: ["/bin/sh", "-c"]
-                      args:
-                        - "curl -sS 'https://api.open-meteo.com/v1/forecast?latitude=${schema.spec.latitude}&longitude=${schema.spec.longitude}&current=temperature_2m&timezone=auto' && sleep 3600"
-
-        ITS INSTANCE (of the generated kind):
-        apiVersion: kro.run/v1alpha1
-        kind: Weather
-        metadata:
-          name: berlin
-        spec:
-          latitude: 52.52
-          longitude: 13.41
-        KRO
-        )
+                  KRO=$(printf %s 'S1JPIChLdWJlIFJlc291cmNlIE9yY2hlc3RyYXRvcik6IGEgUmVzb3VyY2VHcmFwaERlZmluaXRpb24gKFJHRCkgKDEpIGRlY2xhcmVzIHNwZWMuc2NoZW1hIOKAlCBhIE5FVyBjdXN0b20ga2luZCAoS1JPIGdlbmVyYXRlcyBpdHMgQ1JEOyBncm91cCBrcm8ucnVuLCB2ZXJzaW9uID0gc2NoZW1hLmFwaVZlcnNpb24sIGtpbmQgPSBzY2hlbWEua2luZCkg4oCUIGFuZCAoMikgbGlzdHMgc3BlYy5yZXNvdXJjZXMsIHRoZSBLdWJlcm5ldGVzIG9iamVjdHMgdG8gY3JlYXRlLCB3aXJlZCB3aXRoIENFTC4gWW91IHRoZW4gY3JlYXRlIGFuIElOU1RBTkNFIG9mIHRoYXQga2luZDsgS1JPIHJlbmRlcnMgdGhlIHJlc291cmNlcywgc3Vic3RpdHV0aW5nIHRoZSBpbnN0YW5jZSdzIGlucHV0cyB2aWEgJHtzY2hlbWEuc3BlYy48ZmllbGQ+fSwgYW5kIHdyaXRlcyBDRUwtZGVyaXZlZCB2YWx1ZXMgdG8gdGhlIGluc3RhbmNlIHN0YXR1cy4KCnNwZWMuc2NoZW1hIGlzIEtSTyBTSU1QTEUtU0NIRU1BLCBOT1QgT3BlbkFQSS4gVW5kZXIgc3BlYzogZWFjaCBmaWVsZCBpcyAibmFtZTogdHlwZSB8IG1hcmtlcnMiICh0eXBlczogc3RyaW5nLCBpbnRlZ2VyLCBmbG9hdCwgYm9vbGVhbjsgbWFya2VyczogcmVxdWlyZWQ9dHJ1ZSwgZGVmYXVsdD0uLi4pLiBVbmRlciBzdGF0dXM6IGVhY2ggZmllbGQgVkFMVUUgaXMgYSBDRUwgc3RyaW5nIHRoYXQgcmVhZHMgYSByZXNvdXJjZSBieSBpdHMgaWQsIGUuZy4gJHt3ZWF0aGVycG9kLnN0YXR1cy5waGFzZX0uIFRoZXJlIGlzIE5PIHByb3BlcnRpZXM6LCBOTyByZXF1aXJlZDogbGlzdCwgTk8geC1rcm8uCgpNSU5JTUFMIFZBTElEIFJHRDoKYXBpVmVyc2lvbjoga3JvLnJ1bi92MWFscGhhMQpraW5kOiBSZXNvdXJjZUdyYXBoRGVmaW5pdGlvbgptZXRhZGF0YToKICBuYW1lOiB3ZWF0aGVyCnNwZWM6CiAgc2NoZW1hOgogICAgYXBpVmVyc2lvbjogdjFhbHBoYTEKICAgIGtpbmQ6IFdlYXRoZXIKICAgIHNwZWM6CiAgICAgIGxhdGl0dWRlOiBzdHJpbmcgfCByZXF1aXJlZD10cnVlCiAgICAgIGxvbmdpdHVkZTogc3RyaW5nIHwgcmVxdWlyZWQ9dHJ1ZQogICAgc3RhdHVzOgogICAgICBwb2RQaGFzZTogJHt3ZWF0aGVycG9kLnN0YXR1cy5waGFzZX0KICAgICAgcG9kSXA6ICR7d2VhdGhlcnBvZC5zdGF0dXMucG9kSVB9CiAgcmVzb3VyY2VzOgogICAgLSBpZDogd2VhdGhlcnBvZAogICAgICB0ZW1wbGF0ZToKICAgICAgICBhcGlWZXJzaW9uOiB2MQogICAgICAgIGtpbmQ6IFBvZAogICAgICAgIG1ldGFkYXRhOgogICAgICAgICAgbmFtZTogd2VhdGhlci1jaGVjawogICAgICAgIHNwZWM6CiAgICAgICAgICByZXN0YXJ0UG9saWN5OiBOZXZlcgogICAgICAgICAgY29udGFpbmVyczoKICAgICAgICAgICAgLSBuYW1lOiBjdXJsCiAgICAgICAgICAgICAgaW1hZ2U6IGN1cmxpbWFnZXMvY3VybDpsYXRlc3QKICAgICAgICAgICAgICBjb21tYW5kOiBbIi9iaW4vc2giLCAiLWMiXQogICAgICAgICAgICAgIGFyZ3M6CiAgICAgICAgICAgICAgICAtICJjdXJsIC1zUyAnaHR0cHM6Ly9hcGkub3Blbi1tZXRlby5jb20vdjEvZm9yZWNhc3Q/bGF0aXR1ZGU9JHtzY2hlbWEuc3BlYy5sYXRpdHVkZX0mbG9uZ2l0dWRlPSR7c2NoZW1hLnNwZWMubG9uZ2l0dWRlfSZjdXJyZW50PXRlbXBlcmF0dXJlXzJtJnRpbWV6b25lPWF1dG8nICYmIHNsZWVwIDM2MDAiCgpJVFMgSU5TVEFOQ0UgKG9mIHRoZSBnZW5lcmF0ZWQga2luZCk6CmFwaVZlcnNpb246IGtyby5ydW4vdjFhbHBoYTEKa2luZDogV2VhdGhlcgptZXRhZGF0YToKICBuYW1lOiBiZXJsaW4Kc3BlYzoKICBsYXRpdHVkZTogIjUyLjUyIgogIGxvbmdpdHVkZTogIjEzLjQxIgo=' | base64 -d)
                   if [ "$IN_SCENARIO" = kro-weather ]; then
                     TASK="Create a 'weather' RGD like the reference: one Pod (curlimages/curl:latest) that curls the open-meteo.com forecast API using the instance's latitude/longitude; surface the pod phase and IP in status."
                   else
