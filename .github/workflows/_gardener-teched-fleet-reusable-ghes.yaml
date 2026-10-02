@@ -314,18 +314,81 @@
         "SHOW_CONTAINMENT": "${{ inputs.show_containment }}"
       "if": "${{ inputs.task == 'nvidia' }}"
       "name": "Run OpenRouter agents (ex10) → rich summary"
-      "run": |
-        case "$IN_SCENARIO" in
-          ping)          PROMPT="Reply with exactly one word: PONG." ;;
-          explain-k8s)   PROMPT="Explain what a Kubernetes Deployment is and how it differs from a Pod, in 4 concise bullet points." ;;
-          kro-weather)   PROMPT="Generate a VALID KRO ResourceGraphDefinition (apiVersion kro.run/v1alpha1, kind ResourceGraphDefinition, name weather). Required shape: a spec.schema block (apiVersion v1alpha1, kind Weather, a spec with simple typed fields, and a status whose fields are KRO CEL expressions referencing a created resource field) AND spec.resources as a list where each item has an id and a template holding a full Kubernetes manifest. Deploy one Pod using image curlimages/curl:latest that queries the public open-meteo.com current-weather forecast API. Do NOT inline resources without id and template, and do NOT invent spec.nodes, spec.components or spec.graph. Output ONLY valid YAML in a single fenced code block." ;;
-          kro-approuter) PROMPT="Generate a VALID KRO ResourceGraphDefinition (apiVersion kro.run/v1alpha1, kind ResourceGraphDefinition, name approuter). Required shape: a spec.schema block (apiVersion v1alpha1, kind Approuter) AND spec.resources as a list where each item has an id and a template. Include a Deployment (image sapse/approuter) and a Service, plus a ConfigMap holding a minimal xs-app.json. Do NOT inline resources without id and template, and do NOT invent spec.nodes, spec.components or spec.graph. Output ONLY valid YAML in a single fenced code block." ;;
-          *)             PROMPT="$IN_PROMPT" ;;
-        esac
-        [ -n "$PROMPT" ] || PROMPT="Reply with exactly one word: PONG."
-        export PROMPT
-        export NAME="ci-or-${{ github.run_id }}-${{ github.run_attempt }}"
-        "$GITHUB_WORKSPACE/.github/scripts/ci-openrouter-agents.sh"
+      "run": |2
+              case "$IN_SCENARIO" in
+                ping)        PROMPT="Reply with exactly one word: PONG." ;;
+                explain-k8s) PROMPT="Explain what a Kubernetes Deployment is and how it differs from a Pod, in 4 concise bullet points." ;;
+                kro-weather|kro-approuter)
+                  # No internet in the box except openrouter.ai → the model can't read KRO's docs; teach it inline with a
+                  # primer + a MINIMAL VALID RGD and its instance. (each ${...} below renders as a literal dollar-brace; the bash
+                  # quoted heredoc <<'KRO' keeps it verbatim; the heredoc body is flush-left so the HCL <<- strip is a no-op.)
+                  KRO=$(cat <<'KRO'
+        KRO (Kube Resource Orchestrator): a ResourceGraphDefinition (RGD) (1) declares spec.schema — a NEW custom kind (KRO
+        generates its CRD; group kro.run, version = schema.apiVersion, kind = schema.kind) — and (2) lists spec.resources, the
+        Kubernetes objects to create, wired with CEL. You then create an INSTANCE of that kind; KRO renders the resources,
+        substituting the instance's inputs via ${schema.spec.<field>}, and writes CEL-derived values to the instance status.
+
+        spec.schema is KRO SIMPLE-SCHEMA, NOT OpenAPI. Under spec: each field is "name: type | markers" (types: string,
+        integer, float, boolean; markers: required=true, default=...). Under status: each field VALUE is a CEL string that
+        reads a resource by its id, e.g. ${weatherpod.status.phase}. There is NO properties:, NO required: list, NO x-kro.
+
+        MINIMAL VALID RGD:
+        apiVersion: kro.run/v1alpha1
+        kind: ResourceGraphDefinition
+        metadata:
+          name: weather
+        spec:
+          schema:
+            apiVersion: v1alpha1
+            kind: Weather
+            spec:
+              latitude: float | required=true
+              longitude: float | required=true
+            status:
+              podPhase: ${weatherpod.status.phase}
+              podIp: ${weatherpod.status.podIP}
+          resources:
+            - id: weatherpod
+              template:
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                  name: weather-check
+                spec:
+                  restartPolicy: Never
+                  containers:
+                    - name: curl
+                      image: curlimages/curl:latest
+                      command: ["/bin/sh", "-c"]
+                      args:
+                        - "curl -sS 'https://api.open-meteo.com/v1/forecast?latitude=${schema.spec.latitude}&longitude=${schema.spec.longitude}&current=temperature_2m&timezone=auto' && sleep 3600"
+
+        ITS INSTANCE (of the generated kind):
+        apiVersion: kro.run/v1alpha1
+        kind: Weather
+        metadata:
+          name: berlin
+        spec:
+          latitude: 52.52
+          longitude: 13.41
+        KRO
+        )
+                  if [ "$IN_SCENARIO" = kro-weather ]; then
+                    TASK="Create a 'weather' RGD like the reference: one Pod (curlimages/curl:latest) that curls the open-meteo.com forecast API using the instance's latitude/longitude; surface the pod phase and IP in status."
+                  else
+                    TASK="Create an 'approuter' RGD: a Deployment (image sapse/approuter) + a Service + a ConfigMap holding a minimal xs-app.json; add a replicas input to schema.spec and surface the deployment readyReplicas in status."
+                  fi
+                  PROMPT="Learn KRO from the reference below, then do this: $TASK Follow the reference's schema format EXACTLY (KRO simple-schema; status values are CEL; NO OpenAPI properties/required/x-kro). Output BOTH the RGD and a sample instance, each in its own fenced yaml block.
+
+        ===== KRO REFERENCE =====
+        $KRO"
+                  ;;
+                *)           PROMPT="$IN_PROMPT" ;;
+              esac
+              [ -n "$PROMPT" ] || PROMPT="Reply with exactly one word: PONG."
+              export PROMPT
+              export NAME="ci-or-${{ github.run_id }}-${{ github.run_attempt }}"
+              "$GITHUB_WORKSPACE/.github/scripts/ci-openrouter-agents.sh"
     - "if": "${{ always() && inputs.task == 'nvidia' }}"
       "name": "Upload ex10 report (v3)"
       "uses": "actions/upload-artifact@v3"
