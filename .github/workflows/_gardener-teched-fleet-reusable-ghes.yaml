@@ -120,6 +120,7 @@
         echo "GLOBALACCOUNT=$GLOBALACCOUNT" >> $GITHUB_OUTPUT
         echo "BTP_DEEPLINK=$DEEPLINK" >> $GITHUB_OUTPUT
     - "id": "HTTPBIN_URL"
+      "if": "${{ inputs.task == 'cluster-health' }}"
       "name": "deploy httpbin via kyma app push"
       "run": |2
             kubectl delete all -l app.kubernetes.io/name=httpbin-$NAMESPACE -n $NAMESPACE || true
@@ -173,11 +174,13 @@
             GLOBALACCOUNT="${{ steps.cluster_info.outputs.GLOBALACCOUNT }}"
             [ -n "$BTP_DEEPLINK" ] && echo "- **BTP Cockpit:** [$GLOBALACCOUNT]($BTP_DEEPLINK)" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
-    - "name": "community modules catalog"
+    - "if": "${{ inputs.task == 'cluster-health' }}"
+      "name": "community modules catalog"
       "run": |
         echo 'discover/add available community-driven modules...'
         ./kyma module catalog | tee /tmp/module_catalog.txt || true
-    - "name": "simulate load on httpbin"
+    - "if": "${{ inputs.task == 'cluster-health' }}"
+      "name": "simulate load on httpbin"
       "run": |
         URL="${{ steps.HTTPBIN_URL.outputs.HTTPBIN_URL }}/headers"
         for i in $(seq 1 30); do
@@ -193,6 +196,7 @@
         "GOOSE_IDP": "${{ steps.coords.outputs.idp }}"
         "GOOSE_MODE": "${{ inputs.goose_mode }}"
         "KEEP_SANDBOX": "${{ inputs.keep_sandbox }}"
+      "if": "${{ inputs.task == 'cluster-health' }}"
       "name": "Goose — interpret cluster health"
       "run": |2
                 # LIVE (Investigate) mode: goose drives read-only kubectl in an explicit-policy OpenShell sandbox (headless
@@ -267,7 +271,7 @@
         out = out.lstrip('\n')
         print(out.strip())
         " | tee /tmp/goose_report.md >> "$GITHUB_STEP_SUMMARY"
-    - "if": "always()"
+    - "if": "${{ always() && inputs.task == 'cluster-health' }}"
       "name": "Upload goose health report (v3)"
       "uses": "actions/upload-artifact@v3"
       "with":
@@ -277,6 +281,7 @@
         "retention-days": 14
     - "env":
         "GH_ISSUE_TOKEN": "${{ secrets.GH_ISSUE_TOKEN }}"
+      "if": "${{ inputs.task == 'cluster-health' }}"
       "name": "Goose — open GitHub issue for critical findings"
       "run": |
         export PATH="$HOME/.local/bin:$PATH"
@@ -299,45 +304,98 @@
         else
           echo "No critical findings — skipping issue creation"
         fi
+    - "env":
+        "AGENT": "${{ inputs.agent }}"
+        "IN_PROMPT": "${{ inputs.prompt }}"
+        "IN_SCENARIO": "${{ inputs.scenario }}"
+        "KEEP_SANDBOX": "${{ inputs.keep_sandbox }}"
+        "OPENROUTER_MODEL": "${{ inputs.model }}"
+        "SHOOT_NAME": "${{ inputs.shoot_name }}"
+        "SHOW_CONTAINMENT": "${{ inputs.show_containment }}"
+      "if": "${{ inputs.task == 'nvidia' }}"
+      "name": "Run OpenRouter agents (ex10) → rich summary"
+      "run": |
+        case "$IN_SCENARIO" in
+          ping)          PROMPT="Reply with exactly one word: PONG." ;;
+          explain-k8s)   PROMPT="Explain what a Kubernetes Deployment is and how it differs from a Pod, in 4 concise bullet points." ;;
+          kro-weather)   PROMPT="Generate a VALID KRO ResourceGraphDefinition (apiVersion kro.run/v1alpha1, kind ResourceGraphDefinition, name weather). Required shape: a spec.schema block (apiVersion v1alpha1, kind Weather, a spec with simple typed fields, and a status whose fields are KRO CEL expressions referencing a created resource field) AND spec.resources as a list where each item has an id and a template holding a full Kubernetes manifest. Deploy one Pod using image curlimages/curl:latest that queries the public open-meteo.com current-weather forecast API. Do NOT inline resources without id and template, and do NOT invent spec.nodes, spec.components or spec.graph. Output ONLY valid YAML in a single fenced code block." ;;
+          kro-approuter) PROMPT="Generate a VALID KRO ResourceGraphDefinition (apiVersion kro.run/v1alpha1, kind ResourceGraphDefinition, name approuter). Required shape: a spec.schema block (apiVersion v1alpha1, kind Approuter) AND spec.resources as a list where each item has an id and a template. Include a Deployment (image sapse/approuter) and a Service, plus a ConfigMap holding a minimal xs-app.json. Do NOT inline resources without id and template, and do NOT invent spec.nodes, spec.components or spec.graph. Output ONLY valid YAML in a single fenced code block." ;;
+          *)             PROMPT="$IN_PROMPT" ;;
+        esac
+        [ -n "$PROMPT" ] || PROMPT="Reply with exactly one word: PONG."
+        export PROMPT
+        export NAME="ci-or-${{ github.run_id }}-${{ github.run_attempt }}"
+        "$GITHUB_WORKSPACE/.github/scripts/ci-openrouter-agents.sh"
+    - "if": "${{ always() && inputs.task == 'nvidia' }}"
+      "name": "Upload ex10 report (v3)"
+      "uses": "actions/upload-artifact@v3"
+      "with":
+        "if-no-files-found": "ignore"
+        "name": "openrouter-agents-${{ inputs.shoot_name }}"
+        "path": "/tmp/openrouter_report.md"
+        "retention-days": 14
 "name": "_gardener-teched-fleet-reusable-ghes"
 "on":
   "workflow_call":
     "inputs":
+      "agent":
+        "default": "pi"
+        "description": "pi (default) | all-three | opencode | qwen"
+        "type": "string"
       "goose_mode":
         "default": "snapshot"
-        "description": "Goose mode: snapshot (interpret kyma-diagnose output, no tools)
-          OR live (read-only kubectl investigation in an OpenShell sandbox; skips
-          where OpenShell absent)"
+        "description": "snapshot (interpret kyma-diagnose, no tools) | live (read-only
+          kubectl in a sandbox)"
         "type": "string"
       "keep_sandbox":
         "default": false
-        "description": "Live mode only: keep the sandbox alive after the run so students
-          can inspect its logs (default: delete it)"
+        "description": "keep the sandbox alive after the run"
         "type": "boolean"
       "kyma_env_uuid":
         "description": "Kyma env UUID — KEB key on GHES; empty on github.com (static
           bake)"
         "required": true
         "type": "string"
+      "model":
+        "default": "qwen/qwen3.8-27b:free"
+        "description": "OpenRouter :free model (e.g. qwen/qwen3.8-27b:free · nvidia/nemotron-3-super-120b-a12b:free)"
+        "type": "string"
       "namespace":
         "default": "quovadis-k3d"
         "description": "Target namespace"
+        "type": "string"
+      "prompt":
+        "default": ""
+        "description": "Custom prompt (used when scenario = custom)"
         "type": "string"
       "runner":
         "default": "[\"ubuntu-latest\"]"
         "description": "JSON-encoded runner labels"
         "type": "string"
+      "scenario":
+        "default": "kro-weather"
+        "description": "kro-weather | kro-approuter | explain-k8s | ping | custom"
+        "type": "string"
       "shoot_name":
         "description": "Kyma env name (e.g. xp266-001)"
         "required": true
         "type": "string"
+      "show_containment":
+        "default": true
+        "description": "Include the egress / containment proof"
+        "type": "boolean"
       "subaccount_id":
         "description": "BTP subaccount id"
         "required": true
         "type": "string"
+      "task":
+        "default": "cluster-health"
+        "description": "cluster-health (goose) | nvidia (OpenRouter agents)"
+        "type": "string"
     "secrets":
       "GH_ISSUE_TOKEN":
-        "description": "GitHub token for opening issues on critical findings"
+        "description": "GitHub token for opening issues on critical findings (cluster-health
+          only)"
         "required": false
 "permissions":
   "contents": "read"

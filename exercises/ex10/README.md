@@ -50,6 +50,41 @@ One image, three agents (all installed in `openrouter-agents:latest`):
 | **Pi** | `@earendil-works/pi-coding-agent` | `pi -p --model openrouter/<model> "…"` (headless) or `pi` (TUI) |
 | **Qwen Code** | `@qwen-code/qwen-code` (OpenAI-compat) | `qwen` (TUI) — reads `OPENAI_API_KEY`/`OPENAI_BASE_URL` (pre-set in the box) |
 
+## OpenRouter vs SAP AI Core — the same shape to LiteLLM
+
+**OpenRouter** is a public LLM *aggregator*: one OpenAI-compatible endpoint + one key, routing to many models
+(OpenAI, Anthropic, Google, Qwen, NVIDIA…). **SAP AI Core** — the provider you used *keyless* in ex9 — is SAP's
+managed inference gateway, reached in-cluster through the **LiteLLM proxy**. To LiteLLM they're the **same shape** (an
+OpenAI-compatible gateway behind one credential), so one proxy can front **both**.
+
+The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.** OpenRouter only routes to its own public
+upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
+the reverse.
+
+| | ex9 (keyless, in-cluster) | ex10 (this exercise — **direct**) |
+|---|---|---|
+| Path | agent → LiteLLM proxy → **SAP AI Core** | agent → **OpenRouter** (one allow-listed external host) |
+| Key | none in the box (ClusterIP, plain-HTTP) | real key in the gateway; box sees a sentinel |
+| Internet | none | one host: `openrouter.ai` |
+
+ex10 keeps the agent talking to OpenRouter **directly** — that external, allow-listed, keyed endpoint *is* the 4th
+tier. (In production you'd often put OpenRouter *behind* LiteLLM too — one in-cluster exit, spend-tracked, key never
+leaves the proxy — but then it looks just like ex9.)
+
+> [!TIP]
+> **Picking a `:free` model.** The agents are *agentic*, so the model must be a **chat/completion model with
+> tool-calling**. **Embedding and rerank models won't work** (ids with `-embed-` / `-rerank-` are RAG parts, not chat
+> — the agent will error). The `:free` lineup **rotates** (models go paid without notice). Known-good free picks:
+> **`qwen/qwen3.8-27b:free`** (default) and **`nvidia/nemotron-3-super-120b-a12b:free`**. Find current ones at
+> [openrouter.ai/models?max_price=0](https://openrouter.ai/models) or the NVIDIA model dashboard
+> ([`sherman-yang/nvidia-model-info`](https://github.com/sherman-yang/nvidia-model-info), `agent` filter). This
+> exercise replicates NVIDIA's [*Run Pi with OpenRouter*](https://docs.nvidia.com/openshell/latest/tutorials/run-pi-with-openrouter).
+
+> [!NOTE]
+> **No terminal? (Windows / no CLI).** Run the **`all-fleets-teched-nvidia`** workflow from the repo's **Actions** tab —
+> pick your cluster, agent, and model, then read the run **summary**: a verdict table, each agent's output, and the
+> containment proof. Same agents, same containment, zero local tooling.
+
 ## Exercise 10.1 - Inspect the pieces (UI)
 
 1. In Busola, open **namespace `openshell` → Custom Resources** and find the pre-built image build (`KanikoAgent`
