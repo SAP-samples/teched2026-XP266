@@ -161,6 +161,143 @@ So this is a *different* tier than ex9, not a weaker one:
 
 Clean up: `openshell sandbox delete agents`
 
+## Exercise 10.5 - From draft to deployable: a correct KRO RGD 🔧
+
+When you ask an agent for *"a KRO ResourceGraphDefinition"*, a free model's first draft is usually **confident but
+wrong** — it reaches for OpenAPI schema (`type`/`properties`/`x-kro`), Helm templating (`{{ .spec.x }}`), or invented
+fields (`spec.nodes`/`components`/`graph`). KRO is a niche CRD the model hasn't memorised. That's the real lesson of
+this exercise: **the agent drafts, the cluster adjudicates — you iterate.** Always validate before trusting:
+
+```bash
+kubectl apply --dry-run=server -f weather-rgd.yaml   # the API server + KRO reject an invalid RGD
+```
+
+KRO's actual rules (what the drafts get wrong):
+- **`spec.schema` is KRO *simple-schema*, not OpenAPI** — each field is `name: type | markers` (types `string`,
+  `integer`, `float`, `boolean`; markers `required=true`, `default=…`). No `properties:`, no `required:` list, no `x-kro`.
+- **Status fields are CEL strings** that read a created resource by its `id`: `${weatherpod.status.phase}`.
+- **Templates substitute instance inputs with CEL** `${schema.spec.<field>}` — **not** `{{ }}`.
+- **The instance's `apiVersion` is `kro.run/v1alpha1`** (group `kro.run`), kind = your `schema.kind`.
+- KRO is **already installed** on your teched runtime — just `kubectl apply`.
+
+A **corrected, deployable** version (keeps the production touches — namespace, ServiceAccount + RBAC, `securityContext`,
+resource limits, two example instances — but uses *real* KRO):
+
+```yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata: { name: weather-system }
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: { name: weather-checker, namespace: weather-system }
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: { name: weather-checker, namespace: weather-system }
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata: { name: weather-checker, namespace: weather-system }
+roleRef: { apiGroup: rbac.authorization.k8s.io, kind: Role, name: weather-checker }
+subjects:
+  - { kind: ServiceAccount, name: weather-checker, namespace: weather-system }
+---
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata: { name: weather }          # RGDs are cluster-scoped (no namespace)
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: Weather
+    spec:                            # KRO simple-schema (strings → drop straight into env + the URL)
+      name: string | required=true
+      latitude: string | required=true
+      longitude: string | required=true
+      currentFields: string | default="temperature_2m,relative_humidity_2m,wind_speed_10m"
+      timezone: string | default="auto"
+      sleepSeconds: string | default="3600"
+    status:                          # CEL reading the created Pod by its resource id
+      podPhase: ${weatherpod.status.phase}
+      podIp: ${weatherpod.status.podIP}
+      containerImage: ${weatherpod.status.containerStatuses[0].image}
+  resources:
+    - id: weatherpod
+      template:
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          name: ${schema.spec.name}
+          namespace: weather-system
+          labels: { app.kubernetes.io/name: weather-check, app.kubernetes.io/managed-by: kro }
+        spec:
+          restartPolicy: Never
+          serviceAccountName: weather-checker
+          securityContext: { fsGroup: 1000 }
+          containers:
+            - name: weather-query
+              image: curlimages/curl:latest
+              env:
+                - { name: LATITUDE,       value: ${schema.spec.latitude} }
+                - { name: LONGITUDE,      value: ${schema.spec.longitude} }
+                - { name: CURRENT_FIELDS, value: ${schema.spec.currentFields} }
+                - { name: TIMEZONE,       value: ${schema.spec.timezone} }
+                - { name: SLEEP_SECONDS,  value: ${schema.spec.sleepSeconds} }
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -e
+                  echo "Weather for $LATITUDE,$LONGITUDE ($CURRENT_FIELDS)"
+                  curl -sS "https://api.open-meteo.com/v1/forecast?latitude=$LATITUDE&longitude=$LONGITUDE&current=$CURRENT_FIELDS&timezone=$TIMEZONE" | head -c 4096
+                  echo; sleep "$SLEEP_SECONDS"
+              resources:
+                requests: { cpu: 50m, memory: 64Mi }
+                limits:   { cpu: 100m, memory: 128Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1000
+                capabilities: { drop: ["ALL"] }
+---
+apiVersion: kro.run/v1alpha1       # ← instance of the generated kind, group kro.run
+kind: Weather
+metadata: { name: berlin, namespace: weather-system }
+spec:
+  name: weather-berlin
+  latitude: "52.52"
+  longitude: "13.41"
+  currentFields: "temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m"
+  timezone: "Europe/Berlin"
+  sleepSeconds: "1800"
+---
+apiVersion: kro.run/v1alpha1
+kind: Weather
+metadata: { name: newyork, namespace: weather-system }
+spec:
+  name: weather-newyork
+  latitude: "40.7128"
+  longitude: "-74.0060"
+  currentFields: "temperature_2m,relative_humidity_2m,wind_speed_10m"
+  timezone: "America/New_York"
+  sleepSeconds: "3600"
+```
+
+```bash
+kubectl apply --dry-run=server -f weather-rgd.yaml   # validate first
+kubectl apply -f weather-rgd.yaml                    # then deploy
+kubectl -n weather-system get weather,pods
+kubectl -n weather-system get weather berlin -o jsonpath='{.status}'   # CEL-derived status
+```
+
+> [!NOTE]
+> Treat this as *the shape KRO accepts*, not gospel — always `--dry-run=server` first. That round-trip (draft → reject
+> → fix) **is** the skill ex10 is teaching.
+
 ## Summary
 
 You added an **external, keyed** LLM provider to the contained-sandbox model, ran three different terminal coding
