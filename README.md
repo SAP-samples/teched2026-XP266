@@ -77,6 +77,7 @@ flowchart LR
 - [Exercise 7 - JupyterHub playground: SAP AI Core from Python](exercises/ex7/) — run the sample notebooks, do the guided exercises, create your own
 - [Exercise 8 - Behind the scenes: the workflow that built your runtime](exercises/ex8/) — run the `all-fleets-admin` pipeline and explore every deploy step
 - [Exercise 9 - Your own sandboxed agent: the OpenShell CLI dance](exercises/ex9/) 🔧 *(advanced / instructor-demo)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
+- [Exercise 10 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex10/) 🔧 *(advanced / CLI)* — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
 
 > [!IMPORTANT]
 > **Every exercise can be completed entirely in the browser — no terminal experience required.** A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**; wherever one appears there is a UI (Busola) or **Run workflow** (GitHub Actions) way to reach the same result. Whatever your level, you can succeed with clicks alone.
