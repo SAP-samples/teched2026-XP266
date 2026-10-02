@@ -118,21 +118,31 @@ run_agent() {
   esac
   ver=$("$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc "$a --version 2>/dev/null | head -1" </dev/null 2>/dev/null || true)
   echo "==> running '$a' (model openrouter/$MODEL) …" >&2
+  "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'touch /tmp/.ex10_marker' </dev/null 2>/dev/null || true
   t0=$(date +%s)
   out=$(printf '%s' "$PROMPT" | "$OS" sandbox exec --name "$NAME" --no-tty -- \
         bash -lc "source /tmp/openrouter.env; PROMPT=\$(cat); $cmd" 2>&1) || rc=$?
   secs=$(( $(date +%s) - t0 ))
   clean=$(printf '%s' "$out" | strip)
-  if [ "$rc" = 0 ] && [ -n "$(printf '%s' "$clean" | tr -d '[:space:]')" ]; then
+  # Some agents (e.g. Pi) SAVE the artifact to files instead of printing it. Collect any yaml/json the agent wrote
+  # during the run (the sandbox is ephemeral → this is the only way those files reach the report). Markers → markdown.
+  raw=$("$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc 'for f in $(find /sandbox /home /workspace . -maxdepth 6 -type f -newer /tmp/.ex10_marker -not -path "*/.*" \( -name "*.yaml" -o -name "*.yml" -o -name "*.json" \) 2>/dev/null | sort -u | head -8); do echo "@@FILE@@ $f"; cat "$f" 2>/dev/null; echo; echo "@@END@@"; done' </dev/null 2>/dev/null | strip || true)
+  wrote=$(printf '%s\n' "$raw" | awk '/^@@FILE@@ /{print ""; print "**"substr($0,10)"**"; print "```yaml"; next} /^@@END@@$/{print "```"; next} {print}')
+  if [ "$rc" = 0 ] && { [ -n "$(printf '%s' "$clean" | tr -d '[:space:]')" ] || [ -n "$(printf '%s' "$raw" | tr -d '[:space:]')" ]; }; then
     verdict="✅ completed"; note="returned a completion in ${secs}s"
   else
     verdict="⚠️ no completion"; note="exit $rc${clean:+ (see output)}; try a different :free model"
   fi
   printf '%s\t%s\t%ss\t%s\n' "$a" "$verdict" "$secs" "$note" >> "$RESULTS"
-  { printf '<details%s><summary><b>%s</b>%s · %s · %ss</summary>\n\n```\n' \
-      "$([ "$a" = opencode ] && echo ' open')" "$a" "${ver:+ · <code>$ver</code>}" "$verdict" "$secs"
+  { printf '<details open><summary><b>%s</b>%s · %s · %ss</summary>\n\n```\n' \
+      "$a" "${ver:+ · <code>$ver</code>}" "$verdict" "$secs"
     printf '%s\n' "${clean:-(no output)}"
-    printf '```\n\n</details>\n\n'; } >> "$DETAILS"
+    printf '```\n'
+    if [ -n "$(printf '%s' "$raw" | tr -d '[:space:]')" ]; then
+      printf '\n**Generated file(s)** — verbatim:\n%s\n' "$wrote"
+      [ "$KEEP_SANDBOX" = "true" ] && printf '\n> Also on disk in the kept sandbox `%s` — inspect: `openshell sandbox exec --name %s -- cat <path>`\n' "$NAME" "$NAME"
+    fi
+    printf '\n</details>\n\n'; } >> "$DETAILS"
 }
 case "$AGENT" in
   all-three)        for a in opencode pi qwen; do run_agent "$a"; done ;;
