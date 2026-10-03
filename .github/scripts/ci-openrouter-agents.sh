@@ -60,15 +60,23 @@ fi
 "$OS" --version >&2
 
 # ── derive gateway host + issuer; headless client-credentials login; PIN the gateway ──
-VS_HOST=$(kubectl -n openshell get virtualservice -o jsonpath='{.items[0].spec.hosts[0]}' 2>/dev/null || true)
-[ -n "$VS_HOST" ] || { echo "ERROR: no openshell VirtualService in ns openshell — is OpenShell deployed?" >&2; exit 2; }
+# Prefer the VS named for THIS shoot's primary domain (OPENSHELL_VS, e.g. openshell-{aws,openstack,azure}); a shoot has
+# MULTIPLE openshell VSes, so `.items[0]` is nondeterministic and may pick a host whose issuer domain NXDOMAINs.
+# Fetch the one VS by name; fall back to items[0] only when OPENSHELL_VS is unset.
+if [ -n "${OPENSHELL_VS:-}" ]; then
+  VS_HOST=$(kubectl -n openshell get virtualservice "$OPENSHELL_VS" -o jsonpath='{.spec.hosts[0]}' 2>/dev/null || true)
+  [ -n "$VS_HOST" ] || { echo "ERROR: openshell VirtualService '$OPENSHELL_VS' not found in ns openshell" >&2; exit 2; }
+else
+  VS_HOST=$(kubectl -n openshell get virtualservice -o jsonpath='{.items[0].spec.hosts[0]}' 2>/dev/null || true)
+  [ -n "$VS_HOST" ] || { echo "ERROR: no openshell VirtualService in ns openshell — is OpenShell deployed?" >&2; exit 2; }
+fi
 GW_URL="https://$VS_HOST"
 ISSUER="https://keycloak.${VS_HOST#openshell.}/realms/ateam-isveng"
 OPENSHELL_OIDC_CLIENT_SECRET=$(kubectl -n openshell get secret openshell-admin-sa \
   -o jsonpath='{.data.OPENSHELL_OIDC_CLIENT_SECRET}' 2>/dev/null | base64 -d || true)
 [ -n "$OPENSHELL_OIDC_CLIENT_SECRET" ] || { echo "ERROR: openshell-admin-sa secret not readable" >&2; exit 2; }
 export OPENSHELL_OIDC_CLIENT_SECRET
-echo "==> gateway=$GW_URL  issuer=$ISSUER" >&2
+echo "==> gateway=$GW_URL  issuer=$ISSUER  vs=${OPENSHELL_VS:-items[0]}" >&2
 "$OS" gateway add "$GW_URL" --oidc-issuer "$ISSUER" --oidc-client-id openshell-admin-sa --oidc-audience openshell-oidc >&2
 export OPENSHELL_GATEWAY="$VS_HOST"                            # pin EVERY subsequent provider/sandbox call to this shoot
 SHOOT=${SHOOT_NAME:-$(echo "${VS_HOST#openshell.}" | cut -d. -f1)}
