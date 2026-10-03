@@ -21,7 +21,8 @@ set -euo pipefail
 
 # ── inputs ──────────────────────────────────────────────────────────────────────
 PROMPT_SRC=${1:--}                                             # a file path, or '-' for stdin
-IMAGE=${IMAGE:-localhost:32137/dev-toolbox-bash:latest}        # in-cluster registry NodePort ref (goose baked in)
+case "${SHOOT_NAME:-}" in k3d-*) _reg="dev-${SHOOT_NAME#k3d-}:5000" ;; *) _reg="localhost:32137" ;; esac   # per-cluster registry (k3d local vs Gardener NodePort)
+IMAGE=${IMAGE:-$_reg/dev-toolbox-bash:latest}                  # goose baked (the dev-toolbox container also passes IMAGE explicitly)
 GOOSE_MODEL=${GOOSE_MODEL:-anthropic--claude-4.6-sonnet}       # SAP AI Core model via the proxy
 LITELLM_HOST=${LITELLM_HOST:-http://litellm-proxy.default.svc.cluster.local:4001}
 # Optional 2nd-pass reformat (EMPTY → skip, emit the raw goose report — the admin-GHA default, unchanged). When

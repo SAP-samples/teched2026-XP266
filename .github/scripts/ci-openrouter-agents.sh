@@ -21,7 +21,8 @@ AGENT=${AGENT:-pi}                                      # all-three | opencode |
 MODEL=${OPENROUTER_MODEL:-${MODEL:-qwen/qwen3.8-27b:free}}      # an OpenRouter :free model
 PROMPT=${PROMPT:-Reply with exactly one word: PONG}            # default = a deterministic smoke prompt (guaranteed-clear success)
 SHOW_CONTAINMENT=${SHOW_CONTAINMENT:-true}
-IMAGE=${IMAGE:-localhost:32137/openrouter-agents:latest}       # in-cluster registry NodePort ref (agents baked in)
+case "${SHOOT_NAME:-}" in k3d-*) _reg="dev-${SHOOT_NAME#k3d-}:5000" ;; *) _reg="localhost:32137" ;; esac   # per-cluster registry (k3d local vs Gardener NodePort)
+IMAGE=${IMAGE:-$_reg/openrouter-agents:latest}                 # agents baked ($IMAGE overrides)
 KEEP_SANDBOX=${KEEP_SANDBOX:-false}
 NAME=${NAME:-ci-or-$(date +%s)}; NAME=$(printf '%.19s' "$NAME")   # 19-char sandbox-name cap
 
