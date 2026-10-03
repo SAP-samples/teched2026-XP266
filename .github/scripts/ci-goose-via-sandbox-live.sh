@@ -70,11 +70,21 @@ fi
 "$OS" --version >&2
 
 # ── 2. derive gateway host + Keycloak issuer from the cluster (no hardcoded values) ──
-VS_HOST=$(kubectl -n openshell get virtualservice -o jsonpath='{.items[0].spec.hosts[0]}' 2>/dev/null || true)
-[ -n "$VS_HOST" ] || { echo "ERROR: no openshell VirtualService in ns openshell" >&2; exit 2; }
+# Prefer the VS named for THIS shoot's primary domain (OPENSHELL_VS, TF-threaded: openshell-{aws,openstack,azure}).
+# A shoot can have MULTIPLE openshell VSes (one per "anywhere" gateway/domain) → `.items[0]` is nondeterministic AND
+# may pick a host whose domain doesn't resolve / whose keycloak issuer the gateway wasn't configured with. Fetching
+# the one VS by name is robust no matter how many exist. Fallback to items[0] only when OPENSHELL_VS is unset
+# (standalone/manual runs).
+if [ -n "${OPENSHELL_VS:-}" ]; then
+  VS_HOST=$(kubectl -n openshell get virtualservice "$OPENSHELL_VS" -o jsonpath='{.spec.hosts[0]}' 2>/dev/null || true)
+  [ -n "$VS_HOST" ] || { echo "ERROR: openshell VirtualService '$OPENSHELL_VS' not found in ns openshell" >&2; exit 2; }
+else
+  VS_HOST=$(kubectl -n openshell get virtualservice -o jsonpath='{.items[0].spec.hosts[0]}' 2>/dev/null || true)
+  [ -n "$VS_HOST" ] || { echo "ERROR: no openshell VirtualService in ns openshell" >&2; exit 2; }
+fi
 GW_URL="${GW_URL:-https://$VS_HOST}"
 ISSUER="${ISSUER:-https://keycloak.${VS_HOST#openshell.}/realms/ateam-isveng}"
-echo "==> gateway=$GW_URL  issuer=$ISSUER  shoot=$SHOOT" >&2
+echo "==> gateway=$GW_URL  issuer=$ISSUER  shoot=$SHOOT  vs=${OPENSHELL_VS:-items[0]}" >&2
 
 # ── 3. read the confidential client secret + register client-credentials (headless) ──
 OPENSHELL_OIDC_CLIENT_SECRET=$(kubectl -n openshell get secret openshell-admin-sa \
