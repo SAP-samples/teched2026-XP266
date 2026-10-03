@@ -72,6 +72,25 @@ OpenShell applies **defense in depth** across four policy domains — some locke
 | **Process** | privilege escalation, dangerous syscalls | locked at sandbox creation | non-root uid 10001, `drop [ALL]` caps, `seccomp: RuntimeDefault`, no privilege escalation |
 | **Provider credentials** | resolve credential **sentinels** only at profile-authorized endpoints | runtime (new vars need a new process) | the supervisor swaps the injected resolve sentinel for the real key **only** on the provider's declared endpoint |
 
+> [!NOTE]
+> **Why "kernel-level, not container-level" matters — Landlock + seccomp.** The Filesystem and Process layers above are
+> enforced by the **Linux kernel itself**, from *inside* the agent process — not by the container runtime around it:
+> - **Landlock** is a Linux Security Module (kernel ≥ 5.13) that lets an *unprivileged* process restrict its **own**
+>   filesystem access at the syscall level. The supervisor builds a Landlock ruleset from the `filesystem_policy`
+>   (read-only `/usr`,`/etc`; read-write `/sandbox`,`/tmp`) before the agent runs. The agent then **cannot** reach a
+>   path outside the policy *regardless of what the container or its own code tries* — and it can't take the restriction
+>   back off (Landlock rules are one-way). `best_effort` means "apply the strongest ruleset this kernel's Landlock ABI
+>   supports."
+> - **seccomp** (`RuntimeDefault`) filters the syscalls the process may make at all — blocking privilege-escalation /
+>   setuid / dangerous syscalls below the application.
+>
+> Because these are **host-kernel** features, the node's kernel must actually have them **enabled**. Managed Kyma /
+> Gardener nodes and most modern Linux (e.g. Ubuntu) ship Landlock active, so sandboxes "just work" there. On a host
+> where Landlock is compiled but **disabled at boot** (e.g. SUSE's default `lsm=` list omits it), the supervisor can't
+> build its ruleset and `sandbox create` fails with `ProvisioningTimedOut` — the fix is host-side (`lsm=landlock,…` on
+> the kernel cmdline + reboot). This is the "defense extends down to the kernel" trade-off: strong isolation, but it
+> depends on the host, not just the container. (Full story: `docs/openshell-landlock-k3d.md` in the platform repo.)
+
 ### Common use cases
 
 | Use case | What it looks like here |
@@ -468,7 +487,7 @@ the stock **agent-sandbox** runtime — no fork, no extra network config. *The s
 | **Supervisor** | The trusted process (outside the boundary) that owns the box's single exit: intercepts all outbound traffic, enforces the allow-list, and injects the real LLM key at the last hop. |
 | **`openshell-sandbox`** | The in-boundary agent-side component that identifies which binary made a request and applies process controls; verifies the sandbox JWT but can't mint one. |
 | **L7 allow-list (policy)** | The supervisor's deny-by-default rule set — names, at the application layer, exactly *which binary* may reach *which host:port* over *which protocol* (`openshell policy set`). |
-| **Landlock** | A Linux LSM the sandbox uses (`best_effort`) to confine filesystem access to declared paths — one of the protection layers. |
+| **Landlock** | A Linux kernel LSM (≥ 5.13) the sandbox uses (`best_effort`) to confine filesystem access to declared paths — enforced **in-kernel, from inside the agent process**, so it holds regardless of the container. One of the kernel-level protection layers; requires the **host kernel** to have Landlock enabled (see the note under *Protection layers*). |
 | **Credential injection / sentinel** | The agent sends a resolve *sentinel* (`openshell:resolve:env:…`), not a real key; the supervisor swaps in the real key just before forwarding upstream. The key lives only in the gateway. |
 | **Provider** | A named binding of a service to a stored credential (`litellm`, `litellm-openai`); the supervisor releases it only at the profile-authorized endpoint. |
 | **Gateway JWT / Sandbox JWT** | The paired machine tokens for one sandbox run — supervisor→gateway and supervisor→`openshell-sandbox` respectively; the sandbox can verify but not mint. |
