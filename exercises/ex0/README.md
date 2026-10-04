@@ -16,6 +16,13 @@ In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, 
 2. Sign in with the workshop identity provider when prompted (single sign-on). You land on the Busola **Cluster Overview** for your runtime.
 <br>![](images/00_01_0010.png)
 
+> [!NOTE]
+> **How sign-in works.** Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers*
+> several corporate identity providers. For TechEd the default is **SAP IAS** — enter your workshop account and you are
+> straight in. If you are an **SAP employee** (an `@sap.com` address), IAS automatically forwards you to **SAP corporate
+> single sign-on** (with 2FA); the first time it quietly links that to your account, so you never see an "account already
+> exists" prompt. Either way you end up in the same Busola session — no passwords are stored by the workshop.
+
 > [!TIP]
 > The **Cluster Overview** shows one or more **banner cards** with handy shortcut **buttons** into the workshop features (dashboards, quick actions). If you dismiss a card, it **stays hidden in that browser**. To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
 
