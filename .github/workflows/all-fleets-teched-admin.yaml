@@ -94,8 +94,8 @@
         "options":
         - "none"
         - "all"
-        - "teched-01"
         - "teched-02"
+        - "teched-01"
         "type": "choice"
       "keep_sandbox":
         "default": false
@@ -106,11 +106,12 @@
         "description": "Your cluster (xp266-NNN)"
         "options":
         - "none"
+        - "xp266-011"
+        - "xp266-012"
         - "xp266-001"
         - "xp266-002"
         - "xp266-003"
-        - "xp266-011"
-        - "xp266-012"
+        - "xp266-004"
         "type": "choice"
 "permissions":
   "contents": "read"

@@ -164,7 +164,8 @@
             echo "" >> "$GITHUB_STEP_SUMMARY"
             DOMAIN="$SHOOT_NAME.$SERVE_DOMAIN"
             echo "- **httpbin:** [https://$CUSTOM_HOST/headers](https://$CUSTOM_HOST/headers)" >> "$GITHUB_STEP_SUMMARY"
-            echo "- **Busola:** [https://monsoon3.$DOMAIN/kubeconfig](https://monsoon3.$DOMAIN/kubeconfig)" >> "$GITHUB_STEP_SUMMARY"
+            case "$SHOOT_NAME" in xp266-*) BUSOLA_PREFIX=busola ;; *) BUSOLA_PREFIX=monsoon3 ;; esac   # teched serves Busola at busola.<...>; everything else at monsoon3. (mirrors local._busola_prefix)
+            echo "- **Busola:** [https://$BUSOLA_PREFIX.$DOMAIN/kubeconfig](https://$BUSOLA_PREFIX.$DOMAIN/kubeconfig)" >> "$GITHUB_STEP_SUMMARY"
             echo "- **Headlamp:** [https://headlamp.$DOMAIN](https://headlamp.$DOMAIN)" >> "$GITHUB_STEP_SUMMARY"
             echo "- **Keycloak:** [https://keycloak.$DOMAIN](https://keycloak.$DOMAIN)" >> "$GITHUB_STEP_SUMMARY"
             echo "- **SCC:** [https://sapcc.$DOMAIN](https://sapcc.$DOMAIN)" >> "$GITHUB_STEP_SUMMARY"
