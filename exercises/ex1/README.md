@@ -31,7 +31,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 | **v3** | `cluster-health-v3` | **live**, read-only `kubectl`, real-time and uncapped | richest and priciest — treat it as a lead list to confirm |
 
 > [!NOTE]
-> The **security audit** (`cluster-audit`) is produced as part of a **v2** run — there's no separate button. Trigger a v2 run to refresh it, and read it in **Busola → Cluster Audit**. v3 may be disabled on some clusters.
+> The **security audit** (`cluster-audit`) is produced as part of a **v2** run — there's no separate button. Trigger a v2 run to refresh it, and read it in **Busola → Cluster Audit**.
 
 **Contents**
 
