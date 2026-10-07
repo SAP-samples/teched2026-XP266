@@ -52,7 +52,9 @@ The dashboards are one click away from Busola's left navigation.
 
 ## Exercise 3.3 - The FleetStatus card
 
-1. In Busola's left navigation, open **Autonomous Fleet → Autonomous Fleet Status**, then the **`fleet-status`** resource (namespace `dev-toolbox-system`). It surfaces the health and the **LLM Dashboards** / **SAP Cloud Logging** shortcuts as cards — a single pane that links the running system to its observability.
+1. In Busola, switch to namespace **`dev-toolbox-system`**.
+
+2. In the left navigation, open **Autonomous Fleet → Autonomous Fleet Status**, then the **`fleet-status`** resource. It displays the **LLM Dashboards** / **SAP Cloud Logging** shortcuts as cards.
 <br>![](images/05_03_0010.png)
 
 ## Summary
