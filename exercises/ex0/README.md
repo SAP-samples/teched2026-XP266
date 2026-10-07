@@ -44,7 +44,7 @@ Now sign in:
 
 ## Exercise 0.2 - See what is already deployed
 
-Everything in the "pink" layer of the architecture — the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, JupyterHub, the telemetry and spend pipeline — was deployed for you declaratively with **KRO** (Kubernetes Resource Orchestrator) as a single unit. Let's confirm it's there.
+Everything in the **self-hosted agent layer** — the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, JupyterHub, the telemetry and spend pipeline — was deployed for you declaratively with **KRO** (Kubernetes Resource Orchestrator) as a single unit. Let's confirm it's there.
 
 1. In Busola, use the namespace switcher (top left) to look at the key namespaces:
 
@@ -68,7 +68,7 @@ Everything in the "pink" layer of the architecture — the LiteLLM proxy, the Go
 
 ## Exercise 0.3 - Where this sits in the SAP AI landscape
 
-The pink components you just found are the **self-hosted, in-cluster agent layer**. Everything else on the map — SAP Joule, the Generative AI Hub, SAP AI Core, the data and runtime layers — is the SAP AI platform your agent **consumes**. The one connection that matters for this workshop is the arrow from your agent to SAP AI Core, through the LiteLLM proxy:
+The components you just found are the **self-hosted, in-cluster agent layer**. Everything else on the map — SAP Joule, the Generative AI Hub, SAP AI Core, the data and runtime layers — is the SAP AI platform your agent **consumes**. The one connection that matters for this workshop is the arrow from your agent to SAP AI Core, through the LiteLLM proxy:
 
 ```mermaid
 flowchart TB

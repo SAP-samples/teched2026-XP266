@@ -6,15 +6,28 @@ This repository contains the material for the SAP TechEd 2026 session **XP266 - 
 
 ## Overview
 
-Modern Kubernetes operations need more than dashboards — they need reasoning. In this hands-on you meet a **fully in-cluster, sandboxed AI operations agent** running on **SAP BTP, Kyma runtime** and talking to **SAP AI Core**: a [Goose](https://github.com/block/goose) agent with live `kubectl` access that investigates the cluster autonomously, writes its findings as Kubernetes custom resources you can see in Busola, and streams its LLM spend to SAP Cloud Logging — all routed through a **LiteLLM proxy** and deployed declaratively with **KRO**.
+Modern Kubernetes operations need more than dashboards — they need **reasoning**.
 
-Everything is **already deployed and wired up for you** on your personal Kyma runtime — the provisioning and bootstrapping are done. Your two hours are spent **understanding how the pieces fit and playing with the running system**: call SAP AI Core through the proxy, run agents in the in-cluster web terminal, tweak the autonomous diagnostic jobs and watch the reports change, chat with the interactive chat agent, read the spend dashboards, inspect the sandbox guardrails, explore SAP AI Core from Python in JupyterHub — and finally run the **GitHub Actions pipeline** that deployed all of it (deploying, when you do it, is a click, not a local tool-chain).
+In this hands-on you meet a **fully in-cluster, sandboxed AI operations agent** running on **SAP BTP, Kyma runtime** and talking to **SAP AI Core**: a [Goose](https://github.com/block/goose) agent with live `kubectl` access that investigates the cluster autonomously, writes its findings as Kubernetes custom resources you can see in Busola, and streams its LLM spend to SAP Cloud Logging — all routed through a **LiteLLM proxy** and deployed declaratively with **KRO**.
 
-This is the "self-hosted agent" layer (shown in pink) of the SAP AI landscape — everything below runs **inside your Kyma runtime** and reaches SAP AI Core through one proxy:
+Everything is **already deployed and wired up for you** on your personal Kyma runtime — the provisioning and bootstrapping are done. Your two hours are spent **understanding how the pieces fit and playing with the running system**:
+
+- call **SAP AI Core** through the proxy;
+- run agents in the **in-cluster web terminal**;
+- tweak the **autonomous diagnostic jobs** and watch the reports change;
+- chat with the **interactive chat agent**;
+- read the **spend dashboards**;
+- inspect the **sandbox guardrails**;
+- explore SAP AI Core from **Python in JupyterHub**;
+- and finally run the **GitHub Actions pipeline** that deployed all of it.
+
+👉 Deploying, when you do it, is a **click** — not a local tool-chain.
+
+This is the **self-hosted agent layer** of the SAP AI landscape — everything below runs **inside your Kyma runtime** and reaches SAP AI Core through one proxy:
 
 ```mermaid
 flowchart LR
-  subgraph KYMA["🌸 Your SAP BTP, Kyma runtime — all pre-deployed"]
+  subgraph KYMA["☸️ Your SAP BTP, Kyma runtime — all pre-deployed"]
     direction TB
     TERM["🖥️ Busola web terminal<br/>Goose · Claude Code"]
     GOOSE["🔎 Goose diagnostic jobs<br/>autonomous kubectl"]
