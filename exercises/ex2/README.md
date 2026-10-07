@@ -38,10 +38,10 @@ goose / claude ──▶ LiteLLM proxy :4001 ──▶ SAP AI Core
    ```
 
 > [!TIP]
-> Prefer a **visual** cluster browser to typing `kubectl`? Run **`k9s`** — a full-screen terminal UI. Arrow-key around namespaces, pods, logs, and YAML; press `:` to jump to a resource (e.g. `:pods`, `:cronjobs`), `d` to describe, `l` for logs, and `:q` to quit. Navigating and inspecting works freely; *mutating* actions (delete/scale) are blocked by the terminal's read-mostly permissions — that's [Exercise 6](../ex6/README.md)'s guardrails in action.
+> Prefer a **visual** cluster browser to typing `kubectl`? Run **`k9s`** — a full-screen terminal UI. Arrow-key around namespaces, pods, logs, and YAML; press `:` to jump to a resource (e.g. `:pods`, `:cronjobs`), `d` to describe, `l` for logs, and `:q` to quit. Navigating and inspecting works freely; *mutating* actions (delete/scale) are blocked by the terminal's read-mostly permissions — that's [Exercise 3](../ex3/README.md)'s guardrails in action.
 
 > [!NOTE]
-> The terminal is **auto-authenticated**: a start-up script fetches the LiteLLM key from the `llm-proxy-credentials` Secret and exports the environment both agents need (`GOOSE_PROVIDER=litellm`, `ANTHROPIC_BASE_URL`, model tiers…). You never see or handle a key. The pod runs **non-root** with a **read-mostly** RBAC role (you'll prove that in [Exercise 6](../ex6/README.md)).
+> The terminal is **auto-authenticated**: a start-up script fetches the LiteLLM key from the `llm-proxy-credentials` Secret and exports the environment both agents need (`GOOSE_PROVIDER=litellm`, `ANTHROPIC_BASE_URL`, model tiers…). You never see or handle a key. The pod runs **non-root** with a **read-mostly** RBAC role (you'll prove that in [Exercise 3](../ex3/README.md)).
 
 ## Exercise 2.2 - Zoom: the `kyma` CLI
 
@@ -153,6 +153,6 @@ Same proxy, same SAP AI Core, now driven interactively by you.
 Next, the same recipe runs on its own.
 
 > [!TIP]
-> Want the same agents but **fenced inside a contained, read-only sandbox** (no internet, `secrets` excluded, writes → 403)? [**Exercise 9**](../ex9/README.md) (§9.5) runs Goose/Claude from *this same terminal* via one command — **`scoped-ops`** — which provisions an OpenShell sandbox with a short-lived read-only token and drops you inside.
+> Want the same agents but **fenced inside a contained, read-only sandbox** (no internet, `secrets` excluded, writes → 403)? [**Exercise 7**](../ex7/README.md) (§7.5) runs Goose/Claude from *this same terminal* via one command — **`scoped-ops`** — which provisions an OpenShell sandbox with a short-lived read-only token and drops you inside.
 
-Continue to - [Exercise 3 - Play with the autonomous Goose diagnostic jobs](../ex3/README.md)
+Continue to - [Exercise 3 - Trigger and shape the Cluster Health Reports](../ex3/README.md)

@@ -1,141 +1,141 @@
-# Exercise 3 - Play with the autonomous Goose diagnostic jobs
+# Exercise 3 - Trigger and shape the Cluster Health Reports
 
 This is the heart of the workshop.
 
-Two scheduled **CronJobs** run Goose *autonomously* against your cluster — no human at the keyboard — and write structured findings into Kubernetes resources you can read in Busola.
+A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit**.
 
-In this exercise you inspect them and read a report — all in Busola — and, if you like, use the terminal to **tweak the parameters and trigger a fresh run**.
+Every run executes Goose **keyless, inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
+
+You drive all of it from one place: the **dev-toolbox UI**.
+
+👉 You never touch CronJobs or `kubectl` here — the dev-toolbox UI is the control panel: trigger a run, pick the model, read the report, and write your own prompt.
+
+Open it (same single sign-on as Busola):
 
 ```
-CronJob dev-toolbox-diagnose      (every 10 min)  ── kyma diagnose ──▶ Goose ──▶ ClusterHealthReport/cluster-health
-CronJob dev-toolbox-diagnose-v2   (daily, adaptive) ── kubectl/kyma ──▶ Goose ──▶ ClusterHealthReport/cluster-health-v2
-                                                                          │                 + AuditLogCatalog
-                                                                          └── reasoning on ──▶ LiteLLM :4001 ──▶ SAP AI Core
+https://dev-toolbox.xp266-NNN.<workshop-domain>/
 ```
 
 > [!NOTE]
-> Everything below runs on **your own** `xp266-NNN` runtime, so you can tweak freely — you won't affect anyone else. The diagnostic resources live in namespace **`dev-toolbox-system`**; the raw Goose transcripts land in namespace **`openclaw`**.
+> Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else. The reports live in namespace `dev-toolbox-system`; each run spins up a short-lived OpenShell sandbox with a **read-only** cluster token.
 
 > [!IMPORTANT]
-> **Everyone (UI-only):** 3.1 and 3.2 — inspect the jobs and read a Cluster Health Report entirely in Busola. **🔧 Go deeper (optional, terminal):** 3.3 and 3.4 tweak parameters and trigger a run. You never *have* to trigger anything — the v1 job runs **every 10 minutes** on its own, so a fresh report is always waiting for you in Busola.
+> **Everyone (UI):** 3.1–3.3 — read a report, trigger a run, and write your own prompt, all in the dev-toolbox UI. **🔧 Go deeper (optional):** 3.4 peeks at the same artifacts from a terminal. You never *have* to trigger anything — the reports refresh on a schedule, so one is always waiting for you.
+
+### The three report generations
+
+They trade **fidelity for cost** — all run the same way (Goose in an OpenShell sandbox → LiteLLM → SAP AI Core), but differ in how much live cluster access Goose gets.
+
+| Report | Busola CR | What Goose sees | Style |
+|---|---|---|---|
+| **v1** | `cluster-health` | a **frozen** `kyma alpha diagnose` snapshot — no live cluster access | cheap, deterministic — catches regressions between runs |
+| **v2** | `cluster-health-v2` (+ `cluster-audit`) | **live**, read-only `kubectl` on a leash — a fixed health playbook; a second sidecar runs a free-form **security audit** | the balanced default |
+| **v3** | `cluster-health-v3` | **live**, read-only `kubectl`, real-time and uncapped | richest and priciest — treat it as a lead list to confirm |
+
+> [!NOTE]
+> The **security audit** (`cluster-audit`) is produced as part of a **v2** run — there's no separate button. Trigger a v2 run to refresh it, and read it in **Busola → Cluster Audit**. v3 may be disabled on some clusters.
+
+## Exercise 3.1 - Read the latest reports
+
+1. In the dev-toolbox UI, find the **Latest health reports** panel.
+
+   Each report shows an **executive summary**, a **status badge** (HEALTHY / WARNING / CRITICAL), and a **raw Goose** expander with the agent's unedited output. The panel auto-refreshes every ~15 s.
+
+2. Look at the **run-stats** line in each report's header: **Model · Duration · Cost · Tokens · Agent**.
+
+   That's the real SAP AI Core spend and latency of that single run — the same numbers roll up into the spend dashboard in [Exercise 5](../ex5/README.md).
+
+3. Open the same report in **Busola** → namespace `dev-toolbox-system` → **Custom Resources → ClusterHealthReport → `cluster-health-v2`**.
+
+   While a run is in flight, Busola shows a live **Activity** badge (`RUNNING`) and an **Elapsed** timer — the report is a Kubernetes custom resource the agent writes into, so the whole fleet can read it.
 
 > [!TIP]
-> **The three report generations at a glance** (this exercise focuses on v1 + v2; a third, **v3**, and a **security audit** also run). They are a spectrum of fidelity vs. cost — all run Goose *keyless inside an OpenShell sandbox* (→ LiteLLM → SAP AI Core), then a 2nd `claude -p` pass reformats the raw report into an executive guide:
->
-> | Job | Report (Busola `ClusterHealthReport`) | Schedule | Report type |
-> |---|---|---|---|
-> | **v1** | `cluster-health` | every 10 min (Goose ~every 12 h) | **Snapshot** — Goose summarizes a precomputed `kyma diagnose` JSON; no live cluster access |
-> | **v2** | `cluster-health-v2` **+** `cluster-audit` | daily | health = **Live, bounded playbook** (15 fixed commands) · audit = **Live, adaptive** (free security investigation) |
-> | **v3** | `cluster-health-v3` | daily | **Live, real-time** — read-only `kubectl` in the sandbox, uncapped |
->
-> *Snapshot* = cheap, deterministic, catches regressions between runs. *Live/bounded* = real data on a leash (predictable turn count). *Live/adaptive* = richest but can over-escalate stale findings — treat it as a lead list and confirm against live state. Full reference: `docs/cluster-health-jobs-inventory.md` in the runtime repo.
+> These aren't hypothetical checks. In production the same pipeline surfaced things static monitoring missed — **402 ingress-gateway revisions** piled up in five days (a pod cycling every 17 minutes), **18 leftover cluster-admin bindings** from dev tooling, and a cert-manager ACME solver **stuck for 5+ days** on a DNS mismatch. Reasoning over correlated state finds what probes can't.
 
-## Exercise 3.1 - Inspect the two pipelines
+## Exercise 3.2 - Trigger a run
 
-1. In Busola, open **namespace `dev-toolbox-system` → Workloads → Cron Jobs**. You'll see the two diagnostic jobs and their schedules — click one to see its pod template, environment, and history.
-<br>![](images/03_01_0010.png)
+1. In the **Run a diagnostic** card, choose a **job** — start with **v2** (live, balanced).
 
-🔧 *Or, in a web terminal (as in Exercise 2):*
+2. *(optional)* Pick a **Model**.
+
+   The dropdown is the **intersection** of what's actually deployed and `RUNNING` in your SAP AI Core, and what the LiteLLM proxy is configured to route — so you can only pick a model the proxy will accept. (v2/v3 honour your choice; v1 keeps its baked model.)
+
+3. *(optional)* Set **Max turns** — how many reason-and-act rounds Goose gets.
+
+4. Click **Run**.
+
+   A one-off sandboxed run starts immediately (no waiting for the schedule). Watch the **Recent runs** table; click **logs** on the new row to tail the sandbox and see the extracted *Goose answer*.
+
+5. When it completes, the matching report in **Latest health reports** refreshes — new `lastUpdated`, new sections.
+
+> [!TIP]
+> **What does *Max turns* actually do?** A *turn* is one round of reasoning **plus** its tool calls — not one LLM call. In this headless, no-human-in-the-loop setup, hitting the cap makes Goose simply **stop** — sometimes before it has written the report. The recipe is tuned so the default is enough; the run also **guards the write**, so a short or empty run never overwrites your last good report. (Calibration rule of thumb: narrow task 10–15 · bounded playbook ~30 · open-ended exploration 100+.)
+
+## Exercise 3.3 - Write your own prompt
+
+The real power of the dev-toolbox is this: **you change what Goose investigates by changing the prompt** — no code, no redeploy.
+
+1. In the **Run a diagnostic** card, open the **Prompt** dropdown and choose **— custom prompt —**.
+
+2. Give it a **name** and paste your **prompt text**. For example:
+
+   ```text
+   You are a Kubernetes SRE. Using read-only kubectl, review this cluster's workloads and
+   produce a prioritized markdown report: the top 3 risks (each with concrete evidence —
+   resource names, counts, event messages) and a specific remediation for each. Finish with
+   a one-line overall verdict.
+   ```
+
+3. Pick the **v2** job (so Goose gets live, read-only `kubectl`) and click **Run**.
+
+   Your prompt is saved to your own **adhoc prompt** store and used for this run; it then appears in the dropdown so you can **reuse** it. The **delete** button removes your custom prompts (the shipped ones are read-only).
+
+👉 The shipped **v1/v2/v3 recipes are read-only** in the UI — your custom prompts live alongside them and never change the defaults, so you can experiment safely.
+
+> [!NOTE]
+> Your prompt runs inside the **same OpenShell sandbox** as the built-in ones: a read-only cluster token, no internet, writes → `403`. So even a prompt you wrote can only **look and reason** — it can't mutate the cluster or exfiltrate anything. (That containment is [Exercise 7](../ex7/README.md).)
+
+## Exercise 3.4 - The guardrails: read, reason, but don't touch
+
+An agent with `kubectl` is powerful — and, unchecked, dangerous. The reason you can hand it a prompt you wrote and let it loose is that it is **boxed in by construction**, not by asking the model to behave.
+
+Three overlapping fences wrap every run:
+
+- **A read-only identity.** The run gets a short-lived **`sandbox-viewer`** token — `get`/`list`/`watch` only, with **`secrets` excluded**. It can read the whole picture to reason, but a write or a secret-read is refused by the API server with `403`.
+- **No route out.** The run executes inside an **OpenShell sandbox** with no path to the internet; its only egress is the in-cluster LiteLLM proxy. The LLM key is never in the box.
+- **An unprivileged pod.** The workload runs **non-root** with a read-only root filesystem and dropped capabilities.
+
+> [!NOTE]
+> **Defense in depth.** No single control is trusted alone: the read-only token (can't write or read secrets), the sandbox boundary (no internet, no API-server mutation), non-root + read-only rootfs (can't escalate on the node), and `drop_params` at the proxy (can't send SAP AI Core a malformed request). The agent is useful *because* it's boxed in. The deep dive is [Exercise 7](../ex7/README.md).
+
+🔧 **Prove it yourself (optional — go deeper).** In a **web terminal** ([Exercise 2](../ex2/README.md)), ask the API server what the web-terminal identity may do, and read the report artifacts directly:
 
 Command:
 ```bash
-kubectl get cronjob -n dev-toolbox-system
+echo "read anything:    $(kubectl auth can-i list nodes)"
+echo "write configmap:  $(kubectl auth can-i create configmaps)"
+echo "delete deploy:    $(kubectl auth can-i delete deployments)"
+echo "read secrets:     $(kubectl auth can-i get secrets)"
+echo "cluster-admin:    $(kubectl auth can-i '*' '*')"
+
+# everything the UI shows is a plain Kubernetes object:
+kubectl get clusterhealthreport -n dev-toolbox-system
 ```
 Output:
 ```
-NAME                        SCHEDULE       SUSPEND   ...
-dev-toolbox-diagnose        */10 * * * *   False     ...
-dev-toolbox-diagnose-v2     7 3 * * *      False     ...
+read anything:    yes
+write configmap:  yes
+delete deploy:    no
+read secrets:     no
+cluster-admin:    no
 ```
-
-- **v1 — `dev-toolbox-diagnose` (every 10 min).** `kyma alpha diagnose` produces a cluster snapshot; Goose consumes it as a static blob and emits a structured summary. Fast, cheap, catches regressions between runs.
-- **v2 — `dev-toolbox-diagnose-v2` (adaptive, daily).** Goose gets live `kubectl`/`kyma` access and investigates across **12 sections**:
-
-  | # | Section | What Goose checks |
-  |---|---------|-------------------|
-  | 1 | Health Status | Cluster + Kyma module conditions |
-  | 2 | Issues | Degraded resources, error events |
-  | 3 | Kyma Modules | Module reconciliation state |
-  | 4 | Impact Assessment | Blast radius of active issues |
-  | 5 | Node Resources | CPU/memory pressure, disk |
-  | 6 | Workload Health | Deployments, statefulsets, daemonsets |
-  | 7 | Security Assessment | RBAC surface, privileged workloads |
-  | 8 | Drift Detection | Resources diverging from declared state |
-  | 9 | Cost Attribution | Namespace resource consumption |
-  | 10 | Network Policy Audit | Connectivity gaps, permissive policies |
-  | 11 | Certificate Expiry | Certs within 30 days of expiry |
-  | 12 | Recent Events | High-frequency warnings in the last hour |
-
-Look at the knobs that shape a run:
-
-Command:
-```bash
-kubectl get cronjob dev-toolbox-diagnose-v2 -n dev-toolbox-system \
-  -o jsonpath='{.spec.jobTemplate.spec.template.spec.containers[*].env[?(@.name=="GOOSE_MODEL")].value}{"\n"}'
-```
-Key parameters: **`GOOSE_MAX_TURNS`** (default 30), **`--max-tool-repetitions 3`**, **`GOOSE_MODEL`** (the LiteLLM tier/model), **`GOOSE_MAX_TOKENS`** (16000).
-
-## Exercise 3.2 - Read a Cluster Health Report
-
-The v2 job writes its findings to the `ClusterHealthReport` custom resource `cluster-health-v2`.
-
-1. In Busola, open **namespace `dev-toolbox-system` → Custom Resources → ClusterHealthReport → `cluster-health-v2`** and browse the 12 sections (each rendered in a code viewer).
-<br>![](images/03_02_0010.png)
-
-2. Or from the terminal:
-
-   Command:
-   ```bash
-   kubectl get clusterhealthreport cluster-health-v2 -n dev-toolbox-system \
-     -o jsonpath='{.spec.values.healthStatus}{"\n"}'
-   ```
-
-> [!TIP]
-> These aren't hypothetical checks. In production, the same pipeline surfaced things static monitoring missed — e.g. **402 ingress-gateway revisions accumulated in five days** (an unbounded revision history from a pod cycling every 17 minutes), **18 leftover cluster-admin bindings** from dev tooling, and a cert-manager ACME solver **stuck for 5+ days** on a DNS zone mismatch. Reasoning over correlated state finds what probes can't.
-
-## Exercise 3.3 - Tweak the parameters and watch the effect 🔧 *(optional — go deeper)*
-
-The safest way to *feel* the parameters is to run the diagnostic recipe yourself in the terminal, changing one knob at a time.
-
-1. Capture a diagnosis and hand it to Goose with a **generous** turn budget:
-
-   Command:
-   ```bash
-   kyma alpha diagnose cluster -f json > /tmp/diag.json
-   goose run --max-turns 30 --max-tool-repetitions 3 \
-     --text "Read /tmp/diag.json and produce a '## Health Status:' section plus the top 3 risks with evidence."
-   ```
-
-2. Now **starve it** — drop the turn budget so it runs out mid-investigation:
-
-   Command:
-   ```bash
-   goose run --max-turns 3 --text "Investigate cluster health with kubectl across nodes, workloads, events, RBAC and certs, then write a 12-section report."
-   ```
-   You'll often see it stop with *"I've reached the maximum number of actions I can do without user input."* — **before** it writes the report.
 
 > [!IMPORTANT]
-> **A turn is one round of reasoning + tool calls, not one LLM call.** In headless mode there's no human to answer "continue?", so hitting the cap makes Goose simply **stop** — sometimes with an empty report. The production fix is *tighten the recipe, don't just raise the cap*: a named 12-section checklist + `--max-tool-repetitions 3` (stops repetitive dumps) keeps 30 turns sufficient. The job also **guards the write** — an empty extraction never overwrites the last good report.
->
-> Calibration ladder: narrow task 10–15 · bounded multi-step (our v2) **30** · exploratory 50–75 · open-ended 100–200.
-
-## Exercise 3.4 - Trigger a real run 🔧 *(optional — go deeper)*
-
-Kick the v2 CronJob now (instead of waiting for the schedule) and watch it work:
-
-Command:
-```bash
-kubectl create job --from=cronjob/dev-toolbox-diagnose-v2 diag-now -n dev-toolbox-system
-kubectl get pods -n dev-toolbox-system -l job-name=diag-now -w    # Ctrl-C when Completed
-```
-When it completes, refresh `ClusterHealthReport/cluster-health-v2` in Busola — the `lastUpdated` timestamp and sections reflect the fresh run.
-
-> [!IMPORTANT]
-> **Hand-off — remember this for the next exercises.** The job's output is a *shared artifact*: the `ClusterHealthReport` / `AuditLogCatalog` custom resources **and** the raw transcript ConfigMaps (`goose-raw-*`, `cluster-health-*`) in namespace `openclaw`. Two downstream consumers read them: the **interactive chat agent** ([Exercise 4](../ex4/README.md)) answers questions about the findings, and a **JupyterHub notebook** ([Exercise 7](../ex7/README.md)) analyzes them in Python. *Jobs produce → agents and notebooks consume.*
+> **Hand-off — remember this for later.** A run's output is a *shared artifact*: the `ClusterHealthReport` / `cluster-audit` custom resources, plus the raw Goose transcripts. Two downstream consumers read them — the **interactive chat agent** ([Exercise 4](../ex4/README.md)) answers questions about the findings, and a **JupyterHub notebook** ([Exercise 6](../ex6/README.md)) analyses them in Python. *Jobs produce → agents and notebooks consume.*
 
 ## Summary
 
-You inspected the two autonomous Goose pipelines, read a 12-section Cluster Health Report, felt how `--max-turns` / `--max-tool-repetitions` shape a headless run (and why an empty report happens), and triggered a fresh v2 run.
+You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model and turn budget), **wrote your own prompt** and watched Goose run it keyless inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.
 
 You also met the hand-off surface the rest of the workshop builds on.
 

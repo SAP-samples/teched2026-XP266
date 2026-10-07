@@ -1,93 +1,332 @@
-# Exercise 8 - Behind the scenes: the one workflow that built your runtime
+# Exercise 8 - External agents: Pi, opencode & Qwen via OpenRouter 🔧 *(advanced — CLI)*
 
-Throughout this workshop you were told *"everything is already deployed for you."*
+> [!WARNING]
+> **Advanced / builds on [Exercise 7](../ex7/README.md).** You need the `openshell` CLI (pre-installed in the Busola
+> web terminal) and an active gateway session (ex7 §7.1, device-code login). If you don't have the `openshell-admin`
+> role, watch the instructor demo. Everything runs on **your own** `xp266-NNN` runtime.
 
-This is the exercise where you see **how**.
+In Exercise 7 the sandbox had **no internet** — its only exit was the in-cluster LiteLLM proxy, and §7.4 *proved* the
+agent couldn't reach the apiserver or the public web.
 
-A single GitHub Actions workflow — **`all-fleets-admin`** — provisions and reconciles the *entire* stack you've been exploring: the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, the KRO resource graphs, the telemetry pipelines, the dashboards, and JupyterHub.
+This exercise flips exactly one dial: a **4th trust tier** — a
+still-contained sandbox with **one external endpoint allow-listed** (`openrouter.ai`), so you can drive terminal
+coding agents against public **OpenRouter** models.
 
-In this exercise you **run it against your own runtime and explore every step** in the Actions log.
+The real OpenRouter key never enters the box: it lives in the
+gateway's `openrouter` **provider**, which injects a **resolve-sentinel** and swaps the real key at egress — and
+*only* for the agent binaries named in the provider profile (binary-scoped injection).
 
-Because it's `terraform apply` under the hood, running it on your already-provisioned `xp266-NNN` is an **idempotent reconcile** — it converges the cluster to the declared state, it does **not** tear anything down or rebuild it.
+## How it works — profile → provider → sandbox
 
-Safe to run, and it shows you the whole assembly line.
+Three concepts, one key that never leaves the gateway:
 
-```mermaid
-flowchart TB
-  RUN["▶️ You: Run workflow<br/>shoots = xp266-NNN · oidc_provider = teched"]
-  SETUP["setup<br/>reads the fleet registry →<br/>builds the per-family shoot matrix"]
-  DEPLOY["deploy-gardener<br/>(_gardener-kyma-fleet-reusable)"]
-  OIDC["🔑 OIDC federated login<br/>gh-teched-xp266-NNN → your cluster<br/>(no long-lived kubeconfig)"]
-  TF["🌱 terraform apply<br/>the whole kyma-unplugged stack"]
-  STACK["LiteLLM · Goose/dev-toolbox · Chat agent<br/>KRO RGDs · Telemetry → SAP Cloud Logging<br/>JupyterHub · Busola extensions"]
+- **Profile** — a reusable *spec* (no secret): which credential env var, which auth style, which **endpoints** egress
+  may reach, and which **binaries** are allowed to use the credential.
+- **Provider** — a profile **bound to a real key**. The key (`sk-or-…`) is stored **only in the gateway**.
+- **Sandbox** — `--provider openrouter` attaches it: the box receives a **sentinel** (not the key) + scoped egress;
+  the supervisor swaps the sentinel for the real key **at the wire**, only for a listed binary → a listed endpoint.
 
-  RUN --> SETUP --> DEPLOY --> OIDC --> TF --> STACK
+```
+                   ┌──────────────────── OpenShell gateway (holds the real key) ────────────────────┐
+  PROFILE          │  profile "openrouter"                                                           │
+  (template:       │    credential: OPENROUTER_API_KEY (bearer)                                      │
+   what & where)   │    endpoints : openrouter.ai, models.dev   ← the ONLY hosts egress is opened to │
+                   │    binaries  : node, opencode.exe          ← only THESE may send egress traffic │
+  PROVIDER         │  provider "openrouter" = profile + REAL KEY (sk-or-…)   ← key lives ONLY here    │
+  (profile + key)  └───────────────────────────────────┬─────────────────────────────────────────────┘
+                           sandbox create --provider openrouter
+                                                        ▼
+                   ┌──────────────────────── your sandbox (the box) ─────────────────────────┐
+  SANDBOX          │  OPENROUTER_API_KEY = openshell:resolve:…   ← a SENTINEL, not the key    │
+  (--provider      │  agent (opencode / pi / qwen)  ──▶  Authorization: Bearer <sentinel>     │
+   attaches it)    └───────────────────────────────────────┬───────────────────────────────────┘
+                                                            ▼  (allowed binary + allowed host)
+                        supervisor swaps  <sentinel> → sk-or-…  AT THE WIRE
+                                                            ▼
+                                                      openrouter.ai   (sees the real key; the box never did)
+```
+
+One image, three agents (all installed in `openrouter-agents:latest`):
+
+| Agent | What it is | Run it |
+|---|---|---|
+| **opencode** | [opencode.ai](https://opencode.ai) coding agent (Bun binary) | `opencode run -m openrouter/<model> "…"` (headless) or `opencode` (TUI) |
+| **Pi** | `@earendil-works/pi-coding-agent` | `pi -p --model openrouter/<model> "…"` (headless) or `pi` (TUI) |
+| **Qwen Code** | `@qwen-code/qwen-code` (OpenAI-compat) | `qwen` (TUI) — reads `OPENAI_API_KEY`/`OPENAI_BASE_URL` (pre-set in the box) |
+
+## OpenRouter vs SAP AI Core — the same shape to LiteLLM
+
+**OpenRouter** is a public LLM *aggregator*: one OpenAI-compatible endpoint + one key, routing to many models
+(OpenAI, Anthropic, Google, Qwen, NVIDIA…).
+
+**SAP AI Core** — the provider you used *keyless* in ex7 — is SAP's
+managed inference gateway, reached in-cluster through the **LiteLLM proxy**.
+
+To LiteLLM they're the **same shape** (an
+OpenAI-compatible gateway behind one credential), so one proxy can front **both**.
+
+The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.**
+
+OpenRouter only routes to its own public
+upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
+the reverse.
+
+| | ex7 (keyless, in-cluster) | ex10 (this exercise — **direct**) |
+|---|---|---|
+| Path | agent → LiteLLM proxy → **SAP AI Core** | agent → **OpenRouter** (one allow-listed external host) |
+| Key | none in the box (ClusterIP, plain-HTTP) | real key in the gateway; box sees a sentinel |
+| Internet | none | one host: `openrouter.ai` |
+
+ex10 keeps the agent talking to OpenRouter **directly** — that external, allow-listed, keyed endpoint *is* the 4th
+tier.
+
+(In production you'd often put OpenRouter *behind* LiteLLM too — one in-cluster exit, spend-tracked, key never
+leaves the proxy — but then it looks just like ex7.)
+
+> [!TIP]
+> **Picking a `:free` model.** The agents are *agentic*, so the model must be a **chat/completion model with
+> tool-calling**. **Embedding and rerank models won't work** (ids with `-embed-` / `-rerank-` are RAG parts, not chat
+> — the agent will error). The `:free` lineup **rotates** (models go paid without notice). Known-good free picks:
+> **`qwen/qwen3.8-27b:free`** (default) and **`nvidia/nemotron-3-super-120b-a12b:free`**. Find current ones at
+> [openrouter.ai/models?max_price=0](https://openrouter.ai/models) or the NVIDIA model dashboard
+> ([`sherman-yang/nvidia-model-info`](https://github.com/sherman-yang/nvidia-model-info), `agent` filter). This
+> exercise replicates NVIDIA's [*Run Pi with OpenRouter*](https://docs.nvidia.com/openshell/latest/tutorials/run-pi-with-openrouter).
+
+> [!NOTE]
+> **No terminal? (Windows / no CLI).** Run the **`all-fleets-teched-nvidia`** workflow from the repo's **Actions** tab —
+> pick your cluster, agent, and model, then read the run **summary**: a verdict table, each agent's output, and the
+> containment proof. Same agents, same containment, zero local tooling.
+
+## Exercise 8.1 - Inspect the pieces (UI)
+
+1. In Busola, open **namespace `openshell` → Custom Resources** and find the pre-built image build (`KanikoAgent`
+   `kaniko-agent`) and the `openrouter` provider (it's created by the provider-setup Job because your runtime was
+   given a shared OpenRouter key). The agents image is pushed to the in-cluster registry as
+   `openrouter-agents:latest`.
+
+> [!NOTE]
+> The OpenRouter key is **shared and platform-provided** for the workshop — you never handle it. Use the `:free`
+> models (they cost nothing). The gateway holds the key; your sandbox only ever sees `openshell:resolve:…`.
+
+## Exercise 8.2 - Create a sandbox with the agents + OpenRouter 🔧
+
+In a web terminal (ex2), with your gateway session active (ex7 §7.1):
+
+Command:
+```bash
+openshell sandbox create --name agents \
+  --from localhost:32137/openrouter-agents:latest \
+  --provider openrouter \
+  --env OPENAI_BASE_URL=https://openrouter.ai/api/v1 \
+  --env OPENAI_MODEL=qwen/qwen3.8-27b:free \
+  --detach -- sleep infinity
+openshell sandbox list        # wait for PHASE=Ready
+```
+`--provider openrouter` grants the sandbox egress to `openrouter.ai` (+ `models.dev`) **for the agent binaries only**
+and injects the key sentinel.
+
+`--env` passes the base URL + default model (OpenAI-compat agents need them).
+
+## Exercise 8.3 - Run an agent against a free model 🔧
+
+Command (opencode — the cleanest):
+```bash
+openshell sandbox exec --name agents -- opencode run -m openrouter/qwen/qwen3.8-27b:free "Reply with one word: PONG"
+```
+Output:
+```
+PONG
+```
+Try Pi too:
+```bash
+openshell sandbox exec --name agents -- pi -p --model openrouter/qwen/qwen3.8-27b:free "List 3 facts about Kyma."
+```
+
+> [!TIP]
+> **Pick a model:** `openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'`
+> lists the free models. opencode/Pi take `openrouter/<id>`. Qwen Code (`qwen`, interactive) uses whatever
+> `OPENAI_MODEL` you set at create — some models reject its tool-calling request shape, so if `qwen` errors `400`,
+> switch `OPENAI_MODEL` to another `:free` model and recreate the sandbox.
+
+## Exercise 8.4 - Prove it's still contained 🔧
+
+The agent reaches OpenRouter — and **nothing else**:
+
+Command:
+```bash
+openshell sandbox exec --name agents -- sh -c 'curl -sS -m8 -o /dev/null -w "openrouter.ai: %{http_code}\n" https://openrouter.ai/api/v1/models; curl -sS -m8 https://example.com >/dev/null 2>&1 && echo "example.com: REACHED" || echo "example.com: blocked"; curl -sS -m8 https://kubernetes.default.svc >/dev/null 2>&1 && echo "apiserver: REACHED" || echo "apiserver: blocked"; echo "key in box: $OPENROUTER_API_KEY"'
+```
+Output:
+```
+openrouter.ai: 200
+example.com: blocked
+apiserver: blocked
+key in box: openshell:resolve:env:…      ← a sentinel, NOT the real key
+```
+
+So this is a *different* tier than ex7, not a weaker one:
+
+| | ex7 (scoped-ops) | **ex10 (external agent)** |
+|---|---|---|
+| LLM | in-cluster LiteLLM → SAP AI Core (keyless) | **public OpenRouter (keyed, key in gateway only)** |
+| Egress | in-cluster proxy only; **no internet** | **`openrouter.ai` + `models.dev` only; nothing else** |
+| Cluster | read-only kubectl (sandbox-viewer) | none |
+| Key in box | sentinel | sentinel |
+
+Clean up: `openshell sandbox delete agents`
+
+## Exercise 8.5 - From draft to deployable: a correct KRO RGD 🔧
+
+When you ask an agent for *"a KRO ResourceGraphDefinition"*, a free model's first draft is usually **confident but
+wrong** — it reaches for OpenAPI schema (`type`/`properties`/`x-kro`), Helm templating (`{{ .spec.x }}`), or invented
+fields (`spec.nodes`/`components`/`graph`).
+
+KRO is a niche CRD the model hasn't memorised.
+
+That's the real lesson of
+this exercise: **the agent drafts, the cluster adjudicates — you iterate.**
+
+Always validate before trusting:
+
+```bash
+kubectl apply --dry-run=server -f weather-rgd.yaml   # the API server + KRO reject an invalid RGD
+```
+
+KRO's actual rules (what the drafts get wrong):
+- **`spec.schema` is KRO *simple-schema*, not OpenAPI** — each field is `name: type | markers` (types `string`,
+  `integer`, `float`, `boolean`; markers `required=true`, `default=…`). No `properties:`, no `required:` list, no `x-kro`.
+- **Status fields are CEL strings** that read a created resource by its `id`: `${weatherpod.status.phase}`.
+- **Templates substitute instance inputs with CEL** `${schema.spec.<field>}` — **not** `{{ }}`.
+- **The instance's `apiVersion` is `kro.run/v1alpha1`** (group `kro.run`), kind = your `schema.kind`.
+- KRO is **already installed** on your teched runtime — just `kubectl apply`.
+
+A **corrected, deployable** version (keeps the production touches — namespace, ServiceAccount + RBAC, `securityContext`,
+resource limits, two example instances — but uses *real* KRO):
+
+```yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata: { name: weather-system }
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: { name: weather-checker, namespace: weather-system }
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: { name: weather-checker, namespace: weather-system }
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata: { name: weather-checker, namespace: weather-system }
+roleRef: { apiGroup: rbac.authorization.k8s.io, kind: Role, name: weather-checker }
+subjects:
+  - { kind: ServiceAccount, name: weather-checker, namespace: weather-system }
+---
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata: { name: weather }          # RGDs are cluster-scoped (no namespace)
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: Weather
+    spec:                            # KRO simple-schema (strings → drop straight into env + the URL)
+      name: string | required=true
+      latitude: string | required=true
+      longitude: string | required=true
+      currentFields: string | default="temperature_2m,relative_humidity_2m,wind_speed_10m"
+      timezone: string | default="auto"
+      sleepSeconds: string | default="3600"
+    status:                          # CEL reading the created Pod by its resource id
+      podPhase: ${weatherpod.status.phase}
+      podIp: ${weatherpod.status.podIP}
+      containerImage: ${weatherpod.status.containerStatuses[0].image}
+  resources:
+    - id: weatherpod
+      template:
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          name: ${schema.spec.name}
+          namespace: weather-system
+          labels: { app.kubernetes.io/name: weather-check, app.kubernetes.io/managed-by: kro }
+        spec:
+          restartPolicy: Never
+          serviceAccountName: weather-checker
+          securityContext: { fsGroup: 1000 }
+          containers:
+            - name: weather-query
+              image: curlimages/curl:latest
+              env:
+                - { name: LATITUDE,       value: ${schema.spec.latitude} }
+                - { name: LONGITUDE,      value: ${schema.spec.longitude} }
+                - { name: CURRENT_FIELDS, value: ${schema.spec.currentFields} }
+                - { name: TIMEZONE,       value: ${schema.spec.timezone} }
+                - { name: SLEEP_SECONDS,  value: ${schema.spec.sleepSeconds} }
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -e
+                  echo "Weather for $LATITUDE,$LONGITUDE ($CURRENT_FIELDS)"
+                  curl -sS "https://api.open-meteo.com/v1/forecast?latitude=$LATITUDE&longitude=$LONGITUDE&current=$CURRENT_FIELDS&timezone=$TIMEZONE" | head -c 4096
+                  echo; sleep "$SLEEP_SECONDS"
+              resources:
+                requests: { cpu: 50m, memory: 64Mi }
+                limits:   { cpu: 100m, memory: 128Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1000
+                capabilities: { drop: ["ALL"] }
+---
+apiVersion: kro.run/v1alpha1       # ← instance of the generated kind, group kro.run
+kind: Weather
+metadata: { name: berlin, namespace: weather-system }
+spec:
+  name: weather-berlin
+  latitude: "52.52"
+  longitude: "13.41"
+  currentFields: "temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m"
+  timezone: "Europe/Berlin"
+  sleepSeconds: "1800"
+---
+apiVersion: kro.run/v1alpha1
+kind: Weather
+metadata: { name: newyork, namespace: weather-system }
+spec:
+  name: weather-newyork
+  latitude: "40.7128"
+  longitude: "-74.0060"
+  currentFields: "temperature_2m,relative_humidity_2m,wind_speed_10m"
+  timezone: "America/New_York"
+  sleepSeconds: "3600"
+```
+
+```bash
+kubectl apply --dry-run=server -f weather-rgd.yaml   # validate first
+kubectl apply -f weather-rgd.yaml                    # then deploy
+kubectl -n weather-system get weather,pods
+kubectl -n weather-system get weather berlin -o jsonpath='{.status}'   # CEL-derived status
 ```
 
 > [!NOTE]
-> ✅ **No terminal, no local tooling** — you run everything from the GitHub Actions UI in your browser.
-
-## Exercise 8.1 - Run the workflow
-
-1. Open **your fork** of the workshop repository (you forked it and enabled Actions per the [Requirements](../../README.md#requirements)) and go to the **Actions** tab.
-<br>![](images/08_01_0010.png)
-
-2. In the left list of workflows, select **`all-fleets-admin`**, then click **Run workflow** (top-right).
-<br>![](images/08_01_0020.png)
-
-3. Fill the inputs — only two change from their defaults:
-
-   | Input | Set it to | Why |
-   |---|---|---|
-   | **`shoots`** | your **`xp266-NNN`** | target *your* runtime only |
-   | **`oidc_provider`** | **`teched`** | mint the `gh-teched-xp266-NNN` OIDC token + use the public runner |
-   | `idp` | *(leave default)* | `kyma4signavio` |
-   | `kyma_version` | *(leave default)* | |
-   | `namespace` | *(leave default)* | |
-
-4. Click the green **Run workflow** button. A new run appears in the list — click it to open the live log.
-
-> [!NOTE]
-> **No secrets in your hands.** The workflow authenticates to your cluster with a short-lived **GitHub OIDC token** (`id-token: write`), federated as `gh-teched-<your-shoot>` — there is no kubeconfig or cloud credential to copy anywhere. This is the same upfront-federated-identity pattern that provisioned your runtime in the first place.
-
-## Exercise 8.2 - Explore the steps
-
-Expand the jobs and steps in the run and connect them to what you learned:
-
-1. **`setup` → "Build per-family shoot matrices"** — reads the fleet registry at runtime and works out that your `xp266-NNN` is a *gardener-teched* shoot, routing it to the Gardener reusable workflow. Open the **Fleet Reference** in the run **Summary** to see the whole fleet it *can* target.
-<br>![](images/08_02_0010.png)
-
-2. **`deploy-gardener` → the OIDC login step** — watch it exchange the GitHub OIDC token for cluster access. No password, no stored kubeconfig.
-
-3. **`deploy-gardener` → `terraform apply`** — this is the heart of it. Scroll the plan/apply output and spot the pieces you met:
-   - the **`litellm-proxy`** Deployment + config ([Exercise 1](../ex1/README.md))
-   - the **`dev-toolbox`** CronJobs and `ClusterHealthReport` CRD ([Exercise 3](../ex3/README.md))
-   - the **KRO** ResourceGraphDefinitions that assemble the chat agent ([Exercise 4](../ex4/README.md))
-   - the **Telemetry** `MetricPipeline` to SAP Cloud Logging ([Exercise 5](../ex5/README.md))
-   - the **JupyterHub** release ([Exercise 7](../ex7/README.md))
-
-> [!TIP]
-> On an already-provisioned runtime most resources report **no change** — that's the point of a declarative pipeline: the apply is a *reconcile*, so re-running is safe and mostly a no-op. If you tweaked something in an earlier exercise, watch `terraform` notice and converge it back.
-
-> [!IMPORTANT]
-> This is the "self-hosted AI ops" story end to end: **one workflow, one `terraform apply`, one federated identity** stands up an entire sandboxed AI-operations platform on SAP BTP, Kyma runtime — reproducibly, per student, with nothing hand-clicked. Everything else in this workshop was just exploring what this one run produced.
+> Treat this as *the shape KRO accepts*, not gospel — always `--dry-run=server` first. That round-trip (draft → reject
+> → fix) **is** the skill ex10 is teaching.
 
 ## Summary
 
-You ran the `all-fleets-admin` workflow against your own `xp266-NNN` runtime, saw it federate in with a short-lived OIDC token, and explored the `terraform apply` steps that build every component you played with — the declarative, reproducible pipeline behind the whole workshop.
+You added an **external, keyed** LLM provider to the contained-sandbox model, ran three different terminal coding
+agents (opencode, Pi, Qwen Code) against free OpenRouter models, and proved the sandbox still can't reach anything
+but the one allow-listed endpoint — with the real key staying in the gateway.
 
----
+That's the OpenShell provider model
+generalizing from "keyless in-cluster" to "any governed external endpoint."
 
-🎉 **That's the workshop.**
-
-You've met the whole self-hosted, sandboxed AI-ops stack — the LiteLLM gateway, the in-cluster agents, the autonomous diagnostic jobs, the interactive chat agent, the observability, the guardrails, the JupyterHub playground, and finally the one workflow that builds it all — running on **SAP BTP, Kyma runtime** and reasoning through **SAP AI Core**.
-
-Now you know how the pieces fit, and how to reproduce and build on them.
-
-> [!TIP]
-> **Want to go one level deeper on isolation?** [Exercise 9](../ex9/README.md) 🔧 *(advanced / instructor-demo)* runs the
-> same tools image as a **runtime-isolated OpenShell `Sandbox`** with a contained LLM provider — the agent reasons
-> through SAP AI Core while the egress guardrail physically denies the apiserver and the internet. It needs the
-> `openshell` CLI + admin access, so it's an operator/instructor track — but it's the strongest containment tier in the stack.
+Continue to - [Appendix - The making of your runtime (Day-1 operations)](../appendix-day1-operations/README.md)
 
 Back to - [Overview](../../README.md)

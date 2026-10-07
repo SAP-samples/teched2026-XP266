@@ -115,14 +115,16 @@ flowchart LR
 - [Getting Started](exercises/ex0/) — access your Kyma runtime and tour the pre-deployed AI-ops stack
 - [Exercise 1 - The LLM gateway: LiteLLM and SAP AI Core](exercises/ex1/) — how the proxy routes to SAP AI Core, and call it yourself
 - [Exercise 2 - The Busola web terminal](exercises/ex2/) — run Goose and Claude Code against your cluster, in-browser
-- [Exercise 3 - Play with the autonomous Goose diagnostic jobs](exercises/ex3/) — tweak the parameters, trigger a run, read the Cluster Health Report
+- [Exercise 3 - Trigger and shape the Cluster Health Reports](exercises/ex3/) — drive the v1/v2/v3 reports from the dev-toolbox UI, write your own prompt, and see the read-only sandbox guardrails
 - [Exercise 4 - Chat with the interactive agent](exercises/ex4/) — the interactive chat UI, and the hand-off from the diagnostic jobs
 - [Exercise 5 - Observability and spend](exercises/ex5/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards
-- [Exercise 6 - Sandbox and guardrails](exercises/ex6/) — how the agent is contained: non-root, scoped RBAC, network policy
-- [Exercise 7 - JupyterHub playground: SAP AI Core from Python](exercises/ex7/) — run the sample notebooks, do the guided exercises, create your own
-- [Exercise 8 - Behind the scenes: the workflow that built your runtime](exercises/ex8/) — run the `all-fleets-admin` pipeline and explore every deploy step
-- [Exercise 9 - Your own sandboxed agent: the OpenShell CLI dance](exercises/ex9/) 🔧 *(advanced / instructor-demo)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
-- [Exercise 10 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex10/) 🔧 *(advanced / CLI)* — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
+- [Exercise 6 - JupyterHub playground: SAP AI Core from Python](exercises/ex6/) — run the sample notebooks, do the guided exercises, create your own
+- [Exercise 7 - Your own sandboxed agent: the OpenShell CLI dance](exercises/ex7/) 🔧 *(advanced / instructor-demo)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
+- [Exercise 8 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex8/) 🔧 *(advanced / CLI)* — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
+
+### Appendix
+
+- [The making of your runtime (Day-1 operations)](exercises/appendix-day1-operations/) — run the `all-fleets-admin` pipeline and explore every `terraform apply` step that built the whole stack
 
 > [!IMPORTANT]
 > **Every exercise can be completed entirely in the browser — no terminal experience required.** A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**; wherever one appears there is a UI (Busola) or **Run workflow** (GitHub Actions) way to reach the same result. Whatever your level, you can succeed with clicks alone.
