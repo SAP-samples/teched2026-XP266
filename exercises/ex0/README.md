@@ -5,13 +5,29 @@ In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, 
 > [!NOTE]
 > Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`). Wherever you see `xp266-NNN` below, use the number you were given. Your Busola URL and sign-in details are handed out at the start of the session.
 
-## Exercise 0.1 - Sign in to Busola
+## Exercise 0.1 - Find your cluster and sign in to Busola
 
-1. Open your Busola URL in the browser — it looks like:
+Everything starts at the **Cluster Directory** — one launcher page for the whole TechEd fleet. From here you pick your runtime, read your sign-in details, and jump straight into the right dashboard. Open the directory URL you were given:
 
-   ```
-   https://busola.xp266-NNN.<workshop-domain>/
-   ```
+```
+https://busola.xp266-NNN.<workshop-domain>/clusterdir/
+```
+
+<p float="left">
+  <img src="images/00_01_0005.jpg" width="820" alt="SAP TechEd 2026 Cluster Directory" />
+</p>
+
+The page is organised top-to-bottom:
+
+- **SAP TechEd2026-XP266 — Navigate to your Kyma cluster.** Pick your runtime with the **selector** (top right), e.g. `xp266-NNN`. The card then shows your **User login** (`XP266-NNN`, `xp266-nnn@education.cloud.sap`) and the shared **Instructor login** (`XP266-000`), plus two ways in:
+  - **OIDC login** — `xp266-NNN` (and `…-external`): open Busola and sign in interactively with your workshop identity. **This is the path you use for the exercises.**
+  - **Token-based login** — `…-federated` / `…-sa-token`: open Busola already authenticated with a service-account/federated token (no interactive sign-in) — handy for a quick look.
+- **Cluster launchpad** — one-click deep-links into every endpoint you'll inspect for the selected cluster (Cluster Health, Fleet Status + Spend, Audit Log, Jobs, and the apps — dev-toolbox, LiteLLM Spend, JupyterHub, the Chat agent). It follows the selector.
+- **LiteLLM spend** and an **Appendix** (this cluster's raw access variants + the other fleet clusters) round out the page — you can ignore these for now.
+
+Now sign in:
+
+1. In the **Navigate to your Kyma cluster** card, select your runtime and click the **OIDC login** entry `xp266-NNN` (or just open your Busola URL directly: `https://busola.xp266-NNN.<workshop-domain>/`).
 
 2. Sign in with the workshop identity provider when prompted (single sign-on). You land on the Busola **Cluster Overview** for your runtime.
 <br>![](images/00_01_0010.png)
