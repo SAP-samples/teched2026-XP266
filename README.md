@@ -25,11 +25,13 @@ It also streams its **LLM** spend to **SAP Cloud Logging** — all routed throug
 > - **KRO** — *Kubernetes Resource Orchestrator*; packages the whole stack as one declarative unit.
 > - **CLS** — *SAP Cloud Logging*; SAP's OpenSearch-based observability service.
 
-👉 The whole premise is in the title: the agent is **sandboxed**.  
-Giving an AI agent a shell and a kubeconfig normally means a bad prompt — or a prompt-injection — can delete your workloads or leak a token.  
-Here the **sandbox itself is the guardrail**: each agent runs in a disposable, per-session pod that _by construction_ cannot reach the internet or the API server, and never holds the LLM key — it sends a placeholder, and the gateway injects the real key at the edge.  
-The same tools image is dialed to three trust tiers — **contained** (no cluster access) → **scoped-ops** (read-only) → **web terminal** (RBAC-scoped) — so you choose how much to trust each workload.  
-It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on Kyma, no fork.  
+👉 The whole premise is in the title: the agent is **sandboxed**.
+
+- Giving an AI agent a shell and a kubeconfig normally means a bad prompt — or a prompt-injection — can delete your workloads or leak a token.
+- Here the **sandbox itself is the guardrail**: each agent runs in a disposable, per-session pod that _by construction_ cannot reach the internet or the API server, and never holds the LLM key — it sends a placeholder, and the gateway injects the real key at the edge.
+- The same tools image is dialed to three trust tiers — **contained** (no cluster access) → **scoped-ops** (read-only) → **web terminal** (RBAC-scoped) — so you choose how much to trust each workload.
+- It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on Kyma, no fork.
+
 👉 A prompt-injected or buggy agent hits the exact same walls a well-behaved one does — that is the difference between a guardrail and a guideline, and why you can say *"yes, run it"*.
 
 > [!TIP]
