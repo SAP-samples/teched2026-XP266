@@ -5,6 +5,16 @@
 > web terminal) and an active gateway session (ex7 §7.1, device-code login). If you don't have the `openshell-admin`
 > role, watch the instructor demo. Everything runs on **your own** `xp266-NNN` runtime.
 
+> [!TIP]
+> **Easy path — run it as a workflow (no CLI).** Everything below is the manual CLI flow. To run the external coding
+> agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
+>
+> | Run this workflow | What it does |
+> |---|---|
+> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. Pick your `student_cluster` (`xp266-NNN`), the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`), a **`model`** (a `:free` OpenRouter model), and a **`scenario`** → **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. Same agents, same containment, zero local tooling. |
+>
+> Prefer the hands-on CLI? Continue below.
+
 In Exercise 7 the sandbox had **no internet** — its only exit was the in-cluster LiteLLM proxy, and §7.4 *proved* the
 agent couldn't reach the apiserver or the public web.
 
@@ -91,11 +101,6 @@ leaves the proxy — but then it looks just like ex7.)
 > [openrouter.ai/models?max_price=0](https://openrouter.ai/models) or the NVIDIA model dashboard
 > ([`sherman-yang/nvidia-model-info`](https://github.com/sherman-yang/nvidia-model-info), `agent` filter). This
 > exercise replicates NVIDIA's [*Run Pi with OpenRouter*](https://docs.nvidia.com/openshell/latest/tutorials/run-pi-with-openrouter).
-
-> [!NOTE]
-> **No terminal? (Windows / no CLI).** Run the **`all-fleets-teched-nvidia`** workflow from the repo's **Actions** tab —
-> pick your cluster, agent, and model, then read the run **summary**: a verdict table, each agent's output, and the
-> containment proof. Same agents, same containment, zero local tooling.
 
 ## Exercise 8.1 - Inspect the pieces (UI)
 

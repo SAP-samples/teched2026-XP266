@@ -9,6 +9,17 @@
 > `openshell-admin` role, **watch the instructor demo** — everything below is a live walk-through. Nothing here is required
 > to complete the workshop — you already finished it at [the Appendix](../appendix-day1-operations/README.md).
 
+> [!TIP]
+> **Easy path — run it as a workflow (no CLI, no admin role).** The hands-on below is the full manual OpenShell CLI
+> dance — do it if you want to *feel* every layer. But you can get the **same contained sandbox + the egress/containment
+> proof** by dispatching one GitHub Actions workflow from your fork — no terminal, no `openshell-admin` role:
+>
+> | Run this workflow | What it does |
+> |---|---|
+> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Provisions a **contained OpenShell sandbox** on your cluster, runs an agent inside it, and — with **`show_containment: true`** (the default) — prints the **egress-guardrail proof** (apiserver + internet both denied) that §7.4 walks through by hand. Pick your `student_cluster` (`xp266-NNN`) → **Run workflow** → read the run **Summary**. |
+>
+> Want to see it under the hood? Keep reading — the manual walk-through is below.
+
 **Contents:** [Why OpenShell](#why-openshell) · [Common risks & controls](#common-risks-and-controls) ·
 [Protection layers](#protection-layers-at-a-glance) · [Common use cases](#common-use-cases) —
 [Hands-on 7.1–7.5](#hands-on-the-openshell-cli-dance) — [Deep dive: Architecture](#deep-dive-architecture) ·
