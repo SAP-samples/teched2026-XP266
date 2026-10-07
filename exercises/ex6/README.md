@@ -138,7 +138,7 @@ twins of [Exercise 7](../ex7/README.md) — plus a few upstream JupyterLab sampl
 | `00`–`03`, `Cluster_Health` | SAP AI Core from Python (the notebooks above). |
 | `04-OpenShell-Sandbox-SDK` | Drive an OpenShell sandbox (create → exec → delete) via the **Python SDK** — gateway registered with a CLI device-code login. |
 | `04b-OpenShell-Sandbox-SDK-Headless` | The same lifecycle, **pure SDK, no CLI** — connects straight to the in-cluster gateway (`tls=None` + a self-minted bearer token). |
-| `05-OpenShell-Goose-Diagnostics-Live` | An agent (**goose**) runs **live read-only kubectl** inside a scoped sandbox and writes a health report — the notebook twin of ex9's `scoped-ops`. |
+| `05-OpenShell-Goose-Diagnostics-Live` | An agent (**goose**) runs **live read-only kubectl** inside a scoped sandbox and writes a health report — the notebook twin of ex7's `scoped-ops`. |
 | `05b` / `05c` | The same live-goose investigation, headless (client-credentials) / via the **pure SDK**. |
 | `06` / `07` | goose over a **static** cluster snapshot / over the **baked** health reports from [Exercise 3](../ex3/README.md). |
 | `Lorenz`, `2013-12-03-Crank_Nicolson`, `Complex Location`, `Earthdata`, `JupyterLab APOD` | Upstream JupyterLab sample notebooks — a familiar playground (`Lorenz` is a nice "does my kernel work?" check). |

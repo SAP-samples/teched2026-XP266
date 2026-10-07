@@ -154,22 +154,30 @@ kubectl get pods -n kyma-system -o json | claude -p "List workloads with no CPU/
 
 The interactive `claude` reads files and runs an **allowlisted, read-only** toolset (`kubectl get/describe/logs/top`, `kyma`, file reads) **without prompting** — so you can hand it an investigation and watch it work.
 
-Launch `claude`, then paste any of these:
+Launch `claude`, then paste any one of these.
+
+**Headline SRE demo:**
 
 ```text
-# Headline SRE demo
 You are an SRE doing a cluster health review. Run `kyma alpha diagnose cluster`, then use kubectl to inspect
 the nodes and any unhealthy or over-committed workloads. Produce a prioritized markdown report: the top 3 risks
 (each with concrete evidence — numbers, resource names, event counts) and for each a specific remediation (the
 exact kubectl/patch command). Finish with a one-line overall verdict.
+```
 
-# Focused investigations
+**Focused investigations** (paste one at a time):
+
+```text
 Which workloads on this cluster are over their CPU/memory limits or have no requests set? Show a table sorted by
 risk, and flag anything that would block the HPA from scaling.
+```
 
+```text
 Investigate why the `busola` HorizontalPodAutoscaler is failing, from first principles using kubectl — root cause
 plus the exact fix.
+```
 
+```text
 Walk the `kyma-system` namespace: list the Kyma modules and their states, and flag any that are degraded or drifting.
 ```
 

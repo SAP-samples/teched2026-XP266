@@ -71,13 +71,13 @@ OpenRouter only routes to its own public
 upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
 the reverse.
 
-| | ex7 (keyless, in-cluster) | ex10 (this exercise — **direct**) |
+| | ex7 (keyless, in-cluster) | ex8 (this exercise — **direct**) |
 |---|---|---|
 | Path | agent → LiteLLM proxy → **SAP AI Core** | agent → **OpenRouter** (one allow-listed external host) |
 | Key | none in the box (ClusterIP, plain-HTTP) | real key in the gateway; box sees a sentinel |
 | Internet | none | one host: `openrouter.ai` |
 
-ex10 keeps the agent talking to OpenRouter **directly** — that external, allow-listed, keyed endpoint *is* the 4th
+ex8 keeps the agent talking to OpenRouter **directly** — that external, allow-listed, keyed endpoint *is* the 4th
 tier.
 
 (In production you'd often put OpenRouter *behind* LiteLLM too — one in-cluster exit, spend-tracked, key never
@@ -166,7 +166,7 @@ key in box: openshell:resolve:env:…      ← a sentinel, NOT the real key
 
 So this is a *different* tier than ex7, not a weaker one:
 
-| | ex7 (scoped-ops) | **ex10 (external agent)** |
+| | ex7 (scoped-ops) | **ex8 (external agent)** |
 |---|---|---|
 | LLM | in-cluster LiteLLM → SAP AI Core (keyless) | **public OpenRouter (keyed, key in gateway only)** |
 | Egress | in-cluster proxy only; **no internet** | **`openrouter.ai` + `models.dev` only; nothing else** |
@@ -309,14 +309,23 @@ spec:
 
 ```bash
 kubectl apply --dry-run=server -f weather-rgd.yaml   # validate first
+```
+
+```bash
 kubectl apply -f weather-rgd.yaml                    # then deploy
+```
+
+```bash
 kubectl -n weather-system get weather,pods
+```
+
+```bash
 kubectl -n weather-system get weather berlin -o jsonpath='{.status}'   # CEL-derived status
 ```
 
 > [!NOTE]
 > Treat this as *the shape KRO accepts*, not gospel — always `--dry-run=server` first. That round-trip (draft → reject
-> → fix) **is** the skill ex10 is teaching.
+> → fix) **is** the skill ex8 is teaching.
 
 ## Summary
 

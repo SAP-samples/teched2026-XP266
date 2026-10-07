@@ -186,20 +186,35 @@ gateway's PVC, so this is done **once**.
 (OpenShell 0.1.x removed the built-in provider types, so we import our own
 profile — which already carries the endpoint — rather than overriding a built-in.)
 
+The provider profile lives in the platform repo at `manifests/kro/openshell/litellm-provider.yaml`.
+
+Lint it, then import it (it already carries the endpoint):
+
 ```bash
-# The provider profile lives in the platform repo: manifests/kro/openshell/litellm-provider.yaml
-openshell provider profile lint   -f litellm-provider.yaml
+openshell provider profile lint -f litellm-provider.yaml
+```
+
+```bash
 openshell provider profile import -f litellm-provider.yaml --global
+```
 
-# Feed the LiteLLM key. The key only ever lives in the gateway. (The endpoint — litellm-proxy…:4001 — is declared in the
-# profile, so there is no --config here.)
+Feed the LiteLLM key — it only ever lives in the gateway (the endpoint `litellm-proxy…:4001` is declared in the profile, so there's no `--config`):
+
+```bash
 KEY=$(kubectl get secret llm-proxy-credentials -n default -o jsonpath='{.data.PROXY_API_KEY}' | base64 -d)
-openshell provider create --name litellm --type anthropic --credential ANTHROPIC_API_KEY="$KEY"
+```
 
-# Second provider — for goose. goose can't use claude's /v1/messages route (it streams; the SAP path doesn't), so it
-# reaches the SAME proxy over the OpenAI-compat /v1/chat/completions path with bearer auth. Also keyless — the gateway
-# holds the key; the box gets only a sentinel. (Attached by scoped-ops in 7.5. See "Two providers, both keyless" below.)
+```bash
+openshell provider create --name litellm --type anthropic --credential ANTHROPIC_API_KEY="$KEY"
+```
+
+Add a **second provider for goose** — it can't use claude's `/v1/messages` route (it streams; the SAP path doesn't), so it reaches the SAME proxy over the OpenAI-compat `/v1/chat/completions` path with bearer auth. Also keyless — the gateway holds the key; the box gets only a sentinel (attached by `scoped-ops` in §7.5; see "Two providers, both keyless" below):
+
+```bash
 openshell provider profile import -f litellm-openai-provider.yaml --global
+```
+
+```bash
 openshell provider create --name litellm-openai --type litellm-openai --credential LITELLM_API_KEY="$KEY"
 ```
 
