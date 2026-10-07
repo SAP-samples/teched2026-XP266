@@ -56,8 +56,6 @@ Everything is **already deployed and wired up for you** on your personal Kyma ru
 
 The **LLM gateway** (calling SAP AI Core through the proxy) and the **in-cluster web terminal** are covered in the appendices.
 
-👉 Deploying, when you do it, is a **click** — not a local tool-chain.
-
 This is the **self-hosted agent layer** of the SAP AI landscape — everything below runs **inside your Kyma runtime** and reaches SAP AI Core through one proxy:
 
 ```mermaid
@@ -85,13 +83,13 @@ flowchart LR
   LITELLM --> CLS
 ```
 
-**Your path through the workshop:**
-
-```text
-shape the autonomous reports (ex1) → chat with the agent (ex2) → see the spend (ex3) → explore with JupyterHub notebooks (ex4) → sandbox your own agent (ex5–ex6)
-```
-
 > [!TIP]
+> **Your path through the workshop:**
+>
+> ```text
+> shape the autonomous reports (ex1) → chat with the agent (ex2) → see the spend (ex3) → explore with JupyterHub notebooks (ex4) → sandbox your own agent (ex5–ex6)
+> ```
+>
 > The appendices go deeper: the LLM gateway (Appendix 1), the web terminal (Appendix 2), and how it was all built (Appendix 3).
 
 ## Requirements
