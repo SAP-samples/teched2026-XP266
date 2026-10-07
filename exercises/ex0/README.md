@@ -48,39 +48,11 @@ Now sign in:
 > [!TIP]
 > The **Cluster Overview** shows one or more **banner cards** with handy shortcut **buttons** into the workshop features (dashboards, quick actions). If you dismiss a card, it **stays hidden in that browser**. To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
 
-## Exercise 0.2 - See what is already deployed
+## Exercise 0.2 - See what is already deployed *(optional)*
 
-Everything in the **self-hosted agent layer** — the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, JupyterHub, the telemetry and spend pipeline — was deployed for you declaratively with **KRO** (Kubernetes Resource Orchestrator) as a single unit.
+Your runtime's **self-hosted, in-cluster agent layer** — the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, JupyterHub, the telemetry and spend pipeline — was deployed for you declaratively with **KRO** (Kubernetes Resource Orchestrator) as a single unit.
 
-Let's confirm it's there.
-
-1. In Busola, use the namespace switcher (top left) to look at the key namespaces:
-
-   | Namespace | What runs there |
-   |---|---|
-   | `default` | the **LiteLLM proxy** (`litellm-proxy`), PostgreSQL, Pushgateway |
-   | `dev-toolbox-system` | the **dev-toolbox** (`dev-toolbox-api`) and the **Goose diagnostic** CronJobs/Jobs, plus the fleet/health/audit custom resources (`FleetStatus`, `ClusterHealthReport`, `AuditLogCatalog`) |
-   | `openclaw` | the **interactive chat agent** + the diagnostic output ConfigMaps |
-   | `jupyter` | **JupyterHub** (the Python playground) |
-   | `kyma-system` | Kyma modules — Istio, Telemetry, API Gateway |
-
-2. Open **Cluster Details → Custom Resources** (or the left-nav groups) and note the KRO-managed kinds already present — you'll meet these through the workshop:
-
-   ```
-   LiteLLMProxy · DevToolbox · ChatUI · JupyterHub
-   ClusterHealthReport · AuditLogCatalog · FleetStatus
-   ```
-
-3. Open the **Autonomous Fleet Status** card (left nav) — a live summary of your cluster: health, AI Core catalog counts, and today's LiteLLM spend. It is populated by the diagnostic jobs you'll play with in [Exercise 3](../ex3/README.md).
-<br>![](images/00_02_0010.png)
-
-## Exercise 0.3 - Where this sits in the SAP AI landscape
-
-The components you just found are the **self-hosted, in-cluster agent layer**.
-
-Everything else on the map — SAP Joule, the Generative AI Hub, SAP AI Core, the data and runtime layers — is the SAP AI platform your agent **consumes**.
-
-The one connection that matters for this workshop is the arrow from your agent to SAP AI Core, through the LiteLLM proxy:
+Everything *else* on the SAP AI map — SAP Joule, the Generative AI Hub, SAP AI Core, the data and runtime layers — is the SAP AI platform your agent **consumes**. The one connection that matters for this workshop is the arrow from your agent to **SAP AI Core**, through the **LiteLLM proxy**:
 
 ```mermaid
 flowchart TB
@@ -107,7 +79,36 @@ flowchart TB
   llm ==>|"sap/ provider · OAuth2 token<br/>(the one arrow that matters)"| aicore
 ```
 
-You'll follow that arrow in the next exercise.
+Here is what that in-cluster layer actually runs, grouped by namespace:
+
+```text
+Your Kyma runtime (xp266-NNN) — deployed as one KRO unit
+│
+├─ default             LiteLLM proxy :4001 · PostgreSQL · Pushgateway
+├─ dev-toolbox-system  dev-toolbox-api · Goose diagnostic CronJobs/Jobs
+│                        └─▶ writes  ClusterHealthReport · AuditLogCatalog · FleetStatus
+├─ openclaw            interactive chat agent  (+ diagnostic-output ConfigMaps)
+├─ jupyter             JupyterHub  (the Python playground)
+└─ kyma-system         Kyma modules — Istio · Telemetry · API Gateway
+
+        every LLM call  ──▶  LiteLLM proxy  ──▶  SAP AI Core  (Claude · GPT · Mistral · Nova)
+```
+
+**Want to poke at it in Busola?** *(optional)*
+
+1. Use the namespace switcher (top left) to open the namespaces above and see the workloads running in each.
+
+2. Open **Cluster Details → Custom Resources** (or the left-nav groups) and note the KRO-managed kinds already present — you'll meet these through the workshop:
+
+   ```
+   LiteLLMProxy · DevToolbox · ChatUI · JupyterHub
+   ClusterHealthReport · AuditLogCatalog · FleetStatus
+   ```
+
+3. Open the **Autonomous Fleet Status** card (left nav) — a live summary of your cluster: health, AI Core catalog counts, and today's LiteLLM spend. It is populated by the diagnostic jobs you'll play with in [Exercise 3](../ex3/README.md).
+<br>![](images/00_02_0010.png)
+
+You'll follow that **LiteLLM → SAP AI Core** arrow in the next exercise.
 
 > [!TIP]
 > Want the full story behind this stack? Read the deep-dive on the SAP Community:
