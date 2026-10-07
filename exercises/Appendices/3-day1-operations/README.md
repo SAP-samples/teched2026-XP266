@@ -21,6 +21,12 @@ flowchart TB
   RUN --> SETUP --> DEPLOY --> OIDC --> TF --> STACK
 ```
 
+**Contents**
+
+- ⚙️ [How it runs](#how-it-runs)
+- 🔍 [Explore the steps](#explore-the-steps)
+
+
 ## How it runs
 
 1. From the fleet repository's **Actions** tab, the **`all-fleets-admin`** workflow is dispatched with **Run workflow**.

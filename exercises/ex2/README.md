@@ -13,6 +13,13 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
                           (ClusterHealthReport · goose-raw-* ConfigMaps)
 ```
 
+**Contents**
+
+- 💬 [Open the chat UI and chat](#exercise-21---open-the-chat-ui-and-chat)
+- 🤝 [The hand-off: ask about your cluster's diagnosis](#exercise-22---the-hand-off-ask-about-your-clusters-diagnosis)
+- ⚖️ [Autonomous vs interactive — when to use which](#exercise-23---autonomous-vs-interactive--when-to-use-which)
+
+
 ## Exercise 2.1 - Open the chat UI and chat
 
 1. Open your chat UI URL in the browser (handed out with your runtime), e.g.:

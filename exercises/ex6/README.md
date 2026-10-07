@@ -26,6 +26,17 @@ The real OpenRouter key never enters the box: it lives in the
 gateway's `openrouter` **provider**, which injects a **resolve-sentinel** and swaps the real key at egress — and
 *only* for the agent binaries named in the provider profile (binary-scoped injection).
 
+**Contents**
+
+- 🧩 [How it works: profile → provider → sandbox](#how-it-works--profile--provider--sandbox)
+- 🔀 [OpenRouter vs SAP AI Core](#openrouter-vs-sap-ai-core--the-same-shape-to-litellm)
+- 🔍 [Inspect the pieces](#exercise-61---inspect-the-pieces-ui)
+- 📦 [Create a sandbox with the agents + OpenRouter](#exercise-62---create-a-sandbox-with-the-agents--openrouter-)
+- ▶️ [Run an agent against a free model](#exercise-63---run-an-agent-against-a-free-model-)
+- 🛡️ [Prove it's still contained](#exercise-64---prove-its-still-contained-)
+- 🏗️ [From draft to deployable: a correct KRO RGD](#exercise-65---from-draft-to-deployable-a-correct-kro-rgd-)
+
+
 ## How it works — profile → provider → sandbox
 
 Three concepts, one key that never leaves the gateway:

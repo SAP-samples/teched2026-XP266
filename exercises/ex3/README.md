@@ -16,6 +16,13 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
                                     (opened from Busola)                         (opened from Busola)
 ```
 
+**Contents**
+
+- 📡 [The telemetry path](#exercise-31---the-telemetry-path-concept)
+- 💰 [Open the spend dashboards](#exercise-32---open-the-spend-dashboards)
+- 🩺 [The FleetStatus card](#exercise-33---the-fleetstatus-card)
+
+
 ## Exercise 3.1 - The telemetry path (concept)
 
 1. In Busola, open **namespace `kyma-system` → Custom Resources → MetricPipeline**. This is the declarative pipe that forwards scraped metrics to SAP Cloud Logging — no Prometheus server to run, no Grafana to host.

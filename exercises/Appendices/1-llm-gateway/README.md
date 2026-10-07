@@ -9,6 +9,13 @@ In this exercise you inspect the running proxy, understand *why* it's there, and
 > [!NOTE]
 > **Everyone:** Appendix 1.1 is a pure Busola click-through — that's all you need to understand the gateway. **🔧 Go deeper (optional):** 1.2 and 1.3 call the proxy yourself from the **in-cluster web terminal** — the Busola terminal introduced in [Appendix 2](../2-web-terminal/README.md) (top-right cluster menu → **Terminal**). If you'd rather not use a terminal, skip them — you'll see the exact same call made for you in later exercises (and from Python in [Exercise 4](../../ex4/README.md)).
 
+**Contents**
+
+- 🔀 [Understand the proxy](#appendix-11---understand-the-proxy)
+- 📡 [Call SAP AI Core through the proxy](#appendix-12---call-sap-ai-core-through-the-proxy--optional--go-deeper)
+- 🔁 [Same API, different model](#appendix-13---same-api-different-model--optional--go-deeper)
+
+
 ## Appendix 1.1 - Understand the proxy
 
 1. In Busola, go to **namespace `default` → Workloads → Deployments** and open **`litellm-proxy`**. It listens on port **4001** and exposes an **OpenAI-compatible** API at `/v1`.

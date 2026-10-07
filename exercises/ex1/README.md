@@ -35,6 +35,14 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 > [!NOTE]
 > The **security audit** (`cluster-audit`) is produced as part of a **v2** run — there's no separate button. Trigger a v2 run to refresh it, and read it in **Busola → Cluster Audit**. v3 may be disabled on some clusters.
 
+**Contents**
+
+- 📋 [Read the latest reports](#exercise-11---read-the-latest-reports)
+- ▶️ [Trigger a run](#exercise-12---trigger-a-run)
+- ✍️ [Write your own prompt](#exercise-13---write-your-own-prompt)
+- 🛡️ [The guardrails](#exercise-14---the-guardrails-read-reason-but-dont-touch)
+
+
 ## Exercise 1.1 - Read the latest reports
 
 1. In the dev-toolbox UI, find the **Latest health reports** panel.

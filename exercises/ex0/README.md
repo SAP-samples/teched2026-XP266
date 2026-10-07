@@ -7,6 +7,12 @@ You will not deploy anything — everything is in place; you are here to underst
 > [!NOTE]
 > Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`). Wherever you see `xp266-NNN` below, use the number you were given. Your Busola URL and sign-in details are handed out at the start of the session.
 
+**Contents**
+
+- 🧭 [Find your cluster and sign in to Busola](#exercise-01---find-your-cluster-and-sign-in-to-busola)
+- 📦 [See what is already deployed](#exercise-02---see-what-is-already-deployed-optional)
+
+
 ## Exercise 0.1 - Find your cluster and sign in to Busola
 
 Everything starts at the **Cluster Directory** — one launcher page for the whole TechEd fleet.

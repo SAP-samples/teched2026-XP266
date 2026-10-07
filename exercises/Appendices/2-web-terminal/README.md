@@ -18,6 +18,15 @@ goose / claude ──▶ LiteLLM proxy :4001 ──▶ SAP AI Core
    └── kubectl / kyma ──▶ your Kyma cluster
 ```
 
+**Contents**
+
+- 🖥️ [Open the terminal and check the tools](#appendix-21---open-the-terminal-and-check-the-tools)
+- 🔭 [Zoom: the kyma CLI](#appendix-22---zoom-the-kyma-cli)
+- 🪿 [Ask Goose](#appendix-23---ask-goose)
+- 🤖 [Ask Claude Code, and pipe real cluster data](#appendix-24---ask-claude-code-and-pipe-real-cluster-data)
+- 📝 [A prompt library to try](#appendix-25---a-prompt-library-to-try)
+
+
 ## Appendix 2.1 - Open the terminal and check the tools
 
 1. In Busola, open the cluster menu (top-right) and choose **Terminal**. A shell opens in the browser.

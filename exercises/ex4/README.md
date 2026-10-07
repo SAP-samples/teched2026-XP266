@@ -16,6 +16,15 @@ openai client  ──▶  http://litellm-proxy.default:4001/v1  ──▶  SAP A
                     (same proxy as every other exercise)
 ```
 
+**Contents**
+
+- 🚀 [Sign in and spawn your server](#exercise-41---sign-in-and-spawn-your-server)
+- 📓 [Walk the sample notebooks](#exercise-42---walk-the-sample-notebooks)
+- 🐍 [Guided exercises](#exercise-43---guided-exercises-copy-paste-into-a-new-cell)
+- ✨ [Create your own](#exercise-44---create-your-own)
+- 📚 [The full notebook set](#exercise-45---the-full-notebook-set-what-else-is-pre-loaded)
+
+
 ## Exercise 4.1 - Sign in and spawn your server
 
 1. Open your JupyterHub URL in the browser (handed out with your runtime), e.g.:
