@@ -7,7 +7,7 @@ Every LLM call goes through an in-cluster **LiteLLM proxy**, which routes to **S
 In this exercise you inspect the running proxy, understand *why* it's there, and **call SAP AI Core yourself** through it.
 
 > [!NOTE]
-> **Everyone:** Exercise 1.1 is a pure Busola click-through — that's all you need to understand the gateway. **🔧 Go deeper (optional):** 1.2 and 1.3 call the proxy yourself from the in-cluster web terminal. If you'd rather not use a terminal, skip them — you'll see the exact same call made for you in later exercises (and from Python in [Exercise 7](../ex7/README.md)).
+> **Everyone:** Exercise 1.1 is a pure Busola click-through — that's all you need to understand the gateway. **🔧 Go deeper (optional):** 1.2 and 1.3 call the proxy yourself from the **in-cluster web terminal** — the Busola terminal introduced in [Exercise 2](../ex2/README.md) (top-right cluster menu → **Terminal**). If you'd rather not use a terminal, skip them — you'll see the exact same call made for you in later exercises (and from Python in [Exercise 7](../ex7/README.md)).
 
 ## Exercise 1.1 - Understand the proxy
 

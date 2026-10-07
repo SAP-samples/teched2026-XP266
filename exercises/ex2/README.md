@@ -21,7 +21,6 @@ goose / claude ──▶ LiteLLM proxy :4001 ──▶ SAP AI Core
 ## Exercise 2.1 - Open the terminal and check the tools
 
 1. In Busola, open the cluster menu (top-right) and choose **Terminal**. A shell opens in the browser.
-<br>![](images/02_01_0010.png)
 
 2. Confirm the pre-installed toolchain:
 
