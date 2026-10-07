@@ -28,11 +28,18 @@ https://busola.xp266-NNN.<workshop-domain>/clusterdir/
 
 The page is organised top-to-bottom:
 
-- **SAP TechEd2026-XP266 — Navigate to your Kyma cluster.** Pick your runtime with the **selector** (top right), e.g. `xp266-NNN`. The card then shows your **User login** (`XP266-NNN`, `xp266-nnn@education.cloud.sap`) and the shared **Instructor login** (`XP266-000`), plus two ways in:
-  - **Token-based login** — `…-federated` / `…-sa-token`: open Busola already authenticated with a service-account / federated token — **no second sign-in**, because you were already authenticated at the gateway (oauth2-proxy). This is the **frictionless, recommended path for the workshop**, and it mirrors the **headless, CI/CD-style** access that the automation uses.
-  - **OIDC login** — `xp266-NNN` (and `…-external`): sign in to Busola **interactively** with your workshop identity. Use this when you want the full interactive login flow; it is **not** suited to headless / automated environments.
-- **Cluster launchpad** — one-click deep-links into every endpoint you'll inspect for the selected cluster (Cluster Health, Fleet Status + Spend, Audit Log, Jobs, and the apps — dev-toolbox, LiteLLM Spend, JupyterHub, the Chat agent). It follows the selector.
-- **LiteLLM spend** and an **Appendix** (this cluster's raw access variants + the other fleet clusters) round out the page — you can ignore these for now.
+| Section | What it's for |
+|---|---|
+| **Navigate to your Kyma cluster** | Pick your runtime with the **selector** (top-right), e.g. `xp266-NNN`. The card shows your **User login** (`XP266-NNN`, `xp266-nnn@education.cloud.sap`) and the shared **Instructor login** (`XP266-000`) — plus two ways in (below). |
+| **Cluster launchpad** | One-click deep-links into every endpoint for the selected cluster — Cluster Health, Fleet Status + Spend, Audit Log, Jobs, and the apps (dev-toolbox, LiteLLM Spend, JupyterHub, Chat agent). Follows the selector. |
+| **LiteLLM spend** + **Appendix** | Today's spend, plus this cluster's raw access variants and the other fleet clusters — you can ignore these for now. |
+
+**Two ways in:**
+
+| Login | What it does | When to use |
+|---|---|---|
+| **Token-based** (`…-federated` / `…-sa-token`) | opens Busola already authenticated with a service-account / federated token — **no second sign-in** (you were already authenticated at the oauth2-proxy gateway) | **frictionless, recommended** — mirrors the headless, CI/CD-style access the automation uses |
+| **OIDC** (`xp266-NNN` / `…-external`) | sign in to Busola **interactively** with your workshop identity | the full interactive login flow; **not** suited to headless / automated environments |
 
 Now sign in:
 
