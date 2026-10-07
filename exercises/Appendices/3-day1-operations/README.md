@@ -1,20 +1,17 @@
 # Appendix 3 - The making of your runtime (Day-1 operations)
 
-Throughout this workshop you were told *"everything is already deployed for you."*
+Throughout this workshop you were told *"everything is already deployed for you."* This appendix shows **how**.
 
-This is the exercise where you see **how**.
+> [!IMPORTANT]
+> **Reference / instructor track — you don't run this.** The Day-1 provisioning pipeline lives in the SAP-internal fleet repository, **not** in your fork, so students can't run it. It's here as a **read-along** so you can see how your runtime was assembled.
 
 A single GitHub Actions workflow — **`all-fleets-admin`** — provisions and reconciles the *entire* stack you've been exploring: the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, the KRO resource graphs, the telemetry pipelines, the dashboards, and JupyterHub.
 
-In this exercise you **run it against your own runtime and explore every step** in the Actions log.
-
-Because it's `terraform apply` under the hood, running it on your already-provisioned `xp266-NNN` is an **idempotent reconcile** — it converges the cluster to the declared state, it does **not** tear anything down or rebuild it.
-
-Safe to run, and it shows you the whole assembly line.
+It's `terraform apply` under the hood, so on an already-provisioned runtime it is an **idempotent reconcile** — it converges the cluster to the declared state; it does **not** tear anything down or rebuild it.
 
 ```mermaid
 flowchart TB
-  RUN["▶️ You: Run workflow<br/>shoots = xp266-NNN · oidc_provider = teched"]
+  RUN["▶️ Admin: Run workflow<br/>shoots = xp266-NNN · oidc_provider = teched"]
   SETUP["setup<br/>reads the fleet registry →<br/>builds the per-family shoot matrix"]
   DEPLOY["deploy-gardener<br/>(_gardener-kyma-fleet-reusable)"]
   OIDC["🔑 OIDC federated login<br/>gh-teched-xp266-NNN → your cluster<br/>(no long-lived kubeconfig)"]
@@ -24,18 +21,15 @@ flowchart TB
   RUN --> SETUP --> DEPLOY --> OIDC --> TF --> STACK
 ```
 
-> [!NOTE]
-> ✅ **No terminal, no local tooling** — you run everything from the GitHub Actions UI in your browser.
+## How it runs
 
-## Run the workflow
-
-1. Open **your fork** of the workshop repository (you forked it and enabled Actions per the [Requirements](../../../README.md#requirements)) and go to the **Actions** tab.
+1. From the fleet repository's **Actions** tab, the **`all-fleets-admin`** workflow is dispatched with **Run workflow**.
 <br>![](images/08_01_0010.png)
 
-2. In the left list of workflows, select **`all-fleets-admin`**, then click **Run workflow** (top-right).
+2. In the left list of workflows, **`all-fleets-admin`** is selected, then **Run workflow** (top-right).
 <br>![](images/08_01_0020.png)
 
-3. Fill the inputs — only two change from their defaults:
+3. The inputs target a single runtime — only two change from their defaults:
 
    | Input | Set it to | Why |
    |---|---|---|
@@ -45,14 +39,14 @@ flowchart TB
    | `kyma_version` | *(leave default)* | |
    | `namespace` | *(leave default)* | |
 
-4. Click the green **Run workflow** button. A new run appears in the list — click it to open the live log.
+4. On dispatch, the run federates in (short-lived OIDC token) and reconciles the cluster — the live log shows every step.
 
 > [!NOTE]
 > **No secrets in your hands.** The workflow authenticates to your cluster with a short-lived **GitHub OIDC token** (`id-token: write`), federated as `gh-teched-<your-shoot>` — there is no kubeconfig or cloud credential to copy anywhere. This is the same upfront-federated-identity pattern that provisioned your runtime in the first place.
 
 ## Explore the steps
 
-Expand the jobs and steps in the run and connect them to what you learned:
+In the run's log, each job connects to what you learned:
 
 1. **`setup` → "Build per-family shoot matrices"** — reads the fleet registry at runtime and works out that your `xp266-NNN` is a *gardener-teched* shoot, routing it to the Gardener reusable workflow. Open the **Fleet Reference** in the run **Summary** to see the whole fleet it *can* target.
 <br>![](images/08_02_0010.png)
@@ -74,7 +68,7 @@ Expand the jobs and steps in the run and connect them to what you learned:
 
 ## Summary
 
-You ran the `all-fleets-admin` workflow against your own `xp266-NNN` runtime, saw it federate in with a short-lived OIDC token, and explored the `terraform apply` steps that build every component you played with — the declarative, reproducible pipeline behind the whole workshop.
+You saw how the `all-fleets-admin` workflow federates in with a short-lived OIDC token and reconciles every component you played with — the declarative, reproducible pipeline behind the whole workshop.
 
 ---
 
