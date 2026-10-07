@@ -50,13 +50,9 @@ Now sign in:
 
 ## Exercise 0.2 - See what is already deployed *(optional)*
 
-Your runtime's **self-hosted, in-cluster agent layer** — the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, JupyterHub, the telemetry and spend pipeline — was deployed for you declaratively with **KRO** (Kubernetes Resource Orchestrator) as a single unit.
-
-Your agent **consumes** the SAP AI platform — it hosts no model itself.
-
-Every LLM call goes down to **SAP AI Core** (SAP's LLM Module / Generative AI Hub) and the generation comes back.
-
-The one connection that matters for this workshop is exactly that arrow — from your in-cluster agent to SAP AI Core, through the **LiteLLM proxy**:
+Your runtime's **self-hosted, in-cluster agent layer** — the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, JupyterHub, the telemetry and spend pipeline — was deployed for you declaratively with **KRO** (Kubernetes Resource Orchestrator) as a single unit.  
+Your agent **consumes** the SAP AI platform — it hosts no model itself.  
+Every LLM call goes down to **SAP AI Core** (SAP's LLM Module / Generative AI Hub) and the generation comes back.  
 
 ```mermaid
 flowchart TB
