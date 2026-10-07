@@ -1,6 +1,6 @@
 # Appendix 1 - The LLM gateway: LiteLLM and SAP AI Core
 
-Your agent never talks to a model provider directly.
+👉 Your agent never talks to a model provider directly.
 
 Every LLM call goes through an in-cluster **LiteLLM proxy**, which routes to **SAP AI Core** — SAP's orchestration layer in front of Claude (via AWS Bedrock), GPT (via Azure OpenAI), Mistral, and Amazon Nova.
 

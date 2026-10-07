@@ -5,7 +5,7 @@
 
 Busola ships an **in-cluster web terminal** — a pod, in your browser, that already has **`goose`**, **`Claude Code`**, `kubectl`, and the **`kyma`** CLI installed and **pre-authenticated to the LiteLLM proxy**.
 
-No local install, no login, no API key.
+👉 No local install, no login, no API key.
 
 In this exercise you drive the `kyma` CLI and both AI agents against your own cluster and see them answer via SAP AI Core.
 

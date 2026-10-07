@@ -71,7 +71,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 ## Exercise 1.3 - Write your own prompt
 
-The real power of the dev-toolbox is this: **you change what Goose investigates by changing the prompt** — no code, no redeploy.
+👉 The real power of the dev-toolbox is this: **you change what Goose investigates by changing the prompt** — no code, no redeploy.
 
 1. In the **Run a diagnostic** card, open the **Prompt** dropdown and choose **— custom prompt —**.
 

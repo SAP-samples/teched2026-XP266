@@ -18,7 +18,7 @@
 In Exercise 5 the sandbox had **no internet** — its only exit was the in-cluster LiteLLM proxy, and §5.4 *proved* the
 agent couldn't reach the apiserver or the public web.
 
-This exercise flips exactly one dial: a **4th trust tier** — a
+👉 This exercise flips exactly one dial: a **4th trust tier** — a
 still-contained sandbox with **one external endpoint allow-listed** (`openrouter.ai`), so you can drive terminal
 coding agents against public **OpenRouter** models.
 

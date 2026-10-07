@@ -1,6 +1,6 @@
 # Exercise 4 - JupyterHub playground: SAP AI Core from Python
 
-This is your **open playground**.
+👉 This is your **open playground**.
 
 A full **JupyterHub** is running in your cluster, pre-loaded with notebooks, and — like every other component — wired to **SAP AI Core through the LiteLLM proxy**.
 

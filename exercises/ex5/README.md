@@ -31,7 +31,7 @@
 
 AI agents are most useful when they can read files, install packages, call APIs, and use credentials.
 
-**That same access
+👉 **That same access
 is the risk.**
 
 [Appendix 2](../Appendices/2-web-terminal/README.md) fenced the Busola web terminal with **RBAC + a NetworkPolicy** — but it's

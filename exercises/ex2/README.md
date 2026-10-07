@@ -32,7 +32,7 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 
 ## Exercise 2.2 - The hand-off: ask about your cluster's diagnosis
 
-This is the pay-off of the "jobs produce → agents consume" pattern.
+👉 This is the pay-off of the "jobs produce → agents consume" pattern.
 
 The Goose jobs already wrote a **Cluster Health Report** and archived their raw findings.
 
