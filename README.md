@@ -52,7 +52,7 @@ Everything is **already deployed and wired up for you** on your personal Kyma ru
 - 💰 read the **spend dashboards** ([Exercise 3](exercises/ex3/));
 - 📓 explore SAP AI Core and **OpenShell sandboxes** with **JupyterHub notebooks** ([Exercise 4](exercises/ex4/));
 - 🛡️ watch a **sandboxed agent** hit its guardrails — denied the internet and the API server ([Exercise 5](exercises/ex5/));
-- ⚙️ and finally run the **GitHub Actions pipeline** that deployed all of it ([Appendix 3](exercises/Appendices/3-day1-operations/)).
+- ⚙️ and run the **OpenShell-admin** and **NVIDIA** GitHub Actions workflows ([Exercise 5](exercises/ex5/) · [Exercise 6](exercises/ex6/)).
 
 The **LLM gateway** (calling SAP AI Core through the proxy) and the **in-cluster web terminal** are covered in the appendices.
 
