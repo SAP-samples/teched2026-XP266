@@ -50,7 +50,7 @@ Everything is **already deployed and wired up for you** on your personal Kyma ru
 - 🩺 **experiment with the diagnostics' prompts** and watch the Cluster Health Reports change ([Exercise 1](exercises/ex1/));
 - 💬 chat with the **interactive chat agent** ([Exercise 2](exercises/ex2/));
 - 💰 read the **spend dashboards** ([Exercise 3](exercises/ex3/));
-- 📓 explore SAP AI Core and **OpenShell sandboxes** from **Python in JupyterHub** ([Exercise 4](exercises/ex4/));
+- 📓 explore SAP AI Core and **OpenShell sandboxes** with **JupyterHub notebooks** ([Exercise 4](exercises/ex4/));
 - 🛡️ watch a **sandboxed agent** hit its guardrails — denied the internet and the API server ([Exercise 5](exercises/ex5/));
 - ⚙️ and finally run the **GitHub Actions pipeline** that deployed all of it ([Appendix 3](exercises/Appendices/3-day1-operations/)).
 
