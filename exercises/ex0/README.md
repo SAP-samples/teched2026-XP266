@@ -54,6 +54,12 @@ Your runtime's **self-hosted, in-cluster agent layer** — the LiteLLM proxy, th
 Your agent **consumes** the SAP AI platform — it hosts no model itself.  
 Every LLM call goes down to **SAP AI Core** (SAP's LLM Module / Generative AI Hub) and the generation comes back.  
 
+```text
+every LLM call  ──▶  LiteLLM proxy  ──▶  SAP AI Core  (Claude · GPT · Mistral · Nova)
+```
+
+You'll follow that **LiteLLM → SAP AI Core** arrow in the next exercise.
+
 ```mermaid
 flowchart TB
   subgraph kyma["🟣 Your Kyma runtime — self-hosted, in-cluster agent layer (deployed as one KRO unit)"]
@@ -78,12 +84,6 @@ flowchart TB
   end
   llm ==>|"sap/ provider · OAuth2 token<br/>(the one arrow that matters)"| aicore
 ```
-
-```text
-every LLM call  ──▶  LiteLLM proxy  ──▶  SAP AI Core  (Claude · GPT · Mistral · Nova)
-```
-
-You'll follow that **LiteLLM → SAP AI Core** arrow in the next exercise.
 
 > [!TIP]
 > Want the full story behind this stack? Read the deep-dive on the SAP Community:
