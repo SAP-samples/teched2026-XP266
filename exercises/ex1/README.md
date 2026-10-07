@@ -6,9 +6,7 @@
 - Every run executes Goose **keyless, inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
 - You drive all of it from one place: the **dev-toolbox UI**.
 
-👉 You never touch CronJobs or `kubectl` here — the dev-toolbox UI is the control panel: trigger a run, pick the model, read the report, and write your own prompt.
-
-Open it (same single sign-on as Busola):
+👉 Open it (same single sign-on as Busola):
 
 ```
 https://dev-toolbox.xp266-NNN.<workshop-domain>/
