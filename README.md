@@ -25,7 +25,7 @@ It also streams its **LLM** spend to **SAP Cloud Logging** — all routed throug
 > - **KRO** — *Kubernetes Resource Orchestrator*; packages the whole stack as one declarative unit.
 > - **CLS** — *SAP Cloud Logging*; SAP's OpenSearch-based observability service.
 
-The whole premise is in the title: the agent is **sandboxed**.
+👉 The whole premise is in the title: the agent is **sandboxed**.
 
 Giving an AI agent a shell and a kubeconfig normally means a bad prompt — or a prompt-injection — can delete your workloads or leak a token.
 
