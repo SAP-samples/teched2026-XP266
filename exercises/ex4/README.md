@@ -16,9 +16,6 @@ openai client  ──▶  http://litellm-proxy.default:4001/v1  ──▶  SAP A
                     (same proxy as every other exercise)
 ```
 
-> [!NOTE]
-> ✅ **No terminal needed** — everything runs in JupyterLab in your browser (**Run ▸ Run All Cells**).
-
 ## Exercise 4.1 - Sign in and spawn your server
 
 1. Open your JupyterHub URL in the browser (handed out with your runtime), e.g.:

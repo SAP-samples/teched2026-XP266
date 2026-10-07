@@ -6,9 +6,6 @@ The other half of the story is an **interactive** AI agent — a chat UI (for in
 
 In this exercise you chat with it and see how it picks up where the diagnostic jobs leave off.
 
-> [!NOTE]
-> ✅ **No terminal needed** — this exercise is entirely browser-based.
-
 ```
 You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SAP AI Core (Claude Opus by default)
                       │
@@ -21,7 +18,7 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 1. Open your chat UI URL in the browser (handed out with your runtime), e.g.:
 
    ```
-   https://chat.xp266-NNN.<workshop-domain>/
+   https://openclaw.xp266-NNN.<workshop-domain>/
    ```
    Sign in with the workshop identity provider (same single sign-on as Busola).
 <br>![](images/04_01_0010.png)
