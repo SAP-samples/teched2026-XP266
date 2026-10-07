@@ -1,13 +1,7 @@
 # Exercise 7 - Your own sandboxed agent: OpenShell on Kyma 🔧 *(advanced — CLI + admin access)*
 
 > [!WARNING]
-> **This is a bonus / advanced exercise, and it is admin-gated.** Unlike ex0–ex8, it needs the **`openshell` CLI** and an
-> account in the operators' group — the OpenShell gateway only admits the `openshell-admin` role. You can run the CLI two
-> ways: **(a) from your laptop** (a browser opens for single sign-on), or **(b) from the [Busola web terminal](../ex2/README.md)**,
-> where `openshell` is **pre-installed** — handy on locked-down Windows laptops with nothing to install; it uses a
-> **device-code login** since the terminal pod has no browser (see the two paths in 7.1). If you don't have the
-> `openshell-admin` role, **watch the instructor demo** — everything below is a live walk-through. Nothing here is required
-> to complete the workshop — you already finished it at [the Appendix](../appendix-day1-operations/README.md).
+> **Bonus / advanced, and admin-gated.** The `openshell` CLI is **pre-installed in the [Busola web terminal](../ex2/README.md)** (and the sandbox images) — nothing to install; it signs in via device-code (§7.1). The OpenShell gateway only admits the **`openshell-admin`** role — if you don't have it, **watch the instructor demo**. Nothing here is required to complete the workshop; everything runs on **your own** `xp266-NNN` runtime.
 
 > [!TIP]
 > **Easy path — run it as a workflow (no CLI, no admin role).** The hands-on below is the full manual OpenShell CLI
