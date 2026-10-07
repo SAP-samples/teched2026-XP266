@@ -23,7 +23,7 @@ AI agents are most useful when they can read files, install packages, call APIs,
 **That same access
 is the risk.**
 
-[Exercise 3](../ex3/README.md) fenced the Busola web terminal with **RBAC + a NetworkPolicy** — but it's
+[Exercise 2](../ex2/README.md) fenced the Busola web terminal with **RBAC + a NetworkPolicy** — but it's
 still an ordinary `exec` pod: those are guardrails *around* it, not isolation *of* it.
 
 OpenShell takes the next step —
@@ -325,7 +325,7 @@ So the sandbox can reach **only** `litellm-proxy…:4001` (→ SAP AI Core) — 
 internet are all **refused** by the egress broker.
 
 That containment is **native to the stock OpenShell chart** — no NetworkPolicy required — a
-stronger boundary than [Exercise 3](../ex3/README.md)'s RBAC-fenced Busola terminal, which is still an ordinary pod on the
+stronger boundary than [Exercise 2](../ex2/README.md)'s RBAC-fenced Busola terminal, which is still an ordinary pod on the
 cluster network.
 
 Clean up when done:
