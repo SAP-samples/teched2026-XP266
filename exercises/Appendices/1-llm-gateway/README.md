@@ -63,7 +63,7 @@ flowchart LR
    - **`drop_params: true`.** SAP AI Core rejects unknown parameters, so LiteLLM silently drops them instead of failing. This is mandatory for the SAP path.
 
 > [!TIP]
-> Why a proxy at all? One place for **routing** (tiers → models), **cost tracking** (every call is logged to PostgreSQL and surfaced on the spend dashboard in [Exercise 3](../../ex3/README.md)), **auth** (the SAP AI Core credentials live in one Secret, not in every agent), and **quirk-handling** (a pre-call hook works around SAP-specific request/response oddities).
+> Why a proxy at all? One place for **routing** (tiers → models), **cost tracking** (every call is logged to PostgreSQL and shown on the spend dashboard in [Exercise 3](../../ex3/README.md)), **auth** (the SAP AI Core credentials live in one Secret, not in every agent), and **quirk-handling** (a pre-call hook works around SAP-specific request/response oddities).
 
 ## Appendix 1.2 - Call SAP AI Core through the proxy 🔧 *(optional — go deeper)*
 
@@ -101,7 +101,7 @@ You just called SAP AI Core, in your own cluster, with no API key of your own �
 
 ## Appendix 1.3 - Same API, different model 🔧 *(optional — go deeper)*
 
-The whole point of the OpenAI-compatible surface is that swapping models is a one-word change.
+The whole point of the OpenAI-compatible API is that swapping models is a one-word change.
 
 Try the deep-reasoning tier and an OpenAI model:
 

@@ -58,7 +58,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
    While a run is in flight, Busola shows a live **Activity** badge (`RUNNING`) and an **Elapsed** timer — the report is a Kubernetes custom resource the agent writes into, so the whole fleet can read it.
 
 > [!TIP]
-> These aren't hypothetical checks. In production the same pipeline surfaced things static monitoring missed — **402 ingress-gateway revisions** piled up in five days (a pod cycling every 17 minutes), **18 leftover cluster-admin bindings** from dev tooling, and a cert-manager ACME solver **stuck for 5+ days** on a DNS mismatch. Reasoning over correlated state finds what probes can't.
+> These aren't hypothetical checks. In production the same pipeline caught things static monitoring missed — **402 ingress-gateway revisions** piled up in five days (a pod cycling every 17 minutes), **18 leftover cluster-admin bindings** from dev tooling, and a cert-manager ACME solver **stuck for 5+ days** on a DNS mismatch. Reasoning over correlated state finds what probes can't.
 
 ## Exercise 1.2 - Trigger a run
 
@@ -139,5 +139,5 @@ cluster-admin:    no
 ## Summary
 
 You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it keyless inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.  
-You also met the hand-off surface the rest of the workshop builds on.  
+You also met the hand-off that the rest of the workshop builds on.  
 Continue to - [Exercise 2 - Chat with the interactive agent](../ex2/README.md)
