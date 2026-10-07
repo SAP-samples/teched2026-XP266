@@ -1,10 +1,13 @@
 # Exercise 1 - Trigger and shape the Cluster Health Reports
 
-This is the heart of the workshop.  
-A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit**.  
-Every run executes Goose **keyless, inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.  
-You drive all of it from one place: the **dev-toolbox UI**.  
-👉 You never touch CronJobs or `kubectl` here — the dev-toolbox UI is the control panel: trigger a run, pick the model, read the report, and write your own prompt.  
+👉 This is the heart of the workshop.
+
+- A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit**.
+- Every run executes Goose **keyless, inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
+- You drive all of it from one place: the **dev-toolbox UI**.
+
+👉 You never touch CronJobs or `kubectl` here — the dev-toolbox UI is the control panel: trigger a run, pick the model, read the report, and write your own prompt.
+
 Open it (same single sign-on as Busola):
 
 ```
