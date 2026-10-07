@@ -1,6 +1,10 @@
 # Exercise 1 - The LLM gateway: LiteLLM and SAP AI Core
 
-Your agent never talks to a model provider directly. Every LLM call goes through an in-cluster **LiteLLM proxy**, which routes to **SAP AI Core** — SAP's orchestration layer in front of Claude (via AWS Bedrock), GPT (via Azure OpenAI), Mistral, and Amazon Nova. In this exercise you inspect the running proxy, understand *why* it's there, and **call SAP AI Core yourself** through it.
+Your agent never talks to a model provider directly.
+
+Every LLM call goes through an in-cluster **LiteLLM proxy**, which routes to **SAP AI Core** — SAP's orchestration layer in front of Claude (via AWS Bedrock), GPT (via Azure OpenAI), Mistral, and Amazon Nova.
+
+In this exercise you inspect the running proxy, understand *why* it's there, and **call SAP AI Core yourself** through it.
 
 > [!NOTE]
 > **Everyone:** Exercise 1.1 is a pure Busola click-through — that's all you need to understand the gateway. **🔧 Go deeper (optional):** 1.2 and 1.3 call the proxy yourself from the in-cluster web terminal. If you'd rather not use a terminal, skip them — you'll see the exact same call made for you in later exercises (and from Python in [Exercise 7](../ex7/README.md)).
@@ -8,7 +12,40 @@ Your agent never talks to a model provider directly. Every LLM call goes through
 ## Exercise 1.1 - Understand the proxy
 
 1. In Busola, go to **namespace `default` → Workloads → Deployments** and open **`litellm-proxy`**. It listens on port **4001** and exposes an **OpenAI-compatible** API at `/v1`.
-<br>![](images/01_01_0010.png)
+
+```mermaid
+flowchart LR
+  subgraph callers["In-cluster callers · OpenAI-compatible"]
+    direction TB
+    goose["🪿 Goose"]
+    claude["🤖 Claude Code"]
+    chat["💬 Chat agent · OpenClaw"]
+    you["🧑 You · curl in the web terminal"]
+  end
+
+  subgraph proxy["🔀 LiteLLM proxy · ns default · :4001 · /v1"]
+    direction TB
+    tiers["Tier aliases (caller asks for a tier, not a model)<br/>reasoning-fast → Claude Sonnet (default)<br/>reasoning-hard → Claude Opus (~9× cost)<br/>gpt-5.5 · mistral · nova"]
+    hook["Pre-call hook + drop_params: true<br/>(handles SAP-specific request/response quirks)"]
+    prov["sap/ provider<br/>mints an OAuth2 token from the service-key Secret"]
+    tiers --> hook --> prov
+  end
+
+  subgraph sap["☁️ SAP AI Core · LLM Module"]
+    direction TB
+    aicore["SAP AI Core"]
+    aicore --> bedrock["Claude · AWS Bedrock"]
+    aicore --> azure["GPT · Azure OpenAI"]
+    aicore --> mistral["Mistral"]
+    aicore --> nova["Amazon Nova"]
+  end
+
+  callers -->|"Authorization: Bearer PROXY_API_KEY<br/>POST /v1/chat/completions · model = a tier"| proxy
+  prov ==>|"HTTPS · OAuth2 token"| aicore
+
+  proxy -.->|"cost + tokens, every call"| pg[("🗄️ PostgreSQL<br/>LiteLLM_SpendLogs")]
+  proxy -.->|"/metrics"| cls["📊 Kyma Telemetry → SAP Cloud Logging<br/>spend dashboard (ex5)"]
+```
 
 2. Open **namespace `default` → Configuration → Config Maps → `litellm-proxy-config`** and look at `config.yaml`. Three things to notice:
 
@@ -57,7 +94,9 @@ You just called SAP AI Core, in your own cluster, with no API key of your own �
 
 ## Exercise 1.3 - Same API, different model 🔧 *(optional — go deeper)*
 
-The whole point of the OpenAI-compatible surface is that swapping models is a one-word change. Try the deep-reasoning tier and an OpenAI model:
+The whole point of the OpenAI-compatible surface is that swapping models is a one-word change.
+
+Try the deep-reasoning tier and an OpenAI model:
 
 Command:
 ```bash
@@ -76,6 +115,8 @@ done
 
 ## Summary
 
-You inspected the LiteLLM proxy, learned how it routes to SAP AI Core (the `sap/` provider, tier aliases, `drop_params`), and called SAP AI Core through it from your cluster — first the `reasoning-fast` tier, then other models with a one-word change. Every agent in this workshop uses exactly this path.
+You inspected the LiteLLM proxy, learned how it routes to SAP AI Core (the `sap/` provider, tier aliases, `drop_params`), and called SAP AI Core through it from your cluster — first the `reasoning-fast` tier, then other models with a one-word change.
+
+Every agent in this workshop uses exactly this path.
 
 Continue to - [Exercise 2 - The Busola web terminal](../ex2/README.md)
