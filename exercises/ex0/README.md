@@ -20,16 +20,16 @@ https://busola.xp266-NNN.<workshop-domain>/clusterdir/
 The page is organised top-to-bottom:
 
 - **SAP TechEd2026-XP266 — Navigate to your Kyma cluster.** Pick your runtime with the **selector** (top right), e.g. `xp266-NNN`. The card then shows your **User login** (`XP266-NNN`, `xp266-nnn@education.cloud.sap`) and the shared **Instructor login** (`XP266-000`), plus two ways in:
-  - **OIDC login** — `xp266-NNN` (and `…-external`): open Busola and sign in interactively with your workshop identity. **This is the path you use for the exercises.**
-  - **Token-based login** — `…-federated` / `…-sa-token`: open Busola already authenticated with a service-account/federated token (no interactive sign-in) — handy for a quick look.
+  - **Token-based login** — `…-federated` / `…-sa-token`: open Busola already authenticated with a service-account / federated token — **no second sign-in**, because you were already authenticated at the gateway (oauth2-proxy). This is the **frictionless, recommended path for the workshop**, and it mirrors the **headless, CI/CD-style** access that the automation uses.
+  - **OIDC login** — `xp266-NNN` (and `…-external`): sign in to Busola **interactively** with your workshop identity. Use this when you want the full interactive login flow; it is **not** suited to headless / automated environments.
 - **Cluster launchpad** — one-click deep-links into every endpoint you'll inspect for the selected cluster (Cluster Health, Fleet Status + Spend, Audit Log, Jobs, and the apps — dev-toolbox, LiteLLM Spend, JupyterHub, the Chat agent). It follows the selector.
 - **LiteLLM spend** and an **Appendix** (this cluster's raw access variants + the other fleet clusters) round out the page — you can ignore these for now.
 
 Now sign in:
 
-1. In the **Navigate to your Kyma cluster** card, select your runtime and click the **OIDC login** entry `xp266-NNN` (or just open your Busola URL directly: `https://busola.xp266-NNN.<workshop-domain>/`).
+1. In the **Navigate to your Kyma cluster** card, select your runtime and click the **Token-based login** entry `xp266-NNN-federated` — the frictionless path (or just open your Busola URL directly: `https://busola.xp266-NNN.<workshop-domain>/`).
 
-2. Sign in with the workshop identity provider when prompted (single sign-on). You land on the Busola **Cluster Overview** for your runtime.
+2. The first dashboard you open this session takes you through the gateway (oauth2-proxy) to sign in with the workshop identity provider (single sign-on). After that you land directly on the Busola **Cluster Overview** for your runtime — the token-based entry needs no further Busola sign-in.
 <br>![](images/00_01_0010.png)
 
 > [!NOTE]
