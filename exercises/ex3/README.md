@@ -60,16 +60,14 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
    The dropdown is the **intersection** of what's actually deployed and `RUNNING` in your SAP AI Core, and what the LiteLLM proxy is configured to route — so you can only pick a model the proxy will accept. (v2/v3 honour your choice; v1 keeps its baked model.)
 
-3. *(optional)* Set **Max turns** — how many reason-and-act rounds Goose gets.
-
-4. Click **Run**.
+3. Click **Run**.
 
    A one-off sandboxed run starts immediately (no waiting for the schedule). Watch the **Recent runs** table; click **logs** on the new row to tail the sandbox and see the extracted *Goose answer*.
 
-5. When it completes, the matching report in **Latest health reports** refreshes — new `lastUpdated`, new sections.
+4. When it completes, the matching report in **Latest health reports** refreshes — new `lastUpdated`, new sections.
 
-> [!TIP]
-> **What does *Max turns* actually do?** A *turn* is one round of reasoning **plus** its tool calls — not one LLM call. In this headless, no-human-in-the-loop setup, hitting the cap makes Goose simply **stop** — sometimes before it has written the report. The recipe is tuned so the default is enough; the run also **guards the write**, so a short or empty run never overwrites your last good report. (Calibration rule of thumb: narrow task 10–15 · bounded playbook ~30 · open-ended exploration 100+.)
+> [!NOTE]
+> The sandboxed run is **keyless and uncapped** — Goose reasons for as many steps as the task needs; there's no turn budget to tune. What shapes a run is the **prompt** (the recipe — next) and the **model** you pick. The job also **guards the write**: a failed or empty run never overwrites your last good report, so you can experiment freely.
 
 ## Exercise 3.3 - Write your own prompt
 
@@ -135,7 +133,7 @@ cluster-admin:    no
 
 ## Summary
 
-You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model and turn budget), **wrote your own prompt** and watched Goose run it keyless inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.
+You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it keyless inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.
 
 You also met the hand-off surface the rest of the workshop builds on.
 
