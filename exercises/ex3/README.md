@@ -1,7 +1,6 @@
 # Exercise 3 - Observability and spend
 
-Running LLMs in production raises an obvious question: **what is this costing, and who is spending it?**
-
+Running LLMs in production raises an obvious question: **what is this costing, and who is spending it?**  
 In this exercise you see how the stack answers that — every call is metered by the LiteLLM proxy, scraped by **Kyma Telemetry**, shipped to **SAP Cloud Logging**, and rendered as dashboards you read straight from Busola.
 
 ```
@@ -58,6 +57,5 @@ The dashboards are one click away from Busola's left navigation.
 
 ## Summary
 
-You followed one LLM call's metrics from the LiteLLM proxy through a Kyma Telemetry `MetricPipeline` into SAP Cloud Logging, and read the **LiteLLM Spend** and **LLM Overview** dashboards from Busola — seeing the autonomous-jobs (Sonnet) vs interactive-agents (Opus) spend split that the single-proxy design makes possible.
-
+You followed one LLM call's metrics from the LiteLLM proxy through a Kyma Telemetry `MetricPipeline` into SAP Cloud Logging, and read the **LiteLLM Spend** and **LLM Overview** dashboards from Busola — seeing the autonomous-jobs (Sonnet) vs interactive-agents (Opus) spend split that the single-proxy design makes possible.  
 Continue to - [Exercise 4 - JupyterHub playground: SAP AI Core from Python](../ex4/README.md)

@@ -1,7 +1,6 @@
 # Getting Started — access your Kyma runtime and tour the AI-ops stack
 
-In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, get oriented in **Busola** (the Kyma dashboard), and take a quick tour of the AI operations stack that is **already running** for you.
-
+In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, get oriented in **Busola** (the Kyma dashboard), and take a quick tour of the AI operations stack that is **already running** for you.  
 You will not deploy anything — everything is in place; you are here to understand it and play with it.
 
 > [!NOTE]
@@ -95,6 +94,5 @@ flowchart TB
 
 ## Summary
 
-You signed in to your Kyma runtime in Busola, met the pre-deployed AI-ops stack (LiteLLM, Goose, the interactive chat agent, JupyterHub, and the KRO custom resources), and saw where it fits in the SAP AI landscape.
-
+You signed in to your Kyma runtime in Busola, met the pre-deployed AI-ops stack (LiteLLM, Goose, the interactive chat agent, JupyterHub, and the KRO custom resources), and saw where it fits in the SAP AI landscape.  
 Continue to - [Exercise 1 - Trigger and shape the Cluster Health Reports](../ex1/README.md)

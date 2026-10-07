@@ -1,15 +1,10 @@
 # Exercise 1 - Trigger and shape the Cluster Health Reports
 
-This is the heart of the workshop.
-
-A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit**.
-
-Every run executes Goose **keyless, inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
-
-You drive all of it from one place: the **dev-toolbox UI**.
-
-👉 You never touch CronJobs or `kubectl` here — the dev-toolbox UI is the control panel: trigger a run, pick the model, read the report, and write your own prompt.
-
+This is the heart of the workshop.  
+A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit**.  
+Every run executes Goose **keyless, inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.  
+You drive all of it from one place: the **dev-toolbox UI**.  
+👉 You never touch CronJobs or `kubectl` here — the dev-toolbox UI is the control panel: trigger a run, pick the model, read the report, and write your own prompt.  
 Open it (same single sign-on as Busola):
 
 ```
@@ -94,8 +89,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 3. Pick the **v2** job (so Goose gets live, read-only `kubectl`) and click **Run**.
 
-   Your prompt is saved to your own **adhoc prompt** store and used for this run; it then appears in the dropdown so you can **reuse** it. The **delete** button removes your custom prompts (the shipped ones are read-only).
-
+   Your prompt is saved to your own **adhoc prompt** store and used for this run; it then appears in the dropdown so you can **reuse** it. The **delete** button removes your custom prompts (the shipped ones are read-only).  
 👉 The shipped **v1/v2/v3 recipes are read-only** in the UI — your custom prompts live alongside them and never change the defaults, so you can experiment safely.
 
 > [!NOTE]
@@ -103,8 +97,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 ## Exercise 1.4 - The guardrails: read, reason, but don't touch
 
-An agent with `kubectl` is powerful — and, unchecked, dangerous. The reason you can hand it a prompt you wrote and let it loose is that it is **boxed in by construction**, not by asking the model to behave.
-
+An agent with `kubectl` is powerful — and, unchecked, dangerous. The reason you can hand it a prompt you wrote and let it loose is that it is **boxed in by construction**, not by asking the model to behave.  
 Three overlapping fences wrap every run:
 
 - **A read-only identity.** The run gets a short-lived **`sandbox-viewer`** token — `get`/`list`/`watch` only, with **`secrets` excluded**. It can read the whole picture to reason, but a write or a secret-read is refused by the API server with `403`.
@@ -114,8 +107,7 @@ Three overlapping fences wrap every run:
 > [!NOTE]
 > **Defense in depth.** No single control is trusted alone: the read-only token (can't write or read secrets), the sandbox boundary (no internet, no API-server mutation), non-root + read-only rootfs (can't escalate on the node), and `drop_params` at the proxy (can't send SAP AI Core a malformed request). The agent is useful *because* it's boxed in. The deep dive is [Exercise 5](../ex5/README.md).
 
-🔧 **Prove it yourself (optional — go deeper).** In a **web terminal** ([Appendix 2](../Appendices/2-web-terminal/README.md)), ask the API server what the web-terminal identity may do, and read the report artifacts directly:
-
+🔧 **Prove it yourself (optional — go deeper).** In a **web terminal** ([Appendix 2](../Appendices/2-web-terminal/README.md)), ask the API server what the web-terminal identity may do, and read the report artifacts directly:  
 Command:
 ```bash
 echo "read anything:    $(kubectl auth can-i list nodes)"
@@ -141,8 +133,6 @@ cluster-admin:    no
 
 ## Summary
 
-You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it keyless inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.
-
-You also met the hand-off surface the rest of the workshop builds on.
-
+You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it keyless inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.  
+You also met the hand-off surface the rest of the workshop builds on.  
 Continue to - [Exercise 2 - Chat with the interactive agent](../ex2/README.md)

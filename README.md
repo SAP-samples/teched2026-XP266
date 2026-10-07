@@ -9,12 +9,9 @@ This repository contains the material for the SAP TechEd 2026 session **XP266 - 
 
 ## Overview
 
-Modern Kubernetes operations need more than dashboards — they need **reasoning**.
-
-In this hands-on you meet a **fully in-cluster, sandboxed AI operations agent** running on **SAP BTP, Kyma runtime** and talking to **SAP AI Core**.
-
-It's a [Goose](https://github.com/block/goose) agent with live `kubectl` access: it investigates the cluster autonomously and writes its findings as **Busola** in-cluster health reports.
-
+Modern Kubernetes operations need more than dashboards — they need **reasoning**.  
+In this hands-on you meet a **fully in-cluster, sandboxed AI operations agent** running on **SAP BTP, Kyma runtime** and talking to **SAP AI Core**.  
+It's a [Goose](https://github.com/block/goose) agent with live `kubectl` access: it investigates the cluster autonomously and writes its findings as **Busola** in-cluster health reports.  
 It also streams its **LLM** spend to **SAP Cloud Logging** — all routed through a **LiteLLM proxy** and deployed declaratively with **KRO**.
 
 > [!NOTE]
@@ -28,16 +25,11 @@ It also streams its **LLM** spend to **SAP Cloud Logging** — all routed throug
 > - **KRO** — *Kubernetes Resource Orchestrator*; packages the whole stack as one declarative unit.
 > - **CLS** — *SAP Cloud Logging*; SAP's OpenSearch-based observability service.
 
-👉 The whole premise is in the title: the agent is **sandboxed**.
-
-Giving an AI agent a shell and a kubeconfig normally means a bad prompt — or a prompt-injection — can delete your workloads or leak a token.
-
-Here the **sandbox itself is the guardrail**: each agent runs in a disposable, per-session pod that _by construction_ cannot reach the internet or the API server, and never holds the LLM key — it sends a placeholder, and the gateway injects the real key at the edge.
-
-The same tools image is dialed to three trust tiers — **contained** (no cluster access) → **scoped-ops** (read-only) → **web terminal** (RBAC-scoped) — so you choose how much to trust each workload.
-
-It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on Kyma, no fork.
-
+👉 The whole premise is in the title: the agent is **sandboxed**.  
+Giving an AI agent a shell and a kubeconfig normally means a bad prompt — or a prompt-injection — can delete your workloads or leak a token.  
+Here the **sandbox itself is the guardrail**: each agent runs in a disposable, per-session pod that _by construction_ cannot reach the internet or the API server, and never holds the LLM key — it sends a placeholder, and the gateway injects the real key at the edge.  
+The same tools image is dialed to three trust tiers — **contained** (no cluster access) → **scoped-ops** (read-only) → **web terminal** (RBAC-scoped) — so you choose how much to trust each workload.  
+It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on Kyma, no fork.  
 👉 A prompt-injected or buggy agent hits the exact same walls a well-behaved one does — that is the difference between a guardrail and a guideline, and why you can say *"yes, run it"*.
 
 > [!TIP]
@@ -54,8 +46,7 @@ Everything is **already deployed and wired up for you** on your personal Kyma ru
 - 🛡️ watch a **sandboxed agent** hit its guardrails — denied the internet and the API server ([Exercise 5](exercises/ex5/));
 - ⚙️ and run the **OpenShell-admin** and **NVIDIA** GitHub Actions workflows ([Exercise 5](exercises/ex5/) · [Exercise 6](exercises/ex6/)).
 
-The **LLM gateway** (calling SAP AI Core through the proxy) and the **in-cluster web terminal** are covered in the appendices.
-
+The **LLM gateway** (calling SAP AI Core through the proxy) and the **in-cluster web terminal** are covered in the appendices.  
 This is the **self-hosted agent layer** of the SAP AI landscape — everything below runs **inside your Kyma runtime** and reaches SAP AI Core through one proxy:
 
 ```mermaid

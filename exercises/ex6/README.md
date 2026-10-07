@@ -16,12 +16,10 @@
 > Prefer the hands-on CLI? Continue below.
 
 In Exercise 5 the sandbox had **no internet** — its only exit was the in-cluster LiteLLM proxy, and §5.4 *proved* the
-agent couldn't reach the apiserver or the public web.
-
+agent couldn't reach the apiserver or the public web.  
 👉 This exercise flips exactly one dial: a **4th trust tier** — a
 still-contained sandbox with **one external endpoint allow-listed** (`openrouter.ai`), so you can drive terminal
-coding agents against public **OpenRouter** models.
-
+coding agents against public **OpenRouter** models.  
 The real OpenRouter key never enters the box: it lives in the
 gateway's `openrouter` **provider**, which injects a **resolve-sentinel** and swaps the real key at egress — and
 *only* for the agent binaries named in the provider profile (binary-scoped injection).
@@ -78,16 +76,12 @@ One image, three agents (all installed in `openrouter-agents:latest`):
 ## OpenRouter vs SAP AI Core — the same shape to LiteLLM
 
 **OpenRouter** is a public LLM *aggregator*: one OpenAI-compatible endpoint + one key, routing to many models
-(OpenAI, Anthropic, Google, Qwen, NVIDIA…).
-
+(OpenAI, Anthropic, Google, Qwen, NVIDIA…).  
 **SAP AI Core** — the provider you used *keyless* in ex5 — is SAP's
-managed inference gateway, reached in-cluster through the **LiteLLM proxy**.
-
+managed inference gateway, reached in-cluster through the **LiteLLM proxy**.  
 To LiteLLM they're the **same shape** (an
-OpenAI-compatible gateway behind one credential), so one proxy can front **both**.
-
-The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.**
-
+OpenAI-compatible gateway behind one credential), so one proxy can front **both**.  
+The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.**  
 OpenRouter only routes to its own public
 upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
 the reverse.
@@ -99,8 +93,7 @@ the reverse.
 | Internet | none | one host: `openrouter.ai` |
 
 ex6 keeps the agent talking to OpenRouter **directly** — that external, allow-listed, keyed endpoint *is* the 4th
-tier.
-
+tier.  
 (In production you'd often put OpenRouter *behind* LiteLLM too — one in-cluster exit, spend-tracked, key never
 leaves the proxy — but then it looks just like ex5.)
 
@@ -126,8 +119,7 @@ leaves the proxy — but then it looks just like ex5.)
 
 ## Exercise 6.2 - Create a sandbox with the agents + OpenRouter 🔧
 
-In a web terminal (Appendix 2), with your gateway session active (ex5 §5.1):
-
+In a web terminal (Appendix 2), with your gateway session active (ex5 §5.1):  
 Command:
 ```bash
 openshell sandbox create --name agents \
@@ -166,8 +158,7 @@ openshell sandbox exec --name agents -- pi -p --model openrouter/qwen/qwen3.8-27
 
 ## Exercise 6.4 - Prove it's still contained 🔧
 
-The agent reaches OpenRouter — and **nothing else**:
-
+The agent reaches OpenRouter — and **nothing else**:  
 Command:
 ```bash
 openshell sandbox exec --name agents -- sh -c 'curl -sS -m8 -o /dev/null -w "openrouter.ai: %{http_code}\n" https://openrouter.ai/api/v1/models; curl -sS -m8 https://example.com >/dev/null 2>&1 && echo "example.com: REACHED" || echo "example.com: blocked"; curl -sS -m8 https://kubernetes.default.svc >/dev/null 2>&1 && echo "apiserver: REACHED" || echo "apiserver: blocked"; echo "key in box: $OPENROUTER_API_KEY"'
@@ -195,13 +186,10 @@ Clean up: `openshell sandbox delete agents`
 
 When you ask an agent for *"a KRO ResourceGraphDefinition"*, a free model's first draft is usually **confident but
 wrong** — it reaches for OpenAPI schema (`type`/`properties`/`x-kro`), Helm templating (`{{ .spec.x }}`), or invented
-fields (`spec.nodes`/`components`/`graph`).
-
-KRO is a niche CRD the model hasn't memorised.
-
+fields (`spec.nodes`/`components`/`graph`).  
+KRO is a niche CRD the model hasn't memorised.  
 That's the real lesson of
-this exercise: **the agent drafts, the cluster adjudicates — you iterate.**
-
+this exercise: **the agent drafts, the cluster adjudicates — you iterate.**  
 Always validate before trusting:
 
 ```bash
@@ -347,11 +335,8 @@ kubectl -n weather-system get weather berlin -o jsonpath='{.status}'   # CEL-der
 
 You added an **external, keyed** LLM provider to the contained-sandbox model, ran three different terminal coding
 agents (opencode, Pi, Qwen Code) against free OpenRouter models, and proved the sandbox still can't reach anything
-but the one allow-listed endpoint — with the real key staying in the gateway.
-
+but the one allow-listed endpoint — with the real key staying in the gateway.  
 That's the OpenShell provider model
-generalizing from "keyless in-cluster" to "any governed external endpoint."
-
-Continue to - [Appendix 3 - The making of your runtime (Day-1 operations)](../Appendices/3-day1-operations/README.md)
-
+generalizing from "keyless in-cluster" to "any governed external endpoint."  
+Continue to - [Appendix 3 - The making of your runtime (Day-1 operations)](../Appendices/3-day1-operations/README.md)  
 Back to - [Overview](../../README.md)
