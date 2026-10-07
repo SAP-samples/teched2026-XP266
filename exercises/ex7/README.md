@@ -11,12 +11,12 @@
 
 > [!TIP]
 > **Easy path — run it as a workflow (no CLI, no admin role).** The hands-on below is the full manual OpenShell CLI
-> dance — do it if you want to *feel* every layer. But you can get the **same contained sandbox + the egress/containment
-> proof** by dispatching one GitHub Actions workflow from your fork — no terminal, no `openshell-admin` role:
+> dance — do it if you want to *feel* every layer. But you can see **Goose running inside a contained OpenShell sandbox**
+> on your cluster — the real production path this exercise builds by hand — by dispatching one workflow from your fork:
 >
 > | Run this workflow | What it does |
 > |---|---|
-> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Provisions a **contained OpenShell sandbox** on your cluster, runs an agent inside it, and — with **`show_containment: true`** (the default) — prints the **egress-guardrail proof** (apiserver + internet both denied) that §7.4 walks through by hand. Pick your `student_cluster` (`xp266-NNN`) → **Run workflow** → read the run **Summary**. |
+> | [**`all-fleets-teched-admin`**](../../../../actions/workflows/all-fleets-teched-admin.yaml) | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report — the same sandboxed-agent path §7 wires up manually. Pick your `student_cluster` (`xp266-NNN`) and `goose_mode` (`snapshot` / `live`) → **Run workflow** → read the run **Summary** (and the report in Busola). |
 >
 > Want to see it under the hood? Keep reading — the manual walk-through is below.
 
