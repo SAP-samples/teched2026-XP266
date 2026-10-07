@@ -90,11 +90,21 @@ Command:
 goose run --max-turns 3 --text "Using kubectl, how many namespaces are in this cluster, and which are not Active?"
 ```
 
-More documented one-shots to try:
+More documented one-shots to try — run them one at a time:
+
 ```bash
 goose run --max-turns 1 --text "In one line, what is Kyma?"
+```
+
+```bash
 goose run --max-turns 8 --text "Using kubectl, list namespaces with any non-Running pods and summarize why."
+```
+
+```bash
 kyma alpha diagnose cluster -f json > /tmp/diag.json
+```
+
+```bash
 goose run --max-turns 4 --text "Read /tmp/diag.json and summarize cluster health in 3 bullets."
 ```
 
@@ -105,15 +115,37 @@ goose run --max-turns 4 --text "Read /tmp/diag.json and summarize cluster health
 
 `claude -p` runs Claude Code headlessly — the **most reliable** mode.
 
-It shines when you **pipe cluster data into it**:
+It shines when you **pipe cluster data into it**. Run these one at a time:
 
-Command:
 ```bash
 kyma alpha diagnose cluster -f json | claude -p "Summarize cluster health and flag any issues."
-kubectl get pods -A -o wide       | claude -p "Which pods look unhealthy or mis-scheduled? Table by severity."
-kubectl get pods -A -o json       | claude -p "List workloads with no CPU/memory requests and flag which block HPA scaling."
-claude -p "Read /tmp/diag.json and list the top issues"
 ```
+
+```bash
+kubectl get pods -A -o wide | claude -p "Which pods look unhealthy or mis-scheduled? Table by severity."
+```
+
+<details>
+<summary><b>Example output</b> (abridged — wording varies, it's a live model)</summary>
+
+### Pod Health &amp; Scheduling Assessment
+
+| Severity | Pod | Namespace | Signal |
+|---|---|---|---|
+| 🟡 Low | `busola-oauth2-proxy-…` | busola | 7 restarts (23 h ago) — early startup churn, stable since |
+| 🟡 Low | `litellm-proxy-…` | default | 3 restarts (23 h ago) — settled; no recent restarts |
+| ℹ️ Info | `dev-toolbox-diagnose-…`, `terraform-*` | various | `0/1 Completed` — expected terminal state for Jobs |
+
+**Bottom line:** no critical or high-severity issues — a handful of oauth2-proxy pods churned early then stabilized; everything else is Running/ready or in an expected Completed state.
+
+</details>
+
+```bash
+kubectl get pods -n kyma-system -o json | claude -p "List workloads with no CPU/memory requests set and flag which block HPA scaling."
+```
+
+> [!NOTE]
+> Pipe a **scoped** query into `claude -p` — a cluster-wide `kubectl get pods -A -o json` can exceed the model's input limit. Narrow it (a namespace, `-o wide`, or a `jq`/`grep` filter) so the prompt stays well within bounds.
 
 > [!TIP]
 > The **interactive** `claude` TUI may show a one-time *"Streaming response ended … retrying without streaming"* — it's **harmless** (SAP AI Core's path is non-streaming) and recovers on retry. Headless `claude -p` and pipes don't hit it.
