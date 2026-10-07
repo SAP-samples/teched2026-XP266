@@ -10,6 +10,15 @@ Modern Kubernetes operations need more than dashboards — they need **reasoning
 
 In this hands-on you meet a **fully in-cluster, sandboxed AI operations agent** running on **SAP BTP, Kyma runtime** and talking to **SAP AI Core**: a [Goose](https://github.com/block/goose) agent with live `kubectl` access that investigates the cluster autonomously, writes its findings as Kubernetes custom resources you can see in Busola, and streams its LLM spend to SAP Cloud Logging — all routed through a **LiteLLM proxy** and deployed declaratively with **KRO**.
 
+The whole premise is in the title: the agent is **sandboxed**. Giving an AI agent a shell and a kubeconfig normally means a bad prompt — or a prompt-injection — can delete your workloads or leak a token. Here the **sandbox itself is the guardrail**: each agent runs in a disposable, per-session pod that _by construction_ cannot reach the internet or the API server, and never holds the LLM key — it sends a placeholder, and the gateway injects the real key at the edge. The same tools image is dialed to three trust tiers — **contained** (no cluster access) → **scoped-ops** (read-only) → **web terminal** (RBAC-scoped) — so you choose how much to trust each workload. It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on Kyma, no fork.
+
+👉 A prompt-injected or buggy agent hits the exact same walls a well-behaved one does — that is the difference between a guardrail and a guideline, and why you can say *"yes, run it"*.
+
+> [!TIP]
+> The sandboxing story has its own deep-dive on the SAP Community:
+> [**Ship your own sandboxed AI operations agent to Kyma in two hours**](https://community.sap.com/t5/technology-blog-posts-by-sap/teched2026-xp266-ship-your-own-sandboxed-ai-operations-agent-to-kyma-in-two/ba-p/14492281).
+> _(The post was written against the OpenShell alpha; the workshop runs a newer beta — the sandbox model is the same.)_
+
 Everything is **already deployed and wired up for you** on your personal Kyma runtime — the provisioning and bootstrapping are done. Your two hours are spent **understanding how the pieces fit and playing with the running system**:
 
 - call **SAP AI Core** through the proxy;
