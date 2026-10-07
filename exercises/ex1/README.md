@@ -15,9 +15,6 @@ https://dev-toolbox.xp266-NNN.<workshop-domain>/
 > [!NOTE]
 > Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else. The reports live in namespace `dev-toolbox-system`; each run spins up a short-lived OpenShell sandbox with a **read-only** cluster token.
 
-> [!IMPORTANT]
-> **Everyone (UI):** 3.1–3.3 — read a report, trigger a run, and write your own prompt, all in the dev-toolbox UI. **🔧 Go deeper (optional):** 3.4 peeks at the same artifacts from a terminal. You never *have* to trigger anything — the reports refresh on a schedule, so one is always waiting for you.
-
 ### The three report generations
 
 They trade **fidelity for cost** — all run the same way (Goose in an OpenShell sandbox → LiteLLM → SAP AI Core), but differ in how much live cluster access Goose gets.
