@@ -29,7 +29,7 @@ flowchart TB
 
 ## Run the workflow
 
-1. Open **your fork** of the workshop repository (you forked it and enabled Actions per the [Requirements](../../README.md#requirements)) and go to the **Actions** tab.
+1. Open **your fork** of the workshop repository (you forked it and enabled Actions per the [Requirements](../../../README.md#requirements)) and go to the **Actions** tab.
 <br>![](images/08_01_0010.png)
 
 2. In the left list of workflows, select **`all-fleets-admin`**, then click **Run workflow** (top-right).
@@ -60,11 +60,11 @@ Expand the jobs and steps in the run and connect them to what you learned:
 2. **`deploy-gardener` → the OIDC login step** — watch it exchange the GitHub OIDC token for cluster access. No password, no stored kubeconfig.
 
 3. **`deploy-gardener` → `terraform apply`** — this is the heart of it. Scroll the plan/apply output and spot the pieces you met:
-   - the **`litellm-proxy`** Deployment + config ([Appendix 1](../appendix-1-llm-gateway/README.md))
-   - the **`dev-toolbox`** CronJobs and `ClusterHealthReport` CRD ([Exercise 1](../ex1/README.md))
-   - the **KRO** ResourceGraphDefinitions that assemble the chat agent ([Exercise 2](../ex2/README.md))
-   - the **Telemetry** `MetricPipeline` to SAP Cloud Logging ([Exercise 3](../ex3/README.md))
-   - the **JupyterHub** release ([Exercise 4](../ex4/README.md))
+   - the **`litellm-proxy`** Deployment + config ([Appendix 1](../1-llm-gateway/README.md))
+   - the **`dev-toolbox`** CronJobs and `ClusterHealthReport` CRD ([Exercise 1](../../ex1/README.md))
+   - the **KRO** ResourceGraphDefinitions that assemble the chat agent ([Exercise 2](../../ex2/README.md))
+   - the **Telemetry** `MetricPipeline` to SAP Cloud Logging ([Exercise 3](../../ex3/README.md))
+   - the **JupyterHub** release ([Exercise 4](../../ex4/README.md))
 
 > [!TIP]
 > On an already-provisioned runtime most resources report **no change** — that's the point of a declarative pipeline: the apply is a *reconcile*, so re-running is safe and mostly a no-op. If you tweaked something in an earlier exercise, watch `terraform` notice and converge it back.
@@ -85,9 +85,9 @@ You've met the whole self-hosted, sandboxed AI-ops stack — the LiteLLM gateway
 Now you know how the pieces fit, and how to reproduce and build on them.
 
 > [!TIP]
-> **Want to go one level deeper on isolation?** [Exercise 5](../ex5/README.md) 🔧 *(advanced / instructor-demo)* runs the
+> **Want to go one level deeper on isolation?** [Exercise 5](../../ex5/README.md) 🔧 *(advanced / instructor-demo)* runs the
 > same tools image as a **runtime-isolated OpenShell `Sandbox`** with a contained LLM provider — the agent reasons
 > through SAP AI Core while the egress guardrail physically denies the apiserver and the internet. It needs the
 > `openshell` CLI + admin access, so it's an operator/instructor track — but it's the strongest containment tier in the stack.
 
-Back to - [Overview](../../README.md)
+Back to - [Overview](../../../README.md)

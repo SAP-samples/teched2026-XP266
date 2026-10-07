@@ -122,9 +122,9 @@ flowchart LR
 
 ### Appendix
 
-- [Appendix 1 - The LLM gateway: LiteLLM and SAP AI Core](exercises/appendix-1-llm-gateway/) — how the proxy routes to SAP AI Core, and call it yourself
-- [Appendix 2 - The Busola web terminal](exercises/appendix-2-web-terminal/) 🔧 *(optional)* — run Goose and Claude Code against your cluster, in-browser
-- [Appendix 3 - The making of your runtime (Day-1 operations)](exercises/appendix-3-day1-operations/) — run the `all-fleets-admin` pipeline and explore every `terraform apply` step that built the whole stack
+- [Appendix 1 - The LLM gateway: LiteLLM and SAP AI Core](exercises/Appendices/1-llm-gateway/) — how the proxy routes to SAP AI Core, and call it yourself
+- [Appendix 2 - The Busola web terminal](exercises/Appendices/2-web-terminal/) 🔧 *(optional)* — run Goose and Claude Code against your cluster, in-browser
+- [Appendix 3 - The making of your runtime (Day-1 operations)](exercises/Appendices/3-day1-operations/) — run the `all-fleets-admin` pipeline and explore every `terraform apply` step that built the whole stack
 
 > [!IMPORTANT]
 > **Every exercise can be completed entirely in the browser — no terminal experience required.** A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**; wherever one appears there is a UI (Busola) or **Run workflow** (GitHub Actions) way to reach the same result. Whatever your level, you can succeed with clicks alone.

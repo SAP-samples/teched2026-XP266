@@ -1,7 +1,7 @@
 # Appendix 2 - The Busola web terminal 🔧 *(optional — go deeper)*
 
 > [!NOTE]
-> **This whole exercise is the optional "go deeper" track** — it's the most fun if you're comfortable with a shell, but **nothing here is required to finish the workshop**. If you'd rather stay UI-only, skip straight to [Exercise 1](../ex1/README.md): you'll see these same agents running *for* you, autonomously, with everything readable in Busola.
+> **This whole exercise is the optional "go deeper" track** — it's the most fun if you're comfortable with a shell, but **nothing here is required to finish the workshop**. If you'd rather stay UI-only, skip straight to [Exercise 1](../../ex1/README.md): you'll see these same agents running *for* you, autonomously, with everything readable in Busola.
 
 Busola ships an **in-cluster web terminal** — a pod, in your browser, that already has **`goose`**, **`Claude Code`**, `kubectl`, and the **`kyma`** CLI installed and **pre-authenticated to the LiteLLM proxy**.
 
@@ -38,10 +38,10 @@ goose / claude ──▶ LiteLLM proxy :4001 ──▶ SAP AI Core
    ```
 
 > [!TIP]
-> Prefer a **visual** cluster browser to typing `kubectl`? Run **`k9s`** — a full-screen terminal UI. Arrow-key around namespaces, pods, logs, and YAML; press `:` to jump to a resource (e.g. `:pods`, `:cronjobs`), `d` to describe, `l` for logs, and `:q` to quit. Navigating and inspecting works freely; *mutating* actions (delete/scale) are blocked by the terminal's read-mostly permissions — that's [Exercise 1](../ex1/README.md)'s guardrails in action.
+> Prefer a **visual** cluster browser to typing `kubectl`? Run **`k9s`** — a full-screen terminal UI. Arrow-key around namespaces, pods, logs, and YAML; press `:` to jump to a resource (e.g. `:pods`, `:cronjobs`), `d` to describe, `l` for logs, and `:q` to quit. Navigating and inspecting works freely; *mutating* actions (delete/scale) are blocked by the terminal's read-mostly permissions — that's [Exercise 1](../../ex1/README.md)'s guardrails in action.
 
 > [!NOTE]
-> The terminal is **auto-authenticated**: a start-up script fetches the LiteLLM key from the `llm-proxy-credentials` Secret and exports the environment both agents need (`GOOSE_PROVIDER=litellm`, `ANTHROPIC_BASE_URL`, model tiers…). You never see or handle a key. The pod runs **non-root** with a **read-mostly** RBAC role (you'll prove that in [Exercise 1](../ex1/README.md)).
+> The terminal is **auto-authenticated**: a start-up script fetches the LiteLLM key from the `llm-proxy-credentials` Secret and exports the environment both agents need (`GOOSE_PROVIDER=litellm`, `ANTHROPIC_BASE_URL`, model tiers…). You never see or handle a key. The pod runs **non-root** with a **read-mostly** RBAC role (you'll prove that in [Exercise 1](../../ex1/README.md)).
 
 ## Appendix 2.2 - Zoom: the `kyma` CLI
 
@@ -182,7 +182,7 @@ Walk the `kyma-system` namespace: list the Kyma modules and their states, and fl
 ```
 
 > [!IMPORTANT]
-> This is the **same LLM path** as Appendix 1 — the agents are just convenient front-ends over the LiteLLM proxy → SAP AI Core. In [Exercise 1](../ex1/README.md) you'll see this exact pattern (`kyma alpha diagnose` → Goose) running **autonomously on a schedule**, writing its findings into Kubernetes.
+> This is the **same LLM path** as Appendix 1 — the agents are just convenient front-ends over the LiteLLM proxy → SAP AI Core. In [Exercise 1](../../ex1/README.md) you'll see this exact pattern (`kyma alpha diagnose` → Goose) running **autonomously on a schedule**, writing its findings into Kubernetes.
 
 ## Summary
 
@@ -193,6 +193,6 @@ Same proxy, same SAP AI Core, now driven interactively by you.
 Next, the same recipe runs on its own.
 
 > [!TIP]
-> Want the same agents but **fenced inside a contained, read-only sandbox** (no internet, `secrets` excluded, writes → 403)? [**Exercise 5**](../ex5/README.md) (§5.5) runs Goose/Claude from *this same terminal* via one command — **`scoped-ops`** — which provisions an OpenShell sandbox with a short-lived read-only token and drops you inside.
+> Want the same agents but **fenced inside a contained, read-only sandbox** (no internet, `secrets` excluded, writes → 403)? [**Exercise 5**](../../ex5/README.md) (§5.5) runs Goose/Claude from *this same terminal* via one command — **`scoped-ops`** — which provisions an OpenShell sandbox with a short-lived read-only token and drops you inside.
 
-Back to - [Overview](../../README.md)
+Back to - [Overview](../../../README.md)

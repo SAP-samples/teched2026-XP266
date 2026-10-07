@@ -341,6 +341,6 @@ but the one allow-listed endpoint — with the real key staying in the gateway.
 That's the OpenShell provider model
 generalizing from "keyless in-cluster" to "any governed external endpoint."
 
-Continue to - [Appendix 3 - The making of your runtime (Day-1 operations)](../appendix-3-day1-operations/README.md)
+Continue to - [Appendix 3 - The making of your runtime (Day-1 operations)](../Appendices/3-day1-operations/README.md)
 
 Back to - [Overview](../../README.md)

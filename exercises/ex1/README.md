@@ -106,7 +106,7 @@ Three overlapping fences wrap every run:
 > [!NOTE]
 > **Defense in depth.** No single control is trusted alone: the read-only token (can't write or read secrets), the sandbox boundary (no internet, no API-server mutation), non-root + read-only rootfs (can't escalate on the node), and `drop_params` at the proxy (can't send SAP AI Core a malformed request). The agent is useful *because* it's boxed in. The deep dive is [Exercise 5](../ex5/README.md).
 
-🔧 **Prove it yourself (optional — go deeper).** In a **web terminal** ([Appendix 2](../appendix-2-web-terminal/README.md)), ask the API server what the web-terminal identity may do, and read the report artifacts directly:
+🔧 **Prove it yourself (optional — go deeper).** In a **web terminal** ([Appendix 2](../Appendices/2-web-terminal/README.md)), ask the API server what the web-terminal identity may do, and read the report artifacts directly:
 
 Command:
 ```bash

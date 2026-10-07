@@ -1,7 +1,7 @@
 # Exercise 5 - Your own sandboxed agent: OpenShell on Kyma 🔧 *(advanced — CLI + admin access)*
 
 > [!WARNING]
-> **Bonus / advanced, and admin-gated.** The `openshell` CLI is **pre-installed in the [Busola web terminal](../appendix-2-web-terminal/README.md)** (and the sandbox images) — nothing to install; it signs in via device-code (§5.1). The OpenShell gateway only admits the **`openshell-admin`** role — if you don't have it, **watch the instructor demo**. Nothing here is required to complete the workshop; everything runs on **your own** `xp266-NNN` runtime.
+> **Bonus / advanced, and admin-gated.** The `openshell` CLI is **pre-installed in the [Busola web terminal](../Appendices/2-web-terminal/README.md)** (and the sandbox images) — nothing to install; it signs in via device-code (§5.1). The OpenShell gateway only admits the **`openshell-admin`** role — if you don't have it, **watch the instructor demo**. Nothing here is required to complete the workshop; everything runs on **your own** `xp266-NNN` runtime.
 
 > [!TIP]
 > **Easy path — run it as a workflow (no CLI, no admin role).** The hands-on below is the full manual OpenShell CLI
@@ -28,7 +28,7 @@ AI agents are most useful when they can read files, install packages, call APIs,
 **That same access
 is the risk.**
 
-[Appendix 2](../appendix-2-web-terminal/README.md) fenced the Busola web terminal with **RBAC + a NetworkPolicy** — but it's
+[Appendix 2](../Appendices/2-web-terminal/README.md) fenced the Busola web terminal with **RBAC + a NetworkPolicy** — but it's
 still an ordinary `exec` pod: those are guardrails *around* it, not isolation *of* it.
 
 OpenShell takes the next step —
@@ -58,7 +58,7 @@ Two properties make this **contained**, not merely isolated:
    out**; its only path is the supervisor proxy, which allow-lists the LiteLLM provider endpoint (`litellm-proxy…:4001`) and
    **denies everything else** (apiserver, other pods, internet). No extra NetworkPolicy — it's native to the stock chart. You'll prove it in 5.4.
 
-Rule of thumb for the whole workshop: **Busola terminal ([Appendix 2](../appendix-2-web-terminal/README.md)) = an agent that *does things to* the
+Rule of thumb for the whole workshop: **Busola terminal ([Appendix 2](../Appendices/2-web-terminal/README.md)) = an agent that *does things to* the
 cluster; OpenShell sandbox = an agent that *computes things you don't fully trust*.**
 
 ### Common risks and controls
@@ -148,7 +148,7 @@ It is **OIDC-gated**: it validates your Keycloak token itself.
 #### From the Busola web terminal instead — no local install (device-code login)
 
 If you can't (or don't want to) install the CLI locally — e.g. a locked-down Windows laptop — the **`openshell` CLI is
-pre-installed in the [Busola web terminal](../appendix-2-web-terminal/README.md)**.
+pre-installed in the [Busola web terminal](../Appendices/2-web-terminal/README.md)**.
 
 The terminal runs *inside* the cluster, so you target the
 gateway's in-cluster Service directly (no HTTPS host, no port-forward).
@@ -285,7 +285,7 @@ claude -p "In one line, what is Kyma?"
 > [!NOTE]
 > It's a **reasoning box, not an ops shell**: `kubectl` / `kyma` / `k9s` are installed but **inert** (no cluster token,
 > no route to the API server — you'll prove that in 5.4). For an agent whose `kubectl`/`kyma` actually reach the cluster,
-> use the Busola web terminal ([Appendix 2](../appendix-2-web-terminal/README.md)); the sandbox trades cluster access for hard isolation.
+> use the Busola web terminal ([Appendix 2](../Appendices/2-web-terminal/README.md)); the sandbox trades cluster access for hard isolation.
 
 ### 5.4 - See the guardrail hold
 
@@ -345,7 +345,7 @@ So the sandbox can reach **only** `litellm-proxy…:4001` (→ SAP AI Core) — 
 internet are all **refused** by the egress broker.
 
 That containment is **native to the stock OpenShell chart** — no NetworkPolicy required — a
-stronger boundary than [Appendix 2](../appendix-2-web-terminal/README.md)'s RBAC-fenced Busola terminal, which is still an ordinary pod on the
+stronger boundary than [Appendix 2](../Appendices/2-web-terminal/README.md)'s RBAC-fenced Busola terminal, which is still an ordinary pod on the
 cluster network.
 
 Clean up when done:
@@ -476,7 +476,7 @@ The policy + auth you attach set how far the agent reaches:
 |---|---|---|---|
 | **Contained** (5.1–5.4) | `litellm-proxy…:4001` only | none | run/execute untrusted code + reason — zero blast radius |
 | **Scoped-ops** (5.5 — `scoped-ops`) | + apiserver (read-only), still no internet | read-only `kubectl` | a diagnostic agent that *reads* the cluster and reasons |
-| **Busola terminal** ([Appendix 2](../appendix-2-web-terminal/README.md)) | full pod network | RBAC-scoped `kubectl` | an agent that *operates* the cluster |
+| **Busola terminal** ([Appendix 2](../Appendices/2-web-terminal/README.md)) | full pod network | RBAC-scoped `kubectl` | an agent that *operates* the cluster |
 
 ### Two providers, both keyless — how goose reaches SAP AI Core too
 
