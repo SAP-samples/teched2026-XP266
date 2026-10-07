@@ -86,7 +86,7 @@ flowchart LR
 ```
 
 > [!TIP]
-> The exercises follow the arrows: **shape the autonomous reports** (ex1) → **chat with the agent** (ex2) → **see the spend** (ex3) → **explore from Python** (ex4) → **sandbox your own agent** (ex5–ex6). The appendices go deeper: the LLM gateway (Appendix 1), the web terminal (Appendix 2), and how it was all built (Appendix 3).
+> **Your path through the workshop:** shape the autonomous reports (ex1) → chat with the agent (ex2) → see the spend (ex3) → explore with JupyterHub notebooks (ex4) → sandbox your own agent (ex5–ex6). The appendices go deeper: the LLM gateway (Appendix 1), the web terminal (Appendix 2), and how it was all built (Appendix 3).
 
 ## Requirements
 
