@@ -3,7 +3,11 @@
 > [!NOTE]
 > **This whole exercise is the optional "go deeper" track** — it's the most fun if you're comfortable with a shell, but **nothing here is required to finish the workshop**. If you'd rather stay UI-only, skip straight to [Exercise 3](../ex3/README.md): you'll see these same agents running *for* you, autonomously, with everything readable in Busola.
 
-Busola ships an **in-cluster web terminal** — a pod, in your browser, that already has **`goose`**, **`Claude Code`**, `kubectl`, and the **`kyma`** CLI installed and **pre-authenticated to the LiteLLM proxy**. No local install, no login, no API key. In this exercise you drive the `kyma` CLI and both AI agents against your own cluster and see them answer via SAP AI Core.
+Busola ships an **in-cluster web terminal** — a pod, in your browser, that already has **`goose`**, **`Claude Code`**, `kubectl`, and the **`kyma`** CLI installed and **pre-authenticated to the LiteLLM proxy**.
+
+No local install, no login, no API key.
+
+In this exercise you drive the `kyma` CLI and both AI agents against your own cluster and see them answer via SAP AI Core.
 
 ```
 You (browser)
@@ -42,13 +46,19 @@ goose / claude ──▶ LiteLLM proxy :4001 ──▶ SAP AI Core
 
 ## Exercise 2.2 - Zoom: the `kyma` CLI
 
-The [`kyma` CLI](https://github.com/kyma-project/cli) (v3) is your purpose-built lens on a Kyma runtime. In the terminal it is **pre-wired to your cluster** — the image bakes a `KUBECONFIG`, so commands just work with no setup. The star command for this workshop is **`kyma alpha diagnose`**: it snapshots the whole cluster — nodes, Kyma modules, workloads, events — into one structured report.
+The [`kyma` CLI](https://github.com/kyma-project/cli) (v3) is your purpose-built lens on a Kyma runtime.
+
+In the terminal it is **pre-wired to your cluster** — the image bakes a `KUBECONFIG`, so commands just work with no setup.
+
+The star command for this workshop is **`kyma alpha diagnose`**: it snapshots the whole cluster — nodes, Kyma modules, workloads, events — into one structured report.
 
 Command:
 ```bash
 kyma alpha diagnose cluster
 ```
-This prints a human-readable health snapshot. Now get the **machine-readable** form — the exact input the autonomous jobs feed to Goose:
+This prints a human-readable health snapshot.
+
+Now get the **machine-readable** form — the exact input the autonomous jobs feed to Goose:
 
 Command:
 ```bash
@@ -70,7 +80,11 @@ A few more workshop-relevant `kyma` commands to try:
 
 ## Exercise 2.3 - Ask Goose
 
-Goose is an autonomous agent with shell-tool access. It does **not** read stdin — give it a file or embed the text. Give it a one-shot task with a bounded turn budget:
+Goose is an autonomous agent with shell-tool access.
+
+It does **not** read stdin — give it a file or embed the text.
+
+Give it a one-shot task with a bounded turn budget:
 
 Command:
 ```bash
@@ -90,7 +104,9 @@ goose run --max-turns 4 --text "Read /tmp/diag.json and summarize cluster health
 
 ## Exercise 2.4 - Ask Claude Code, and pipe real cluster data
 
-`claude -p` runs Claude Code headlessly — the **most reliable** mode. It shines when you **pipe cluster data into it**:
+`claude -p` runs Claude Code headlessly — the **most reliable** mode.
+
+It shines when you **pipe cluster data into it**:
 
 Command:
 ```bash
@@ -105,7 +121,9 @@ claude -p "Read /tmp/diag.json and list the top issues"
 
 ## Exercise 2.5 - A prompt library to try
 
-The interactive `claude` reads files and runs an **allowlisted, read-only** toolset (`kubectl get/describe/logs/top`, `kyma`, file reads) **without prompting** — so you can hand it an investigation and watch it work. Launch `claude`, then paste any of these:
+The interactive `claude` reads files and runs an **allowlisted, read-only** toolset (`kubectl get/describe/logs/top`, `kyma`, file reads) **without prompting** — so you can hand it an investigation and watch it work.
+
+Launch `claude`, then paste any of these:
 
 ```text
 # Headline SRE demo
@@ -129,7 +147,11 @@ Walk the `kyma-system` namespace: list the Kyma modules and their states, and fl
 
 ## Summary
 
-You opened the in-cluster web terminal, drove the `kyma` CLI (especially `kyma alpha diagnose cluster`), and ran both Goose and Claude Code against your cluster — one-shot, headless, and fed live `kubectl`/`kyma` output. Same proxy, same SAP AI Core, now driven interactively by you. Next, the same recipe runs on its own.
+You opened the in-cluster web terminal, drove the `kyma` CLI (especially `kyma alpha diagnose cluster`), and ran both Goose and Claude Code against your cluster — one-shot, headless, and fed live `kubectl`/`kyma` output.
+
+Same proxy, same SAP AI Core, now driven interactively by you.
+
+Next, the same recipe runs on its own.
 
 > [!TIP]
 > Want the same agents but **fenced inside a contained, read-only sandbox** (no internet, `secrets` excluded, writes → 403)? [**Exercise 9**](../ex9/README.md) (§9.5) runs Goose/Claude from *this same terminal* via one command — **`scoped-ops`** — which provisions an OpenShell sandbox with a short-lived read-only token and drops you inside.

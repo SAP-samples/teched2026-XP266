@@ -1,13 +1,19 @@
 # Getting Started — access your Kyma runtime and tour the AI-ops stack
 
-In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, get oriented in **Busola** (the Kyma dashboard), and take a quick tour of the AI operations stack that is **already running** for you. You will not deploy anything — everything is in place; you are here to understand it and play with it.
+In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, get oriented in **Busola** (the Kyma dashboard), and take a quick tour of the AI operations stack that is **already running** for you.
+
+You will not deploy anything — everything is in place; you are here to understand it and play with it.
 
 > [!NOTE]
 > Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`). Wherever you see `xp266-NNN` below, use the number you were given. Your Busola URL and sign-in details are handed out at the start of the session.
 
 ## Exercise 0.1 - Find your cluster and sign in to Busola
 
-Everything starts at the **Cluster Directory** — one launcher page for the whole TechEd fleet. From here you pick your runtime, read your sign-in details, and jump straight into the right dashboard. Open the directory URL you were given:
+Everything starts at the **Cluster Directory** — one launcher page for the whole TechEd fleet.
+
+From here you pick your runtime, read your sign-in details, and jump straight into the right dashboard.
+
+Open the directory URL you were given:
 
 ```
 https://busola.xp266-NNN.<workshop-domain>/clusterdir/
@@ -44,7 +50,9 @@ Now sign in:
 
 ## Exercise 0.2 - See what is already deployed
 
-Everything in the **self-hosted agent layer** — the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, JupyterHub, the telemetry and spend pipeline — was deployed for you declaratively with **KRO** (Kubernetes Resource Orchestrator) as a single unit. Let's confirm it's there.
+Everything in the **self-hosted agent layer** — the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, JupyterHub, the telemetry and spend pipeline — was deployed for you declaratively with **KRO** (Kubernetes Resource Orchestrator) as a single unit.
+
+Let's confirm it's there.
 
 1. In Busola, use the namespace switcher (top left) to look at the key namespaces:
 
@@ -68,7 +76,11 @@ Everything in the **self-hosted agent layer** — the LiteLLM proxy, the Goose d
 
 ## Exercise 0.3 - Where this sits in the SAP AI landscape
 
-The components you just found are the **self-hosted, in-cluster agent layer**. Everything else on the map — SAP Joule, the Generative AI Hub, SAP AI Core, the data and runtime layers — is the SAP AI platform your agent **consumes**. The one connection that matters for this workshop is the arrow from your agent to SAP AI Core, through the LiteLLM proxy:
+The components you just found are the **self-hosted, in-cluster agent layer**.
+
+Everything else on the map — SAP Joule, the Generative AI Hub, SAP AI Core, the data and runtime layers — is the SAP AI platform your agent **consumes**.
+
+The one connection that matters for this workshop is the arrow from your agent to SAP AI Core, through the LiteLLM proxy:
 
 ```mermaid
 flowchart TB

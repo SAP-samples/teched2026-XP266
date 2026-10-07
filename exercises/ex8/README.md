@@ -1,8 +1,16 @@
 # Exercise 8 - Behind the scenes: the one workflow that built your runtime
 
-Throughout this workshop you were told *"everything is already deployed for you."* This is the exercise where you see **how**. A single GitHub Actions workflow — **`all-fleets-admin`** — provisions and reconciles the *entire* stack you've been exploring: the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, the KRO resource graphs, the telemetry pipelines, the dashboards, and JupyterHub. In this exercise you **run it against your own runtime and explore every step** in the Actions log.
+Throughout this workshop you were told *"everything is already deployed for you."*
 
-Because it's `terraform apply` under the hood, running it on your already-provisioned `xp266-NNN` is an **idempotent reconcile** — it converges the cluster to the declared state, it does **not** tear anything down or rebuild it. Safe to run, and it shows you the whole assembly line.
+This is the exercise where you see **how**.
+
+A single GitHub Actions workflow — **`all-fleets-admin`** — provisions and reconciles the *entire* stack you've been exploring: the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, the KRO resource graphs, the telemetry pipelines, the dashboards, and JupyterHub.
+
+In this exercise you **run it against your own runtime and explore every step** in the Actions log.
+
+Because it's `terraform apply` under the hood, running it on your already-provisioned `xp266-NNN` is an **idempotent reconcile** — it converges the cluster to the declared state, it does **not** tear anything down or rebuild it.
+
+Safe to run, and it shows you the whole assembly line.
 
 ```mermaid
 flowchart TB
@@ -70,7 +78,11 @@ You ran the `all-fleets-admin` workflow against your own `xp266-NNN` runtime, sa
 
 ---
 
-🎉 **That's the workshop.** You've met the whole self-hosted, sandboxed AI-ops stack — the LiteLLM gateway, the in-cluster agents, the autonomous diagnostic jobs, the interactive chat agent, the observability, the guardrails, the JupyterHub playground, and finally the one workflow that builds it all — running on **SAP BTP, Kyma runtime** and reasoning through **SAP AI Core**. Now you know how the pieces fit, and how to reproduce and build on them.
+🎉 **That's the workshop.**
+
+You've met the whole self-hosted, sandboxed AI-ops stack — the LiteLLM gateway, the in-cluster agents, the autonomous diagnostic jobs, the interactive chat agent, the observability, the guardrails, the JupyterHub playground, and finally the one workflow that builds it all — running on **SAP BTP, Kyma runtime** and reasoning through **SAP AI Core**.
+
+Now you know how the pieces fit, and how to reproduce and build on them.
 
 > [!TIP]
 > **Want to go one level deeper on isolation?** [Exercise 9](../ex9/README.md) 🔧 *(advanced / instructor-demo)* runs the

@@ -1,6 +1,10 @@
 # Exercise 3 - Play with the autonomous Goose diagnostic jobs
 
-This is the heart of the workshop. Two scheduled **CronJobs** run Goose *autonomously* against your cluster — no human at the keyboard — and write structured findings into Kubernetes resources you can read in Busola. In this exercise you inspect them and read a report — all in Busola — and, if you like, use the terminal to **tweak the parameters and trigger a fresh run**.
+This is the heart of the workshop.
+
+Two scheduled **CronJobs** run Goose *autonomously* against your cluster — no human at the keyboard — and write structured findings into Kubernetes resources you can read in Busola.
+
+In this exercise you inspect them and read a report — all in Busola — and, if you like, use the terminal to **tweak the parameters and trigger a fresh run**.
 
 ```
 CronJob dev-toolbox-diagnose      (every 10 min)  ── kyma diagnose ──▶ Goose ──▶ ClusterHealthReport/cluster-health
@@ -131,6 +135,8 @@ When it completes, refresh `ClusterHealthReport/cluster-health-v2` in Busola —
 
 ## Summary
 
-You inspected the two autonomous Goose pipelines, read a 12-section Cluster Health Report, felt how `--max-turns` / `--max-tool-repetitions` shape a headless run (and why an empty report happens), and triggered a fresh v2 run. You also met the hand-off surface the rest of the workshop builds on.
+You inspected the two autonomous Goose pipelines, read a 12-section Cluster Health Report, felt how `--max-turns` / `--max-tool-repetitions` shape a headless run (and why an empty report happens), and triggered a fresh v2 run.
+
+You also met the hand-off surface the rest of the workshop builds on.
 
 Continue to - [Exercise 4 - Chat with the interactive agent](../ex4/README.md)

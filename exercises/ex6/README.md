@@ -1,6 +1,10 @@
 # Exercise 6 - Sandbox and guardrails
 
-An AI agent with `kubectl` access is powerful — and, unchecked, dangerous. The whole system is built so the agent can **read everything it needs to reason, but change almost nothing**, runs as an unprivileged workload, and is boxed in by the platform. In this exercise you *prove* those boundaries yourself with `kubectl auth can-i`.
+An AI agent with `kubectl` access is powerful — and, unchecked, dangerous.
+
+The whole system is built so the agent can **read everything it needs to reason, but change almost nothing**, runs as an unprivileged workload, and is boxed in by the platform.
+
+In this exercise you *prove* those boundaries yourself with `kubectl auth can-i`.
 
 ```
                     ┌──────────────────────────────────────────────┐
@@ -25,7 +29,9 @@ The web-terminal identity (`busola-terminal`) — the same identity your agents 
 > [!IMPORTANT]
 > The agent can **read broadly** (it needs the full picture to reason) but its only write surface is **ConfigMaps** — exactly where it stores its diagnostic reports (the `goose-raw-*` / `cluster-health-*` ConfigMaps from Exercise 3). It **cannot** scale a Deployment, read/write a Secret's contents beyond listing, or grant itself more power. Even if the model "decided" to delete a workload, the API server refuses.
 
-🔧 **Prove it yourself (optional — go deeper).** In a web terminal, ask the API server directly what this identity may do:
+🔧 **Prove it yourself (optional — go deeper).**
+
+In a web terminal, ask the API server directly what this identity may do:
 
 Command:
 ```bash
@@ -73,6 +79,8 @@ The interactive chat agent (Exercise 4) executes agent actions inside a dedicate
 
 ## Summary
 
-You inspected the agent's RBAC boundary in Busola — and, optionally, proved it with `kubectl auth can-i` (reads broadly, writes only ConfigMaps, no secrets/RBAC/workload writes) — saw it runs non-root with a read-only root filesystem, and inspected the chat agent's isolating `Sandbox`. Layered guardrails are what make an autonomous kubectl agent safe to run in production.
+You inspected the agent's RBAC boundary in Busola — and, optionally, proved it with `kubectl auth can-i` (reads broadly, writes only ConfigMaps, no secrets/RBAC/workload writes) — saw it runs non-root with a read-only root filesystem, and inspected the chat agent's isolating `Sandbox`.
+
+Layered guardrails are what make an autonomous kubectl agent safe to run in production.
 
 Continue to - [Exercise 7 - JupyterHub playground: SAP AI Core from Python](../ex7/README.md)

@@ -1,6 +1,12 @@
 # Exercise 7 - JupyterHub playground: SAP AI Core from Python
 
-This is your **open playground**. A full **JupyterHub** is running in your cluster, pre-loaded with notebooks, and — like every other component — wired to **SAP AI Core through the LiteLLM proxy**. Here you run the sample notebooks, do a few guided Python exercises, and then **create your own**. It's a safe sandbox: experiment freely, nothing you do here affects the rest of the workshop.
+This is your **open playground**.
+
+A full **JupyterHub** is running in your cluster, pre-loaded with notebooks, and — like every other component — wired to **SAP AI Core through the LiteLLM proxy**.
+
+Here you run the sample notebooks, do a few guided Python exercises, and then **create your own**.
+
+It's a safe sandbox: experiment freely, nothing you do here affects the rest of the workshop.
 
 ```
 JupyterHub (in your cluster)
@@ -47,7 +53,9 @@ openai client  ──▶  http://litellm-proxy.default:4001/v1  ──▶  SAP A
 
 ## Exercise 7.3 - Guided exercises (copy-paste into a new cell)
 
-After running `00-SAP-AI-Core-Credentials` (so `client` exists), try these. Each is self-contained — paste into a new cell and **Shift+Enter**.
+After running `00-SAP-AI-Core-Credentials` (so `client` exists), try these.
+
+Each is self-contained — paste into a new cell and **Shift+Enter**.
 
 **A - List the models the proxy can route to:**
 ```python
@@ -90,11 +98,15 @@ resp = client.chat.completions.create(
 print(resp.choices[0].message.tool_calls)   # the model asks to CALL your function, with arguments
 ```
 
-**E - The hand-off in Python:** open and run **`Cluster_Health.ipynb`**. It reads the same diagnostic artifacts the Goose jobs produced in [Exercise 3](../ex3/README.md) (the `ClusterHealthReport` / `goose-raw-*` resources) and analyzes them with SAP AI Core — the *jobs produce → notebook consumes* hand-off, now in Python you can extend.
+**E - The hand-off in Python:** open and run **`Cluster_Health.ipynb`**.
+
+It reads the same diagnostic artifacts the Goose jobs produced in [Exercise 3](../ex3/README.md) (the `ClusterHealthReport` / `goose-raw-*` resources) and analyzes them with SAP AI Core — the *jobs produce → notebook consumes* hand-off, now in Python you can extend.
 
 ## Exercise 7.4 - Create your own
 
-Open **File ▸ New ▸ Notebook** (pick the Python 3 kernel) and start experimenting. Paste this once to connect — it mirrors what `00-SAP-AI-Core-Credentials` does — then the model is one call away:
+Open **File ▸ New ▸ Notebook** (pick the Python 3 kernel) and start experimenting.
+
+Paste this once to connect — it mirrors what `00-SAP-AI-Core-Credentials` does — then the model is one call away:
 
 ```python
 import os, base64
@@ -137,6 +149,8 @@ twins of [Exercise 9](../ex9/README.md) — plus a few upstream JupyterLab sampl
 
 ## Summary
 
-You signed in to JupyterHub, ran the pre-loaded SAP AI Core notebooks, did guided Python exercises (chat, embeddings, tool calling, and the diagnostic hand-off), and created your own notebook with a copy-paste connection snippet. You now have a full, safe Python playground against SAP AI Core running inside your own Kyma cluster.
+You signed in to JupyterHub, ran the pre-loaded SAP AI Core notebooks, did guided Python exercises (chat, embeddings, tool calling, and the diagnostic hand-off), and created your own notebook with a copy-paste connection snippet.
+
+You now have a full, safe Python playground against SAP AI Core running inside your own Kyma cluster.
 
 Continue to - [Exercise 8 - Behind the scenes: the workflow that built your runtime](../ex8/README.md)

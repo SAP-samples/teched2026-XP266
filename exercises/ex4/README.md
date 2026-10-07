@@ -1,6 +1,10 @@
 # Exercise 4 - Chat with the interactive agent
 
-The Goose diagnostic jobs (Exercise 3) run *autonomously*. The other half of the story is an **interactive** AI agent — a chat UI (for instance **OpenClaw**, or a similar chat front-end) running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy. In this exercise you chat with it and see how it picks up where the diagnostic jobs leave off.
+The Goose diagnostic jobs (Exercise 3) run *autonomously*.
+
+The other half of the story is an **interactive** AI agent — a chat UI (for instance **OpenClaw**, or a similar chat front-end) running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy.
+
+In this exercise you chat with it and see how it picks up where the diagnostic jobs leave off.
 
 > [!NOTE]
 > ✅ **No terminal needed** — this exercise is entirely browser-based.
@@ -31,7 +35,11 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 
 ## Exercise 4.2 - The hand-off: ask about your cluster's diagnosis
 
-This is the pay-off of the "jobs produce → agents consume" pattern. The Goose jobs already wrote a **Cluster Health Report** and archived their raw findings. Now ask the *interactive* agent about them:
+This is the pay-off of the "jobs produce → agents consume" pattern.
+
+The Goose jobs already wrote a **Cluster Health Report** and archived their raw findings.
+
+Now ask the *interactive* agent about them:
 
 > *Summarize the latest cluster health report for this cluster. What are the top risks, and what would you do about the most urgent one?*
 

@@ -1,6 +1,8 @@
 # Exercise 5 - Observability and spend
 
-Running LLMs in production raises an obvious question: **what is this costing, and who is spending it?** In this exercise you see how the stack answers that — every call is metered by the LiteLLM proxy, scraped by **Kyma Telemetry**, shipped to **SAP Cloud Logging**, and rendered as dashboards you read straight from Busola.
+Running LLMs in production raises an obvious question: **what is this costing, and who is spending it?**
+
+In this exercise you see how the stack answers that — every call is metered by the LiteLLM proxy, scraped by **Kyma Telemetry**, shipped to **SAP Cloud Logging**, and rendered as dashboards you read straight from Busola.
 
 ```
 LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma Telemetry MetricPipeline
