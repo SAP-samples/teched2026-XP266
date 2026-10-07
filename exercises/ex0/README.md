@@ -15,10 +15,8 @@ You will not deploy anything — everything is in place; you are here to underst
 
 ## Exercise 0.1 - Find your cluster and sign in to Busola
 
-Everything starts at the **Cluster Directory** — one launcher page for the whole TechEd fleet.
-
-From here you pick your runtime, read your sign-in details, and jump straight into the right dashboard.
-
+Everything starts at the **Cluster Directory** — one launcher page for the whole TechEd fleet.  
+From here you pick your runtime, read your sign-in details, and jump straight into the right dashboard.  
 Open the directory URL you were given:
 
 ```
