@@ -70,11 +70,36 @@ Everything in the "pink" layer of the architecture — the LiteLLM proxy, the Go
 
 The pink components you just found are the **self-hosted, in-cluster agent layer**. Everything else on the map — SAP Joule, the Generative AI Hub, SAP AI Core, the data and runtime layers — is the SAP AI platform your agent **consumes**. The one connection that matters for this workshop is the arrow from your agent to SAP AI Core, through the LiteLLM proxy:
 
-```
-Goose / Chat UI  ──▶  LiteLLM proxy (:4001)  ──▶  SAP AI Core  ──▶  Claude · GPT · Mistral · Nova
+```mermaid
+flowchart TB
+  subgraph kyma["🟣 Your Kyma runtime — self-hosted, in-cluster agent layer (deployed as one KRO unit)"]
+    direction TB
+    goose["🪿 Goose<br/>autonomous diagnostic agent<br/>(dev-toolbox-system CronJobs / Jobs)"]
+    chat["💬 Chat agent — OpenClaw<br/>(interactive)"]
+    llm["🔀 LiteLLM proxy :4001"]
+    k8s[("Kubernetes API<br/>logs · metrics · events · kubectl")]
+    crs["📋 Findings → KRO custom resources<br/>ClusterHealthReport · AuditLogCatalog · FleetStatus"]
+    busola["🖥️ Busola dashboard"]
+    goose -->|reads| k8s
+    goose --> llm
+    chat --> llm
+    goose -->|writes| crs
+    crs -->|Busola extension| busola
+  end
+  subgraph sap["🔵 SAP AI platform — consumed"]
+    direction TB
+    aicore["SAP AI Core<br/>LLM Module · Generative AI Hub"]
+    models["Claude · GPT · Mistral · Nova"]
+    aicore --> models
+  end
+  llm ==>|"sap/ provider · OAuth2 token<br/>(the one arrow that matters)"| aicore
 ```
 
 You'll follow that arrow in the next exercise.
+
+> [!TIP]
+> Want the full story behind this stack? Read the deep-dive on the SAP Community:
+> [**Autonomous Diagnostics on Kyma Unplugged: Goose + LiteLLM + KRO + SAP AI Core in Production**](https://community.sap.com/t5/technology-blog-posts-by-sap/autonomous-diagnostics-on-kyma-unplugged-goose-litellm-kro-sap-ai-core-in/ba-p/14435287).
 
 ## Summary
 
