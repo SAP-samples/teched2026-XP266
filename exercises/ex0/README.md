@@ -94,18 +94,3 @@ flowchart TB
 You signed in to your Kyma runtime in Busola, met the pre-deployed AI-ops stack (LiteLLM, Goose, the interactive chat agent, JupyterHub, and the KRO custom resources), and saw where it fits in the SAP AI landscape.
 
 Continue to - [Exercise 1 - Trigger and shape the Cluster Health Reports](../ex1/README.md)
-
-## See it live — SAP TechEd 2026 (XP266)
-
-**XP266 | Ship your own sandboxed AI operations agent to Kyma in two hours.**
-
-> What does an AI agent do when something fails in production? Find out by causing the failure yourself. Deploy a reasoning agent into Kyma, connect it to the SAP AI Core foundation, and give it full observability to diagnose what broke. Leave with practical patterns for cost control and monitoring.
-
-| | |
-|---|---|
-| **Session code** | XP266 |
-| **Type** | Hands-on workshop |
-| **Venue** | Messe Berlin — Messedamm 22, 14055 Berlin |
-| **Room** | Hands-On Room 6 |
-| **Date** | 27 October 2026 (conference runs 27–29 October) |
-| **Time** | 13:30 – 15:30 |
