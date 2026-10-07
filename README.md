@@ -47,12 +47,12 @@ It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on 
 
 Everything is **already deployed and wired up for you** on your personal Kyma runtime — the provisioning and bootstrapping are done. Your two hours are spent **understanding how the pieces fit and playing with the running system**:
 
-- **experiment with the diagnostics' prompts** and watch the Cluster Health Reports change;
-- chat with the **interactive chat agent**;
-- read the **spend dashboards**;
-- explore SAP AI Core and **OpenShell sandboxes** from **Python in JupyterHub**;
-- watch a **sandboxed agent** hit its guardrails — denied the internet and the API server;
-- and finally run the **GitHub Actions pipeline** that deployed all of it.
+- 🩺 **experiment with the diagnostics' prompts** and watch the Cluster Health Reports change;
+- 💬 chat with the **interactive chat agent**;
+- 💰 read the **spend dashboards**;
+- 📓 explore SAP AI Core and **OpenShell sandboxes** from **Python in JupyterHub**;
+- 🛡️ watch a **sandboxed agent** hit its guardrails — denied the internet and the API server;
+- ⚙️ and finally run the **GitHub Actions pipeline** that deployed all of it.
 
 The **LLM gateway** (calling SAP AI Core through the proxy) and the **in-cluster web terminal** are covered in the appendices.
 
