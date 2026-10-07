@@ -49,10 +49,10 @@ Everything is **already deployed and wired up for you** on your personal Kyma ru
 
 - call **SAP AI Core** through the proxy;
 - run agents in the **in-cluster web terminal**;
-- tweak the **autonomous diagnostic jobs** and watch the reports change;
+- **experiment with the diagnostics' prompts** and watch the Cluster Health Reports change;
 - chat with the **interactive chat agent**;
 - read the **spend dashboards**;
-- inspect the **sandbox guardrails**;
+- watch a **sandboxed agent** hit its guardrails — denied the internet and the API server;
 - explore SAP AI Core from **Python in JupyterHub**;
 - and finally run the **GitHub Actions pipeline** that deployed all of it.
 
