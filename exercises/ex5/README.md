@@ -14,10 +14,18 @@
 >
 > Want to see it under the hood? Keep reading — the manual walk-through is below.
 
-**Contents:** [Why OpenShell](#why-openshell) · [Common risks & controls](#common-risks-and-controls) ·
-[Protection layers](#protection-layers-at-a-glance) · [Common use cases](#common-use-cases) —
-[Hands-on 5.1–5.5](#hands-on-the-openshell-cli-dance) — [Deep dive: Architecture](#deep-dive-architecture) ·
-[How components authenticate](#how-components-authenticate) · [Glossary](#glossary)
+**Contents**
+
+| | Section |
+|---|---|
+| 🧭 | [Why OpenShell](#why-openshell) |
+| ⚠️ | [Common risks &amp; controls](#common-risks-and-controls) |
+| 🛡️ | [Protection layers](#protection-layers-at-a-glance) |
+| 💡 | [Common use cases](#common-use-cases) |
+| 🛠️ | [Hands-on 5.1–5.5](#hands-on-the-openshell-cli-dance) |
+| 🏗️ | [Deep dive: Architecture](#deep-dive-architecture) |
+| 🔑 | [How components authenticate](#how-components-authenticate) |
+| 📖 | [Glossary](#glossary) |
 
 ---
 
