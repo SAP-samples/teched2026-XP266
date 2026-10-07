@@ -4,7 +4,8 @@
 
 This repository contains the material for the SAP TechEd 2026 session **XP266 - Ship your own sandboxed AI operations agent to Kyma in two hours**.
 
-What does an AI agent do when something fails in production? Find out by causing the failure yourself. Deploy a reasoning agent into Kyma, connect it to the SAP AI Core foundation, and give it full observability to diagnose what broke. Leave with practical patterns for cost control and monitoring.
+> [!IMPORTANT]
+> What does an AI agent do when something fails in production? Find out by causing the failure yourself. Deploy a reasoning agent into Kyma, connect it to the SAP AI Core foundation, and give it full observability to diagnose what broke. Leave with practical patterns for cost control and monitoring.
 
 ## Overview
 
