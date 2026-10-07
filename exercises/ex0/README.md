@@ -50,7 +50,8 @@ Everything in the "pink" layer of the architecture — the LiteLLM proxy, the Go
 
    | Namespace | What runs there |
    |---|---|
-   | `default` | the **LiteLLM proxy** (`litellm-proxy`), the **dev-toolbox** (Goose diagnostics), PostgreSQL, Pushgateway |
+   | `default` | the **LiteLLM proxy** (`litellm-proxy`), PostgreSQL, Pushgateway |
+   | `dev-toolbox-system` | the **dev-toolbox** (`dev-toolbox-api`) and the **Goose diagnostic** CronJobs/Jobs, plus the fleet/health/audit custom resources (`FleetStatus`, `ClusterHealthReport`, `AuditLogCatalog`) |
    | `openclaw` | the **interactive chat agent** + the diagnostic output ConfigMaps |
    | `jupyter` | **JupyterHub** (the Python playground) |
    | `kyma-system` | Kyma modules — Istio, Telemetry, API Gateway |
