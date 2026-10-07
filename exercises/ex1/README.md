@@ -1,122 +1,140 @@
-# Exercise 1 - The LLM gateway: LiteLLM and SAP AI Core
+# Exercise 1 - Trigger and shape the Cluster Health Reports
 
-Your agent never talks to a model provider directly.
+This is the heart of the workshop.
 
-Every LLM call goes through an in-cluster **LiteLLM proxy**, which routes to **SAP AI Core** — SAP's orchestration layer in front of Claude (via AWS Bedrock), GPT (via Azure OpenAI), Mistral, and Amazon Nova.
+A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit**.
 
-In this exercise you inspect the running proxy, understand *why* it's there, and **call SAP AI Core yourself** through it.
+Every run executes Goose **keyless, inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
 
-> [!NOTE]
-> **Everyone:** Exercise 1.1 is a pure Busola click-through — that's all you need to understand the gateway. **🔧 Go deeper (optional):** 1.2 and 1.3 call the proxy yourself from the **in-cluster web terminal** — the Busola terminal introduced in [Exercise 2](../ex2/README.md) (top-right cluster menu → **Terminal**). If you'd rather not use a terminal, skip them — you'll see the exact same call made for you in later exercises (and from Python in [Exercise 6](../ex6/README.md)).
+You drive all of it from one place: the **dev-toolbox UI**.
 
-## Exercise 1.1 - Understand the proxy
+👉 You never touch CronJobs or `kubectl` here — the dev-toolbox UI is the control panel: trigger a run, pick the model, read the report, and write your own prompt.
 
-1. In Busola, go to **namespace `default` → Workloads → Deployments** and open **`litellm-proxy`**. It listens on port **4001** and exposes an **OpenAI-compatible** API at `/v1`.
+Open it (same single sign-on as Busola):
 
-```mermaid
-flowchart LR
-  subgraph callers["In-cluster callers · OpenAI-compatible"]
-    direction TB
-    goose["🪿 Goose"]
-    claude["🤖 Claude Code"]
-    chat["💬 Chat agent · OpenClaw"]
-    you["🧑 You · curl in the web terminal"]
-  end
-
-  subgraph proxy["🔀 LiteLLM proxy · ns default · :4001 · /v1"]
-    direction TB
-    tiers["Tier aliases (caller asks for a tier, not a model)<br/>reasoning-fast → Claude Sonnet (default)<br/>reasoning-hard → Claude Opus (~9× cost)<br/>gpt-5.5 · mistral · nova"]
-    hook["Pre-call hook + drop_params: true<br/>(handles SAP-specific request/response quirks)"]
-    prov["sap/ provider<br/>mints an OAuth2 token from the service-key Secret"]
-    tiers --> hook --> prov
-  end
-
-  subgraph sap["☁️ SAP AI Core · LLM Module"]
-    direction TB
-    aicore["SAP AI Core"]
-    aicore --> bedrock["Claude · AWS Bedrock"]
-    aicore --> azure["GPT · Azure OpenAI"]
-    aicore --> mistral["Mistral"]
-    aicore --> nova["Amazon Nova"]
-  end
-
-  callers -->|"Authorization: Bearer PROXY_API_KEY<br/>POST /v1/chat/completions · model = a tier"| proxy
-  prov ==>|"HTTPS · OAuth2 token"| aicore
-
-  proxy -.->|"cost + tokens, every call"| pg[("🗄️ PostgreSQL<br/>LiteLLM_SpendLogs")]
-  proxy -.->|"/metrics"| cls["📊 Kyma Telemetry → SAP Cloud Logging<br/>spend dashboard (ex5)"]
+```
+https://dev-toolbox.xp266-NNN.<workshop-domain>/
 ```
 
-2. Open **namespace `default` → Configuration → Config Maps → `litellm-proxy-config`** and look at `config.yaml`. Three things to notice:
+> [!NOTE]
+> Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else. The reports live in namespace `dev-toolbox-system`; each run spins up a short-lived OpenShell sandbox with a **read-only** cluster token.
 
-   - **The `sap/` provider.** Each model is routed as `sap/<model>` — LiteLLM obtains an OAuth2 token and calls SAP AI Core. Example: `anthropic--claude-4.6-sonnet` → `sap/anthropic--claude-4.6-sonnet`.
-   - **Tier aliases.** Callers reference a *tier*, not a specific model, so the backing model can be rotated centrally without touching every agent:
-     - `reasoning-fast` → Claude Sonnet (routine work — the default)
-     - `reasoning-hard` → Claude Opus (deep reasoning; ~9× the cost per call)
-   - **`drop_params: true`.** SAP AI Core rejects unknown parameters, so LiteLLM silently drops them instead of failing. This is mandatory for the SAP path.
+> [!IMPORTANT]
+> **Everyone (UI):** 3.1–3.3 — read a report, trigger a run, and write your own prompt, all in the dev-toolbox UI. **🔧 Go deeper (optional):** 3.4 peeks at the same artifacts from a terminal. You never *have* to trigger anything — the reports refresh on a schedule, so one is always waiting for you.
+
+### The three report generations
+
+They trade **fidelity for cost** — all run the same way (Goose in an OpenShell sandbox → LiteLLM → SAP AI Core), but differ in how much live cluster access Goose gets.
+
+| Report | Busola CR | What Goose sees | Style |
+|---|---|---|---|
+| **v1** | `cluster-health` | a **frozen** `kyma alpha diagnose` snapshot — no live cluster access | cheap, deterministic — catches regressions between runs |
+| **v2** | `cluster-health-v2` (+ `cluster-audit`) | **live**, read-only `kubectl` on a leash — a fixed health playbook; a second sidecar runs a free-form **security audit** | the balanced default |
+| **v3** | `cluster-health-v3` | **live**, read-only `kubectl`, real-time and uncapped | richest and priciest — treat it as a lead list to confirm |
+
+> [!NOTE]
+> The **security audit** (`cluster-audit`) is produced as part of a **v2** run — there's no separate button. Trigger a v2 run to refresh it, and read it in **Busola → Cluster Audit**. v3 may be disabled on some clusters.
+
+## Exercise 1.1 - Read the latest reports
+
+1. In the dev-toolbox UI, find the **Latest health reports** panel.
+
+   Each report shows an **executive summary**, a **status badge** (HEALTHY / WARNING / CRITICAL), and a **raw Goose** expander with the agent's unedited output. The panel auto-refreshes every ~15 s.
+
+2. Look at the **run-stats** line in each report's header: **Model · Duration · Cost · Tokens · Agent**.
+
+   That's the real SAP AI Core spend and latency of that single run — the same numbers roll up into the spend dashboard in [Exercise 3](../ex3/README.md).
+
+3. Open the same report in **Busola** → namespace `dev-toolbox-system` → **Custom Resources → ClusterHealthReport → `cluster-health-v2`**.
+
+   While a run is in flight, Busola shows a live **Activity** badge (`RUNNING`) and an **Elapsed** timer — the report is a Kubernetes custom resource the agent writes into, so the whole fleet can read it.
 
 > [!TIP]
-> Why a proxy at all? One place for **routing** (tiers → models), **cost tracking** (every call is logged to PostgreSQL and surfaced on the spend dashboard in [Exercise 5](../ex5/README.md)), **auth** (the SAP AI Core credentials live in one Secret, not in every agent), and **quirk-handling** (a pre-call hook works around SAP-specific request/response oddities).
+> These aren't hypothetical checks. In production the same pipeline surfaced things static monitoring missed — **402 ingress-gateway revisions** piled up in five days (a pod cycling every 17 minutes), **18 leftover cluster-admin bindings** from dev tooling, and a cert-manager ACME solver **stuck for 5+ days** on a DNS mismatch. Reasoning over correlated state finds what probes can't.
 
-## Exercise 1.2 - Call SAP AI Core through the proxy 🔧 *(optional — go deeper)*
+## Exercise 1.2 - Trigger a run
 
-1. In Busola, open a **web terminal**: top-right cluster menu → **Terminal** (a shell pod opens in the browser).
+1. In the **Run a diagnostic** card, choose a **job** — start with **v2** (live, balanced).
 
-2. Fetch the proxy key from its Secret and store it in a variable:
+2. *(optional)* Pick a **Model**.
 
-   Command:
-   ```bash
-   PROXY_KEY=$(kubectl get secret llm-proxy-credentials -n default \
-     -o jsonpath='{.data.PROXY_API_KEY}' | base64 -d)
-   echo "key length: ${#PROXY_KEY}"
+   The dropdown is the **intersection** of what's actually deployed and `RUNNING` in your SAP AI Core, and what the LiteLLM proxy is configured to route — so you can only pick a model the proxy will accept. (v2/v3 honour your choice; v1 keeps its baked model.)
+
+3. Click **Run**.
+
+   A one-off sandboxed run starts immediately (no waiting for the schedule). Watch the **Recent runs** table; click **logs** on the new row to tail the sandbox and see the extracted *Goose answer*.
+
+4. When it completes, the matching report in **Latest health reports** refreshes — new `lastUpdated`, new sections.
+
+> [!NOTE]
+> The sandboxed run is **keyless and uncapped** — Goose reasons for as many steps as the task needs; there's no turn budget to tune. What shapes a run is the **prompt** (the recipe — next) and the **model** you pick. The job also **guards the write**: a failed or empty run never overwrites your last good report, so you can experiment freely.
+
+## Exercise 1.3 - Write your own prompt
+
+The real power of the dev-toolbox is this: **you change what Goose investigates by changing the prompt** — no code, no redeploy.
+
+1. In the **Run a diagnostic** card, open the **Prompt** dropdown and choose **— custom prompt —**.
+
+2. Give it a **name** and paste your **prompt text**. For example:
+
+   ```text
+   You are a Kubernetes SRE. Using read-only kubectl, review this cluster's workloads and
+   produce a prioritized markdown report: the top 3 risks (each with concrete evidence —
+   resource names, counts, event messages) and a specific remediation for each. Finish with
+   a one-line overall verdict.
    ```
-   Output:
-   ```
-   key length: 40
-   ```
 
-3. Send a chat completion to the `reasoning-fast` tier (Claude Sonnet on SAP AI Core):
+3. Pick the **v2** job (so Goose gets live, read-only `kubectl`) and click **Run**.
 
-   Command:
-   ```bash
-   curl -s http://litellm-proxy.default.svc.cluster.local:4001/v1/chat/completions \
-     -H "Authorization: Bearer $PROXY_KEY" -H 'Content-Type: application/json' \
-     -d '{"model":"reasoning-fast","messages":[{"role":"user","content":"In one sentence, what is SAP BTP, Kyma runtime?"}]}' \
-     | jq -r '.choices[0].message.content'
-   ```
-   Output (wording will vary — it's a live model):
-   ```
-   SAP BTP, Kyma runtime is a fully managed, Kubernetes-based environment on SAP Business
-   Technology Platform for building and running cloud-native, extensible applications.
-   ```
+   Your prompt is saved to your own **adhoc prompt** store and used for this run; it then appears in the dropdown so you can **reuse** it. The **delete** button removes your custom prompts (the shipped ones are read-only).
 
-You just called SAP AI Core, in your own cluster, with no API key of your own — the proxy handled routing and authentication.
+👉 The shipped **v1/v2/v3 recipes are read-only** in the UI — your custom prompts live alongside them and never change the defaults, so you can experiment safely.
 
-## Exercise 1.3 - Same API, different model 🔧 *(optional — go deeper)*
+> [!NOTE]
+> Your prompt runs inside the **same OpenShell sandbox** as the built-in ones: a read-only cluster token, no internet, writes → `403`. So even a prompt you wrote can only **look and reason** — it can't mutate the cluster or exfiltrate anything. (That containment is [Exercise 5](../ex5/README.md).)
 
-The whole point of the OpenAI-compatible surface is that swapping models is a one-word change.
+## Exercise 1.4 - The guardrails: read, reason, but don't touch
 
-Try the deep-reasoning tier and an OpenAI model:
+An agent with `kubectl` is powerful — and, unchecked, dangerous. The reason you can hand it a prompt you wrote and let it loose is that it is **boxed in by construction**, not by asking the model to behave.
+
+Three overlapping fences wrap every run:
+
+- **A read-only identity.** The run gets a short-lived **`sandbox-viewer`** token — `get`/`list`/`watch` only, with **`secrets` excluded**. It can read the whole picture to reason, but a write or a secret-read is refused by the API server with `403`.
+- **No route out.** The run executes inside an **OpenShell sandbox** with no path to the internet; its only egress is the in-cluster LiteLLM proxy. The LLM key is never in the box.
+- **An unprivileged pod.** The workload runs **non-root** with a read-only root filesystem and dropped capabilities.
+
+> [!NOTE]
+> **Defense in depth.** No single control is trusted alone: the read-only token (can't write or read secrets), the sandbox boundary (no internet, no API-server mutation), non-root + read-only rootfs (can't escalate on the node), and `drop_params` at the proxy (can't send SAP AI Core a malformed request). The agent is useful *because* it's boxed in. The deep dive is [Exercise 5](../ex5/README.md).
+
+🔧 **Prove it yourself (optional — go deeper).** In a **web terminal** ([Appendix 2](../appendix-2-web-terminal/README.md)), ask the API server what the web-terminal identity may do, and read the report artifacts directly:
 
 Command:
 ```bash
-for MODEL in reasoning-hard gpt-5.5; do
-  echo "=== $MODEL ==="
-  curl -s http://litellm-proxy.default.svc.cluster.local:4001/v1/chat/completions \
-    -H "Authorization: Bearer $PROXY_KEY" -H 'Content-Type: application/json' \
-    -d "{\"model\":\"$MODEL\",\"messages\":[{\"role\":\"user\",\"content\":\"Name one Kyma module in 3 words.\"}]}" \
-    | jq -r '.choices[0].message.content'
-done
+echo "read anything:    $(kubectl auth can-i list nodes)"
+echo "write configmap:  $(kubectl auth can-i create configmaps)"
+echo "delete deploy:    $(kubectl auth can-i delete deployments)"
+echo "read secrets:     $(kubectl auth can-i get secrets)"
+echo "cluster-admin:    $(kubectl auth can-i '*' '*')"
+
+# everything the UI shows is a plain Kubernetes object:
+kubectl get clusterhealthreport -n dev-toolbox-system
+```
+Output:
+```
+read anything:    yes
+write configmap:  yes
+delete deploy:    no
+read secrets:     no
+cluster-admin:    no
 ```
 
-> [!NOTE]
-> List everything the proxy can route to with:
-> `curl -s http://litellm-proxy.default.svc.cluster.local:4001/v1/models -H "Authorization: Bearer $PROXY_KEY" | jq -r '.data[].id'`
+> [!IMPORTANT]
+> **Hand-off — remember this for later.** A run's output is a *shared artifact*: the `ClusterHealthReport` / `cluster-audit` custom resources, plus the raw Goose transcripts. Two downstream consumers read them — the **interactive chat agent** ([Exercise 2](../ex2/README.md)) answers questions about the findings, and a **JupyterHub notebook** ([Exercise 4](../ex4/README.md)) analyses them in Python. *Jobs produce → agents and notebooks consume.*
 
 ## Summary
 
-You inspected the LiteLLM proxy, learned how it routes to SAP AI Core (the `sap/` provider, tier aliases, `drop_params`), and called SAP AI Core through it from your cluster — first the `reasoning-fast` tier, then other models with a one-word change.
+You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it keyless inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.
 
-Every agent in this workshop uses exactly this path.
+You also met the hand-off surface the rest of the workshop builds on.
 
-Continue to - [Exercise 2 - The Busola web terminal](../ex2/README.md)
+Continue to - [Exercise 2 - Chat with the interactive agent](../ex2/README.md)

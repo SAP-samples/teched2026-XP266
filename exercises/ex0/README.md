@@ -93,4 +93,4 @@ flowchart TB
 
 You signed in to your Kyma runtime in Busola, met the pre-deployed AI-ops stack (LiteLLM, Goose, the interactive chat agent, JupyterHub, and the KRO custom resources), and saw where it fits in the SAP AI landscape.
 
-Continue to - [Exercise 1 - The LLM gateway: LiteLLM and SAP AI Core](../ex1/README.md)
+Continue to - [Exercise 1 - Trigger and shape the Cluster Health Reports](../ex1/README.md)

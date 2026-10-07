@@ -83,7 +83,7 @@ flowchart LR
 ```
 
 > [!TIP]
-> The exercises follow the arrows: **call the proxy** (ex1) → **use the agents** (ex2–ex4) → **see the reports and spend** (ex3, ex5) → **inspect the guardrails** (ex6) → **explore from Python** (ex7) → **see how it was all built** (ex8).
+> The exercises follow the arrows: **shape the autonomous reports** (ex1) → **chat with the agent** (ex2) → **see the spend** (ex3) → **explore from Python** (ex4) → **sandbox your own agent** (ex5–ex6). The appendices go deeper: the LLM gateway (Appendix 1), the web terminal (Appendix 2), and how it was all built (Appendix 3).
 
 ## Requirements
 
@@ -113,18 +113,18 @@ flowchart LR
 ## Exercises
 
 - [Getting Started](exercises/ex0/) — access your Kyma runtime and tour the pre-deployed AI-ops stack
-- [Exercise 1 - The LLM gateway: LiteLLM and SAP AI Core](exercises/ex1/) — how the proxy routes to SAP AI Core, and call it yourself
-- [Exercise 2 - The Busola web terminal](exercises/ex2/) — run Goose and Claude Code against your cluster, in-browser
-- [Exercise 3 - Trigger and shape the Cluster Health Reports](exercises/ex3/) — drive the v1/v2/v3 reports from the dev-toolbox UI, write your own prompt, and see the read-only sandbox guardrails
-- [Exercise 4 - Chat with the interactive agent](exercises/ex4/) — the interactive chat UI, and the hand-off from the diagnostic jobs
-- [Exercise 5 - Observability and spend](exercises/ex5/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards
-- [Exercise 6 - JupyterHub playground: SAP AI Core from Python](exercises/ex6/) — run the sample notebooks, do the guided exercises, create your own
-- [Exercise 7 - Your own sandboxed agent: the OpenShell CLI dance](exercises/ex7/) 🔧 *(advanced / instructor-demo)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
-- [Exercise 8 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex8/) 🔧 *(advanced / CLI)* — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
+- [Exercise 1 - Trigger and shape the Cluster Health Reports](exercises/ex1/) — drive the v1/v2/v3 reports from the dev-toolbox UI, write your own prompt, and see the read-only sandbox guardrails
+- [Exercise 2 - Chat with the interactive agent](exercises/ex2/) — the interactive chat UI, and the hand-off from the diagnostic jobs
+- [Exercise 3 - Observability and spend](exercises/ex3/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards
+- [Exercise 4 - JupyterHub playground: SAP AI Core from Python](exercises/ex4/) — run the sample notebooks, do the guided exercises, create your own
+- [Exercise 5 - Your own sandboxed agent: the OpenShell CLI dance](exercises/ex5/) 🔧 *(advanced / instructor-demo)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
+- [Exercise 6 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex6/) 🔧 *(advanced / CLI)* — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
 
 ### Appendix
 
-- [The making of your runtime (Day-1 operations)](exercises/appendix-day1-operations/) — run the `all-fleets-admin` pipeline and explore every `terraform apply` step that built the whole stack
+- [Appendix 1 - The LLM gateway: LiteLLM and SAP AI Core](exercises/appendix-1-llm-gateway/) — how the proxy routes to SAP AI Core, and call it yourself
+- [Appendix 2 - The Busola web terminal](exercises/appendix-2-web-terminal/) 🔧 *(optional)* — run Goose and Claude Code against your cluster, in-browser
+- [Appendix 3 - The making of your runtime (Day-1 operations)](exercises/appendix-3-day1-operations/) — run the `all-fleets-admin` pipeline and explore every `terraform apply` step that built the whole stack
 
 > [!IMPORTANT]
 > **Every exercise can be completed entirely in the browser — no terminal experience required.** A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**; wherever one appears there is a UI (Busola) or **Run workflow** (GitHub Actions) way to reach the same result. Whatever your level, you can succeed with clicks alone.

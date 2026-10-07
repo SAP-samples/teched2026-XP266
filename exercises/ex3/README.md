@@ -1,140 +1,59 @@
-# Exercise 3 - Trigger and shape the Cluster Health Reports
+# Exercise 3 - Observability and spend
 
-This is the heart of the workshop.
+Running LLMs in production raises an obvious question: **what is this costing, and who is spending it?**
 
-A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit**.
-
-Every run executes Goose **keyless, inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
-
-You drive all of it from one place: the **dev-toolbox UI**.
-
-👉 You never touch CronJobs or `kubectl` here — the dev-toolbox UI is the control panel: trigger a run, pick the model, read the report, and write your own prompt.
-
-Open it (same single sign-on as Busola):
+In this exercise you see how the stack answers that — every call is metered by the LiteLLM proxy, scraped by **Kyma Telemetry**, shipped to **SAP Cloud Logging**, and rendered as dashboards you read straight from Busola.
 
 ```
-https://dev-toolbox.xp266-NNN.<workshop-domain>/
+LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma Telemetry MetricPipeline
+                                                                        │
+                                                                        ▼
+                                                              SAP Cloud Logging (OpenSearch)
+                                                                        │
+                                              ┌─────────────────────────┴───────────────┐
+                                              ▼                                           ▼
+                                    LiteLLM Spend dashboard                      LLM Overview dashboard
+                                    (opened from Busola)                         (opened from Busola)
 ```
 
 > [!NOTE]
-> Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else. The reports live in namespace `dev-toolbox-system`; each run spins up a short-lived OpenShell sandbox with a **read-only** cluster token.
+> ✅ **No terminal needed** — this exercise is entirely browser-based.
 
-> [!IMPORTANT]
-> **Everyone (UI):** 3.1–3.3 — read a report, trigger a run, and write your own prompt, all in the dev-toolbox UI. **🔧 Go deeper (optional):** 3.4 peeks at the same artifacts from a terminal. You never *have* to trigger anything — the reports refresh on a schedule, so one is always waiting for you.
+## Exercise 3.1 - The telemetry path (concept)
 
-### The three report generations
-
-They trade **fidelity for cost** — all run the same way (Goose in an OpenShell sandbox → LiteLLM → SAP AI Core), but differ in how much live cluster access Goose gets.
-
-| Report | Busola CR | What Goose sees | Style |
-|---|---|---|---|
-| **v1** | `cluster-health` | a **frozen** `kyma alpha diagnose` snapshot — no live cluster access | cheap, deterministic — catches regressions between runs |
-| **v2** | `cluster-health-v2` (+ `cluster-audit`) | **live**, read-only `kubectl` on a leash — a fixed health playbook; a second sidecar runs a free-form **security audit** | the balanced default |
-| **v3** | `cluster-health-v3` | **live**, read-only `kubectl`, real-time and uncapped | richest and priciest — treat it as a lead list to confirm |
+1. In Busola, open **namespace `kyma-system` → Custom Resources → MetricPipeline**. This is the declarative pipe that forwards scraped metrics to SAP Cloud Logging — no Prometheus server to run, no Grafana to host.
+<br>![](images/05_01_0010.png)
 
 > [!NOTE]
-> The **security audit** (`cluster-audit`) is produced as part of a **v2** run — there's no separate button. Trigger a v2 run to refresh it, and read it in **Busola → Cluster Audit**. v3 may be disabled on some clusters.
+> The LiteLLM proxy exposes Prometheus-style metrics (spend per key, tokens in/out, per-model latency). A **pod annotation** marks it for scraping; the `MetricPipeline` (managed by the Kyma **Telemetry** module) ships those metrics out via OTLP to **SAP Cloud Logging**, where they're stored in OpenSearch and visualized. This is the same managed-telemetry pattern SAP BTP gives you for logs, metrics, and traces — you *use* it, you don't operate it.
 
-## Exercise 3.1 - Read the latest reports
+## Exercise 3.2 - Open the spend dashboards
 
-1. In the dev-toolbox UI, find the **Latest health reports** panel.
+The dashboards are one click away from Busola's left navigation.
 
-   Each report shows an **executive summary**, a **status badge** (HEALTHY / WARNING / CRITICAL), and a **raw Goose** expander with the agent's unedited output. The panel auto-refreshes every ~15 s.
+1. In Busola, open the **SAP Cloud Logging** navigation entry, then the **LiteLLM Spend** dashboard link. It opens SAP Cloud Logging (OpenSearch Dashboards) in a new tab, single sign-on.
+<br>![](images/05_02_0010.png)
 
-2. Look at the **run-stats** line in each report's header: **Model · Duration · Cost · Tokens · Agent**.
+2. Read the split. You'll see spend attributed by **API key / caller** and by **model**:
 
-   That's the real SAP AI Core spend and latency of that single run — the same numbers roll up into the spend dashboard in [Exercise 5](../ex5/README.md).
+   | Caller | Tier / model | Typical share |
+   |---|---|---|
+   | Goose diagnostic jobs (ex1) | `reasoning-fast` — Sonnet | steady, scheduled |
+   | Chat + terminal agents (Appendix 2, ex2) | `reasoning-hard` — Opus | bursty, interactive |
+   | JupyterHub notebooks (ex4) | whatever you call | your experiments show up here |
 
-3. Open the same report in **Busola** → namespace `dev-toolbox-system` → **Custom Resources → ClusterHealthReport → `cluster-health-v2`**.
-
-   While a run is in flight, Busola shows a live **Activity** badge (`RUNNING`) and an **Elapsed** timer — the report is a Kubernetes custom resource the agent writes into, so the whole fleet can read it.
+3. Open the **LLM Overview** dashboard for request volume, token throughput, and per-model latency.
 
 > [!TIP]
-> These aren't hypothetical checks. In production the same pipeline surfaced things static monitoring missed — **402 ingress-gateway revisions** piled up in five days (a pod cycling every 17 minutes), **18 leftover cluster-admin bindings** from dev tooling, and a cert-manager ACME solver **stuck for 5+ days** on a DNS mismatch. Reasoning over correlated state finds what probes can't.
+> This is the pay-off of routing **everything through one proxy** (Appendix 1): because no agent talks to a model directly, *every* token is attributable. Trigger a diagnose run (ex1) or chat with the agent (ex2), wait a minute, and watch your own activity appear on the dashboard.
 
-## Exercise 3.2 - Trigger a run
+## Exercise 3.3 - The FleetStatus card
 
-1. In the **Run a diagnostic** card, choose a **job** — start with **v2** (live, balanced).
-
-2. *(optional)* Pick a **Model**.
-
-   The dropdown is the **intersection** of what's actually deployed and `RUNNING` in your SAP AI Core, and what the LiteLLM proxy is configured to route — so you can only pick a model the proxy will accept. (v2/v3 honour your choice; v1 keeps its baked model.)
-
-3. Click **Run**.
-
-   A one-off sandboxed run starts immediately (no waiting for the schedule). Watch the **Recent runs** table; click **logs** on the new row to tail the sandbox and see the extracted *Goose answer*.
-
-4. When it completes, the matching report in **Latest health reports** refreshes — new `lastUpdated`, new sections.
-
-> [!NOTE]
-> The sandboxed run is **keyless and uncapped** — Goose reasons for as many steps as the task needs; there's no turn budget to tune. What shapes a run is the **prompt** (the recipe — next) and the **model** you pick. The job also **guards the write**: a failed or empty run never overwrites your last good report, so you can experiment freely.
-
-## Exercise 3.3 - Write your own prompt
-
-The real power of the dev-toolbox is this: **you change what Goose investigates by changing the prompt** — no code, no redeploy.
-
-1. In the **Run a diagnostic** card, open the **Prompt** dropdown and choose **— custom prompt —**.
-
-2. Give it a **name** and paste your **prompt text**. For example:
-
-   ```text
-   You are a Kubernetes SRE. Using read-only kubectl, review this cluster's workloads and
-   produce a prioritized markdown report: the top 3 risks (each with concrete evidence —
-   resource names, counts, event messages) and a specific remediation for each. Finish with
-   a one-line overall verdict.
-   ```
-
-3. Pick the **v2** job (so Goose gets live, read-only `kubectl`) and click **Run**.
-
-   Your prompt is saved to your own **adhoc prompt** store and used for this run; it then appears in the dropdown so you can **reuse** it. The **delete** button removes your custom prompts (the shipped ones are read-only).
-
-👉 The shipped **v1/v2/v3 recipes are read-only** in the UI — your custom prompts live alongside them and never change the defaults, so you can experiment safely.
-
-> [!NOTE]
-> Your prompt runs inside the **same OpenShell sandbox** as the built-in ones: a read-only cluster token, no internet, writes → `403`. So even a prompt you wrote can only **look and reason** — it can't mutate the cluster or exfiltrate anything. (That containment is [Exercise 7](../ex7/README.md).)
-
-## Exercise 3.4 - The guardrails: read, reason, but don't touch
-
-An agent with `kubectl` is powerful — and, unchecked, dangerous. The reason you can hand it a prompt you wrote and let it loose is that it is **boxed in by construction**, not by asking the model to behave.
-
-Three overlapping fences wrap every run:
-
-- **A read-only identity.** The run gets a short-lived **`sandbox-viewer`** token — `get`/`list`/`watch` only, with **`secrets` excluded**. It can read the whole picture to reason, but a write or a secret-read is refused by the API server with `403`.
-- **No route out.** The run executes inside an **OpenShell sandbox** with no path to the internet; its only egress is the in-cluster LiteLLM proxy. The LLM key is never in the box.
-- **An unprivileged pod.** The workload runs **non-root** with a read-only root filesystem and dropped capabilities.
-
-> [!NOTE]
-> **Defense in depth.** No single control is trusted alone: the read-only token (can't write or read secrets), the sandbox boundary (no internet, no API-server mutation), non-root + read-only rootfs (can't escalate on the node), and `drop_params` at the proxy (can't send SAP AI Core a malformed request). The agent is useful *because* it's boxed in. The deep dive is [Exercise 7](../ex7/README.md).
-
-🔧 **Prove it yourself (optional — go deeper).** In a **web terminal** ([Exercise 2](../ex2/README.md)), ask the API server what the web-terminal identity may do, and read the report artifacts directly:
-
-Command:
-```bash
-echo "read anything:    $(kubectl auth can-i list nodes)"
-echo "write configmap:  $(kubectl auth can-i create configmaps)"
-echo "delete deploy:    $(kubectl auth can-i delete deployments)"
-echo "read secrets:     $(kubectl auth can-i get secrets)"
-echo "cluster-admin:    $(kubectl auth can-i '*' '*')"
-
-# everything the UI shows is a plain Kubernetes object:
-kubectl get clusterhealthreport -n dev-toolbox-system
-```
-Output:
-```
-read anything:    yes
-write configmap:  yes
-delete deploy:    no
-read secrets:     no
-cluster-admin:    no
-```
-
-> [!IMPORTANT]
-> **Hand-off — remember this for later.** A run's output is a *shared artifact*: the `ClusterHealthReport` / `cluster-audit` custom resources, plus the raw Goose transcripts. Two downstream consumers read them — the **interactive chat agent** ([Exercise 4](../ex4/README.md)) answers questions about the findings, and a **JupyterHub notebook** ([Exercise 6](../ex6/README.md)) analyses them in Python. *Jobs produce → agents and notebooks consume.*
+1. In Busola, open the **FleetStatus** custom resource (cluster overview). It surfaces the health and the **LLM Dashboards** / **SAP Cloud Logging** shortcuts as cards — a single pane that links the running system to its observability.
+<br>![](images/05_03_0010.png)
 
 ## Summary
 
-You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it keyless inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.
+You followed one LLM call's metrics from the LiteLLM proxy through a Kyma Telemetry `MetricPipeline` into SAP Cloud Logging, and read the **LiteLLM Spend** and **LLM Overview** dashboards from Busola — seeing the autonomous-jobs (Sonnet) vs interactive-agents (Opus) spend split that the single-proxy design makes possible.
 
-You also met the hand-off surface the rest of the workshop builds on.
-
-Continue to - [Exercise 4 - Chat with the interactive agent](../ex4/README.md)
+Continue to - [Exercise 4 - JupyterHub playground: SAP AI Core from Python](../ex4/README.md)

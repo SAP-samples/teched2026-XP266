@@ -1,156 +1,346 @@
-# Exercise 6 - JupyterHub playground: SAP AI Core from Python
+# Exercise 6 - External agents: Pi, opencode & Qwen via OpenRouter 🔧 *(advanced — CLI)*
 
-This is your **open playground**.
+> [!WARNING]
+> **Advanced / builds on [Exercise 5](../ex5/README.md).** You need the `openshell` CLI (pre-installed in the Busola
+> web terminal) and an active gateway session (ex5 §5.1, device-code login). If you don't have the `openshell-admin`
+> role, watch the instructor demo. Everything runs on **your own** `xp266-NNN` runtime.
 
-A full **JupyterHub** is running in your cluster, pre-loaded with notebooks, and — like every other component — wired to **SAP AI Core through the LiteLLM proxy**.
+> [!TIP]
+> **Easy path — run it as a workflow (no CLI).** Everything below is the manual CLI flow. To run the external coding
+> agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
+>
+> | Run this workflow | What it does |
+> |---|---|
+> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. Pick your `student_cluster` (`xp266-NNN`), the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`), a **`model`** (a `:free` OpenRouter model), and a **`scenario`** → **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. Same agents, same containment, zero local tooling. |
+>
+> Prefer the hands-on CLI? Continue below.
 
-Here you run the sample notebooks, do a few guided Python exercises, and then **create your own**.
+In Exercise 5 the sandbox had **no internet** — its only exit was the in-cluster LiteLLM proxy, and §5.4 *proved* the
+agent couldn't reach the apiserver or the public web.
 
-It's a safe sandbox: experiment freely, nothing you do here affects the rest of the workshop.
+This exercise flips exactly one dial: a **4th trust tier** — a
+still-contained sandbox with **one external endpoint allow-listed** (`openrouter.ai`), so you can drive terminal
+coding agents against public **OpenRouter** models.
+
+The real OpenRouter key never enters the box: it lives in the
+gateway's `openrouter` **provider**, which injects a **resolve-sentinel** and swaps the real key at egress — and
+*only* for the agent binaries named in the provider profile (binary-scoped injection).
+
+## How it works — profile → provider → sandbox
+
+Three concepts, one key that never leaves the gateway:
+
+- **Profile** — a reusable *spec* (no secret): which credential env var, which auth style, which **endpoints** egress
+  may reach, and which **binaries** are allowed to use the credential.
+- **Provider** — a profile **bound to a real key**. The key (`sk-or-…`) is stored **only in the gateway**.
+- **Sandbox** — `--provider openrouter` attaches it: the box receives a **sentinel** (not the key) + scoped egress;
+  the supervisor swaps the sentinel for the real key **at the wire**, only for a listed binary → a listed endpoint.
 
 ```
-JupyterHub (in your cluster)
-   │  your notebook (Python)
-   ▼
-openai client  ──▶  http://litellm-proxy.default:4001/v1  ──▶  SAP AI Core
-                    (same proxy as every other exercise)
+                   ┌──────────────────── OpenShell gateway (holds the real key) ────────────────────┐
+  PROFILE          │  profile "openrouter"                                                           │
+  (template:       │    credential: OPENROUTER_API_KEY (bearer)                                      │
+   what & where)   │    endpoints : openrouter.ai, models.dev   ← the ONLY hosts egress is opened to │
+                   │    binaries  : node, opencode.exe          ← only THESE may send egress traffic │
+  PROVIDER         │  provider "openrouter" = profile + REAL KEY (sk-or-…)   ← key lives ONLY here    │
+  (profile + key)  └───────────────────────────────────┬─────────────────────────────────────────────┘
+                           sandbox create --provider openrouter
+                                                        ▼
+                   ┌──────────────────────── your sandbox (the box) ─────────────────────────┐
+  SANDBOX          │  OPENROUTER_API_KEY = openshell:resolve:…   ← a SENTINEL, not the key    │
+  (--provider      │  agent (opencode / pi / qwen)  ──▶  Authorization: Bearer <sentinel>     │
+   attaches it)    └───────────────────────────────────────┬───────────────────────────────────┘
+                                                            ▼  (allowed binary + allowed host)
+                        supervisor swaps  <sentinel> → sk-or-…  AT THE WIRE
+                                                            ▼
+                                                      openrouter.ai   (sees the real key; the box never did)
+```
+
+One image, three agents (all installed in `openrouter-agents:latest`):
+
+| Agent | What it is | Run it |
+|---|---|---|
+| **opencode** | [opencode.ai](https://opencode.ai) coding agent (Bun binary) | `opencode run -m openrouter/<model> "…"` (headless) or `opencode` (TUI) |
+| **Pi** | `@earendil-works/pi-coding-agent` | `pi -p --model openrouter/<model> "…"` (headless) or `pi` (TUI) |
+| **Qwen Code** | `@qwen-code/qwen-code` (OpenAI-compat) | `qwen` (TUI) — reads `OPENAI_API_KEY`/`OPENAI_BASE_URL` (pre-set in the box) |
+
+## OpenRouter vs SAP AI Core — the same shape to LiteLLM
+
+**OpenRouter** is a public LLM *aggregator*: one OpenAI-compatible endpoint + one key, routing to many models
+(OpenAI, Anthropic, Google, Qwen, NVIDIA…).
+
+**SAP AI Core** — the provider you used *keyless* in ex5 — is SAP's
+managed inference gateway, reached in-cluster through the **LiteLLM proxy**.
+
+To LiteLLM they're the **same shape** (an
+OpenAI-compatible gateway behind one credential), so one proxy can front **both**.
+
+The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.**
+
+OpenRouter only routes to its own public
+upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
+the reverse.
+
+| | ex5 (keyless, in-cluster) | ex6 (this exercise — **direct**) |
+|---|---|---|
+| Path | agent → LiteLLM proxy → **SAP AI Core** | agent → **OpenRouter** (one allow-listed external host) |
+| Key | none in the box (ClusterIP, plain-HTTP) | real key in the gateway; box sees a sentinel |
+| Internet | none | one host: `openrouter.ai` |
+
+ex6 keeps the agent talking to OpenRouter **directly** — that external, allow-listed, keyed endpoint *is* the 4th
+tier.
+
+(In production you'd often put OpenRouter *behind* LiteLLM too — one in-cluster exit, spend-tracked, key never
+leaves the proxy — but then it looks just like ex5.)
+
+> [!TIP]
+> **Picking a `:free` model.** The agents are *agentic*, so the model must be a **chat/completion model with
+> tool-calling**. **Embedding and rerank models won't work** (ids with `-embed-` / `-rerank-` are RAG parts, not chat
+> — the agent will error). The `:free` lineup **rotates** (models go paid without notice). Known-good free picks:
+> **`qwen/qwen3.8-27b:free`** (default) and **`nvidia/nemotron-3-super-120b-a12b:free`**. Find current ones at
+> [openrouter.ai/models?max_price=0](https://openrouter.ai/models) or the NVIDIA model dashboard
+> ([`sherman-yang/nvidia-model-info`](https://github.com/sherman-yang/nvidia-model-info), `agent` filter). This
+> exercise replicates NVIDIA's [*Run Pi with OpenRouter*](https://docs.nvidia.com/openshell/latest/tutorials/run-pi-with-openrouter).
+
+## Exercise 6.1 - Inspect the pieces (UI)
+
+1. In Busola, open **namespace `openshell` → Custom Resources** and find the pre-built image build (`KanikoAgent`
+   `kaniko-agent`) and the `openrouter` provider (it's created by the provider-setup Job because your runtime was
+   given a shared OpenRouter key). The agents image is pushed to the in-cluster registry as
+   `openrouter-agents:latest`.
+
+> [!NOTE]
+> The OpenRouter key is **shared and platform-provided** for the workshop — you never handle it. Use the `:free`
+> models (they cost nothing). The gateway holds the key; your sandbox only ever sees `openshell:resolve:…`.
+
+## Exercise 6.2 - Create a sandbox with the agents + OpenRouter 🔧
+
+In a web terminal (Appendix 2), with your gateway session active (ex5 §5.1):
+
+Command:
+```bash
+openshell sandbox create --name agents \
+  --from localhost:32137/openrouter-agents:latest \
+  --provider openrouter \
+  --env OPENAI_BASE_URL=https://openrouter.ai/api/v1 \
+  --env OPENAI_MODEL=qwen/qwen3.8-27b:free \
+  --detach -- sleep infinity
+openshell sandbox list        # wait for PHASE=Ready
+```
+`--provider openrouter` grants the sandbox egress to `openrouter.ai` (+ `models.dev`) **for the agent binaries only**
+and injects the key sentinel.
+
+`--env` passes the base URL + default model (OpenAI-compat agents need them).
+
+## Exercise 6.3 - Run an agent against a free model 🔧
+
+Command (opencode — the cleanest):
+```bash
+openshell sandbox exec --name agents -- opencode run -m openrouter/qwen/qwen3.8-27b:free "Reply with one word: PONG"
+```
+Output:
+```
+PONG
+```
+Try Pi too:
+```bash
+openshell sandbox exec --name agents -- pi -p --model openrouter/qwen/qwen3.8-27b:free "List 3 facts about Kyma."
+```
+
+> [!TIP]
+> **Pick a model:** `openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'`
+> lists the free models. opencode/Pi take `openrouter/<id>`. Qwen Code (`qwen`, interactive) uses whatever
+> `OPENAI_MODEL` you set at create — some models reject its tool-calling request shape, so if `qwen` errors `400`,
+> switch `OPENAI_MODEL` to another `:free` model and recreate the sandbox.
+
+## Exercise 6.4 - Prove it's still contained 🔧
+
+The agent reaches OpenRouter — and **nothing else**:
+
+Command:
+```bash
+openshell sandbox exec --name agents -- sh -c 'curl -sS -m8 -o /dev/null -w "openrouter.ai: %{http_code}\n" https://openrouter.ai/api/v1/models; curl -sS -m8 https://example.com >/dev/null 2>&1 && echo "example.com: REACHED" || echo "example.com: blocked"; curl -sS -m8 https://kubernetes.default.svc >/dev/null 2>&1 && echo "apiserver: REACHED" || echo "apiserver: blocked"; echo "key in box: $OPENROUTER_API_KEY"'
+```
+Output:
+```
+openrouter.ai: 200
+example.com: blocked
+apiserver: blocked
+key in box: openshell:resolve:env:…      ← a sentinel, NOT the real key
+```
+
+So this is a *different* tier than ex5, not a weaker one:
+
+| | ex5 (scoped-ops) | **ex6 (external agent)** |
+|---|---|---|
+| LLM | in-cluster LiteLLM → SAP AI Core (keyless) | **public OpenRouter (keyed, key in gateway only)** |
+| Egress | in-cluster proxy only; **no internet** | **`openrouter.ai` + `models.dev` only; nothing else** |
+| Cluster | read-only kubectl (sandbox-viewer) | none |
+| Key in box | sentinel | sentinel |
+
+Clean up: `openshell sandbox delete agents`
+
+## Exercise 6.5 - From draft to deployable: a correct KRO RGD 🔧
+
+When you ask an agent for *"a KRO ResourceGraphDefinition"*, a free model's first draft is usually **confident but
+wrong** — it reaches for OpenAPI schema (`type`/`properties`/`x-kro`), Helm templating (`{{ .spec.x }}`), or invented
+fields (`spec.nodes`/`components`/`graph`).
+
+KRO is a niche CRD the model hasn't memorised.
+
+That's the real lesson of
+this exercise: **the agent drafts, the cluster adjudicates — you iterate.**
+
+Always validate before trusting:
+
+```bash
+kubectl apply --dry-run=server -f weather-rgd.yaml   # the API server + KRO reject an invalid RGD
+```
+
+KRO's actual rules (what the drafts get wrong):
+- **`spec.schema` is KRO *simple-schema*, not OpenAPI** — each field is `name: type | markers` (types `string`,
+  `integer`, `float`, `boolean`; markers `required=true`, `default=…`). No `properties:`, no `required:` list, no `x-kro`.
+- **Status fields are CEL strings** that read a created resource by its `id`: `${weatherpod.status.phase}`.
+- **Templates substitute instance inputs with CEL** `${schema.spec.<field>}` — **not** `{{ }}`.
+- **The instance's `apiVersion` is `kro.run/v1alpha1`** (group `kro.run`), kind = your `schema.kind`.
+- KRO is **already installed** on your teched runtime — just `kubectl apply`.
+
+A **corrected, deployable** version (keeps the production touches — namespace, ServiceAccount + RBAC, `securityContext`,
+resource limits, two example instances — but uses *real* KRO):
+
+```yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata: { name: weather-system }
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: { name: weather-checker, namespace: weather-system }
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: { name: weather-checker, namespace: weather-system }
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata: { name: weather-checker, namespace: weather-system }
+roleRef: { apiGroup: rbac.authorization.k8s.io, kind: Role, name: weather-checker }
+subjects:
+  - { kind: ServiceAccount, name: weather-checker, namespace: weather-system }
+---
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata: { name: weather }          # RGDs are cluster-scoped (no namespace)
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: Weather
+    spec:                            # KRO simple-schema (strings → drop straight into env + the URL)
+      name: string | required=true
+      latitude: string | required=true
+      longitude: string | required=true
+      currentFields: string | default="temperature_2m,relative_humidity_2m,wind_speed_10m"
+      timezone: string | default="auto"
+      sleepSeconds: string | default="3600"
+    status:                          # CEL reading the created Pod by its resource id
+      podPhase: ${weatherpod.status.phase}
+      podIp: ${weatherpod.status.podIP}
+      containerImage: ${weatherpod.status.containerStatuses[0].image}
+  resources:
+    - id: weatherpod
+      template:
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          name: ${schema.spec.name}
+          namespace: weather-system
+          labels: { app.kubernetes.io/name: weather-check, app.kubernetes.io/managed-by: kro }
+        spec:
+          restartPolicy: Never
+          serviceAccountName: weather-checker
+          securityContext: { fsGroup: 1000 }
+          containers:
+            - name: weather-query
+              image: curlimages/curl:latest
+              env:
+                - { name: LATITUDE,       value: ${schema.spec.latitude} }
+                - { name: LONGITUDE,      value: ${schema.spec.longitude} }
+                - { name: CURRENT_FIELDS, value: ${schema.spec.currentFields} }
+                - { name: TIMEZONE,       value: ${schema.spec.timezone} }
+                - { name: SLEEP_SECONDS,  value: ${schema.spec.sleepSeconds} }
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -e
+                  echo "Weather for $LATITUDE,$LONGITUDE ($CURRENT_FIELDS)"
+                  curl -sS "https://api.open-meteo.com/v1/forecast?latitude=$LATITUDE&longitude=$LONGITUDE&current=$CURRENT_FIELDS&timezone=$TIMEZONE" | head -c 4096
+                  echo; sleep "$SLEEP_SECONDS"
+              resources:
+                requests: { cpu: 50m, memory: 64Mi }
+                limits:   { cpu: 100m, memory: 128Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1000
+                capabilities: { drop: ["ALL"] }
+---
+apiVersion: kro.run/v1alpha1       # ← instance of the generated kind, group kro.run
+kind: Weather
+metadata: { name: berlin, namespace: weather-system }
+spec:
+  name: weather-berlin
+  latitude: "52.52"
+  longitude: "13.41"
+  currentFields: "temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m"
+  timezone: "Europe/Berlin"
+  sleepSeconds: "1800"
+---
+apiVersion: kro.run/v1alpha1
+kind: Weather
+metadata: { name: newyork, namespace: weather-system }
+spec:
+  name: weather-newyork
+  latitude: "40.7128"
+  longitude: "-74.0060"
+  currentFields: "temperature_2m,relative_humidity_2m,wind_speed_10m"
+  timezone: "America/New_York"
+  sleepSeconds: "3600"
+```
+
+```bash
+kubectl apply --dry-run=server -f weather-rgd.yaml   # validate first
+```
+
+```bash
+kubectl apply -f weather-rgd.yaml                    # then deploy
+```
+
+```bash
+kubectl -n weather-system get weather,pods
+```
+
+```bash
+kubectl -n weather-system get weather berlin -o jsonpath='{.status}'   # CEL-derived status
 ```
 
 > [!NOTE]
-> ✅ **No terminal needed** — everything runs in JupyterLab in your browser (**Run ▸ Run All Cells**).
-
-## Exercise 6.1 - Sign in and spawn your server
-
-1. Open your JupyterHub URL in the browser (handed out with your runtime), e.g.:
-
-   ```
-   https://jupyterhub.xp266-NNN.<workshop-domain>/
-   ```
-   Sign in with single sign-on and click **Start My Server**. After a moment JupyterLab opens.
-<br>![](images/07_01_0010.png)
-
-2. In the file browser (left) you'll find the **pre-loaded notebooks**:
-
-   | Notebook | What it shows |
-   |---|---|
-   | `00-SAP-AI-Core-Credentials.ipynb` | Establishes the `client` — the OpenAI-compatible connection to the LiteLLM proxy. **Run this first.** |
-   | `01-Bedrock-Models-via-SAP-AI-Core.ipynb` | Chat completions against Claude models on SAP AI Core |
-   | `02-Tool-Calling-Bedrock-via-SAP-AI-Core.ipynb` | Function / tool calling |
-   | `03-SAP-AI-Core-Model-Test.ipynb` | Sweep several models and compare responses |
-   | `Cluster_Health.ipynb` | **The hand-off:** reads the Goose diagnostic output (ex3) and analyzes it in Python |
-
-## Exercise 6.2 - Walk the sample notebooks
-
-1. Open **`00-SAP-AI-Core-Credentials.ipynb`** and run every cell (**Shift+Enter**, or *Run ▸ Run All Cells*). It builds the `client` you'll reuse everywhere — no OAuth, no API key handling on your part.
-<br>![](images/07_02_0010.png)
-
-2. Open **`01-Bedrock-Models-via-SAP-AI-Core.ipynb`** and run all cells. You just called Claude on SAP AI Core, from Python, in your own cluster.
-
-3. Open **`03-SAP-AI-Core-Model-Test.ipynb`** and run it to compare several models side by side.
-
-> [!TIP]
-> Every completion you run here shows up on the **spend dashboard** from [Exercise 5](../ex5/README.md) — go back and watch your own JupyterHub activity appear.
-
-## Exercise 6.3 - Guided exercises (copy-paste into a new cell)
-
-After running `00-SAP-AI-Core-Credentials` (so `client` exists), try these.
-
-Each is self-contained — paste into a new cell and **Shift+Enter**.
-
-**A - List the models the proxy can route to:**
-```python
-for m in client.models.list().data:
-    print(m.id)
-```
-
-**B - A chat completion (routine tier):**
-```python
-resp = client.chat.completions.create(
-    model="reasoning-fast",                       # Claude Sonnet on SAP AI Core
-    messages=[{"role": "user",
-               "content": "In two sentences, what is SAP BTP, Kyma runtime?"}],
-)
-print(resp.choices[0].message.content)
-```
-
-**C - Embeddings + cosine similarity:**
-```python
-import numpy as np
-texts = ["Kubernetes pod", "a container workload", "quarterly sales report"]
-vecs = [e.embedding for e in
-        client.embeddings.create(model="text-embedding-3-small", input=texts).data]
-def cos(a, b): a, b = np.array(a), np.array(b); return a @ b / (np.linalg.norm(a) * np.linalg.norm(b))
-print("pod vs container:", round(cos(vecs[0], vecs[1]), 3))   # high — related
-print("pod vs sales:    ", round(cos(vecs[0], vecs[2]), 3))   # low  — unrelated
-```
-
-**D - Tool / function calling:**
-```python
-tools = [{"type": "function", "function": {
-    "name": "get_pod_count", "description": "Return the number of pods in a namespace",
-    "parameters": {"type": "object", "properties": {"namespace": {"type": "string"}},
-                   "required": ["namespace"]}}}]
-resp = client.chat.completions.create(
-    model="reasoning-fast",
-    messages=[{"role": "user", "content": "How many pods are in the default namespace?"}],
-    tools=tools,
-)
-print(resp.choices[0].message.tool_calls)   # the model asks to CALL your function, with arguments
-```
-
-**E - The hand-off in Python:** open and run **`Cluster_Health.ipynb`**.
-
-It reads the same diagnostic artifacts the Goose jobs produced in [Exercise 3](../ex3/README.md) (the `ClusterHealthReport` / `goose-raw-*` resources) and analyzes them with SAP AI Core — the *jobs produce → notebook consumes* hand-off, now in Python you can extend.
-
-## Exercise 6.4 - Create your own
-
-Open **File ▸ New ▸ Notebook** (pick the Python 3 kernel) and start experimenting.
-
-Paste this once to connect — it mirrors what `00-SAP-AI-Core-Credentials` does — then the model is one call away:
-
-```python
-import os, base64
-from kubernetes import client as k8s, config
-from openai import OpenAI
-
-config.load_incluster_config()
-key = base64.b64decode(
-    k8s.CoreV1Api().read_namespaced_secret("llm-proxy-credentials", "default")
-    .data["PROXY_API_KEY"]).decode()
-
-client = OpenAI(base_url="http://litellm-proxy.default.svc.cluster.local:4001/v1", api_key=key)
-print("connected:", [m.id for m in client.models.list().data][:5])
-```
-
-> [!TIP]
-> Ideas to try: ask a model to **explain a `kubectl get events` dump** you paste in; build a tiny **retrieval** demo with embeddings over a handful of docs; have the model **draft a NetworkPolicy** from a plain-English description; or chain a **tool call** to a real `kubernetes` client read. The proxy, the models, and the spend tracking are all already there — just write Python.
-
-> [!NOTE]
-> This is the same LLM path as every other exercise — the `openai` client simply points at the in-cluster LiteLLM proxy. Anything you prototype here uses the exact routing, auth, and cost-tracking that the production agents use.
-
-## Exercise 6.5 - The full notebook set (what else is pre-loaded)
-
-Beyond the SAP AI Core notebooks above, your JupyterHub is pre-loaded with the **OpenShell agent** notebooks — the Python
-twins of [Exercise 7](../ex7/README.md) — plus a few upstream JupyterLab samples.
-
-| Notebook | What it demonstrates |
-|---|---|
-| `00`–`03`, `Cluster_Health` | SAP AI Core from Python (the notebooks above). |
-| `04-OpenShell-Sandbox-SDK` | Drive an OpenShell sandbox (create → exec → delete) via the **Python SDK** — gateway registered with a CLI device-code login. |
-| `04b-OpenShell-Sandbox-SDK-Headless` | The same lifecycle, **pure SDK, no CLI** — connects straight to the in-cluster gateway (`tls=None` + a self-minted bearer token). |
-| `05-OpenShell-Goose-Diagnostics-Live` | An agent (**goose**) runs **live read-only kubectl** inside a scoped sandbox and writes a health report — the notebook twin of ex7's `scoped-ops`. |
-| `05b` / `05c` | The same live-goose investigation, headless (client-credentials) / via the **pure SDK**. |
-| `06` / `07` | goose over a **static** cluster snapshot / over the **baked** health reports from [Exercise 3](../ex3/README.md). |
-| `Lorenz`, `2013-12-03-Crank_Nicolson`, `Complex Location`, `Earthdata`, `JupyterLab APOD` | Upstream JupyterLab sample notebooks — a familiar playground (`Lorenz` is a nice "does my kernel work?" check). |
-
-> The `04`/`05` OpenShell notebooks are **advanced** and need OpenShell on your cluster — pair them with
-> [Exercise 7](../ex7/README.md). Full design notes for every notebook (gating, auth variants, us-vs-teched) live in the
-> platform repo: `docs/jupyterhub-notebooks-inventory.md`.
+> Treat this as *the shape KRO accepts*, not gospel — always `--dry-run=server` first. That round-trip (draft → reject
+> → fix) **is** the skill ex6 is teaching.
 
 ## Summary
 
-You signed in to JupyterHub, ran the pre-loaded SAP AI Core notebooks, did guided Python exercises (chat, embeddings, tool calling, and the diagnostic hand-off), and created your own notebook with a copy-paste connection snippet.
+You added an **external, keyed** LLM provider to the contained-sandbox model, ran three different terminal coding
+agents (opencode, Pi, Qwen Code) against free OpenRouter models, and proved the sandbox still can't reach anything
+but the one allow-listed endpoint — with the real key staying in the gateway.
 
-You now have a full, safe Python playground against SAP AI Core running inside your own Kyma cluster.
+That's the OpenShell provider model
+generalizing from "keyless in-cluster" to "any governed external endpoint."
 
-Continue to - [Exercise 7 - Your own sandboxed agent: OpenShell on Kyma](../ex7/README.md)
+Continue to - [Appendix 3 - The making of your runtime (Day-1 operations)](../appendix-3-day1-operations/README.md)
+
+Back to - [Overview](../../README.md)
