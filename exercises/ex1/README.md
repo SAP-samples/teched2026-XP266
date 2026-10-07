@@ -24,14 +24,15 @@ https://dev-toolbox.xp266-NNN.<workshop-domain>/
 
 They trade **fidelity for cost** — all run the same way (Goose in an OpenShell sandbox → LiteLLM → SAP AI Core), but differ in how much live cluster access Goose gets.
 
-| Report | Busola CR | What Goose sees | Style |
-|---|---|---|---|
-| **v1** | `cluster-health` | a **frozen** `kyma alpha diagnose` snapshot — no live cluster access | cheap, deterministic — catches regressions between runs |
-| **v2** | `cluster-health-v2` (+ `cluster-audit`) | **live**, read-only `kubectl` on a leash — a fixed health playbook; a second sidecar runs a free-form **security audit** | the balanced default |
-| **v3** | `cluster-health-v3` | **live**, read-only `kubectl`, real-time and uncapped | richest and priciest — treat it as a lead list to confirm |
+| Report (open in Busola) | What Goose sees | Notes |
+|---|---|---|
+| [**v1** · `cluster-health`](https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/clusterhealthreports/cluster-health) | a **frozen** `kyma alpha diagnose` snapshot — no live cluster access | cheap, deterministic — catches regressions between runs |
+| [**v2** · `cluster-health-v2`](https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/clusterhealthreports/cluster-health-v2) | **live**, read-only `kubectl` on a leash — a fixed health playbook | the balanced default |
+| [**v3** · `cluster-health-v3`](https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/clusterhealthreports/cluster-health-v3) | **live**, read-only `kubectl`, real-time and uncapped | richest and priciest — a lead list to confirm |
+| [**audit** · `cluster-audit`](https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/clusterhealthreports/cluster-audit) | **live**, adaptive **security** investigation | produced as part of a **v2** run — no separate trigger; refresh by running v2, read it in **Busola → Cluster Audit** |
 
 > [!NOTE]
-> The **security audit** (`cluster-audit`) is produced as part of a **v2** run — there's no separate button. Trigger a v2 run to refresh it, and read it in **Busola → Cluster Audit**.
+> The report links open the CR directly in Busola via your federated kubeconfig — replace `xp266-NNN` with your runtime.
 
 **Contents**
 
