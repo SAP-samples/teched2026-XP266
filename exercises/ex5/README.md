@@ -17,7 +17,7 @@ agent can't reach the apiserver or the public web.
   - 🏗️ [From draft to deployable: a correct KRO RGD](#exercise-55---from-draft-to-deployable-a-correct-kro-rgd-)
 
 > [!TIP]
-> **Easy path — run it as a workflow (no CLI).** Everything below is the manual CLI flow.  
+> **Easy path — run it as a GitHub Action.** Everything below is the manual in-cluster web terminal.  
 > To run the external coding
 > agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
 >
