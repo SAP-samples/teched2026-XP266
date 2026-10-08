@@ -157,6 +157,10 @@ unset  ANTHROPIC_API_KEY                            # drop the x-api-key path �
 export ANTHROPIC_MODEL=anthropic--claude-4.7-opus              # the SAP AI Core model id — WITHOUT this, Claude Code sends its own default id (e.g. "Opus 5"), which the proxy doesn't have → calls fail
 export ANTHROPIC_SMALL_FAST_MODEL=anthropic--claude-4.6-sonnet
 export CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1  # accept the non-standard model id's context window
+```
+
+```bash
+claude --version
 claude -p "In one line, what is Kyma?"
 ```
 
