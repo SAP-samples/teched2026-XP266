@@ -107,7 +107,7 @@ flowchart LR
 - [Exercise 1 - Trigger and shape the Cluster Health Reports](exercises/ex1/) — drive the v1/v2/v3 reports from the dev-toolbox UI, write your own prompt, and see the read-only sandbox guardrails
 - [Exercise 2 - Chat with the interactive agent](exercises/ex2/) — the interactive chat UI, and the hand-off from the diagnostic jobs
 - [Exercise 3 - Observability and spend](exercises/ex3/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards
-- [Exercise 4 - JupyterHub playground: SAP AI Core from Python](exercises/ex4/) — run the sample notebooks, do the guided exercises, create your own
+- [Exercise 4 - Explore SAP AI Core and OpenShell sandboxes with JupyterHub notebooks](exercises/ex4/) — drive the OpenShell sandbox lifecycle from Python and run an agent inside a sandbox; SAP AI Core from Python is an optional on-ramp
 - [Exercise 5 - Your own sandboxed agent: the OpenShell CLI dance](exercises/ex5/) 🔧 *(advanced / instructor-demo)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
 - [Exercise 6 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex6/) 🔧 *(advanced / CLI)* — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
 

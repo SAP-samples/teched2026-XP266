@@ -1,25 +1,21 @@
-# Exercise 4 - JupyterHub playground: SAP AI Core from Python
+# Exercise 4 - Explore SAP AI Core and OpenShell sandboxes with JupyterHub notebooks
 
-👉 This is your **open playground**.  
-A full **JupyterHub** is running in your cluster, pre-loaded with notebooks, and — like every other component — wired to **SAP AI Core through the LiteLLM proxy**.  
-Here you run the sample notebooks, do a few guided Python exercises, and then **create your own**.  
-It's a safe sandbox: experiment freely, nothing you do here affects the rest of the workshop.
+👉 This is your **Python playground**.  
+A full **JupyterHub** runs in your cluster, pre-loaded with notebooks and wired — like everything else — to **SAP AI Core through the LiteLLM proxy**.  
+It has two tracks, and the **focus is the second**:
 
-```
-JupyterHub (in your cluster)
-   │  your notebook (Python)
-   ▼
-openai client  ──▶  http://litellm-proxy.default:4001/v1  ──▶  SAP AI Core
-                    (same proxy as every other exercise)
-```
+- ☁️ *(optional on-ramp)* call **SAP AI Core** from Python — keyless, through the proxy.
+- 📦 **the main event** — drive **OpenShell sandboxes** from Python: create one, run a command inside it, then let an **agent (goose)** investigate your cluster from within a sandbox.
+
+It is the Python twin of the CLI walkthrough in [Exercise 5](../ex5/README.md) — the same sandboxing and the same guardrails, driven from a notebook instead of a terminal.
 
 **Contents**
 
 - 🚀 [Sign in and spawn your server](#exercise-41---sign-in-and-spawn-your-server)
-- 📓 [Walk the sample notebooks](#exercise-42---walk-the-sample-notebooks)
-- 🐍 [Guided exercises](#exercise-43---guided-exercises-copy-paste-into-a-new-cell)
-- ✨ [Create your own](#exercise-44---create-your-own)
-- 📚 [The full notebook set](#exercise-45---the-full-notebook-set-what-else-is-pre-loaded)
+- ☁️ [SAP AI Core from Python](#exercise-42---sap-ai-core-from-python-optional) *(optional)*
+- 📦 [Drive an OpenShell sandbox from Python](#exercise-43---drive-an-openshell-sandbox-from-python)
+- 🪿 [Run an agent inside a sandbox](#exercise-44---run-an-agent-inside-a-sandbox)
+- 📚 [The full notebook set](#exercise-45---the-full-notebook-set)
 
 
 ## Exercise 4.1 - Sign in and spawn your server
@@ -29,125 +25,97 @@ openai client  ──▶  http://litellm-proxy.default:4001/v1  ──▶  SAP A
    ```
    https://jupyterhub.xp266-NNN.<workshop-domain>/
    ```
-   Sign in with single sign-on and click **Start My Server**. After a moment JupyterLab opens.
+
+2. Sign in with single sign-on and click **Start My Server**. After a moment JupyterLab opens.
 <br>![](images/07_01_0010.png)
 
-2. In the file browser (left) you'll find the **pre-loaded notebooks**:
+3. In the file browser (left) the notebooks are grouped by what they drive:
 
-   | Notebook | What it shows |
-   |---|---|
-   | `00-SAP-AI-Core-Credentials.ipynb` | Establishes the `client` — the OpenAI-compatible connection to the LiteLLM proxy. **Run this first.** |
-   | `01-Bedrock-Models-via-SAP-AI-Core.ipynb` | Chat completions against Claude models on SAP AI Core |
-   | `02-Tool-Calling-Bedrock-via-SAP-AI-Core.ipynb` | Function / tool calling |
-   | `03-SAP-AI-Core-Model-Test.ipynb` | Sweep several models and compare responses |
-   | `Cluster_Health.ipynb` | **The hand-off:** reads the Goose diagnostic output (ex1) and analyzes it in Python |
+   | Prefix | Track | What it drives |
+   |---|---|---|
+   | `00`–`03` | ☁️ SAP AI Core | call AI Core models from Python — keyless, through the proxy *(optional)* |
+   | `04`, `04b` | 📦 OpenShell SDK | create → exec → delete a sandbox from Python |
+   | `05`, `06`, `07` | 🪿 OpenShell + goose | run an agent **inside** a sandbox against your cluster |
 
-## Exercise 4.2 - Walk the sample notebooks
+   The full list (every variant, plus the upstream JupyterLab samples) is in [Exercise 4.5](#exercise-45---the-full-notebook-set).
 
-1. Open **`00-SAP-AI-Core-Credentials.ipynb`** and run every cell (**Shift+Enter**, or *Run ▸ Run All Cells*). It builds the `client` you'll reuse everywhere — no OAuth, no API key handling on your part.
+> [!NOTE]
+> The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
+
+## Exercise 4.2 - SAP AI Core from Python *(optional)*
+
+A quick on-ramp: prove you can reach SAP AI Core from Python before you wrap an agent around it.  
+Skip straight to [4.3](#exercise-43---drive-an-openshell-sandbox-from-python) if you only want the sandboxing track.
+
+1. Open **`00-SAP-AI-Core-Credentials.ipynb`** and run every cell (**Shift+Enter**, or *Run ▸ Run All Cells*).  
+   It builds the `client` the other notebooks reuse — no OAuth, no API key handling on your part.
 <br>![](images/07_02_0010.png)
 
-2. Open **`01-Bedrock-Models-via-SAP-AI-Core.ipynb`** and run all cells. You just called Claude on SAP AI Core, from Python, in your own cluster.
+2. Open **`01-Bedrock-Models-via-SAP-AI-Core.ipynb`** and run all cells — you just called Claude on SAP AI Core, from Python, in your own cluster.
 
 3. Open **`03-SAP-AI-Core-Model-Test.ipynb`** and run it to compare several models side by side.
 
 > [!TIP]
-> Every completion you run here shows up on the **spend dashboard** from [Exercise 3](../ex3/README.md) — go back and watch your own JupyterHub activity appear.
+> Every completion here shows up on the **spend dashboard** from [Exercise 3](../ex3/README.md) — go back and watch your own JupyterHub activity appear.  
+> To go further, open **`02-Tool-Calling-Bedrock-via-SAP-AI-Core.ipynb`** (function calling), or start a blank notebook and reuse the `client` from `00` — the proxy, the models, and the cost tracking are already there.
 
-## Exercise 4.3 - Guided exercises (copy-paste into a new cell)
+## Exercise 4.3 - Drive an OpenShell sandbox from Python
 
-After running `00-SAP-AI-Core-Credentials` (so `client` exists), try these.  
-Each is self-contained — paste into a new cell and **Shift+Enter**.  
-**A - List the models the proxy can route to:**
-```python
-for m in client.models.list().data:
-    print(m.id)
-```
+A **sandbox** is a disposable, per-session pod that _by construction_ can't reach the internet or the cluster API — the containment [Exercise 5](../ex5/README.md) builds by hand on the CLI.  
+Here you drive its whole lifecycle from Python.
 
-**B - A chat completion (routine tier):**
-```python
-resp = client.chat.completions.create(
-    model="reasoning-fast",                       # Claude Sonnet on SAP AI Core
-    messages=[{"role": "user",
-               "content": "In two sentences, what is SAP BTP, Kyma runtime?"}],
-)
-print(resp.choices[0].message.content)
-```
+👉 Open **`04-OpenShell-Sandbox-SDK.ipynb`** and run every cell.  
+It registers the in-cluster OpenShell gateway, then uses the Python `SandboxClient` to **create → exec → list → delete** a minimal sandbox.
 
-**C - Embeddings + cosine similarity:**
-```python
-import numpy as np
-texts = ["Kubernetes pod", "a container workload", "quarterly sales report"]
-vecs = [e.embedding for e in
-        client.embeddings.create(model="text-embedding-3-small", input=texts).data]
-def cos(a, b): a, b = np.array(a), np.array(b); return a @ b / (np.linalg.norm(a) * np.linalg.norm(b))
-print("pod vs container:", round(cos(vecs[0], vecs[1]), 3))   # high — related
-print("pod vs sales:    ", round(cos(vecs[0], vecs[2]), 3))   # low  — unrelated
-```
-
-**D - Tool / function calling:**
-```python
-tools = [{"type": "function", "function": {
-    "name": "get_pod_count", "description": "Return the number of pods in a namespace",
-    "parameters": {"type": "object", "properties": {"namespace": {"type": "string"}},
-                   "required": ["namespace"]}}}]
-resp = client.chat.completions.create(
-    model="reasoning-fast",
-    messages=[{"role": "user", "content": "How many pods are in the default namespace?"}],
-    tools=tools,
-)
-print(resp.choices[0].message.tool_calls)   # the model asks to CALL your function, with arguments
-```
-
-**E - The hand-off in Python:** open and run **`Cluster_Health.ipynb`**.  
-It reads the same diagnostic artifacts the Goose jobs produced in [Exercise 1](../ex1/README.md) (the `ClusterHealthReport` / `goose-raw-*` resources) and analyzes them with SAP AI Core — the *jobs produce → notebook consumes* hand-off, now in Python you can extend.
-
-## Exercise 4.4 - Create your own
-
-Open **File ▸ New ▸ Notebook** (pick the Python 3 kernel) and start experimenting.  
-Paste this once to connect — it mirrors what `00-SAP-AI-Core-Credentials` does — then the model is one call away:
-
-```python
-import os, base64
-from kubernetes import client as k8s, config
-from openai import OpenAI
-
-config.load_incluster_config()
-key = base64.b64decode(
-    k8s.CoreV1Api().read_namespaced_secret("llm-proxy-credentials", "default")
-    .data["PROXY_API_KEY"]).decode()
-
-client = OpenAI(base_url="http://litellm-proxy.default.svc.cluster.local:4001/v1", api_key=key)
-print("connected:", [m.id for m in client.models.list().data][:5])
-```
-
-> [!TIP]
-> Ideas to try: ask a model to **explain a `kubectl get events` dump** you paste in; build a tiny **retrieval** demo with embeddings over a handful of docs; have the model **draft a NetworkPolicy** from a plain-English description; or chain a **tool call** to a real `kubernetes` client read. The proxy, the models, and the spend tracking are all already there — just write Python.
+- When a cell triggers a one-time **device-code login**, open the printed URL in your browser and complete it with your workshop single sign-on — the notebook then holds the session for you.
+- Watch the lifecycle: a sandbox is created, your `exec` runs a command inside it, you list the live sandboxes, and the sandbox is deleted — nothing is left running.
 
 > [!NOTE]
-> This is the same LLM path as every other exercise — the `openai` client simply points at the in-cluster LiteLLM proxy. Anything you prototype here uses the exact routing, auth, and cost-tracking that the production agents use.
+> This minimal sandbox is **compute-only**: it has no cluster credentials and no route out. It's the blank canvas; [4.4](#exercise-44---run-an-agent-inside-a-sandbox) adds an agent and a scoped, read-only cluster identity.
 
-## Exercise 4.5 - The full notebook set (what else is pre-loaded)
+> [!TIP]
+> Prefer no browser step? **`04b-OpenShell-Sandbox-SDK-Headless.ipynb`** runs the identical lifecycle with **no CLI** — a direct `SandboxClient(tls=None, bearer_token=…)` against the in-cluster gateway. Same result, machine-to-machine auth.
 
-Beyond the SAP AI Core notebooks above, your JupyterHub is pre-loaded with the **OpenShell agent** notebooks — the Python
-twins of [Exercise 5](../ex5/README.md) — plus a few upstream JupyterLab samples.
+## Exercise 4.4 - Run an agent inside a sandbox
 
-| Notebook | What it demonstrates |
-|---|---|
-| `00`–`03`, `Cluster_Health` | SAP AI Core from Python (the notebooks above). |
-| `04-OpenShell-Sandbox-SDK` | Drive an OpenShell sandbox (create → exec → delete) via the **Python SDK** — gateway registered with a CLI device-code login. |
-| `04b-OpenShell-Sandbox-SDK-Headless` | The same lifecycle, **pure SDK, no CLI** — connects straight to the in-cluster gateway (`tls=None` + a self-minted bearer token). |
-| `05-OpenShell-Goose-Diagnostics-Live` | An agent (**goose**) runs **live read-only kubectl** inside a scoped sandbox and writes a health report — the notebook twin of ex5's `scoped-ops`. |
-| `05b` / `05c` | The same live-goose investigation, headless (client-credentials) / via the **pure SDK**. |
-| `06` / `07` | goose over a **static** cluster snapshot / over the **baked** health reports from [Exercise 1](../ex1/README.md). |
-| `Lorenz`, `2013-12-03-Crank_Nicolson`, `Complex Location`, `Earthdata`, `JupyterLab APOD` | Upstream JupyterLab sample notebooks — a familiar playground (`Lorenz` is a nice "does my kernel work?" check). |
+Now put an agent **in** the box: **goose**, keyless through the LiteLLM proxy, reasoning over your cluster from inside a sandbox that bounds what it can touch.
 
-> The `04`/`05` OpenShell notebooks are **advanced** and need OpenShell on your cluster — pair them with
-> [Exercise 5](../ex5/README.md). Full design notes for every notebook (gating, auth variants, us-vs-teched) live in the
-> platform repo: `docs/jupyterhub-notebooks-inventory.md`.
+1. 👉 Open **`05-OpenShell-Goose-Diagnostics-Live.ipynb`** and run all cells.  
+   goose runs **live, read-only `kubectl`** inside a scoped sandbox (the `scoped-ops` policy) and writes a cluster-health report — the Python twin of [Exercise 1](../ex1/README.md)'s diagnostic jobs and [Exercise 5](../ex5/README.md)'s `scoped-ops` demo.
+
+2. Open **`06-OpenShell-Goose-Diagnostics-Snapshot.ipynb`** and run all cells.  
+   Same agent, **no live cluster access** — it reasons over a **static** `kyma diagnose` snapshot inside a baked-policy sandbox. Compare its report with the live one from step 1.
+
+> [!IMPORTANT]
+> The sandbox is the guardrail, not the prompt. In step 1 goose gets a short-lived **read-only** identity (`get`/`list`/`watch`, no secrets) and no internet; a write or a secret-read comes back `403`. In step 2 it has **no cluster access at all**. You can hand either one any prompt and it still can't mutate your cluster or leak a token — exactly the containment proven on the CLI in [Exercise 5](../ex5/README.md).
+
+> [!TIP]
+> Advanced variants of the same investigation live alongside: **`05b`** (headless client-credentials, no browser), **`05c`** (pure SDK, no CLI), and **`07`** (triage the baked `ClusterHealthReport` from [Exercise 1](../ex1/README.md) instead of the cluster).
+
+## Exercise 4.5 - The full notebook set
+
+Everything pre-loaded in your JupyterHub:
+
+| Notebook | Track | What it demonstrates |
+|---|---|---|
+| `00-SAP-AI-Core-Credentials` | ☁️ AI Core | Builds the keyless `client` (proxy → SAP AI Core). **Run first** on this track. |
+| `01-Bedrock-Models-via-SAP-AI-Core` | ☁️ AI Core | Chat completions against Claude models on SAP AI Core. |
+| `02-Tool-Calling-Bedrock-via-SAP-AI-Core` | ☁️ AI Core | Function / tool calling. |
+| `03-SAP-AI-Core-Model-Test` | ☁️ AI Core | Sweep several models and compare responses. |
+| `04-OpenShell-Sandbox-SDK` | 📦 SDK | Sandbox create → exec → list → delete; gateway via CLI device-code login. |
+| `04b-OpenShell-Sandbox-SDK-Headless` | 📦 SDK | Same lifecycle, **no CLI** — pure `SandboxClient(tls=None, bearer_token=…)`. |
+| `05-OpenShell-Goose-Diagnostics-Live` | 🪿 goose | Agent runs **live read-only kubectl** in a scoped sandbox and writes a report. |
+| `05b` / `05c` | 🪿 goose | The same live investigation, headless (client-credentials) / pure SDK. |
+| `06-…-Snapshot` | 🪿 goose | goose over a **static** `kyma diagnose` snapshot — no live cluster access. |
+| `07-…-FromReport` | 🪿 goose | Triage the **baked** `ClusterHealthReport` from [Exercise 1](../ex1/README.md). |
+| `Cluster_Health` | ⚙️ ops | Standalone cluster-health walkthrough (kubectl + AI Core). |
+| `Lorenz`, `Crank_Nicolson`, `Complex Location`, `Earthdata`, `JupyterLab APOD` | 🧪 upstream | Stock JupyterLab samples — a familiar playground (`Lorenz` is a quick "does my kernel work?" check). |
+
+> [!NOTE]
+> Notebooks are baked into the image and copied to your home at spawn — **open a fresh server to pick up any changes.** Full design notes (gating, auth variants) live in the platform repo: `docs/jupyterhub-notebooks-inventory.md`.
 
 ## Summary
 
-You signed in to JupyterHub, ran the pre-loaded SAP AI Core notebooks, did guided Python exercises (chat, embeddings, tool calling, and the diagnostic hand-off), and created your own notebook with a copy-paste connection snippet.  
-You now have a full, safe Python playground against SAP AI Core running inside your own Kyma cluster.  
-Continue to - [Exercise 5 - Your own sandboxed agent: OpenShell on Kyma](../ex5/README.md)
+You signed in to JupyterHub, optionally called **SAP AI Core from Python** through the proxy, then drove the full **OpenShell sandbox lifecycle** from the Python SDK and ran an **agent inside a sandbox** — live read-only `kubectl` and a static snapshot — watching the same read-only, no-egress guardrails that bound the CLI agent.  
+You now have the sandboxed-agent pattern in Python, inside your own Kyma cluster.  
+Continue to - [Exercise 5 - Your own sandboxed agent: the OpenShell CLI dance](../ex5/README.md)
