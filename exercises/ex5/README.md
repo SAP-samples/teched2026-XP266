@@ -25,7 +25,7 @@ the sandbox only ever carries a sentinel.
 >
 > | Run this workflow | Workflow inputs | What it does |
 > |---|---|---|
-> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`)<br>• a **`model`** (a `:free` OpenRouter model)<br>• a **`scenario`**<br>👉 **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. Same agents, same containment, zero local tooling. |
+> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`)<br>• a **`model`** (a `:free` OpenRouter model)<br>• a **`scenario`**<br>👉 **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. |
 >
 > Prefer the hands-on CLI? Continue below.
 
