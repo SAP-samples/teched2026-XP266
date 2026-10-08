@@ -252,6 +252,13 @@ terminal** it's a single command — **`scoped-ops`** — which creates the sand
 mints a short-lived **read-only** token, injects a kubeconfig + the LLM env, and drops you **inside** with `kubectl`,
 `goose`, and `claude` already wired:
 
+> [!IMPORTANT]
+> **What makes this the "scoped" tier vs the contained §4.3 box — two things, both required:**
+> 1. **A `--policy` with a `k8s_api` block** that opens the network path to the apiserver (`kubernetes.default.svc:443`, **read-only**, only for the `kubectl`/`kyma` binaries) — on top of the LLM egress the providers already give. The contained box has no such path, so its §4.4 apiserver probe is refused.
+> 2. **A read-only identity** — `scoped-ops` mints a short-lived `sandbox-viewer` SA token (`get`/`list`/`watch`, **secrets excluded**) and injects a kubeconfig. Network access alone isn't enough; the apiserver still needs a credential.
+>
+> Together: `kubectl get` / `kyma alpha diagnose` work, while writes and secret-reads return `403`. The LLM keys still never enter the box (both agents stay sentinel-contained); the one real credential injected is that minimal read-only kubectl token.
+
 ```bash
 scoped-ops                     # or give it a name:  scoped-ops $XP266_CLUSTER-devbox
 #   >> creating scoped-ops sandbox 'ops-…' from …/dev-toolbox-bash (policy applied at CREATE) …
