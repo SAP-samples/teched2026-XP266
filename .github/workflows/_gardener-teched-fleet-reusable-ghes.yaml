@@ -9,19 +9,20 @@
       "uses": "actions/checkout@v7"
     - "name": "Install Helm"
       "uses": "azure/setup-helm@v5"
-    - "id": "coords"
+    - "env":
+        "KYMA_ENV_UUID": "${{ inputs.kyma_env_uuid }}"
+        "SHOOT": "${{ inputs.shoot_name }}"
+      "id": "coords"
       "name": "Resolve teched coords (GHES: KEB via kyma_env_uuid · github.com: baked
         static — fork-safe, no secret, no GUID)"
       "run": |
         set -e
-        SHOOT="${{ inputs.shoot_name }}"
         # Coords + audience differ by GitHub host (the id-token issuer auto-differs; the cluster federates BOTH). GHES
         # (github.tools.sap/_services/token, internal repo) → live KEB fetch by kyma_env_uuid + gh-<shoot> audience.
         # github.com fork → server/ca from the baked static map (NO GUID) + gh-teched-<subaccount_id> audience.
-        if [ "${{ github.repository }}" = "fp-stakeholder-management/terraform-stories" ]; then
-          UUID="${{ inputs.kyma_env_uuid }}"
+        if [ "$GITHUB_REPOSITORY" = "fp-stakeholder-management/terraform-stories" ]; then
           TMP=$(mktemp)
-          curl -s "https://kyma-env-broker.cp.kyma.cloud.sap/kubeconfig/$UUID" -o "$TMP"
+          curl -s "https://kyma-env-broker.cp.kyma.cloud.sap/kubeconfig/$KYMA_ENV_UUID" -o "$TMP"
           SERVER=$(kubectl --kubeconfig "$TMP" config view --minify -o jsonpath='{.clusters[0].cluster.server}')
           CA=$(kubectl --kubeconfig "$TMP" config view --minify --raw -o jsonpath='{.clusters[0].cluster.certificate-authority-data}')
           rm -f "$TMP"
