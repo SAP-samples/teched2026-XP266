@@ -130,23 +130,13 @@ known-good free picks:
 > openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'
 > ```
 
-Run opencode:
-```bash
-openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "Reply with one word: PONG"
-```
-Output:
-```
-PONG
-```
-Try Pi too:
-```bash
-openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."
-```
-Qwen Code too — it takes **no** `-m` flag (it uses the `OPENAI_MODEL` set in the box, your `$FREE_MODEL`), and `-p` runs it headless:
-```bash
-openshell sandbox exec --name agents -- qwen -p "List 3 facts about Kyma."
-```
-(Drop the `-p "…"` for its interactive TUI: `openshell sandbox exec --name agents -- qwen`.)
+Run each agent one-shot — same contained sandbox, same model:
+
+| Agent | Command (→ expected output / note) |
+|---|---|
+| 🧩 **opencode** | `openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "Reply with one word: PONG"` → `PONG` |
+| 🥧 **Pi** | `openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."` |
+| 🐉 **Qwen Code** | `openshell sandbox exec --name agents -- qwen -p "List 3 facts about Kyma."`<br>no `-m` flag — uses `OPENAI_MODEL` (your `$FREE_MODEL`); drop the `-p "…"` for the interactive TUI |
 
 ## Exercise 5.4 - Prove it's still contained 🔧
 
