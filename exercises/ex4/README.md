@@ -8,7 +8,7 @@ This exercise is the **hands-on** — run it either way:
 
 - ⚡ **4a** *(easy path)* — run it as a **GitHub Action** (the Tip below)
 - 🛠️ **4b** *(optional)* — [Hands-on: the OpenShell CLI in the Busola web terminal](#hands-on-the-openshell-cli-in-the-busola-web-terminal)
-  - 🔑 [4.1 CLI & gateway](#41---get-the-cli-and-reach-the-gateway)
+  - 🔑 [4.1 terminal & gateway](#41---open-the-terminal-and-reach-the-gateway)
   - 🔀 [4.2 provider](#42---wire-the-contained-inference-provider-one-time-per-gateway)
   - 📦 [4.3 sandbox](#43---create-a-sandbox-from-the-tools-image-and-use-it)
   - 🛡️ [4.4 guardrail](#44---see-the-guardrail-hold)
@@ -32,60 +32,33 @@ This exercise is the **hands-on** — run it either way:
 You'll register the gateway (4.1), wire the contained inference provider once (4.2), create a contained sandbox and drive
 an agent inside it (4.3), prove the guardrail holds (4.4), then open the read-only **scoped-ops** tier (4.5).
 
-### 4.1 - Get the CLI and reach the gateway
+### 4.1 - Open the terminal and reach the gateway
 
-The gateway has a **stable HTTPS endpoint** — `openshell.<your-shoot>.<workshop-domain>` — so there's **no port-forward
-to run**.  
-It is **OIDC-gated**: it validates your Keycloak token itself.
+The `openshell` CLI is **pre-installed in the Busola web terminal** — nothing to download.  
+The terminal runs *inside* the cluster, so you reach the gateway's in-cluster Service directly (no HTTPS host, no port-forward).  
+The gateway is **OIDC-gated** — it validates your Keycloak token itself.
 
-1. Download the **`openshell`** CLI for your OS/arch from the [OpenShell releases](https://github.com/NVIDIA/OpenShell/releases)
-   (match the deployed gateway version).
-2. Register the gateway against Keycloak (a browser opens for single sign-on):
+1. In Busola, open a **web terminal** (top-right cluster menu → **Terminal**).
+2. Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`):
    ```bash
-   openshell gateway add https://openshell.<your-shoot>.<workshop-domain> \
+   OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \
      --oidc-issuer https://keycloak.<your-shoot>.<workshop-domain>/realms/ateam-isveng \
      --oidc-client-id openshell-oidc
-   #   already registered from a previous day? re-auth instead of add:
-   #   openshell gateway login openshell
+   #   already registered from a previous day? re-auth instead:
+   #   OPENSHELL_NO_BROWSER=1 openshell gateway login openshell
    ```
-   > The gateway validates the JWT itself, so there's no extra API-gateway auth in front of it — just `--oidc-issuer`
-   > to trigger the Keycloak browser login (Keycloak accepts the CLI's random loopback callback port; SAP IAS would not).
-   >
-   > *Fallback* — if your network can't reach the host: `kubectl -n openshell port-forward svc/openshell 8080:8080`, then
-   > `openshell gateway add http://localhost:8080 …` (not `--local`, which is plaintext → `missing authorization header`).
+   It prints a verification URL and a short code, then waits:
+   ```
+   To authenticate, visit:
+     https://keycloak.<your-shoot>.<workshop-domain>/realms/ateam-isveng/device?user_code=XXXX-XXXX
+   Waiting for authorization...
+   ```
+3. Open that URL in your **laptop's** browser, sign in (you must hold the **`openshell-admin`** role), and the terminal unblocks:
+   ```
+   ✓ Authenticated via device code
+   ```
 
-#### From the Busola web terminal instead — no local install (device-code login)
-
-If you can't (or don't want to) install the CLI locally — e.g. a locked-down Windows laptop — the **`openshell` CLI is
-pre-installed in the Busola web terminal**.  
-The terminal runs *inside* the cluster, so you target the
-gateway's in-cluster Service directly (no HTTPS host, no port-forward).  
-Because the terminal pod has **no browser**, the
-loopback single-sign-on used above can't run there — so trigger the **device-code (headless) login** with `OPENSHELL_NO_BROWSER=1`:
-
-```bash
-OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \
-  --oidc-issuer https://keycloak.<your-shoot>.<workshop-domain>/realms/ateam-isveng \
-  --oidc-client-id openshell-oidc
-```
-
-It prints a verification URL and a short code, then waits:
-
-```
-To authenticate, visit:
-  https://keycloak.<your-shoot>.<workshop-domain>/realms/ateam-isveng/device?user_code=XXXX-XXXX
-Waiting for authorization...
-```
-
-Open that URL in your **laptop's** browser, sign in (you must hold the **`openshell-admin`** role), and the terminal unblocks:
-
-```
-✓ Authenticated via device code
-```
-
-Now `openshell sandbox list` works from the terminal — continue with 4.2 exactly as below.  
-(Re-auth later with
-`OPENSHELL_NO_BROWSER=1 openshell gateway login openshell`.)
+Now `openshell sandbox list` works from the terminal — continue with 4.2.
 
 ### 4.2 - Wire the contained inference provider *(one-time, per gateway)*
 
