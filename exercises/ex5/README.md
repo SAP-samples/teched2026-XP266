@@ -124,8 +124,10 @@ known-good free picks:
 | **`nvidia/nemotron-3-ultra-550b-a55b:free`** | large, higher-quality — your `$FREE_MODEL` default |
 | **`nvidia/nemotron-3.5-lightning:free`** | smaller and faster — if the ultra is busy or rate-limited |
 
-The `:free` lineup **rotates** — a model can go paid without notice (`qwen/qwen3.8-27b:free` did), so if a run returns
-*"model unavailable"*, pick another from the Tip below.
+The `:free` lineup **rotates** — to list the models that are free right now, run:
+```bash
+openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'
+```
 
 Run opencode:
 ```bash
@@ -139,16 +141,6 @@ Try Pi too:
 ```bash
 openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."
 ```
-
-> [!TIP]
-> **Which model string does each agent expect?**
-> opencode and Pi take it on the command line as `openrouter/<id>` (so `openrouter/$FREE_MODEL`).
-> Qwen Code takes none — it uses the `OPENAI_MODEL` you set when creating the sandbox (your `$FREE_MODEL`).
->
-> To list the models that are **free right now** (the lineup rotates):
-> ```bash
-> openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'
-> ```
 
 ## Exercise 5.4 - Prove it's still contained 🔧
 
