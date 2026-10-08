@@ -112,8 +112,10 @@ openshell sandbox create --name $XP266_CLUSTER-devbox \
 openshell sandbox list        # wait for PHASE=Ready
 ```
 
-The trailing `&` backgrounds the create so it doesn't hold the terminal while the box spins up — **press Enter** after it prints `Created sandbox` to return to your prompt. The sandbox keeps running `sleep infinity`.  
-Attach **both** inference providers — `litellm` (claude, Anthropic-native) and `litellm-openai` (goose, OpenAI-compat) — so either agent works inside the box; each gets only a resolve sentinel. The box is **contained by default**: its only egress is the providers' endpoint (`litellm-proxy:4001`) — the apiserver, other pods, and the internet are all denied (you'll prove it in 4.4). (Same provider pair `scoped-ops` uses in 4.5, which additionally opens read-only apiserver.)
+> [!NOTE]
+> The trailing `&` backgrounds the create so it doesn't hold the terminal while the box spins up — **press Enter** after it prints `Created sandbox` to return to your prompt. The sandbox keeps running `sleep infinity`.
+>
+> Attach **both** inference providers — `litellm` (claude, Anthropic-native) and `litellm-openai` (goose, OpenAI-compat) — so either agent works inside the box; each gets only a resolve sentinel. The box is **contained by default**: its only egress is the providers' endpoint (`litellm-proxy:4001`) — the apiserver, other pods, and the internet are all denied (you'll prove it in 4.4). (Same provider pair `scoped-ops` uses in 4.5, which additionally opens read-only apiserver.)
 
 👉 **Prove it reasons through SAP AI Core — two flavours.** The sandbox's own `ANTHROPIC_API_KEY` *is* the injected **sentinel** (`openshell:resolve:env:…`), never a real key — so pass it straight through.
 
@@ -163,9 +165,6 @@ export CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1  # accept the non-
 claude --version
 claude -p "In one line, what is Kyma?"
 ```
-
-> [!NOTE]
-> **Why `claude` seemed "not working".** A fresh box only has `ANTHROPIC_BASE_URL`/auth — Claude Code then falls back to its *built-in* model id, which SAP AI Core doesn't serve, so requests error. The three `ANTHROPIC_MODEL…` / `CLAUDE_CODE_…` exports above fix it. The **scoped-ops** tier (4.5) sets exactly these for you (that's why it "just works"), along with `GOOSE_PROVIDER`/`GOOSE_MODEL` for goose.
 
 > [!TIP]
 > **Two Anthropic auth vars — use `ANTHROPIC_AUTH_TOKEN`, not `ANTHROPIC_API_KEY`.** A `--provider litellm` sandbox already
