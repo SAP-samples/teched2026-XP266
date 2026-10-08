@@ -89,7 +89,24 @@ and injects the key sentinel.
 
 ## Exercise 5.3 - Run an agent against a free model 🔧
 
-The sandbox image ships **three** terminal coding agents — all pre-installed, all pointed at OpenRouter:
+The sandbox image ships **three** terminal coding agents — all pre-installed, all pointed at OpenRouter.
+
+```mermaid
+flowchart LR
+  subgraph SB["📦 contained sandbox"]
+    AG["🧩 agent<br/>opencode · Pi · Qwen Code"]
+  end
+  GW["🔐 OpenShell gateway<br/>holds the real key"]
+  OR["🌐 OpenRouter"]
+  M["🤖 NVIDIA Nemotron<br/>:free model"]
+
+  AG -- "prompt + key sentinel" --> GW
+  GW -- "swaps sentinel → real key" --> OR
+  OR -- "routes to" --> M
+  M -. "reply" .-> AG
+```
+
+The agent never sees the real key, and the sandbox reaches nothing but the gateway's one allowed hop to OpenRouter.
 
 | Agent | What it is | How you run it |
 |---|---|---|
@@ -109,23 +126,6 @@ known-good free picks:
 
 The `:free` lineup **rotates** — a model can go paid without notice (`qwen/qwen3.8-27b:free` did), so if a run returns
 *"model unavailable"*, pick another from the Tip below.
-
-Here's the path a call takes — the agent never sees the real key, and the sandbox never reaches anything but the gateway's one allowed hop to OpenRouter:
-
-```mermaid
-flowchart LR
-  subgraph SB["📦 contained sandbox"]
-    AG["🧩 agent<br/>opencode · Pi · Qwen Code"]
-  end
-  GW["🔐 OpenShell gateway<br/>holds the real key"]
-  OR["🌐 OpenRouter"]
-  M["🤖 NVIDIA Nemotron<br/>:free model"]
-
-  AG -- "prompt + key sentinel" --> GW
-  GW -- "swaps sentinel → real key" --> OR
-  OR -- "routes to" --> M
-  M -. "reply" .-> AG
-```
 
 Run opencode:
 ```bash
