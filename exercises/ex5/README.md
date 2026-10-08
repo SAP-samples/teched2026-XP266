@@ -3,7 +3,8 @@
 The contained OpenShell sandbox has **no internet** — its only exit is the in-cluster LiteLLM proxy, so the
 agent can't reach the apiserver or the public web.
 
-How the provider/profile model works and how OpenRouter compares to SAP AI Core are in **[Appendix 5 - External agents & the OpenRouter provider model](../Appendices/5-openrouter-provider/README.md)**.
+> [!NOTE]
+> How the provider/profile model works and how OpenRouter compares to SAP AI Core are in **[Appendix 5 - External agents & the OpenRouter provider model](../Appendices/5-openrouter-provider/README.md)**.
 
 **Contents**
 
@@ -61,10 +62,6 @@ Now `openshell sandbox list` works from the terminal — continue with 5.2.
 
 
 
-> [!NOTE]
-> The OpenRouter key is **shared and platform-provided** for the workshop — you never handle it.  
-> Use the `:free` models (they cost nothing).
-
 ## Exercise 5.2 - Create a sandbox with the agents + OpenRouter 🔧
 
 In a web terminal, with your gateway session active:  
@@ -99,10 +96,9 @@ openshell sandbox exec --name agents -- pi -p --model openrouter/qwen/qwen3.8-27
 ```
 
 > [!TIP]
-> **Pick a model:** `openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'`
-> lists the free models. opencode/Pi take `openrouter/<id>`. Qwen Code (`qwen`, interactive) uses whatever
-> `OPENAI_MODEL` you set at create — some models reject its tool-calling request shape, so if `qwen` errors `400`,
-> switch `OPENAI_MODEL` to another `:free` model and recreate the sandbox.
+> **Pick a model:** `openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'` lists the free models.  
+> opencode/Pi take `openrouter/<id>`.  
+> Qwen Code (`qwen`, interactive) uses whatever `OPENAI_MODEL` you set at create — some models reject its tool-calling request shape, so if `qwen` errors `400`, switch `OPENAI_MODEL` to another `:free` model and recreate the sandbox.
 
 ## Exercise 5.4 - Prove it's still contained 🔧
 
