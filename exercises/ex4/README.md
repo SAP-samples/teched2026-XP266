@@ -1,4 +1,4 @@
-# Exercise 4 - Your own sandboxed agent: OpenShell on Kyma 🔧 *(GitHub Action or in-cluster web terminal)*
+# Exercise 4 - Your own sandboxed agent: OpenShell on Kyma 🔧
 
 > [!WARNING]
 > **Bonus / advanced, and admin-gated.** The `openshell` CLI is **pre-installed in the Busola web terminal** (and the sandbox images) — nothing to install; it signs in via device-code (§4.1). The OpenShell gateway only admits the **`openshell-admin`** role — if you don't have it, **watch the instructor demo**. Nothing here is required to complete the workshop; everything runs on **your own** `xp266-NNN` runtime.

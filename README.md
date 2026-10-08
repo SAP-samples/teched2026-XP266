@@ -107,8 +107,12 @@ flowchart LR
 - [Exercise 1 - Trigger and shape the Cluster Health Reports](exercises/ex1/) — drive the v1/v2/v3 reports from the dev-toolbox UI, write your own prompt, and see the read-only sandbox guardrails
 - [Exercise 2 - Chat with the interactive agent](exercises/ex2/) — the interactive chat UI, and the hand-off from the diagnostic jobs
 - [Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks](exercises/ex3/) — drive the OpenShell sandbox lifecycle from Python and run an agent inside a sandbox
-- [Exercise 4 - Your own sandboxed agent: OpenShell on Kyma](exercises/ex4/) 🔧 *(GitHub Action or in-cluster web terminal)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
-- [Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex5/) 🔧 *(GitHub Action or in-cluster web terminal)* — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
+- [Exercise 4 - Your own sandboxed agent: OpenShell on Kyma](exercises/ex4/) 🔧 — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
+  - **4a** *(easy path)* — run it as a **GitHub Action**
+  - **4b** *(optional)* — do it by hand in the **in-cluster web terminal**
+- [Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex5/) 🔧 — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
+  - **5a** *(easy path)* — run it as a **GitHub Action**
+  - **5b** *(optional)* — do it by hand in the **in-cluster web terminal**
 - [Exercise 6 - Observability and spend](exercises/ex6/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards; the closing activity of the session
 
 ### Appendix
