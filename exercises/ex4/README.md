@@ -118,7 +118,7 @@ openshell sandbox list        # wait for PHASE=Ready
 > Attach **both** inference providers — `litellm` (claude, Anthropic-native) and `litellm-openai` (goose, OpenAI-compat) — so either agent works inside the box; each gets only a resolve sentinel.  
 > The box is **contained by default**: its only egress is the providers' endpoint (`litellm-proxy:4001`) — the apiserver, other pods, and the internet are all denied (you'll prove it in 4.4).
 
-👉 **Prove it reasons through SAP AI Core — two options below.** The sandbox's own `ANTHROPIC_API_KEY` *is* the injected **sentinel** (`openshell:resolve:env:…`), never a real key — so pass it straight through.
+👉 **Prove it reasons through SAP AI Core — two options below.**
 
 **A — one-shot `exec`** (run a command in the box without entering it):
 
@@ -147,8 +147,7 @@ Either way:
 ```
 
 > [!TIP]
-> The `msg_bdrk_` id prefix is your proof the request round-tripped **SAP AI Core** (Bedrock). The `x-api-key` you sent was
-> the OpenShell **sentinel** (`$ANTHROPIC_API_KEY`), *not* a real key — the supervisor resolved it and injected the real key at egress.
+> The `msg_bdrk_` id prefix is your proof the request round-tripped **SAP AI Core** (Bedrock).
 
 👉 Now **drive Claude Code** from inside the shell (option B) — point it at its one allowed endpoint (`litellm-proxy…:4001`), reuse the injected sentinel as the Bearer token, **and pin the SAP AI Core model ids**:
 
@@ -168,13 +167,9 @@ claude -p "In one line, what is Kyma?"
 ```
 
 > [!TIP]
-> **Two Anthropic auth vars — use `ANTHROPIC_AUTH_TOKEN`, not `ANTHROPIC_API_KEY`.**  
-> A `--provider litellm` sandbox already has `ANTHROPIC_API_KEY` set by OpenShell — but to an `openshell:resolve:env:<nonce>_…` **sentinel**, *not* a real key (the supervisor swaps it for the real key at egress; echo it and you get only the token).  
-> The two vars differ solely in the HTTP header Claude Code emits: **`ANTHROPIC_API_KEY` → `x-api-key`** (Anthropic's native scheme) vs **`ANTHROPIC_AUTH_TOKEN` → `Authorization: Bearer`** (the gateway/proxy scheme — ours).  
-> Claude Code guards an `x-api-key` with an interactive *"Detected a custom API key — use it?"* prompt (answer **No** → "not logged in"); the Bearer token has **no** prompt.  
-> So **copy the sentinel into `ANTHROPIC_AUTH_TOKEN` and `unset ANTHROPIC_API_KEY`** — clean and non-interactive (`claude -p` works headless).  
-> Claude Code refuses both at once: *"Both … set · auth may not work."*  
-> The supervisor resolves the sentinel in **either** header, so both *work* — but only the Bearer path is prompt-free.
+> **Why the block above copies the key into `ANTHROPIC_AUTH_TOKEN` and `unset`s `ANTHROPIC_API_KEY`.** With `ANTHROPIC_API_KEY` set, Claude Code sends it as an `x-api-key` header, which triggers an interactive *"Detected a custom API key — use it?"* prompt — so `claude -p` hangs on a headless run.  
+> Passing the sentinel as `ANTHROPIC_AUTH_TOKEN` instead makes Claude Code emit `Authorization: Bearer`, which has no prompt.  
+> Don't set both variables at once — Claude Code warns *"Both … set · auth may not work."* The supervisor resolves the sentinel in either header, so both reach SAP AI Core; only Bearer is prompt-free.
 
 > [!NOTE]
 > It's a **reasoning box, not an ops shell**: `kubectl` / `kyma` / `k9s` are installed but **inert** (no cluster token,
