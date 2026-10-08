@@ -39,10 +39,15 @@ The terminal runs *inside* the cluster, so you reach the gateway's in-cluster Se
 The gateway is **OIDC-gated** — it validates your Keycloak token itself.
 
 1. In Busola, click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
-2. Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`):
+2. Set your runtime once, so the commands below are copy-paste (shell names can't have hyphens, hence `XP266_…`):
+   ```bash
+   export XP266_CLUSTER=xp266-NNN          # your runtime number, e.g. xp266-001
+   export XP266_DOMAIN=<workshop-domain>   # handed out at the start of the session
+   ```
+3. Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`):
    ```bash
    OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \
-     --oidc-issuer https://keycloak.xp266-NNN.<workshop-domain>/realms/ateam-isveng \
+     --oidc-issuer https://keycloak.$XP266_CLUSTER.$XP266_DOMAIN/realms/ateam-isveng \
      --oidc-client-id openshell-oidc
    #   already registered from a previous day? re-auth instead:
    #   OPENSHELL_NO_BROWSER=1 openshell gateway login openshell
@@ -53,7 +58,7 @@ The gateway is **OIDC-gated** — it validates your Keycloak token itself.
      https://keycloak.xp266-NNN.<workshop-domain>/realms/ateam-isveng/device?user_code=XXXX-XXXX
    Waiting for authorization...
    ```
-3. Open that URL in your **laptop's** browser, sign in (you must hold the **`openshell-admin`** role), and the terminal unblocks:
+4. Open that URL in your **laptop's** browser, sign in (you must hold the **`openshell-admin`** role), and the terminal unblocks:
    ```
    ✓ Authenticated via device code
    ```
