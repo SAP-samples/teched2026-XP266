@@ -138,10 +138,11 @@ openshell sandbox create --name $XP266_CLUSTER-devbox \
   --from localhost:32137/dev-toolbox-bash:latest \
   --provider litellm --provider litellm-openai \
   --policy contained-policy.yaml --detach -- sleep infinity &
+# ^ backgrounded with & — press Enter after it prints "Created sandbox" to get your prompt back
 openshell sandbox list        # wait for PHASE=Ready
 ```
 
-`--detach` runs the sandbox detached and the trailing `&` backgrounds the create, so your prompt returns right away while the box keeps running `sleep infinity`. (Without them the `create` holds the terminal.)  
+The trailing `&` backgrounds the create so it doesn't hold the terminal while the box spins up — **press Enter** after it prints `Created sandbox` to return to your prompt. The sandbox keeps running `sleep infinity`.  
 Attach **both** inference providers — `litellm` (claude, Anthropic-native) and `litellm-openai` (goose, OpenAI-compat) — so either agent works inside the box; each gets only a resolve sentinel. `--policy contained-policy.yaml` pins egress to just the LiteLLM proxy, so the apiserver, other pods, and the internet are all denied (proven in 4.4). (This is the same provider pair `scoped-ops` uses in 4.5 — with a policy that *additionally* opens read-only apiserver.)
 
 **Prove it reasons through SAP AI Core — two flavours.** The sandbox's own `ANTHROPIC_API_KEY` *is* the injected **sentinel** (`openshell:resolve:env:…`), never a real key — so pass it straight through.
