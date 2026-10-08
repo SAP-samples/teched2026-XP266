@@ -24,7 +24,57 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
 
 ## Exercise 3.1 - The telemetry path (concept)
 
-1. In Busola, open **namespace `kyma-system` → Custom Resources → MetricPipeline**. This is the declarative pipe that forwards scraped metrics to SAP Cloud Logging — no Prometheus server to run, no Grafana to host.
+1. In Busola, open **Custom Resources → MetricPipeline** and open **`sap-cloud-logging`**. It's **cluster-scoped** — one declarative pipe that forwards scraped metrics to SAP Cloud Logging, with no Prometheus server to run and no Grafana to host:
+
+   ```yaml
+   apiVersion: telemetry.kyma-project.io/v1alpha1
+   kind: MetricPipeline
+   metadata:
+     name: sap-cloud-logging          # cluster-scoped — one pipeline for the whole cluster
+   spec:
+     input:
+       prometheus:                    # scrape Prometheus-style metrics from these namespaces
+         enabled: true
+         namespaces:
+           include:
+             - kube-system            # cilium-agent, cilium-operator, hubble-relay
+             - default                # litellm-proxy — the LLM spend metrics
+       istio:
+         enabled: false
+       runtime:                       # kubelet volume metrics → PVC usage as an alertable series
+         enabled: true
+         resources:
+           volume:
+             enabled: true
+           # pod / container / node / statefulset / deployment / daemonset / job: disabled (keep it lean)
+     output:
+       otlp:                          # ship via OTLP to SAP Cloud Logging (mTLS)
+         endpoint:
+           valueFrom:
+             secretKeyRef:
+               name: sap-cloud-logging       # the CLS ingest Secret (endpoint + client cert/key), pre-created for you
+               key: ingest-otlp-endpoint
+         headers:
+           - name: cluster
+             value: xp266-NNN               # tags every metric with your runtime, so fleet dashboards split by cluster
+         tls:
+           cert:
+             valueFrom:
+               secretKeyRef:
+                 name: sap-cloud-logging
+                 key: ingest-otlp-cert
+           key:
+             valueFrom:
+               secretKeyRef:
+                 name: sap-cloud-logging
+                 key: ingest-otlp-key
+   ```
+
+   👉 Look it up live on your own cluster — open it directly in Busola (replace `xp266-NNN` and `<workshop-domain>`):
+
+   ```
+   https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/metricpipelines/sap-cloud-logging
+   ```
 <br>![](images/05_01_0010.png)
 
 > [!NOTE]
@@ -55,6 +105,12 @@ The dashboards are one click away from Busola's left navigation.
 1. In Busola, switch to namespace **`dev-toolbox-system`**.
 
 2. In the left navigation, open **Autonomous Fleet → Autonomous Fleet Status**, then the **`fleet-status`** resource. It displays the **LLM Dashboards** / **SAP Cloud Logging** shortcuts as cards.
+
+   👉 Or open it directly in Busola (replace `xp266-NNN` and `<workshop-domain>`):
+
+   ```
+   https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/fleetstatuses/fleet-status
+   ```
 <br>![](images/05_03_0010.png)
 
 ## Summary

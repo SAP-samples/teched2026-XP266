@@ -185,7 +185,33 @@ The provider persists on the
 gateway's PVC, so this is done **once**.  
 (OpenShell 0.1.x removed the built-in provider types, so we import our own
 profile — which already carries the endpoint — rather than overriding a built-in.)  
-Lint the provider profile (`litellm-provider.yaml`), then import it:
+Create `litellm-provider.yaml` with:
+
+```yaml
+id: anthropic
+display_name: Anthropic (via in-cluster LiteLLM → SAP AI Core)
+description: Override the built-in anthropic provider to point at our in-cluster LiteLLM proxy (Anthropic-native /v1/messages)
+category: inference
+inference_capable: true
+credentials:
+  - name: api_key
+    description: LiteLLM proxy key (PROXY_API_KEY from secret llm-proxy-credentials, ns default)
+    env_vars: [ANTHROPIC_API_KEY]
+    required: true
+    auth_style: header
+    header_name: x-api-key          # LiteLLM accepts x-api-key on /v1/messages; if rejected, switch to Authorization/Bearer
+discovery:
+  credentials: [api_key]
+endpoints:
+  - host: litellm-proxy.default.svc.cluster.local
+    port: 4001
+    protocol: rest
+    access: read-write
+    enforcement: enforce
+binaries: [/usr/local/bin/claude, /usr/local/lib/node_modules/@anthropic-ai/claude-code/bin/claude.exe, /usr/bin/curl, /usr/local/bin/node]   # client paths in the sandbox image allowed to reach the endpoint
+```
+
+Lint the provider profile, then import it:
 
 ```bash
 openshell provider profile lint -f litellm-provider.yaml
