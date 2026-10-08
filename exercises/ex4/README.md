@@ -102,48 +102,18 @@ The gateway holds each key; a sandbox created with `--provider <name>` gets only
 
 ### 4.3 - Create a sandbox from the tools image and use it
 
-First, write the **contained** sandbox policy — an L7 allow-list that permits **only** the LiteLLM proxy (`:4001`) for the agent binaries, and denies everything else. This is the containment you'll prove in 4.4:
-
-```bash
-cat > contained-policy.yaml <<'YAML'
-version: 1
-filesystem_policy:
-  include_workdir: true
-  read_only: [/usr, /bin, /sbin, /lib, /lib64, /etc, /opt, /proc, /dev/urandom, /var/log, /app]
-  read_write: [/sandbox, /tmp, /home, /run, /var/tmp, /dev/null]
-landlock:
-  compatibility: best_effort
-network_policies:
-  litellm:                       # the ONLY egress — claude + goose both dial litellm-proxy:4001 (keyless)
-    name: litellm-proxy
-    endpoints:
-      - host: litellm-proxy.default.svc.cluster.local
-        port: 4001
-        protocol: rest
-        enforcement: enforce
-        access: read-write
-    binaries:
-      - { path: /usr/local/bin/claude }
-      - { path: /usr/local/lib/node_modules/@anthropic-ai/claude-code/bin/claude.exe }
-      - { path: /usr/local/bin/goose }
-      - { path: /usr/local/bin/node }
-      - { path: /usr/bin/curl }
-YAML
-```
-
-Then create the sandbox with **both providers** and that policy:
+Create the sandbox with **both providers**:
 
 ```bash
 openshell sandbox create --name $XP266_CLUSTER-devbox \
   --from localhost:32137/dev-toolbox-bash:latest \
-  --provider litellm --provider litellm-openai \
-  --policy contained-policy.yaml --detach -- sleep infinity &
+  --provider litellm --provider litellm-openai --detach -- sleep infinity &
 # ^ backgrounded with & — press Enter after it prints "Created sandbox" to get your prompt back
 openshell sandbox list        # wait for PHASE=Ready
 ```
 
 The trailing `&` backgrounds the create so it doesn't hold the terminal while the box spins up — **press Enter** after it prints `Created sandbox` to return to your prompt. The sandbox keeps running `sleep infinity`.  
-Attach **both** inference providers — `litellm` (claude, Anthropic-native) and `litellm-openai` (goose, OpenAI-compat) — so either agent works inside the box; each gets only a resolve sentinel. `--policy contained-policy.yaml` pins egress to just the LiteLLM proxy, so the apiserver, other pods, and the internet are all denied (proven in 4.4). (This is the same provider pair `scoped-ops` uses in 4.5 — with a policy that *additionally* opens read-only apiserver.)
+Attach **both** inference providers — `litellm` (claude, Anthropic-native) and `litellm-openai` (goose, OpenAI-compat) — so either agent works inside the box; each gets only a resolve sentinel. The box is **contained by default**: its only egress is the providers' endpoint (`litellm-proxy:4001`) — the apiserver, other pods, and the internet are all denied (you'll prove it in 4.4). (Same provider pair `scoped-ops` uses in 4.5, which additionally opens read-only apiserver.)
 
 **Prove it reasons through SAP AI Core — two flavours.** The sandbox's own `ANTHROPIC_API_KEY` *is* the injected **sentinel** (`openshell:resolve:env:…`), never a real key — so pass it straight through.
 
