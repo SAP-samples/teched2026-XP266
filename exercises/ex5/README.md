@@ -89,7 +89,23 @@ and injects the key sentinel.
 
 ## Exercise 5.3 - Run an agent against a free model 🔧
 
-Command (opencode — the cleanest):
+The sandbox image ships **three** terminal coding agents — all installed, all pointed at OpenRouter:
+
+- **opencode** — the open-source [opencode.ai](https://opencode.ai) coding agent (a single Bun binary).
+  Model-agnostic: pass any model as `openrouter/<id>`. Runs headless (`opencode run -m …`) or as a full-screen TUI (`opencode`).
+- **Pi** — [`@earendil-works/pi-coding-agent`](https://www.npmjs.com/package/@earendil-works/pi-coding-agent), a small Node coding agent.
+  Same shape as opencode: `pi -p --model openrouter/<id> "…"` headless, or `pi` for the TUI.
+- **Qwen Code** — [`@qwen-code/qwen-code`](https://github.com/QwenLM/qwen-code), an **OpenAI-compatible** agent.
+  It doesn't take `openrouter/<id>`; it reads `OPENAI_BASE_URL` + `OPENAI_MODEL` — both already set in the box to your `$FREE_MODEL`. Interactive only: `qwen`.
+
+**The models — free, OpenRouter-hosted, NVIDIA Nemotron.** OpenRouter aggregates many providers behind one endpoint, and its `:free` tier includes NVIDIA's **Nemotron** family.
+These agents are *agentic* — they call tools — so the model must be a **chat/completion model with tool-calling** (embedding or rerank models, ids with `-embed-`/`-rerank-`, won't work). Two known-good free picks:
+
+- **`nvidia/nemotron-3-ultra-550b-a55b:free`** — the large, higher-quality model (your `$FREE_MODEL` default).
+- **`nvidia/nemotron-3.5-lightning:free`** — smaller and faster, if the ultra is busy or rate-limited.
+
+The `:free` lineup **rotates** — a model can go paid without notice (`qwen/qwen3.8-27b:free` did). List what's currently free with the Tip below, then run an agent:
+
 ```bash
 openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "Reply with one word: PONG"
 ```
@@ -103,8 +119,9 @@ openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "Li
 ```
 
 > [!TIP]
-> **Pick a model:** `openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'` lists the free models.  
-> opencode/Pi take `openrouter/<id>`.  
+> **See the current free models.**
+> `openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'` lists them.
+> opencode and Pi take `openrouter/<id>`.
 > Qwen Code (`qwen`, interactive) uses whatever `OPENAI_MODEL` you set at create — your `$FREE_MODEL`.
 
 ## Exercise 5.4 - Prove it's still contained 🔧
