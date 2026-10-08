@@ -110,9 +110,9 @@ The agent never sees the real key, and the sandbox reaches nothing but the gatew
 
 | Agent | What it is | How you run it |
 |---|---|---|
-| 🧩 **opencode** | the open-source [opencode.ai](https://opencode.ai) coding agent (one Bun binary) | `opencode run -m openrouter/<id> "…"` (one-shot) · `opencode` (full-screen TUI) |
-| 🥧 **Pi** | [`@earendil-works/pi-coding-agent`](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) — a small Node coding agent | `pi -p --model openrouter/<id> "…"` (one-shot) · `pi` (TUI) |
-| 🐉 **Qwen Code** | [`@qwen-code/qwen-code`](https://github.com/QwenLM/qwen-code) — an **OpenAI-compatible** agent | `qwen -p "…"` (one-shot) · `qwen` (TUI) — takes **no** `-m` flag; reads `OPENAI_MODEL` (pre-set to your `$FREE_MODEL`) |
+| 🧩 **opencode** | the open-source [opencode.ai](https://opencode.ai) coding agent (one Bun binary) | `opencode run -m openrouter/<id> "…"` (headless) · `opencode` (full-screen TUI) |
+| 🥧 **Pi** | [`@earendil-works/pi-coding-agent`](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) — a small Node coding agent | `pi -p --model openrouter/<id> "…"` (headless) · `pi` (TUI) |
+| 🐉 **Qwen Code** | [`@qwen-code/qwen-code`](https://github.com/QwenLM/qwen-code) — an **OpenAI-compatible** agent | `qwen -p "…"` (headless) · `qwen` (TUI) — takes **no** `-m` flag; reads `OPENAI_MODEL` (pre-set to your `$FREE_MODEL`) |
 
 **The models — NVIDIA Nemotron, free on OpenRouter.** OpenRouter puts many providers behind one endpoint, and its
 `:free` tier includes NVIDIA's **Nemotron** family. Because the agents call tools, the model must be a
@@ -130,7 +130,7 @@ known-good free picks:
 > openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'
 > ```
 
-Run each agent one-shot — same contained sandbox, same model:
+Run each agent headless — same contained sandbox, same model:
 
 | Agent | Command (→ expected output / note) |
 |---|---|
