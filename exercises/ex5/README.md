@@ -136,7 +136,7 @@ Run each agent one-shot — same contained sandbox, same model:
 |---|---|
 | 🧩 **opencode** | `openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "Reply with one word: PONG"` → `PONG` |
 | 🥧 **Pi** | `openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."` |
-| 🐉 **Qwen Code** | `openshell sandbox exec --name agents -- qwen -p "List 3 facts about Kyma."`<br>no `-m` flag — uses `OPENAI_MODEL` (your `$FREE_MODEL`); drop the `-p "…"` for the interactive TUI |
+| 🐉 **Qwen Code** | `openshell sandbox exec --name agents -- qwen -p "List 3 facts about Kyma."` |
 
 ## Exercise 5.4 - Prove it's still contained 🔧
 
