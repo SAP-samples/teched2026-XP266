@@ -1,20 +1,15 @@
 # Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter 🔧
 
 The contained OpenShell sandbox has **no internet** — its only exit is the in-cluster LiteLLM proxy, so the
-agent can't reach the apiserver or the public web.  
-👉 This exercise flips exactly one dial: a **4th trust tier** — a
-still-contained sandbox with **one external endpoint allow-listed** (`openrouter.ai`), so you can drive terminal
-coding agents (opencode / Pi / Qwen Code) against public **OpenRouter** models.  
-The real OpenRouter key never enters the box: it lives in the
-gateway's `openrouter` **provider**, which injects a **resolve-sentinel** and swaps the real key at egress — and
-*only* for the agent binaries named in the provider profile (binary-scoped injection).  
+agent can't reach the apiserver or the public web.
+
 How the provider/profile model works and how OpenRouter compares to SAP AI Core are in **[Appendix 5 - External agents & the OpenRouter provider model](../Appendices/5-openrouter-provider/README.md)**.
 
 **Contents**
 
 - ⚡ **5a** *(easy path)* — run it as a **GitHub Action** (the Tip below)
 - 🛠️ **5b** *(optional)* — the OpenShell CLI in the Busola web terminal:
-  - 🔍 [Inspect the pieces](#exercise-51---inspect-the-pieces-ui)
+  - 🔑 [Open the terminal and reach the gateway](#exercise-51---open-the-terminal-and-reach-the-gateway)
   - 📦 [Create a sandbox with the agents + OpenRouter](#exercise-52---create-a-sandbox-with-the-agents--openrouter-)
   - ▶️ [Run an agent against a free model](#exercise-53---run-an-agent-against-a-free-model-)
   - 🛡️ [Prove it's still contained](#exercise-54---prove-its-still-contained-)
@@ -31,19 +26,44 @@ How the provider/profile model works and how OpenRouter compares to SAP AI Core 
 >
 > Prefer the hands-on CLI? Continue below.
 
+## Exercise 5.1 - Open the terminal and reach the gateway
+
+The `openshell` CLI is **pre-installed in the embedded web terminal** — nothing to download.  
+The terminal runs *inside* the cluster, so you reach the gateway's in-cluster Service directly (no HTTPS host, no port-forward).  
+The gateway is **OIDC-gated** — it validates your Keycloak token itself.
+
+1. In Busola, click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
+2. Set your runtime once, so the commands below are copy-paste (shell names can't have hyphens, hence `XP266_…`):
+   ```bash
+   export XP266_CLUSTER=xp266-NNN          # your runtime number, e.g. xp266-001
+   export XP266_DOMAIN=<workshop-domain>   # handed out at the start of the session
+   ```
+3. Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`):
+   ```bash
+   OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \
+     --oidc-issuer https://keycloak.$XP266_CLUSTER.$XP266_DOMAIN/realms/ateam-isveng \
+     --oidc-client-id openshell-oidc
+   #   already registered from a previous day? re-auth instead:
+   #   OPENSHELL_NO_BROWSER=1 openshell gateway login openshell
+   ```
+   It prints a verification URL and a short code, then waits:
+   ```
+   To authenticate, visit:
+     https://keycloak.xp266-NNN.<workshop-domain>/realms/ateam-isveng/device?user_code=XXXX-XXXX
+   Waiting for authorization...
+   ```
+4. Open that URL in your **laptop's** browser and sign in (you must hold the **`openshell-admin`** role). On the **Grant Access to `openshell-oidc`** screen (*User roles · User profile · Email address*), click **Yes**. You'll see **Device Login Successful — you may close this browser window** — close it and return to the terminal, which has unblocked:
+   ```
+   ✓ Authenticated via device code
+   ```
+
+Now `openshell sandbox list` works from the terminal — continue with 5.2.
 
 
-## Exercise 5.1 - Inspect the pieces (UI)
-
-1. In Busola, open **namespace `openshell` → Custom Resources** and find the pre-built image build (`KanikoAgent`
-   `kaniko-agent`) and the `openrouter` provider (it's created by the provider-setup Job because your runtime was
-   given a shared OpenRouter key). The agents image is pushed to the in-cluster registry as
-   `openrouter-agents:latest`.
 
 > [!NOTE]
 > The OpenRouter key is **shared and platform-provided** for the workshop — you never handle it.  
-> Use the `:free`
-> models (they cost nothing). The gateway holds the key; your sandbox only ever sees `openshell:resolve:…`.
+> Use the `:free` models (they cost nothing).
 
 ## Exercise 5.2 - Create a sandbox with the agents + OpenRouter 🔧
 
