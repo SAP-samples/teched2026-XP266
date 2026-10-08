@@ -110,7 +110,7 @@ flowchart LR
 - [Exercise 4 - Your own sandboxed agent: OpenShell on Kyma](exercises/ex4/) 🔧 — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
   - **4a** *(easy path)* — run it as a **GitHub Action**
   - **4b** *(optional)* — do it by hand in the **in-cluster web terminal**
-- [Exercise 5 - External agents: opencode & Pi via OpenRouter](exercises/ex5/) 🔧 — add an external, keyed provider; run two terminal coding agents against free OpenRouter models in a still-contained sandbox
+- [Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex5/) 🔧 — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
   - **5a** *(easy path)* — run it as a **GitHub Action**
   - **5b** *(optional)* — do it by hand in the **in-cluster web terminal**
 - [Exercise 6 - Observability and spend](exercises/ex6/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards; the closing activity of the session

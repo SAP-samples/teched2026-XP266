@@ -31,7 +31,7 @@ Three concepts, one key that never leaves the gateway:
                                                         ▼
                    ┌──────────────────────── your sandbox (the box) ─────────────────────────┐
   SANDBOX          │  OPENROUTER_API_KEY = openshell:resolve:…   ← a SENTINEL, not the key    │
-  (--provider      │  agent (opencode / pi)  ──▶  Authorization: Bearer <sentinel>     │
+  (--provider      │  agent (opencode / pi / qwen)  ──▶  Authorization: Bearer <sentinel>     │
    attaches it)    └───────────────────────────────────────┬───────────────────────────────────┘
                                                             ▼  (allowed binary + allowed host)
                         supervisor swaps  <sentinel> → sk-or-…  AT THE WIRE
@@ -39,12 +39,13 @@ Three concepts, one key that never leaves the gateway:
                                                       openrouter.ai   (sees the real key; the box never did)
 ```
 
-One image, two agents (all installed in `openrouter-agents:latest`):
+One image, three agents (all installed in `openrouter-agents:latest`):
 
 | Agent | What it is | Run it |
 |---|---|---|
 | **opencode** | [opencode.ai](https://opencode.ai) coding agent (Bun binary) | `opencode run -m openrouter/<model> "…"` (headless) or `opencode` (TUI) |
 | **Pi** | `@earendil-works/pi-coding-agent` | `pi -p --model openrouter/<model> "…"` (headless) or `pi` (TUI) |
+| **Qwen Code** | `@qwen-code/qwen-code` (OpenAI-compat) | `qwen` (TUI) — reads `OPENAI_MODEL`/`OPENAI_BASE_URL` (pre-set in the box) |
 
 ## OpenRouter vs SAP AI Core — the same shape to LiteLLM
 
