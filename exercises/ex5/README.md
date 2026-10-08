@@ -1,4 +1,4 @@
-# Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter 🔧
+# Exercise 5 - External agents: opencode & Pi via OpenRouter 🔧
 
 The contained OpenShell sandbox has **no internet** — its only exit is the in-cluster LiteLLM proxy, so the
 agent can't reach the apiserver or the public web.
@@ -23,7 +23,7 @@ agent can't reach the apiserver or the public web.
 >
 > | Run this workflow | What it does |
 > |---|---|
-> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. Pick your `student_cluster` (`xp266-NNN`), the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`), a **`model`** (a `:free` OpenRouter model), and a **`scenario`** → **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. Same agents, same containment, zero local tooling. |
+> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. Pick your `student_cluster` (`xp266-NNN`), the **`agent`** (`pi` / `opencode` / `both`), a **`model`** (a `:free` OpenRouter model), and a **`scenario`** → **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. Same agents, same containment, zero local tooling. |
 >
 > Prefer the hands-on CLI? Continue below.
 
@@ -68,7 +68,7 @@ In a web terminal, with your gateway session active.
 
 👉 First pick a **current** `:free` model — the lineup **rotates** (models go paid without notice, as `qwen/qwen3.8-27b:free` did). Browse [openrouter.ai/models?max_price=0&q=nvidia](https://openrouter.ai/models?max_price=0&q=nvidia) — free NVIDIA models (this workshop follows NVIDIA's OpenRouter tutorial) — pick a tool-calling chat model and export your choice:
 ```bash
-export FREE_MODEL=nvidia/nemotron-3.5-lightning:free   # a current :free NVIDIA model — swap if it goes paid
+export FREE_MODEL=nvidia/nemotron-3-ultra-550b-a55b:free   # a current :free NVIDIA model — swap if it goes paid
 ```
 
 Then create the sandbox:
@@ -85,7 +85,7 @@ openshell sandbox list        # wait for PHASE=Ready
 `--provider openrouter` grants the sandbox egress to `openrouter.ai` (+ `models.dev`) **for the agent binaries only**
 and injects the key sentinel.
 
-`--env` passes the base URL + default model (OpenAI-compat agents need them).
+`--env` sets the OpenRouter base URL and a default model in the box.
 
 ## Exercise 5.3 - Run an agent against a free model 🔧
 
@@ -104,8 +104,7 @@ openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "Li
 
 > [!TIP]
 > **Pick a model:** `openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'` lists the free models.  
-> opencode/Pi take `openrouter/<id>`.  
-> Qwen Code (`qwen`, interactive) uses whatever `OPENAI_MODEL` you set at create — some models reject its tool-calling request shape, so if `qwen` errors `400`, switch `OPENAI_MODEL` to another `:free` model and recreate the sandbox.
+> opencode/Pi take `openrouter/<id>`.
 
 ## Exercise 5.4 - Prove it's still contained 🔧
 
@@ -285,8 +284,8 @@ kubectl -n weather-system get weather berlin -o jsonpath='{.status}'   # CEL-der
 
 ## Summary
 
-You added an **external, keyed** LLM provider to the contained-sandbox model, ran three different terminal coding
-agents (opencode, Pi, Qwen Code) against free OpenRouter models, and proved the sandbox still can't reach anything
+You added an **external, keyed** LLM provider to the contained-sandbox model, ran two terminal coding
+agents (opencode and Pi) against free OpenRouter models, and proved the sandbox still can't reach anything
 but the one allow-listed endpoint — with the real key staying in the gateway.  
 That's the OpenShell provider model
 generalizing from "the in-cluster proxy" to "any governed external endpoint."  

@@ -31,7 +31,7 @@ Three concepts, one key that never leaves the gateway:
                                                         ▼
                    ┌──────────────────────── your sandbox (the box) ─────────────────────────┐
   SANDBOX          │  OPENROUTER_API_KEY = openshell:resolve:…   ← a SENTINEL, not the key    │
-  (--provider      │  agent (opencode / pi / qwen)  ──▶  Authorization: Bearer <sentinel>     │
+  (--provider      │  agent (opencode / pi)  ──▶  Authorization: Bearer <sentinel>     │
    attaches it)    └───────────────────────────────────────┬───────────────────────────────────┘
                                                             ▼  (allowed binary + allowed host)
                         supervisor swaps  <sentinel> → sk-or-…  AT THE WIRE
@@ -39,13 +39,12 @@ Three concepts, one key that never leaves the gateway:
                                                       openrouter.ai   (sees the real key; the box never did)
 ```
 
-One image, three agents (all installed in `openrouter-agents:latest`):
+One image, two agents (all installed in `openrouter-agents:latest`):
 
 | Agent | What it is | Run it |
 |---|---|---|
 | **opencode** | [opencode.ai](https://opencode.ai) coding agent (Bun binary) | `opencode run -m openrouter/<model> "…"` (headless) or `opencode` (TUI) |
 | **Pi** | `@earendil-works/pi-coding-agent` | `pi -p --model openrouter/<model> "…"` (headless) or `pi` (TUI) |
-| **Qwen Code** | `@qwen-code/qwen-code` (OpenAI-compat) | `qwen` (TUI) — reads `OPENAI_API_KEY`/`OPENAI_BASE_URL` (pre-set in the box) |
 
 ## OpenRouter vs SAP AI Core — the same shape to LiteLLM
 
@@ -74,10 +73,9 @@ leaves the proxy — but then it looks just like the in-cluster path.)
 > [!TIP]
 > **Picking a `:free` model.** The agents are *agentic*, so the model must be a **chat/completion model with
 > tool-calling**. **Embedding and rerank models won't work** (ids with `-embed-` / `-rerank-` are RAG parts, not chat
-> — the agent will error). The `:free` lineup **rotates** (models go paid without notice). Known-good free picks:
-> **`qwen/qwen3.8-27b:free`** (default) and **`nvidia/nemotron-3-super-120b-a12b:free`**. Find current ones at
-> [openrouter.ai/models?max_price=0](https://openrouter.ai/models) or the NVIDIA model dashboard
-> ([`sherman-yang/nvidia-model-info`](https://github.com/sherman-yang/nvidia-model-info), `agent` filter). This
+> — the agent will error). The `:free` lineup **rotates** (models go paid without notice — `qwen/qwen3.8-27b:free` did). Known-good free picks (NVIDIA Nemotron):
+> **`nvidia/nemotron-3-ultra-550b-a55b:free`** and **`nvidia/nemotron-3.5-lightning:free`**. Find current ones at
+> [openrouter.ai/models?max_price=0&q=nvidia](https://openrouter.ai/models?max_price=0&q=nvidia). This
 > exercise replicates NVIDIA's [*Run Pi with OpenRouter*](https://docs.nvidia.com/openshell/latest/tutorials/run-pi-with-openrouter).
 
 Back to - [Overview](../../../README.md)
