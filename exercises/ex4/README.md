@@ -19,9 +19,9 @@ This exercise is an **OpenShell practice** — run it either way:
 > To see **Goose running inside a contained OpenShell sandbox** on your cluster — the production path this exercise
 > builds by hand — **without a terminal**, dispatch one GitHub Actions workflow from your fork:
 >
-> | Run this workflow | What it does | Workflow inputs |
+> | Run this workflow | Workflow inputs | What it does |
 > |---|---|---|
-> | [**`all-fleets-teched-admin`**](../../../../actions/workflows/all-fleets-teched-admin.yaml) | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report — the same sandboxed-agent path this exercise wires up manually. | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• a `goose_mode` (`snapshot` / `live`)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). |
+> | [**`all-fleets-teched-admin`**](../../../../actions/workflows/all-fleets-teched-admin.yaml) | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• a `goose_mode` (`snapshot` / `live`)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report. |
 >
 > Prefer the hands-on CLI? Continue below.
 
