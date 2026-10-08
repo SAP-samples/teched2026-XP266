@@ -102,13 +102,47 @@ The gateway holds each key; a sandbox created with `--provider <name>` gets only
 
 ### 4.3 - Create a sandbox from the tools image and use it
 
+First, write the **contained** sandbox policy — an L7 allow-list that permits **only** the LiteLLM proxy (`:4001`) for the agent binaries, and denies everything else. This is the containment you'll prove in 4.4:
+
+```bash
+cat > contained-policy.yaml <<'YAML'
+version: 1
+filesystem_policy:
+  include_workdir: true
+  read_only: [/usr, /bin, /sbin, /lib, /lib64, /etc, /opt, /proc, /dev/urandom, /var/log, /app]
+  read_write: [/sandbox, /tmp, /home, /run, /var/tmp, /dev/null]
+landlock:
+  compatibility: best_effort
+network_policies:
+  litellm:                       # the ONLY egress — claude + goose both dial litellm-proxy:4001 (keyless)
+    name: litellm-proxy
+    endpoints:
+      - host: litellm-proxy.default.svc.cluster.local
+        port: 4001
+        protocol: rest
+        enforcement: enforce
+        access: read-write
+    binaries:
+      - { path: /usr/local/bin/claude }
+      - { path: /usr/local/lib/node_modules/@anthropic-ai/claude-code/bin/claude.exe }
+      - { path: /usr/local/bin/goose }
+      - { path: /usr/local/bin/node }
+      - { path: /usr/bin/curl }
+YAML
+```
+
+Then create the sandbox with **both providers** and that policy:
+
 ```bash
 openshell sandbox create --name $XP266_CLUSTER-devbox \
-  --from localhost:32137/dev-toolbox-bash:latest --provider litellm --detach -- sleep infinity &
+  --from localhost:32137/dev-toolbox-bash:latest \
+  --provider litellm --provider litellm-openai \
+  --policy contained-policy.yaml --detach -- sleep infinity &
 openshell sandbox list        # wait for PHASE=Ready
 ```
 
-`--detach` runs the sandbox detached and the trailing `&` backgrounds the create, so your prompt returns right away while the box keeps running `sleep infinity`. (Without them the `create` holds the terminal.)
+`--detach` runs the sandbox detached and the trailing `&` backgrounds the create, so your prompt returns right away while the box keeps running `sleep infinity`. (Without them the `create` holds the terminal.)  
+Attach **both** inference providers — `litellm` (claude, Anthropic-native) and `litellm-openai` (goose, OpenAI-compat) — so either agent works inside the box; each gets only a resolve sentinel. `--policy contained-policy.yaml` pins egress to just the LiteLLM proxy, so the apiserver, other pods, and the internet are all denied (proven in 4.4). (This is the same provider pair `scoped-ops` uses in 4.5 — with a policy that *additionally* opens read-only apiserver.)
 
 **Prove it reasons through SAP AI Core — two flavours.** The sandbox's own `ANTHROPIC_API_KEY` *is* the injected **sentinel** (`openshell:resolve:env:…`), never a real key — so pass it straight through.
 
@@ -142,15 +176,21 @@ Either way:
 > The `msg_bdrk_` id prefix is your proof the request round-tripped **SAP AI Core** (Bedrock). The `x-api-key` you sent was
 > the OpenShell **sentinel** (`$ANTHROPIC_API_KEY`), *not* a real key — the supervisor resolved it and injected the real key at egress.
 
-Now drive **Claude Code** from inside the shell (flavour B) — point it at its one allowed endpoint (`litellm-proxy…:4001`) and reuse the injected sentinel as the Bearer token:
+Now drive **Claude Code** from inside the shell (flavour B) — point it at its one allowed endpoint (`litellm-proxy…:4001`), reuse the injected sentinel as the Bearer token, **and pin the SAP AI Core model ids**:
 
 ```bash
 # inside the sandbox:
 export ANTHROPIC_BASE_URL=http://litellm-proxy.default.svc.cluster.local:4001
 export ANTHROPIC_AUTH_TOKEN="$ANTHROPIC_API_KEY"   # sent as 'Authorization: Bearer'; supervisor injects the real key at egress
 unset  ANTHROPIC_API_KEY                            # drop the x-api-key path — it triggers Claude's "use this custom key?" prompt → hangs headless (see TIP)
+export ANTHROPIC_MODEL=anthropic--claude-4.7-opus              # the SAP AI Core model id — WITHOUT this, Claude Code sends its own default id (e.g. "Opus 5"), which the proxy doesn't have → calls fail
+export ANTHROPIC_SMALL_FAST_MODEL=anthropic--claude-4.6-sonnet
+export CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1  # accept the non-standard model id's context window
 claude -p "In one line, what is Kyma?"
 ```
+
+> [!NOTE]
+> **Why `claude` seemed "not working".** A fresh box only has `ANTHROPIC_BASE_URL`/auth — Claude Code then falls back to its *built-in* model id, which SAP AI Core doesn't serve, so requests error. The three `ANTHROPIC_MODEL…` / `CLAUDE_CODE_…` exports above fix it. The **scoped-ops** tier (4.5) sets exactly these for you (that's why it "just works"), along with `GOOSE_PROVIDER`/`GOOSE_MODEL` for goose.
 
 > [!TIP]
 > **Two Anthropic auth vars — use `ANTHROPIC_AUTH_TOKEN`, not `ANTHROPIC_API_KEY`.** A `--provider litellm` sandbox already
