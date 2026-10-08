@@ -56,7 +56,7 @@ goose / claude ──▶ LiteLLM proxy :4001 ──▶ SAP AI Core
 
 The [`kyma` CLI](https://github.com/kyma-project/cli) (v3) is your purpose-built lens on a Kyma runtime.
 
-In the terminal it is **pre-wired to your cluster** — the image bakes a `KUBECONFIG`, so commands just work with no setup.
+In the terminal it is **pre-wired to your cluster** — the image ships a preconfigured `KUBECONFIG`, so commands just work with no setup.
 
 The star command for this workshop is **`kyma alpha diagnose`**: it snapshots the whole cluster — nodes, Kyma modules, workloads, events — into one structured report.
 

@@ -66,13 +66,13 @@ Now put an agent **in** the box: **goose**, through the LiteLLM proxy, reasoning
    goose runs **live, read-only `kubectl`** inside a scoped sandbox (the `scoped-ops` policy) and writes a cluster-health report — the Python twin of [Exercise 1](../ex1/README.md)'s diagnostic jobs and [Exercise 5](../ex5/README.md)'s `scoped-ops` demo.
 
 2. Open **`06-OpenShell-Goose-Diagnostics-Snapshot.ipynb`** and run all cells.  
-   Same agent, **no live cluster access** — it reasons over a **static** `kyma diagnose` snapshot inside a baked-policy sandbox. Compare its report with the live one from step 1.
+   Same agent, **no live cluster access** — it reasons over a **static** `kyma diagnose` snapshot inside a fixed-policy sandbox. Compare its report with the live one from step 1.
 
 > [!IMPORTANT]
 > The sandbox is the guardrail, not the prompt. In step 1 goose gets a short-lived **read-only** identity (`get`/`list`/`watch`, no secrets) and no internet; a write or a secret-read comes back `403`. In step 2 it has **no cluster access at all**. You can hand either one any prompt and it still can't mutate your cluster or leak a token — exactly the containment proven on the CLI in [Exercise 5](../ex5/README.md).
 
 > [!TIP]
-> Advanced variants of the same investigation live alongside: **`05b`** (headless client-credentials, no browser), **`05c`** (pure SDK, no CLI), and **`07`** (triage the baked `ClusterHealthReport` from [Exercise 1](../ex1/README.md) instead of the cluster).
+> Advanced variants of the same investigation live alongside: **`05b`** (headless client-credentials, no browser), **`05c`** (pure SDK, no CLI), and **`07`** (triage the stored `ClusterHealthReport` from [Exercise 1](../ex1/README.md) instead of the cluster).
 
 ## Exercise 4.4 - The full notebook set
 
@@ -85,13 +85,13 @@ Everything pre-loaded in your JupyterHub:
 | `05-OpenShell-Goose-Diagnostics-Live` | 🪿 goose | Agent runs **live read-only kubectl** in a scoped sandbox and writes a report. |
 | `05b` / `05c` | 🪿 goose | The same live investigation, headless (client-credentials) / pure SDK. |
 | `06-…-Snapshot` | 🪿 goose | goose over a **static** `kyma diagnose` snapshot — no live cluster access. |
-| `07-…-FromReport` | 🪿 goose | Triage the **baked** `ClusterHealthReport` from [Exercise 1](../ex1/README.md). |
+| `07-…-FromReport` | 🪿 goose | Triage the **stored** `ClusterHealthReport` from [Exercise 1](../ex1/README.md). |
 | `00-SAP-AI-Core-Credentials` | ☁️ AI Core | Builds the `client` (proxy → SAP AI Core) — [Appendix 3](../Appendices/3-sap-ai-core-python/README.md). |
 | `01`–`03`, `Cluster_Health` | ☁️ AI Core | Chat, tool calling, model sweep, the Python hand-off — [Appendix 3](../Appendices/3-sap-ai-core-python/README.md). |
 | `Lorenz`, `Crank_Nicolson`, `Complex Location`, `Earthdata`, `JupyterLab APOD` | 🧪 upstream | Stock JupyterLab samples — a familiar playground (`Lorenz` is a quick "does my kernel work?" check). |
 
 > [!NOTE]
-> Notebooks are baked into the image and copied to your home at spawn — **open a fresh server to pick up any changes.** Full design notes (gating, auth variants) live in the platform repo: `docs/jupyterhub-notebooks-inventory.md`.
+> Notebooks ship in the image and are copied to your home at spawn — **open a fresh server to pick up any changes.**
 
 ## Summary
 

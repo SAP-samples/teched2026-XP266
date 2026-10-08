@@ -66,7 +66,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 2. *(optional)* Pick a **Model**.
 
-   The dropdown is the **intersection** of what's actually deployed and `RUNNING` in your SAP AI Core, and what the LiteLLM proxy is configured to route — so you can only pick a model the proxy will accept. (v2/v3 honour your choice; v1 keeps its baked model.)
+   The dropdown is the **intersection** of what's actually deployed and `RUNNING` in your SAP AI Core, and what the LiteLLM proxy is configured to route — so you can only pick a model the proxy will accept. (v2/v3 honour your choice; v1 keeps its fixed model.)
 
 3. Click **Run**.
 

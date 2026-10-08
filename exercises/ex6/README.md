@@ -338,5 +338,4 @@ agents (opencode, Pi, Qwen Code) against free OpenRouter models, and proved the 
 but the one allow-listed endpoint — with the real key staying in the gateway.  
 That's the OpenShell provider model
 generalizing from "the in-cluster proxy" to "any governed external endpoint."  
-Continue to - [Appendix 4 - The making of your runtime (Day-1 operations)](../Appendices/4-day1-operations/README.md)  
 Back to - [Overview](../../README.md)

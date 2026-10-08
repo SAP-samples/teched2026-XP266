@@ -103,7 +103,7 @@ OpenShell applies **defense in depth** across four policy domains — some locke
 > where Landlock is compiled but **disabled at boot** (e.g. SUSE's default `lsm=` list omits it), the supervisor can't
 > build its ruleset and `sandbox create` fails with `ProvisioningTimedOut` — the fix is host-side (`lsm=landlock,…` on
 > the kernel cmdline + reboot). This is the "defense extends down to the kernel" trade-off: strong isolation, but it
-> depends on the host, not just the container. (Full story: `docs/openshell-landlock-k3d.md` in the platform repo.)
+> depends on the host, not just the container.
 
 ### Common use cases
 
@@ -185,8 +185,7 @@ The provider persists on the
 gateway's PVC, so this is done **once**.  
 (OpenShell 0.1.x removed the built-in provider types, so we import our own
 profile — which already carries the endpoint — rather than overriding a built-in.)  
-The provider profile lives in the platform repo at `manifests/kro/openshell/litellm-provider.yaml`.  
-Lint it, then import it (it already carries the endpoint):
+Lint the provider profile (`litellm-provider.yaml`), then import it:
 
 ```bash
 openshell provider profile lint -f litellm-provider.yaml
