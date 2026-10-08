@@ -130,7 +130,7 @@ known-good free picks:
 > openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'
 > ```
 
-Run each agent headless — same contained sandbox, same model:
+Run each agent in web terminal — same contained sandbox, same model:
 
 | Agent | Command (→ expected output / note) |
 |---|---|
