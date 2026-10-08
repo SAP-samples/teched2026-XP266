@@ -110,22 +110,30 @@ openshell sandbox list        # wait for PHASE=Ready
 
 `--detach` runs the sandbox detached and the trailing `&` backgrounds the create, so your prompt returns right away while the box keeps running `sleep infinity`. (Without them the `create` holds the terminal.)
 
-Now **exec into an interactive shell** and work *inside* the isolated box:
+**Prove it reasons through SAP AI Core — two flavours.** The sandbox's own `ANTHROPIC_API_KEY` *is* the injected **sentinel** (`openshell:resolve:env:…`), never a real key — so pass it straight through.
+
+**A — one-shot `exec`** (run a command in the box without entering it):
 
 ```bash
-openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash        # → goose@default--$XP266_CLUSTER-devbox:~$
+openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash -c \
+  'curl -sS -XPOST http://litellm-proxy.default.svc.cluster.local:4001/v1/messages \
+   -H "content-type: application/json" -H "anthropic-version: 2023-06-01" \
+   -H "x-api-key: $ANTHROPIC_API_KEY" \
+   -d "{\"model\":\"anthropic--claude-4.7-opus\",\"max_tokens\":16,\"messages\":[{\"role\":\"user\",\"content\":\"Reply OK\"}]}"'
 ```
 
-First, prove the contained agent reasons through SAP AI Core — sending only the injected **sentinel**, never a real key.  
-The sandbox's own `ANTHROPIC_API_KEY` *is* that sentinel (`openshell:resolve:env:…`), so pass it straight through:
+**B — interactive shell** (`exec` in, then run the same without the wrapper or escaping):
 
 ```bash
+openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash   # → goose@default--$XP266_CLUSTER-devbox:~$
 # inside the sandbox:
 curl -sS -XPOST http://litellm-proxy.default.svc.cluster.local:4001/v1/messages \
   -H "content-type: application/json" -H "anthropic-version: 2023-06-01" \
   -H "x-api-key: $ANTHROPIC_API_KEY" \
   -d '{"model":"anthropic--claude-4.7-opus","max_tokens":16,"messages":[{"role":"user","content":"Reply OK"}]}'
 ```
+
+Either way:
 ```json
 {"id":"msg_bdrk_...","model":"anthropic--claude-4.7-opus", ... "content":[{"type":"text","text":"OK"}] ... }
 ```
@@ -134,10 +142,10 @@ curl -sS -XPOST http://litellm-proxy.default.svc.cluster.local:4001/v1/messages 
 > The `msg_bdrk_` id prefix is your proof the request round-tripped **SAP AI Core** (Bedrock). The `x-api-key` you sent was
 > the OpenShell **sentinel** (`$ANTHROPIC_API_KEY`), *not* a real key — the supervisor resolved it and injected the real key at egress.
 
-Now drive **Claude Code** from the same shell — point it at its one allowed endpoint (`litellm-proxy…:4001`) and reuse the injected sentinel as the Bearer token:
+Now drive **Claude Code** from inside the shell (flavour B) — point it at its one allowed endpoint (`litellm-proxy…:4001`) and reuse the injected sentinel as the Bearer token:
 
 ```bash
-# still inside the sandbox:
+# inside the sandbox:
 export ANTHROPIC_BASE_URL=http://litellm-proxy.default.svc.cluster.local:4001
 export ANTHROPIC_AUTH_TOKEN="$ANTHROPIC_API_KEY"   # sent as 'Authorization: Bearer'; supervisor injects the real key at egress
 unset  ANTHROPIC_API_KEY                            # drop the x-api-key path — it triggers Claude's "use this custom key?" prompt → hangs headless (see TIP)
