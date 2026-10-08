@@ -38,7 +38,7 @@ The `openshell` CLI is **pre-installed in the Busola web terminal** — nothing 
 The terminal runs *inside* the cluster, so you reach the gateway's in-cluster Service directly (no HTTPS host, no port-forward).  
 The gateway is **OIDC-gated** — it validates your Keycloak token itself.
 
-1. In Busola, open a **web terminal** (top-right cluster menu → **Terminal**).
+1. In Busola, click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
 2. Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`):
    ```bash
    OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \

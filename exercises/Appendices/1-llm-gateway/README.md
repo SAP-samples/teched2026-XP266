@@ -7,7 +7,7 @@ Every LLM call goes through an in-cluster **LiteLLM proxy**, which routes to **S
 In this exercise you inspect the running proxy, understand *why* it's there, and **call SAP AI Core yourself** through it.
 
 > [!NOTE]
-> **Everyone:** Appendix 1.1 is a pure Busola click-through — that's all you need to understand the gateway. **🔧 Go deeper (optional):** 1.2 and 1.3 call the proxy yourself from the **in-cluster web terminal** — the Busola terminal introduced in [Appendix 2](../2-web-terminal/README.md) (top-right cluster menu → **Terminal**). If you'd rather not use a terminal, skip them — you'll see the exact same call made for you in later exercises (and from Python in [Appendix 3](../3-sap-ai-core-python/README.md)).
+> **Everyone:** Appendix 1.1 is a pure Busola click-through — that's all you need to understand the gateway. **🔧 Go deeper (optional):** 1.2 and 1.3 call the proxy yourself from the **in-cluster web terminal** — the Busola terminal introduced in [Appendix 2](../2-web-terminal/README.md) (the **`>_`** terminal icon, top-right of the toolbar). If you'd rather not use a terminal, skip them — you'll see the exact same call made for you in later exercises (and from Python in [Appendix 3](../3-sap-ai-core-python/README.md)).
 
 **Contents**
 
@@ -67,7 +67,7 @@ flowchart LR
 
 ## Appendix 1.2 - Call SAP AI Core through the proxy 🔧 *(optional — go deeper)*
 
-1. In Busola, open a **web terminal**: top-right cluster menu → **Terminal** (a shell pod opens in the browser).
+1. In Busola, open a **web terminal**: click the **`>_`** terminal icon in the top-right of the toolbar (a shell pod opens in the browser).
 
 2. Fetch the proxy key from its Secret and store it in a variable:
 
