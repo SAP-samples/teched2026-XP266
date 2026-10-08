@@ -1,4 +1,4 @@
-# Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter 🔧 *(advanced — CLI)*
+# Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter 🔧 *(GitHub Action or in-cluster web terminal)*
 
 > [!WARNING]
 > **Advanced.** You need the `openshell` CLI (pre-installed in the Busola
