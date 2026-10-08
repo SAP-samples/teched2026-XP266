@@ -130,8 +130,6 @@ So this is a *different* tier, not a weaker one:
 | Cluster | read-only kubectl (sandbox-viewer) | none |
 | Key in box | sentinel | sentinel |
 
-Clean up: `openshell sandbox delete agents`
-
 ## Exercise 5.5 - From draft to deployable: a correct KRO RGD 🔧
 
 When you ask an agent for *"a KRO ResourceGraphDefinition"*, a free model's first draft is usually **confident but
@@ -139,9 +137,17 @@ wrong** — it reaches for OpenAPI schema (`type`/`properties`/`x-kro`), Helm te
 fields (`spec.nodes`/`components`/`graph`).  
 KRO is a niche CRD the model hasn't memorised.  
 That's the real lesson of
-this exercise: **the agent drafts, the cluster adjudicates — you iterate.**  
-Always validate before trusting:
+this exercise: **the agent drafts, the cluster adjudicates — you iterate.**
 
+👉 Use **Pi** to generate the code — a real coding task against your `:free` model. Pipe its output to a file in the terminal:
+```bash
+openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL \
+  'Write a KRO ResourceGraphDefinition (apiVersion kro.run/v1alpha1) that provisions a Pod which curls the open-meteo weather API for a given latitude/longitude. Output ONLY the YAML, no prose or code fences.' \
+  > weather-rgd.yaml
+```
+(opencode works too: `openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "…" > weather-rgd.yaml`.)
+
+👉 Always validate before trusting — the draft almost always fails:
 ```bash
 kubectl apply --dry-run=server -f weather-rgd.yaml   # the API server + KRO reject an invalid RGD
 ```
@@ -281,6 +287,8 @@ kubectl -n weather-system get weather berlin -o jsonpath='{.status}'   # CEL-der
 > Treat this as *the shape KRO accepts*, not gospel — always `--dry-run=server` first.  
 > That round-trip (draft → reject
 > → fix) **is** the skill this exercise is teaching.
+
+Clean up when done: `openshell sandbox delete agents`
 
 ## Summary
 
