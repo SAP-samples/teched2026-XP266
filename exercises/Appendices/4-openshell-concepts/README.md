@@ -11,6 +11,7 @@ Read it before or after the hands-on — the exercise works without it, but this
 - 💡 [Common use cases](#common-use-cases)
 - 🏗️ [Deep dive: Architecture](#deep-dive-architecture)
 - 🔑 [How components authenticate](#how-components-authenticate)
+- 🔧 [How the providers were wired (reference)](#how-the-providers-were-wired-reference)
 - 📖 [Glossary](#glossary)
 
 ---
@@ -225,6 +226,56 @@ If the supervisor disconnects, the agent **freezes** — and only the *same* sup
 and resume; a new supervisor can't take over a running sandbox.  
 That's the machine-side complement to the network fence
 you prove in the hands-on.
+
+---
+
+## How the providers were wired (reference)
+
+You **don't run this** — the providers in Exercise 4.2 are pre-created for you. This is **how the platform created them**, kept for reference (and if you ever stand up your own gateway). The key is handed to the gateway once and persists on its PVC. OpenShell 0.1.x removed the built-in provider types, so we import our own profile — which already carries the endpoint — rather than overriding a built-in.
+
+The `litellm` provider is created from this profile (`litellm-provider.yaml`):
+
+```yaml
+id: anthropic
+display_name: Anthropic (via in-cluster LiteLLM → SAP AI Core)
+description: Override the built-in anthropic provider to point at our in-cluster LiteLLM proxy (Anthropic-native /v1/messages)
+category: inference
+inference_capable: true
+credentials:
+  - name: api_key
+    description: LiteLLM proxy key (PROXY_API_KEY from secret llm-proxy-credentials, ns default)
+    env_vars: [ANTHROPIC_API_KEY]
+    required: true
+    auth_style: header
+    header_name: x-api-key          # LiteLLM accepts x-api-key on /v1/messages; if rejected, switch to Authorization/Bearer
+discovery:
+  credentials: [api_key]
+endpoints:
+  - host: litellm-proxy.default.svc.cluster.local
+    port: 4001
+    protocol: rest
+    access: read-write
+    enforcement: enforce
+binaries: [/usr/local/bin/claude, /usr/local/lib/node_modules/@anthropic-ai/claude-code/bin/claude.exe, /usr/bin/curl, /usr/local/bin/node]   # client paths in the sandbox image allowed to reach the endpoint
+```
+
+Lint + import the profile, then create the provider with the key (the key only ever lives in the gateway):
+
+```bash
+openshell provider profile lint   -f litellm-provider.yaml
+openshell provider profile import -f litellm-provider.yaml --global
+KEY=$(kubectl get secret llm-proxy-credentials -n default -o jsonpath='{.data.PROXY_API_KEY}' | base64 -d)
+openshell provider create --name litellm --type anthropic --credential ANTHROPIC_API_KEY="$KEY"
+```
+
+goose needs a **second provider** — it can't use claude's streaming `/v1/messages` route, so it reaches the SAME proxy over the OpenAI-compat `/v1/chat/completions` path with bearer auth:
+
+```bash
+openshell provider profile import -f litellm-openai-provider.yaml --global
+openshell provider create --name litellm-openai --type litellm-openai --credential LITELLM_API_KEY="$KEY"
+```
+
+> **No `inference set`.** OpenShell 0.1.x retired the `inference` subcommand (and the synthetic `inference.local` route). Agents dial the provider endpoint (`litellm-proxy.default.svc.cluster.local:4001`) **directly** and send the injected resolve sentinel; the supervisor resolves it at egress — there's no inference route to pin.
 
 ---
 
