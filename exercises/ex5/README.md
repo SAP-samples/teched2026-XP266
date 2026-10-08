@@ -1,10 +1,5 @@
 # Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter 🔧
 
-> [!WARNING]
-> **Advanced.** You need the `openshell` CLI (pre-installed in the Busola
-> web terminal) and an active gateway session (device-code login). If you don't have the `openshell-admin`
-> role, watch the instructor demo. Everything runs on **your own** `xp266-NNN` runtime.
-
 > [!TIP]
 > **Easy path — run it as a workflow (no CLI).** Everything below is the manual CLI flow. To run the external coding
 > agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
@@ -19,92 +14,20 @@ The contained OpenShell sandbox has **no internet** — its only exit is the in-
 agent can't reach the apiserver or the public web.  
 👉 This exercise flips exactly one dial: a **4th trust tier** — a
 still-contained sandbox with **one external endpoint allow-listed** (`openrouter.ai`), so you can drive terminal
-coding agents against public **OpenRouter** models.  
+coding agents (opencode / Pi / Qwen Code) against public **OpenRouter** models.  
 The real OpenRouter key never enters the box: it lives in the
 gateway's `openrouter` **provider**, which injects a **resolve-sentinel** and swaps the real key at egress — and
-*only* for the agent binaries named in the provider profile (binary-scoped injection).
+*only* for the agent binaries named in the provider profile (binary-scoped injection).  
+How the provider/profile model works and how OpenRouter compares to SAP AI Core are in **[Appendix 5 - External agents & the OpenRouter provider model](../Appendices/5-openrouter-provider/README.md)**.
 
 **Contents**
 
-- 🧩 [How it works: profile → provider → sandbox](#how-it-works--profile--provider--sandbox)
-- 🔀 [OpenRouter vs SAP AI Core](#openrouter-vs-sap-ai-core--the-same-shape-to-litellm)
 - 🔍 [Inspect the pieces](#exercise-51---inspect-the-pieces-ui)
 - 📦 [Create a sandbox with the agents + OpenRouter](#exercise-52---create-a-sandbox-with-the-agents--openrouter-)
 - ▶️ [Run an agent against a free model](#exercise-53---run-an-agent-against-a-free-model-)
 - 🛡️ [Prove it's still contained](#exercise-54---prove-its-still-contained-)
 - 🏗️ [From draft to deployable: a correct KRO RGD](#exercise-55---from-draft-to-deployable-a-correct-kro-rgd-)
 
-
-## How it works — profile → provider → sandbox
-
-Three concepts, one key that never leaves the gateway:
-
-- **Profile** — a reusable *spec* (no secret): which credential env var, which auth style, which **endpoints** egress
-  may reach, and which **binaries** are allowed to use the credential.
-- **Provider** — a profile **bound to a real key**. The key (`sk-or-…`) is stored **only in the gateway**.
-- **Sandbox** — `--provider openrouter` attaches it: the box receives a **sentinel** (not the key) + scoped egress;
-  the supervisor swaps the sentinel for the real key **at the wire**, only for a listed binary → a listed endpoint.
-
-```
-                   ┌──────────────────── OpenShell gateway (holds the real key) ────────────────────┐
-  PROFILE          │  profile "openrouter"                                                           │
-  (template:       │    credential: OPENROUTER_API_KEY (bearer)                                      │
-   what & where)   │    endpoints : openrouter.ai, models.dev   ← the ONLY hosts egress is opened to │
-                   │    binaries  : node, opencode.exe          ← only THESE may send egress traffic │
-  PROVIDER         │  provider "openrouter" = profile + REAL KEY (sk-or-…)   ← key lives ONLY here    │
-  (profile + key)  └───────────────────────────────────┬─────────────────────────────────────────────┘
-                           sandbox create --provider openrouter
-                                                        ▼
-                   ┌──────────────────────── your sandbox (the box) ─────────────────────────┐
-  SANDBOX          │  OPENROUTER_API_KEY = openshell:resolve:…   ← a SENTINEL, not the key    │
-  (--provider      │  agent (opencode / pi / qwen)  ──▶  Authorization: Bearer <sentinel>     │
-   attaches it)    └───────────────────────────────────────┬───────────────────────────────────┘
-                                                            ▼  (allowed binary + allowed host)
-                        supervisor swaps  <sentinel> → sk-or-…  AT THE WIRE
-                                                            ▼
-                                                      openrouter.ai   (sees the real key; the box never did)
-```
-
-One image, three agents (all installed in `openrouter-agents:latest`):
-
-| Agent | What it is | Run it |
-|---|---|---|
-| **opencode** | [opencode.ai](https://opencode.ai) coding agent (Bun binary) | `opencode run -m openrouter/<model> "…"` (headless) or `opencode` (TUI) |
-| **Pi** | `@earendil-works/pi-coding-agent` | `pi -p --model openrouter/<model> "…"` (headless) or `pi` (TUI) |
-| **Qwen Code** | `@qwen-code/qwen-code` (OpenAI-compat) | `qwen` (TUI) — reads `OPENAI_API_KEY`/`OPENAI_BASE_URL` (pre-set in the box) |
-
-## OpenRouter vs SAP AI Core — the same shape to LiteLLM
-
-**OpenRouter** is a public LLM *aggregator*: one OpenAI-compatible endpoint + one key, routing to many models
-(OpenAI, Anthropic, Google, Qwen, NVIDIA…).  
-**SAP AI Core** is SAP's
-managed inference gateway, reached in-cluster through the **LiteLLM proxy**.  
-To LiteLLM they're the **same shape** (an
-OpenAI-compatible gateway behind one credential), so one proxy can front **both**.  
-The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.**  
-OpenRouter only routes to its own public
-upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
-the reverse.
-
-| | SAP AI Core (in-cluster) | OpenRouter (this exercise — **direct**) |
-|---|---|---|
-| Path | agent → LiteLLM proxy → **SAP AI Core** | agent → **OpenRouter** (one allow-listed external host) |
-| Key | none in the box (ClusterIP, plain-HTTP) | real key in the gateway; box sees a sentinel |
-| Internet | none | one host: `openrouter.ai` |
-
-This exercise keeps the agent talking to OpenRouter **directly** — that external, allow-listed, keyed endpoint *is* the 4th
-tier.  
-(In production you'd often put OpenRouter *behind* LiteLLM too — one in-cluster exit, spend-tracked, key never
-leaves the proxy — but then it looks just like the in-cluster path.)
-
-> [!TIP]
-> **Picking a `:free` model.** The agents are *agentic*, so the model must be a **chat/completion model with
-> tool-calling**. **Embedding and rerank models won't work** (ids with `-embed-` / `-rerank-` are RAG parts, not chat
-> — the agent will error). The `:free` lineup **rotates** (models go paid without notice). Known-good free picks:
-> **`qwen/qwen3.8-27b:free`** (default) and **`nvidia/nemotron-3-super-120b-a12b:free`**. Find current ones at
-> [openrouter.ai/models?max_price=0](https://openrouter.ai/models) or the NVIDIA model dashboard
-> ([`sherman-yang/nvidia-model-info`](https://github.com/sherman-yang/nvidia-model-info), `agent` filter). This
-> exercise replicates NVIDIA's [*Run Pi with OpenRouter*](https://docs.nvidia.com/openshell/latest/tutorials/run-pi-with-openrouter).
 
 ## Exercise 5.1 - Inspect the pieces (UI)
 

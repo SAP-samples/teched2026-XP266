@@ -121,6 +121,7 @@ flowchart LR
 - [Appendix 2 - The Busola web terminal](exercises/Appendices/2-web-terminal/) 🔧 *(optional)* — run Goose and Claude Code against your cluster, in-browser
 - [Appendix 3 - SAP AI Core from Python](exercises/Appendices/3-sap-ai-core-python/) — the JupyterHub SAP AI Core track: chat, embeddings, tool calling, and the diagnostic hand-off in Python
 - [Appendix 4 - OpenShell: concepts & architecture](exercises/Appendices/4-openshell-concepts/) — the why, risks, protection layers, architecture, and glossary behind the sandboxed-agent hands-on
+- [Appendix 5 - External agents & the OpenRouter provider model](exercises/Appendices/5-openrouter-provider/) — how a keyed, external provider plugs into the OpenShell sandbox model, and OpenRouter vs SAP AI Core
 
 > [!IMPORTANT]
 > **Every exercise can be completed entirely in the browser — no terminal experience required.** A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**; wherever one appears there is a UI (Busola) or **Run workflow** (GitHub Actions) way to reach the same result. Whatever your level, you can succeed with clicks alone.
