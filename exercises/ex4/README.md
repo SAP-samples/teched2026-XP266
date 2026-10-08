@@ -7,7 +7,12 @@ This exercise is the **hands-on** — run it either way:
 **Contents**
 
 - ⚡ **4a** *(easy path)* — run it as a **GitHub Action** (the Tip below)
-- 🛠️ **4b** *(optional)* — [Hands-on: the OpenShell CLI in the Busola web terminal](#hands-on-the-openshell-cli-in-the-busola-web-terminal) — 4.1 CLI & gateway · 4.2 provider · 4.3 sandbox · 4.4 guardrail · 4.5 scoped-ops
+- 🛠️ **4b** *(optional)* — [Hands-on: the OpenShell CLI in the Busola web terminal](#hands-on-the-openshell-cli-in-the-busola-web-terminal)
+  - 🔑 4.1 CLI & gateway
+  - 🔀 4.2 provider
+  - 📦 4.3 sandbox
+  - 🛡️ 4.4 guardrail
+  - 🔎 4.5 scoped-ops
 
 > [!TIP]
 > **Easy path — run it as a workflow (no CLI, no admin role).** The hands-on below is the full manual OpenShell CLI
