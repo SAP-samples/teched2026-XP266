@@ -12,11 +12,11 @@ the sandbox only ever carries a sentinel.
 
 - ⚡ **5a** *(easy path)* — run it as a **GitHub Action** (see the note below)
 - 🛠️ **5b** *(optional)* — the OpenShell CLI in the Busola web terminal:
-  - 🔑 [Open the terminal and reach the gateway](#exercise-51---open-the-terminal-and-reach-the-gateway)
-  - 📦 [Create a sandbox with the agents + OpenRouter](#exercise-52---create-a-sandbox-with-the-agents--openrouter-)
-  - ▶️ [Run an agent against a free model](#exercise-53---run-an-agent-against-a-free-model-)
-  - 🛡️ [Prove it's still contained](#exercise-54---prove-its-still-contained-)
-  - 🏗️ [From draft to deployable: a correct KRO RGD](#exercise-55---from-draft-to-deployable-a-correct-kro-rgd-)
+  - 🔑 [5.1 Open the terminal and reach the gateway](#exercise-51---open-the-terminal-and-reach-the-gateway)
+  - 📦 [5.2 Create a sandbox with the agents + OpenRouter](#exercise-52---create-a-sandbox-with-the-agents--openrouter-)
+  - ▶️ [5.3 Run an agent against a free model](#exercise-53---run-an-agent-against-a-free-model-)
+  - 🛡️ [5.4 Prove it's still contained](#exercise-54---prove-its-still-contained-)
+  - 🏗️ [5.5 From draft to deployable: a correct KRO RGD](#exercise-55---from-draft-to-deployable-a-correct-kro-rgd-)
 
 > [!NOTE]
 > **Easy path — run it as a GitHub Action.**  
