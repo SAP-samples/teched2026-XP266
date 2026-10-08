@@ -179,6 +179,34 @@ A scoped-ops box attaches **both** (`--provider litellm
 ever holds a key.  
 Bonus: goose dials its endpoint directly, so its own request model is honored — it runs on **sonnet**.
 
+### How a sandbox reaches the LLM proxy — the provider *is* the egress allow-list
+
+A fresh sandbox is **deny-by-default**: its network namespace has no route out, and all egress is intercepted
+transparently by the **supervisor** (no `HTTPS_PROXY` in the box; its DNS resolves only allow-listed FQDNs). So *how* do
+claude and goose reach `litellm-proxy:4001` with **no explicit `--policy`**? Because **each `--provider` you attach brings
+its own egress rule** — the provider's profile declares both the endpoint it may reach and the binaries that may reach it:
+
+| `--provider` | profile | opens egress to | for binaries | injects |
+|---|---|---|---|---|
+| `litellm` | `anthropic` | `litellm-proxy…:4001` (`/v1/messages`) | `claude`, `claude.exe`, `curl`, `node` | `ANTHROPIC_API_KEY` sentinel |
+| `litellm-openai` | `litellm-openai` | `litellm-proxy…:4001` (`/v1/chat/completions`) | `goose`, `curl`, `node` | `LITELLM_API_KEY` sentinel |
+
+So attaching the two providers already punches exactly the `litellm-proxy:4001` hole the agents need — an explicit
+`--policy` is only for egress the providers *don't* cover (e.g. the read-only **apiserver** block `scoped-ops` adds). The
+request path:
+
+1. an agent sends `Authorization: Bearer openshell:resolve:env:…` (a **sentinel**) to `litellm-proxy…:4001`;
+2. the supervisor checks **allowed binary → allowed host?** (yes, from the profile), swaps the sentinel for the **real
+   key** (held by the gateway) **at the wire**, and relays to the in-cluster `litellm-proxy` Service → **SAP AI Core**;
+3. the apiserver, other pods, and the internet stay **denied** — the box never holds the real key.
+
+> [!NOTE]
+> **Two layers, don't conflate them.** The **providers** open the *network path and inject the key* (so a bare
+> `--provider litellm --provider litellm-openai` box already reaches SAP AI Core). The **model-id env** —
+> `ANTHROPIC_MODEL` for claude, `GOOSE_PROVIDER`/`GOOSE_MODEL` for goose — is the separate *per-agent config* that
+> makes the client request a model SAP AI Core actually serves. Egress can be wide open and a call still errors if the
+> model id is the client's built-in default (e.g. "Opus 5") rather than `anthropic--claude-4.7-opus`.
+
 ### Agent-Sandbox controller vs OpenShell — division of labour
 If the *sandbox* does the isolating, what is OpenShell **for**?  
 Different layers:
