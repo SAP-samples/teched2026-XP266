@@ -6,7 +6,7 @@ This exercise is an **OpenShell practice** — run it either way:
 
 **Contents**
 
-- ⚡ **4a** *(easy path)* — run it as a **GitHub Action** (the Tip below)
+- ⚡ **4a** *(easy path)* — run it as a **GitHub Action** (see the note below)
 - 🛠️ **4b** *(optional)* — [Practice the OpenShell CLI in the in-cluster web terminal](#4b-practice-the-openshell-cli-in-the-in-cluster-web-terminal)
   - 🔑 [4.1 terminal & gateway](#41---open-the-terminal-and-reach-the-gateway)
   - 🔀 [4.2 providers (pre-created)](#42---providers-pre-created--nothing-to-wire)
@@ -14,17 +14,16 @@ This exercise is an **OpenShell practice** — run it either way:
   - 🛡️ [4.4 guardrail](#44---see-the-guardrail-hold)
   - 🔎 [4.5 scoped-ops](#45---scoped-ops-an-agent-that-reads-the-cluster-one-command-)
 
-> [!TIP]
-> **Easy path — run it as a workflow (no CLI, no admin role).** The hands-on below is the full manual OpenShell CLI
-> dance — do it if you want to *feel* every layer.  
-> But you can see **Goose running inside a contained OpenShell sandbox**
-> on your cluster — the real production path this exercise builds by hand — by dispatching one workflow from your fork:
+> [!NOTE]
+> **Easy path — run it as a GitHub Action.**  
+> To see **Goose running inside a contained OpenShell sandbox** on your cluster — the production path this exercise
+> builds by hand — **without a terminal**, dispatch one GitHub Actions workflow from your fork:
 >
-> | Run this workflow | What it does |
-> |---|---|
-> | [**`all-fleets-teched-admin`**](../../../../actions/workflows/all-fleets-teched-admin.yaml) | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report — the same sandboxed-agent path §4 wires up manually. Pick your `student_cluster` (`xp266-NNN`) and `goose_mode` (`snapshot` / `live`) → **Run workflow** → read the run **Summary** (and the report in Busola). |
+> | Run this workflow | What it does | Workflow inputs |
+> |---|---|---|
+> | [**`all-fleets-teched-admin`**](../../../../actions/workflows/all-fleets-teched-admin.yaml) | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report — the same sandboxed-agent path this exercise wires up manually. | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• a `goose_mode` (`snapshot` / `live`)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). |
 >
-> Want to see it under the hood? Keep reading — the manual walk-through is below.
+> Prefer the hands-on CLI? Continue below.
 
 ---
 
