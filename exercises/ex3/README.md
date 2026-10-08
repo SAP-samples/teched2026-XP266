@@ -48,10 +48,12 @@ It registers the in-cluster OpenShell gateway, then uses the Python `SandboxClie
 - Watch the lifecycle: a sandbox is created, your `exec` runs a command inside it, you list the live sandboxes, and the sandbox is deleted — nothing is left running.
 
 > [!NOTE]
-> This minimal sandbox is **compute-only**: it has no cluster credentials and no route out. It's the blank canvas; the next step adds an agent and a scoped, read-only cluster identity.
+> This minimal sandbox is **compute-only**: it has no cluster credentials and no route out.  
+> It's the blank canvas; the next step adds an agent and a scoped, read-only cluster identity.
 
 > [!TIP]
-> Prefer no browser step? **`04b-OpenShell-Sandbox-SDK-Headless.ipynb`** runs the identical lifecycle with **no CLI** — a direct `SandboxClient(tls=None, bearer_token=…)` against the in-cluster gateway. Same result, machine-to-machine auth.
+> Prefer no browser step? **`04b-OpenShell-Sandbox-SDK-Headless.ipynb`** runs the identical lifecycle with **no CLI** — a direct `SandboxClient(tls=None, bearer_token=…)` against the in-cluster gateway.  
+> Same result, machine-to-machine auth.
 
 ## Exercise 3.3 - Run an agent inside a sandbox
 
@@ -64,7 +66,8 @@ Now put an agent **in** the box: **goose**, through the LiteLLM proxy, reasoning
    Same agent, **no live cluster access** — it reasons over a **static** `kyma diagnose` snapshot inside a fixed-policy sandbox. Compare its report with the live one from step 1.
 
 > [!IMPORTANT]
-> The sandbox is the guardrail, not the prompt. In step 1 goose gets a short-lived **read-only** identity (`get`/`list`/`watch`, no secrets) and no internet; a write or a secret-read comes back `403`. In step 2 it has **no cluster access at all**. You can hand either one any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt.
+> The sandbox is the guardrail, not the prompt.  
+> In step 1 goose gets a short-lived **read-only** identity (`get`/`list`/`watch`, no secrets) and no internet; a write or a secret-read comes back `403`. In step 2 it has **no cluster access at all**. You can hand either one any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt.
 
 > [!TIP]
 > Advanced variants of the same investigation live alongside: **`05b`** (headless client-credentials, no browser), **`05c`** (pure SDK, no CLI), and **`07`** (triage a stored `ClusterHealthReport` instead of the cluster).

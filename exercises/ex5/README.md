@@ -21,7 +21,8 @@ How the provider/profile model works and how OpenRouter compares to SAP AI Core 
   - 🏗️ [From draft to deployable: a correct KRO RGD](#exercise-55---from-draft-to-deployable-a-correct-kro-rgd-)
 
 > [!TIP]
-> **Easy path — run it as a workflow (no CLI).** Everything below is the manual CLI flow. To run the external coding
+> **Easy path — run it as a workflow (no CLI).** Everything below is the manual CLI flow.  
+> To run the external coding
 > agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
 >
 > | Run this workflow | What it does |
@@ -40,7 +41,8 @@ How the provider/profile model works and how OpenRouter compares to SAP AI Core 
    `openrouter-agents:latest`.
 
 > [!NOTE]
-> The OpenRouter key is **shared and platform-provided** for the workshop — you never handle it. Use the `:free`
+> The OpenRouter key is **shared and platform-provided** for the workshop — you never handle it.  
+> Use the `:free`
 > models (they cost nothing). The gateway holds the key; your sandbox only ever sees `openshell:resolve:…`.
 
 ## Exercise 5.2 - Create a sandbox with the agents + OpenRouter 🔧
@@ -254,7 +256,8 @@ kubectl -n weather-system get weather berlin -o jsonpath='{.status}'   # CEL-der
 ```
 
 > [!NOTE]
-> Treat this as *the shape KRO accepts*, not gospel — always `--dry-run=server` first. That round-trip (draft → reject
+> Treat this as *the shape KRO accepts*, not gospel — always `--dry-run=server` first.  
+> That round-trip (draft → reject
 > → fix) **is** the skill this exercise is teaching.
 
 ## Summary

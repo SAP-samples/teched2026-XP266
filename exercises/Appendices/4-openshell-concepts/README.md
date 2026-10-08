@@ -79,8 +79,10 @@ OpenShell applies **defense in depth** across four policy domains — some locke
 > **Why "kernel-level, not container-level" matters — Landlock + seccomp.** The Filesystem and Process layers above are
 > enforced by the **Linux kernel itself**, from *inside* the agent process — not by the container runtime around it:
 > - **Landlock** is a Linux Security Module (kernel ≥ 5.13) that lets an *unprivileged* process restrict its **own**
->   filesystem access at the syscall level. The supervisor builds a Landlock ruleset from the `filesystem_policy`
->   (read-only `/usr`,`/etc`; read-write `/sandbox`,`/tmp`) before the agent runs. The agent then **cannot** reach a
+> filesystem access at the syscall level.  
+> The supervisor builds a Landlock ruleset from the `filesystem_policy`
+> (read-only `/usr`,`/etc`; read-write `/sandbox`,`/tmp`) before the agent runs.  
+> The agent then **cannot** reach a
 >   path outside the policy *regardless of what the container or its own code tries* — and it can't take the restriction
 >   back off (Landlock rules are one-way). `best_effort` means "apply the strongest ruleset this kernel's Landlock ABI
 >   supports."
@@ -88,7 +90,8 @@ OpenShell applies **defense in depth** across four policy domains — some locke
 >   setuid / dangerous syscalls below the application.
 >
 > Because these are **host-kernel** features, the node's kernel must actually have them **enabled**. Managed Kyma /
-> Gardener nodes and most modern Linux (e.g. Ubuntu) ship Landlock active, so sandboxes "just work" there. On a host
+> Gardener nodes and most modern Linux (e.g. Ubuntu) ship Landlock active, so sandboxes "just work" there.  
+> On a host
 > where Landlock is compiled but **disabled at boot** (e.g. SUSE's default `lsm=` list omits it), the supervisor can't
 > build its ruleset and `sandbox create` fails with `ProvisioningTimedOut` — the fix is host-side (`lsm=landlock,…` on
 > the kernel cmdline + reboot). This is the "defense extends down to the kernel" trade-off: strong isolation, but it
@@ -204,7 +207,8 @@ request path:
 > **Two layers, don't conflate them.** The **providers** open the *network path and inject the key* (so a bare
 > `--provider litellm --provider litellm-openai` box already reaches SAP AI Core). The **model-id env** —
 > `ANTHROPIC_MODEL` for claude, `GOOSE_PROVIDER`/`GOOSE_MODEL` for goose — is the separate *per-agent config* that
-> makes the client request a model SAP AI Core actually serves. Egress can be wide open and a call still errors if the
+> makes the client request a model SAP AI Core actually serves.  
+> Egress can be wide open and a call still errors if the
 > model id is the client's built-in default (e.g. "Opus 5") rather than `anthropic--claude-4.7-opus`.
 
 ### Agent-Sandbox controller vs OpenShell — division of labour

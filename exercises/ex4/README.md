@@ -16,7 +16,8 @@ This exercise is the **hands-on** — run it either way:
 
 > [!TIP]
 > **Easy path — run it as a workflow (no CLI, no admin role).** The hands-on below is the full manual OpenShell CLI
-> dance — do it if you want to *feel* every layer. But you can see **Goose running inside a contained OpenShell sandbox**
+> dance — do it if you want to *feel* every layer.  
+> But you can see **Goose running inside a contained OpenShell sandbox**
 > on your cluster — the real production path this exercise builds by hand — by dispatching one workflow from your fork:
 >
 > | Run this workflow | What it does |
@@ -113,7 +114,8 @@ openshell sandbox list        # wait for PHASE=Ready
 ```
 
 > [!NOTE]
-> The trailing `&` backgrounds the create so it doesn't hold the terminal while the box spins up — **press Enter** after it prints `Created sandbox` to return to your prompt. The sandbox keeps running `sleep infinity`.
+> The trailing `&` backgrounds the create so it doesn't hold the terminal while the box spins up — **press Enter** after it prints `Created sandbox` to return to your prompt.  
+> The sandbox keeps running `sleep infinity`.
 >
 > Attach **both** inference providers — `litellm` (claude, Anthropic-native) and `litellm-openai` (goose, OpenAI-compat) — so either agent works inside the box; each gets only a resolve sentinel.  
 > The box is **contained by default**: its only egress is the providers' endpoint (`litellm-proxy:4001`) — the apiserver, other pods, and the internet are all denied (you'll prove it in 4.4).
@@ -305,8 +307,11 @@ Type **`exit`** to leave — the sandbox keeps running (re-enter any time with `
 
 > [!TIP]
 > **goose vs claude in one line:** `goose run` runs tools on its own; `claude -p` needs the imperative *"Run … then …"*
-> phrasing to act rather than ask. Both reason via SAP AI Core. The terminal image pre-allows read-only
-> `kubectl get/describe/logs/top` + `kyma` for Claude Code, so those run without a permission prompt. A deep
+> phrasing to act rather than ask.  
+> Both reason via SAP AI Core.  
+> The terminal image pre-allows read-only
+> `kubectl get/describe/logs/top` + `kyma` for Claude Code, so those run without a permission prompt.  
+> A deep
 > `kyma alpha diagnose istio` will *time out* — it reaches the mesh sidecars directly, which the sandbox's egress doesn't
 > allow; the apiserver-based diagnostics work fine.
 

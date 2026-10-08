@@ -4,7 +4,8 @@ In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, 
 You will not deploy anything — everything is in place; you are here to understand it and play with it.
 
 > [!NOTE]
-> Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`). Wherever you see `xp266-NNN` below, use the number you were given. Your Busola URL and sign-in details are handed out at the start of the session.
+> Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`). Wherever you see `xp266-NNN` below, use the number you were given.  
+> Your Busola URL and sign-in details are handed out at the start of the session.
 
 **Contents**
 
@@ -50,10 +51,13 @@ Now sign in:
 
 > [!NOTE]
 > **How sign-in works.** Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers*
-> several corporate identity providers. For TechEd the default is **SAP IAS** — enter your workshop account and you are
-> straight in. If you are an **SAP employee** (an `@sap.com` address), IAS automatically forwards you to **SAP corporate
+> several corporate identity providers.  
+> For TechEd the default is **SAP IAS** — enter your workshop account and you are
+> straight in.  
+> If you are an **SAP employee** (an `@sap.com` address), IAS automatically forwards you to **SAP corporate
 > single sign-on** (with 2FA); the first time it quietly links that to your account, so you never see an "account already
-> exists" prompt. Either way you end up in the same Busola session — no passwords are stored by the workshop.
+> exists" prompt.  
+> Either way you end up in the same Busola session — no passwords are stored by the workshop.
 
 > [!TIP]
 > The **Cluster Overview** shows one or more **banner cards** with handy shortcut **buttons** into the workshop features (dashboards, quick actions). If you dismiss a card, it **stays hidden in that browser**. To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.

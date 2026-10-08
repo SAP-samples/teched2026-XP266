@@ -78,7 +78,8 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
 <br>![](images/05_01_0010.png)
 
 > [!NOTE]
-> The LiteLLM proxy exposes Prometheus-style metrics (spend per key, tokens in/out, per-model latency). A **pod annotation** marks it for scraping; the `MetricPipeline` (managed by the Kyma **Telemetry** module) ships those metrics out via OTLP to **SAP Cloud Logging**, where they're stored in OpenSearch and visualized. This is the same managed-telemetry pattern SAP BTP gives you for logs, metrics, and traces — you *use* it, you don't operate it.
+> The LiteLLM proxy exposes Prometheus-style metrics (spend per key, tokens in/out, per-model latency). A **pod annotation** marks it for scraping; the `MetricPipeline` (managed by the Kyma **Telemetry** module) ships those metrics out via OTLP to **SAP Cloud Logging**, where they're stored in OpenSearch and visualized.  
+> This is the same managed-telemetry pattern SAP BTP gives you for logs, metrics, and traces — you *use* it, you don't operate it.
 
 ## Exercise 6.2 - Open the spend dashboards
 
@@ -98,7 +99,8 @@ The dashboards are one click away from Busola's left navigation.
 3. Open the **LLM Overview** dashboard for request volume, token throughput, and per-model latency.
 
 > [!TIP]
-> This is the pay-off of routing **everything through one proxy**: because no agent talks to a model directly, *every* token is attributable. Trigger a diagnose run or chat with the agent, wait a minute, and watch your own activity appear on the dashboard.
+> This is the pay-off of routing **everything through one proxy**: because no agent talks to a model directly, *every* token is attributable.  
+> Trigger a diagnose run or chat with the agent, wait a minute, and watch your own activity appear on the dashboard.
 
 ## Exercise 6.3 - The FleetStatus card
 

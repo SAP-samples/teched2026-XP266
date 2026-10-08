@@ -13,7 +13,8 @@ https://dev-toolbox.xp266-NNN.<workshop-domain>/
 ```
 
 > [!NOTE]
-> Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else. The reports live in namespace `dev-toolbox-system`; each run spins up a short-lived OpenShell sandbox with a **read-only** cluster token.
+> Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else.  
+> The reports live in namespace `dev-toolbox-system`; each run spins up a short-lived OpenShell sandbox with a **read-only** cluster token.
 
 ### The three report generations
 
@@ -58,7 +59,9 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
    While a run is in flight, Busola shows a live **Activity** badge (`RUNNING`) and an **Elapsed** timer — the report is a Kubernetes custom resource the agent writes into, so the whole fleet can read it.
 
 > [!TIP]
-> These aren't hypothetical checks. In production the same pipeline caught things static monitoring missed — **402 ingress-gateway revisions** piled up in five days (a pod cycling every 17 minutes), **18 leftover cluster-admin bindings** from dev tooling, and a cert-manager ACME solver **stuck for 5+ days** on a DNS mismatch. Reasoning over correlated state finds what probes can't.
+> These aren't hypothetical checks.  
+> In production the same pipeline caught things static monitoring missed — **402 ingress-gateway revisions** piled up in five days (a pod cycling every 17 minutes), **18 leftover cluster-admin bindings** from dev tooling, and a cert-manager ACME solver **stuck for 5+ days** on a DNS mismatch.  
+> Reasoning over correlated state finds what probes can't.
 
 ## Exercise 1.2 - Trigger a run
 
@@ -75,7 +78,9 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 4. When it completes, the matching report in **Latest health reports** refreshes — new `lastUpdated`, new sections.
 
 > [!NOTE]
-> The sandboxed run is **uncapped** — Goose reasons for as many steps as the task needs; there's no turn budget to tune. What shapes a run is the **prompt** (the recipe — next) and the **model** you pick. The job also **guards the write**: a failed or empty run never overwrites your last good report, so you can experiment freely.
+> The sandboxed run is **uncapped** — Goose reasons for as many steps as the task needs; there's no turn budget to tune.  
+> What shapes a run is the **prompt** (the recipe — next) and the **model** you pick.  
+> The job also **guards the write**: a failed or empty run never overwrites your last good report, so you can experiment freely.
 
 ## Exercise 1.3 - Write your own prompt
 
@@ -134,7 +139,9 @@ cluster-admin:    no
 ```
 
 > [!IMPORTANT]
-> **Hand-off — remember this for later.** A run's output is a *shared artifact*: the `ClusterHealthReport` / `cluster-audit` custom resources, plus the raw Goose transcripts. Two downstream consumers read them — the **interactive chat agent** answers questions about the findings, and a **JupyterHub notebook** analyses them in Python. *Jobs produce → agents and notebooks consume.*
+> **Hand-off — remember this for later.** A run's output is a *shared artifact*: the `ClusterHealthReport` / `cluster-audit` custom resources, plus the raw Goose transcripts.  
+> Two downstream consumers read them — the **interactive chat agent** answers questions about the findings, and a **JupyterHub notebook** analyses them in Python.  
+> *Jobs produce → agents and notebooks consume.*
 
 ## Summary
 

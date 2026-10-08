@@ -33,7 +33,8 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
    > *Explain, in three sentences, what SAP BTP, Kyma runtime gives me over plain Kubernetes.*
 
 > [!NOTE]
-> **Model routing.** The chat agent defaults to the `reasoning-hard` tier — **Claude Opus** on SAP AI Core — with automatic fallbacks (Sonnet, GPT-5.5, GPT-4.1, Nova, Mistral) if a model is busy. That's why interactive traffic shows up as *Opus* on the spend dashboard, while the Goose jobs (Sonnet) show up as *diagnostics*.
+> **Model routing.** The chat agent defaults to the `reasoning-hard` tier — **Claude Opus** on SAP AI Core — with automatic fallbacks (Sonnet, GPT-5.5, GPT-4.1, Nova, Mistral) if a model is busy.  
+> That's why interactive traffic shows up as *Opus* on the spend dashboard, while the Goose jobs (Sonnet) show up as *diagnostics*.
 
 ## Exercise 2.2 - The hand-off: ask about your cluster's diagnosis
 
@@ -41,7 +42,8 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 The Goose jobs already wrote a **Cluster Health Report** and archived their raw findings.  
 Now ask the *interactive* agent about them:
 
-> *Summarize the latest cluster health report for this cluster. What are the top risks, and what would you do about the most urgent one?*
+> *Summarize the latest cluster health report for this cluster.  
+> What are the top risks, and what would you do about the most urgent one?*
 
 The agent reasons over the diagnostic findings and gives you a conversational, follow-up-able answer — the beginnings of an **on-call assistant**: the overnight autonomous run does the broad sweep, and in the morning you interrogate its findings in plain language.
 

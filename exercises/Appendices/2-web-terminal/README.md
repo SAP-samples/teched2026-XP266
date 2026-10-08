@@ -47,10 +47,13 @@ goose / claude ──▶ LiteLLM proxy :4001 ──▶ SAP AI Core
    ```
 
 > [!TIP]
-> Prefer a **visual** cluster browser to typing `kubectl`? Run **`k9s`** — a full-screen terminal UI. Arrow-key around namespaces, pods, logs, and YAML; press `:` to jump to a resource (e.g. `:pods`, `:cronjobs`), `d` to describe, `l` for logs, and `:q` to quit. Navigating and inspecting works freely; *mutating* actions (delete/scale) are blocked by the terminal's read-mostly permissions — that's [Exercise 1](../../ex1/README.md)'s guardrails in action.
+> Prefer a **visual** cluster browser to typing `kubectl`? Run **`k9s`** — a full-screen terminal UI.  
+> Arrow-key around namespaces, pods, logs, and YAML; press `:` to jump to a resource (e.g. `:pods`, `:cronjobs`), `d` to describe, `l` for logs, and `:q` to quit.  
+> Navigating and inspecting works freely; *mutating* actions (delete/scale) are blocked by the terminal's read-mostly permissions — that's [Exercise 1](../../ex1/README.md)'s guardrails in action.
 
 > [!NOTE]
-> The terminal is **auto-authenticated**: a start-up script fetches the LiteLLM key from the `llm-proxy-credentials` Secret and exports the environment both agents need (`GOOSE_PROVIDER=litellm`, `ANTHROPIC_BASE_URL`, model tiers…). You never see or handle a key. The pod runs **non-root** with a **read-mostly** RBAC role (you'll prove that in [Exercise 1](../../ex1/README.md)).
+> The terminal is **auto-authenticated**: a start-up script fetches the LiteLLM key from the `llm-proxy-credentials` Secret and exports the environment both agents need (`GOOSE_PROVIDER=litellm`, `ANTHROPIC_BASE_URL`, model tiers…). You never see or handle a key.  
+> The pod runs **non-root** with a **read-mostly** RBAC role (you'll prove that in [Exercise 1](../../ex1/README.md)).
 
 ## Appendix 2.2 - Zoom: the `kyma` CLI
 
@@ -84,7 +87,8 @@ A few more workshop-relevant `kyma` commands to try:
 | `kyma alpha --help` | discover the rest (modules, kubeconfig, app push…) |
 
 > [!IMPORTANT]
-> **`kyma alpha diagnose cluster` is exactly what the autonomous diagnostic jobs run** (Exercise 1): they capture this JSON and hand it to Goose, which reasons over it via SAP AI Core. Running it by hand here is you doing manually what the CronJobs do on a schedule.
+> **`kyma alpha diagnose cluster` is exactly what the autonomous diagnostic jobs run** (Exercise 1): they capture this JSON and hand it to Goose, which reasons over it via SAP AI Core.  
+> Running it by hand here is you doing manually what the CronJobs do on a schedule.
 
 ## Appendix 2.3 - Ask Goose
 
@@ -154,10 +158,12 @@ kubectl get pods -n kyma-system -o json | claude -p "List workloads with no CPU/
 ```
 
 > [!NOTE]
-> Pipe a **scoped** query into `claude -p` — a cluster-wide `kubectl get pods -A -o json` can exceed the model's input limit. Narrow it (a namespace, `-o wide`, or a `jq`/`grep` filter) so the prompt stays well within bounds.
+> Pipe a **scoped** query into `claude -p` — a cluster-wide `kubectl get pods -A -o json` can exceed the model's input limit.  
+> Narrow it (a namespace, `-o wide`, or a `jq`/`grep` filter) so the prompt stays well within bounds.
 
 > [!TIP]
-> The **interactive** `claude` TUI may show a one-time *"Streaming response ended … retrying without streaming"* — it's **harmless** (SAP AI Core's path is non-streaming) and recovers on retry. Headless `claude -p` and pipes don't hit it.
+> The **interactive** `claude` TUI may show a one-time *"Streaming response ended … retrying without streaming"* — it's **harmless** (SAP AI Core's path is non-streaming) and recovers on retry.  
+> Headless `claude -p` and pipes don't hit it.
 
 ## Appendix 2.5 - A prompt library to try
 
@@ -191,7 +197,8 @@ Walk the `kyma-system` namespace: list the Kyma modules and their states, and fl
 ```
 
 > [!IMPORTANT]
-> This is the **same LLM path** as Appendix 1 — the agents are just convenient front-ends over the LiteLLM proxy → SAP AI Core. In [Exercise 1](../../ex1/README.md) you'll see this exact pattern (`kyma alpha diagnose` → Goose) running **autonomously on a schedule**, writing its findings into Kubernetes.
+> This is the **same LLM path** as Appendix 1 — the agents are just convenient front-ends over the LiteLLM proxy → SAP AI Core.  
+> In [Exercise 1](../../ex1/README.md) you'll see this exact pattern (`kyma alpha diagnose` → Goose) running **autonomously on a schedule**, writing its findings into Kubernetes.
 
 ## Summary
 

@@ -105,10 +105,12 @@ print("connected:", [m.id for m in client.models.list().data][:5])
 ```
 
 > [!TIP]
-> Ideas to try: ask a model to **explain a `kubectl get events` dump** you paste in; build a tiny **retrieval** demo with embeddings over a handful of docs; have the model **draft a NetworkPolicy** from a plain-English description; or chain a **tool call** to a real `kubernetes` client read. The proxy, the models, and the spend tracking are all already there — just write Python.
+> Ideas to try: ask a model to **explain a `kubectl get events` dump** you paste in; build a tiny **retrieval** demo with embeddings over a handful of docs; have the model **draft a NetworkPolicy** from a plain-English description; or chain a **tool call** to a real `kubernetes` client read.  
+> The proxy, the models, and the spend tracking are all already there — just write Python.
 
 > [!NOTE]
-> This is the same LLM path as every other exercise — the `openai` client simply points at the in-cluster LiteLLM proxy. Anything you prototype here uses the exact routing, auth, and cost-tracking that the production agents use.
+> This is the same LLM path as every other exercise — the `openai` client simply points at the in-cluster LiteLLM proxy.  
+> Anything you prototype here uses the exact routing, auth, and cost-tracking that the production agents use.
 
 ## Appendix 3.4 - The notebook set
 
