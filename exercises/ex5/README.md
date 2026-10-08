@@ -10,7 +10,7 @@ the sandbox only ever carries a sentinel.
 
 **Contents**
 
-- ⚡ **5a** *(easy path)* — run it as a **GitHub Action** (the Tip below)
+- ⚡ **5a** *(easy path)* — run it as a **GitHub Action** (see the note below)
 - 🛠️ **5b** *(optional)* — the OpenShell CLI in the Busola web terminal:
   - 🔑 [Open the terminal and reach the gateway](#exercise-51---open-the-terminal-and-reach-the-gateway)
   - 📦 [Create a sandbox with the agents + OpenRouter](#exercise-52---create-a-sandbox-with-the-agents--openrouter-)
@@ -19,7 +19,7 @@ the sandbox only ever carries a sentinel.
   - 🏗️ [From draft to deployable: a correct KRO RGD](#exercise-55---from-draft-to-deployable-a-correct-kro-rgd-)
 
 > [!NOTE]
-> **Easy path — run it as a GitHub Action.** Everything below is the manual in-cluster web terminal.  
+> **Easy path — run it as a GitHub Action.**  
 > To run the external coding
 > agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
 >
