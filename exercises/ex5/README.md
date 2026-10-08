@@ -141,6 +141,11 @@ Try Pi too:
 ```bash
 openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."
 ```
+Run Qwen Code — it's **interactive**, so this drops you into its TUI (already using your `$FREE_MODEL`):
+```bash
+openshell sandbox exec --name agents -- qwen
+```
+Type a prompt at the TUI (e.g. *List 3 facts about Kyma.*); `/quit` (or `Ctrl-C`) to leave — the sandbox keeps running.
 
 ## Exercise 5.4 - Prove it's still contained 🔧
 
