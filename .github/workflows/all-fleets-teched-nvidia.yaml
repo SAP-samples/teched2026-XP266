@@ -50,20 +50,22 @@
     "steps":
     - "name": "Check out repository (teched registry)"
       "uses": "actions/checkout@v7"
-    - "id": "m"
+    - "env":
+        "IS": "${{ inputs.instructor_subaccount }}"
+        "SC": "${{ inputs.student_cluster }}"
+      "id": "m"
       "name": "Build teched subaccount × cluster matrix (GHES: teched.auto.tfvars
         · github.com: baked static — no GUID)"
       "run": |
-        SC="${{ inputs.student_cluster }}"; IS="${{ inputs.instructor_subaccount }}"
         if [ "$SC" != "none" ] && [ -n "$SC" ]; then TARGET="$SC"
         elif [ "$IS" != "none" ] && [ -n "$IS" ]; then
-          case "${{ github.repository }}" in
+          case "$GITHUB_REPOSITORY" in
             SAP-samples/teched2026-XP266|fp-stakeholder-management/terraform-stories) TARGET="$IS" ;;
             *) echo "::error::Instructor mode (teched-NN / all) is only available in the upstream repo — a fork runs your own xp266-NNN only."; exit 1 ;;
           esac
         else echo "::error::Pick your cluster (xp266-NNN) OR a subaccount (teched-NN)."; exit 1
         fi
-        if [ "${{ github.repository }}" = "fp-stakeholder-management/terraform-stories" ]; then
+        if [ "$GITHUB_REPOSITORY" = "fp-stakeholder-management/terraform-stories" ]; then
           MATRIX=$(awk -v T="$TARGET" '
             /^  "teched-[0-9]+"[ ]*=/  { n=$1; gsub(/[",]/,"",n); name=n }
             /^[ ]*subaccount_id[ ]*=/  { s=$3; gsub(/[",]/,"",s); subid=s }
