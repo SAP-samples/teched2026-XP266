@@ -14,7 +14,6 @@ It is the Python twin of the CLI walkthrough in [Exercise 5](../ex5/README.md) �
 - 🚀 [Sign in and spawn your server](#exercise-41---sign-in-and-spawn-your-server)
 - 📦 [Drive an OpenShell sandbox from Python](#exercise-42---drive-an-openshell-sandbox-from-python)
 - 🪿 [Run an agent inside a sandbox](#exercise-43---run-an-agent-inside-a-sandbox)
-- 📚 [The OpenShell notebook set](#exercise-44---the-openshell-notebook-set)
 
 
 ## Exercise 4.1 - Sign in and spawn your server
@@ -28,12 +27,16 @@ It is the Python twin of the CLI walkthrough in [Exercise 5](../ex5/README.md) �
 2. Sign in with single sign-on and click **Start My Server**. After a moment JupyterLab opens.
 <br>![](images/07_01_0010.png)
 
-3. In the file browser (left) the notebooks are grouped by what they drive:
+3. In the file browser (left) you'll find the pre-loaded OpenShell notebooks:
 
-   | Prefix | Track | What it drives |
+   | Notebook | Track | What it does |
    |---|---|---|
-   | `04`, `04b` | 📦 OpenShell SDK | create → exec → delete a sandbox from Python |
-   | `05`, `06`, `07` | 🪿 OpenShell + goose | run an agent **inside** a sandbox against your cluster |
+   | `04-OpenShell-Sandbox-SDK` | 📦 OpenShell SDK | Sandbox create → exec → list → delete; gateway via CLI device-code login. |
+   | `04b-OpenShell-Sandbox-SDK-Headless` | 📦 OpenShell SDK | Same lifecycle, **no CLI** — pure `SandboxClient(tls=None, bearer_token=…)`. |
+   | `05-OpenShell-Goose-Diagnostics-Live` | 🪿 OpenShell + goose | Agent runs **live read-only kubectl** in a scoped sandbox and writes a report. |
+   | `05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK` | 🪿 OpenShell + goose | The same live investigation, headless (client-credentials) / pure SDK. |
+   | `06-OpenShell-Goose-Diagnostics-Snapshot` | 🪿 OpenShell + goose | goose over a **static** `kyma diagnose` snapshot — no live cluster access. |
+   | `07-OpenShell-Goose-Diagnostics-FromReport` | 🪿 OpenShell + goose | Triage the **stored** `ClusterHealthReport` from Exercise 1. |
 
 > [!NOTE]
 > The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
@@ -70,19 +73,6 @@ Now put an agent **in** the box: **goose**, through the LiteLLM proxy, reasoning
 
 > [!TIP]
 > Advanced variants of the same investigation live alongside: **`05b`** (headless client-credentials, no browser), **`05c`** (pure SDK, no CLI), and **`07`** (triage the stored `ClusterHealthReport` from Exercise 1 instead of the cluster).
-
-## Exercise 4.4 - The OpenShell notebook set
-
-The OpenShell notebooks pre-loaded in your JupyterHub:
-
-| Notebook | Track | What it demonstrates |
-|---|---|---|
-| `04-OpenShell-Sandbox-SDK` | 📦 SDK | Sandbox create → exec → list → delete; gateway via CLI device-code login. |
-| `04b-OpenShell-Sandbox-SDK-Headless` | 📦 SDK | Same lifecycle, **no CLI** — pure `SandboxClient(tls=None, bearer_token=…)`. |
-| `05-OpenShell-Goose-Diagnostics-Live` | 🪿 goose | Agent runs **live read-only kubectl** in a scoped sandbox and writes a report. |
-| `05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK` | 🪿 goose | The same live investigation, headless (client-credentials) / pure SDK. |
-| `06-OpenShell-Goose-Diagnostics-Snapshot` | 🪿 goose | goose over a **static** `kyma diagnose` snapshot — no live cluster access. |
-| `07-OpenShell-Goose-Diagnostics-FromReport` | 🪿 goose | Triage the **stored** `ClusterHealthReport` from Exercise 1. |
 
 ## Summary
 

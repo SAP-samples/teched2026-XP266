@@ -125,7 +125,7 @@ The SAP AI Core notebooks and the upstream JupyterLab samples pre-loaded in your
 
 > [!NOTE]
 > Notebooks ship in the image and are copied to your home at spawn — **open a fresh server to pick up any changes.**  
-> The OpenShell sandbox notebooks (`04`–`07`) are in [Exercise 4](../../ex4/README.md#exercise-44---the-openshell-notebook-set).
+> The OpenShell sandbox notebooks (`04`–`07`) are in [Exercise 4](../../ex4/README.md#exercise-41---sign-in-and-spawn-your-server).
 
 ## Summary
 
