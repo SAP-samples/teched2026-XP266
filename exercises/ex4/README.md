@@ -102,7 +102,7 @@ The gateway holds each key; a sandbox created with `--provider <name>` gets only
 
 ### 4.3 - Create a sandbox from the tools image and use it
 
-Create the sandbox with **both providers**:
+👉 **Create** the sandbox with **both providers**:
 
 ```bash
 openshell sandbox create --name $XP266_CLUSTER-devbox \
@@ -115,7 +115,7 @@ openshell sandbox list        # wait for PHASE=Ready
 The trailing `&` backgrounds the create so it doesn't hold the terminal while the box spins up — **press Enter** after it prints `Created sandbox` to return to your prompt. The sandbox keeps running `sleep infinity`.  
 Attach **both** inference providers — `litellm` (claude, Anthropic-native) and `litellm-openai` (goose, OpenAI-compat) — so either agent works inside the box; each gets only a resolve sentinel. The box is **contained by default**: its only egress is the providers' endpoint (`litellm-proxy:4001`) — the apiserver, other pods, and the internet are all denied (you'll prove it in 4.4). (Same provider pair `scoped-ops` uses in 4.5, which additionally opens read-only apiserver.)
 
-**Prove it reasons through SAP AI Core — two flavours.** The sandbox's own `ANTHROPIC_API_KEY` *is* the injected **sentinel** (`openshell:resolve:env:…`), never a real key — so pass it straight through.
+👉 **Prove it reasons through SAP AI Core — two flavours.** The sandbox's own `ANTHROPIC_API_KEY` *is* the injected **sentinel** (`openshell:resolve:env:…`), never a real key — so pass it straight through.
 
 **A — one-shot `exec`** (run a command in the box without entering it):
 
@@ -147,7 +147,7 @@ Either way:
 > The `msg_bdrk_` id prefix is your proof the request round-tripped **SAP AI Core** (Bedrock). The `x-api-key` you sent was
 > the OpenShell **sentinel** (`$ANTHROPIC_API_KEY`), *not* a real key — the supervisor resolved it and injected the real key at egress.
 
-Now drive **Claude Code** from inside the shell (flavour B) — point it at its one allowed endpoint (`litellm-proxy…:4001`), reuse the injected sentinel as the Bearer token, **and pin the SAP AI Core model ids**:
+👉 Now **drive Claude Code** from inside the shell (flavour B) — point it at its one allowed endpoint (`litellm-proxy…:4001`), reuse the injected sentinel as the Bearer token, **and pin the SAP AI Core model ids**:
 
 ```bash
 # inside the sandbox:
