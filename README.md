@@ -44,7 +44,7 @@ Everything is **already deployed and wired up for you** on your personal Kyma ru
 - 🩺 **experiment with the diagnostics' prompts** and watch the Cluster Health Reports change ([Exercise 1](exercises/ex1/));
 - 💬 chat with the **interactive chat agent** ([Exercise 2](exercises/ex2/));
 - 💰 read the **spend dashboards** ([Exercise 3](exercises/ex3/));
-- 📓 explore SAP AI Core and **OpenShell sandboxes** with **JupyterHub notebooks** ([Exercise 4](exercises/ex4/));
+- 📓 explore **OpenShell sandboxes** with **JupyterHub notebooks** ([Exercise 4](exercises/ex4/)) — and SAP AI Core from Python ([Appendix 3](exercises/Appendices/3-sap-ai-core-python/));
 - 🛡️ watch a **sandboxed agent** hit its guardrails — denied the internet and the API server ([Exercise 5](exercises/ex5/));
 - ⚙️ and run the **OpenShell-admin** and **NVIDIA** GitHub Actions workflows ([Exercise 5](exercises/ex5/) · [Exercise 6](exercises/ex6/)).
 
@@ -107,7 +107,7 @@ flowchart LR
 - [Exercise 1 - Trigger and shape the Cluster Health Reports](exercises/ex1/) — drive the v1/v2/v3 reports from the dev-toolbox UI, write your own prompt, and see the read-only sandbox guardrails
 - [Exercise 2 - Chat with the interactive agent](exercises/ex2/) — the interactive chat UI, and the hand-off from the diagnostic jobs
 - [Exercise 3 - Observability and spend](exercises/ex3/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards
-- [Exercise 4 - Explore SAP AI Core and OpenShell sandboxes with JupyterHub notebooks](exercises/ex4/) — drive the OpenShell sandbox lifecycle from Python and run an agent inside a sandbox; SAP AI Core from Python is an optional on-ramp
+- [Exercise 4 - Explore OpenShell sandboxes with JupyterHub notebooks](exercises/ex4/) — drive the OpenShell sandbox lifecycle from Python and run an agent inside a sandbox (SAP AI Core from Python → Appendix 3)
 - [Exercise 5 - Your own sandboxed agent: the OpenShell CLI dance](exercises/ex5/) 🔧 *(advanced / instructor-demo)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
 - [Exercise 6 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex6/) 🔧 *(advanced / CLI)* — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
 
@@ -115,7 +115,8 @@ flowchart LR
 
 - [Appendix 1 - The LLM gateway: LiteLLM and SAP AI Core](exercises/Appendices/1-llm-gateway/) — how the proxy routes to SAP AI Core, and call it yourself
 - [Appendix 2 - The Busola web terminal](exercises/Appendices/2-web-terminal/) 🔧 *(optional)* — run Goose and Claude Code against your cluster, in-browser
-- [Appendix 3 - The making of your runtime (Day-1 operations)](exercises/Appendices/3-day1-operations/) — *read-along / instructor*: how the `all-fleets-admin` pipeline (`terraform apply`) built the whole stack
+- [Appendix 3 - SAP AI Core from Python](exercises/Appendices/3-sap-ai-core-python/) — the JupyterHub SAP AI Core track: chat, embeddings, tool calling, and the diagnostic hand-off in Python
+- [Appendix 4 - The making of your runtime (Day-1 operations)](exercises/Appendices/4-day1-operations/) — *read-along / instructor*: how the `all-fleets-admin` pipeline (`terraform apply`) built the whole stack
 
 > [!IMPORTANT]
 > **Every exercise can be completed entirely in the browser — no terminal experience required.** A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**; wherever one appears there is a UI (Busola) or **Run workflow** (GitHub Actions) way to reach the same result. Whatever your level, you can succeed with clicks alone.

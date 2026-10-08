@@ -77,7 +77,7 @@ One image, three agents (all installed in `openrouter-agents:latest`):
 
 **OpenRouter** is a public LLM *aggregator*: one OpenAI-compatible endpoint + one key, routing to many models
 (OpenAI, Anthropic, Google, Qwen, NVIDIA…).  
-**SAP AI Core** — the provider you used *keyless* in ex5 — is SAP's
+**SAP AI Core** — the provider you used in ex5 — is SAP's
 managed inference gateway, reached in-cluster through the **LiteLLM proxy**.  
 To LiteLLM they're the **same shape** (an
 OpenAI-compatible gateway behind one credential), so one proxy can front **both**.  
@@ -86,7 +86,7 @@ OpenRouter only routes to its own public
 upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
 the reverse.
 
-| | ex5 (keyless, in-cluster) | ex6 (this exercise — **direct**) |
+| | ex5 (in-cluster) | ex6 (this exercise — **direct**) |
 |---|---|---|
 | Path | agent → LiteLLM proxy → **SAP AI Core** | agent → **OpenRouter** (one allow-listed external host) |
 | Key | none in the box (ClusterIP, plain-HTTP) | real key in the gateway; box sees a sentinel |
@@ -175,7 +175,7 @@ So this is a *different* tier than ex5, not a weaker one:
 
 | | ex5 (scoped-ops) | **ex6 (external agent)** |
 |---|---|---|
-| LLM | in-cluster LiteLLM → SAP AI Core (keyless) | **public OpenRouter (keyed, key in gateway only)** |
+| LLM | in-cluster LiteLLM → SAP AI Core | **public OpenRouter (keyed, key in gateway only)** |
 | Egress | in-cluster proxy only; **no internet** | **`openrouter.ai` + `models.dev` only; nothing else** |
 | Cluster | read-only kubectl (sandbox-viewer) | none |
 | Key in box | sentinel | sentinel |
@@ -337,6 +337,6 @@ You added an **external, keyed** LLM provider to the contained-sandbox model, ra
 agents (opencode, Pi, Qwen Code) against free OpenRouter models, and proved the sandbox still can't reach anything
 but the one allow-listed endpoint — with the real key staying in the gateway.  
 That's the OpenShell provider model
-generalizing from "keyless in-cluster" to "any governed external endpoint."  
-Continue to - [Appendix 3 - The making of your runtime (Day-1 operations)](../Appendices/3-day1-operations/README.md)  
+generalizing from "the in-cluster proxy" to "any governed external endpoint."  
+Continue to - [Appendix 4 - The making of your runtime (Day-1 operations)](../Appendices/4-day1-operations/README.md)  
 Back to - [Overview](../../README.md)

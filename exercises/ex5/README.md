@@ -206,7 +206,7 @@ KEY=$(kubectl get secret llm-proxy-credentials -n default -o jsonpath='{.data.PR
 openshell provider create --name litellm --type anthropic --credential ANTHROPIC_API_KEY="$KEY"
 ```
 
-Add a **second provider for goose** — it can't use claude's `/v1/messages` route (it streams; the SAP path doesn't), so it reaches the SAME proxy over the OpenAI-compat `/v1/chat/completions` path with bearer auth. Also keyless — the gateway holds the key; the box gets only a sentinel (attached by `scoped-ops` in §5.5; see "Two providers, both keyless" below):
+Add a **second provider for goose** — it can't use claude's `/v1/messages` route (it streams; the SAP path doesn't), so it reaches the SAME proxy over the OpenAI-compat `/v1/chat/completions` path with bearer auth. The gateway holds the key; the box gets only a sentinel (attached by `scoped-ops` in §5.5; see "Two providers" below):
 
 ```bash
 openshell provider profile import -f litellm-openai-provider.yaml --global
@@ -456,7 +456,7 @@ The policy + auth you attach set how far the agent reaches:
 | **Scoped-ops** (5.5 — `scoped-ops`) | + apiserver (read-only), still no internet | read-only `kubectl` | a diagnostic agent that *reads* the cluster and reasons |
 | **Busola terminal** ([Appendix 2](../Appendices/2-web-terminal/README.md)) | full pod network | RBAC-scoped `kubectl` | an agent that *operates* the cluster |
 
-### Two providers, both keyless — how goose reaches SAP AI Core too
+### Two providers — how goose reaches SAP AI Core too
 
 | Agent | Provider | Path | Auth header | In-box credential |
 |---|---|---|---|---|
@@ -483,7 +483,7 @@ Different layers:
 - **OpenShell is a control-plane + containment layer on the same controller.** It adds the three things you used here:
   the **OIDC-gated front door** (5.1, no cluster RBAC needed), **credential containment** (5.3), and **L7 egress
   governance** (5.5). Rule of thumb: headless/platform-owned → plain `Sandbox`; a *person* wanting an interactive shell
-  into an untrusted, keyless agent → OpenShell's gateway.
+  into an untrusted agent → OpenShell's gateway.
 
 ### How components authenticate
 
@@ -526,7 +526,7 @@ you proved in 5.4.
 ## Summary
 
 You framed **why** a contained agent matters (capability *and* control), then ran the workshop's tools image as a
-**runtime-isolated OpenShell `Sandbox`**: wired the keyless inference providers (the agent never holds the key), proved the
+**runtime-isolated OpenShell `Sandbox`**: wired the inference providers (the agent never holds the key), proved the
 egress guardrail (apiserver + internet unreachable, no route to bypass), and opened the read-only **scoped-ops** tier for
 cluster diagnostics.  
 Under the hood it's a **gated control plane + credential-injecting supervisor + L7 allow-list** riding

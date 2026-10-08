@@ -60,4 +60,4 @@ The dashboards are one click away from Busola's left navigation.
 ## Summary
 
 You followed one LLM call's metrics from the LiteLLM proxy through a Kyma Telemetry `MetricPipeline` into SAP Cloud Logging, and read the **LiteLLM Spend** and **LLM Overview** dashboards from Busola — seeing the autonomous-jobs (Sonnet) vs interactive-agents (Opus) spend split that the single-proxy design makes possible.  
-Continue to - [Exercise 4 - Explore SAP AI Core and OpenShell sandboxes with JupyterHub notebooks](../ex4/README.md)
+Continue to - [Exercise 4 - Explore OpenShell sandboxes with JupyterHub notebooks](../ex4/README.md)

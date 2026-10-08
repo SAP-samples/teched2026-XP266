@@ -3,7 +3,7 @@
 👉 This is the heart of the workshop.
 
 - A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit**.
-- Every run executes Goose **keyless, inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
+- Every run executes Goose **inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
 - You drive all of it from one place: the **dev-toolbox UI**.
 
 👉 Open it (same single sign-on as Busola):
@@ -75,7 +75,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 4. When it completes, the matching report in **Latest health reports** refreshes — new `lastUpdated`, new sections.
 
 > [!NOTE]
-> The sandboxed run is **keyless and uncapped** — Goose reasons for as many steps as the task needs; there's no turn budget to tune. What shapes a run is the **prompt** (the recipe — next) and the **model** you pick. The job also **guards the write**: a failed or empty run never overwrites your last good report, so you can experiment freely.
+> The sandboxed run is **uncapped** — Goose reasons for as many steps as the task needs; there's no turn budget to tune. What shapes a run is the **prompt** (the recipe — next) and the **model** you pick. The job also **guards the write**: a failed or empty run never overwrites your last good report, so you can experiment freely.
 
 ## Exercise 1.3 - Write your own prompt
 
@@ -138,6 +138,6 @@ cluster-admin:    no
 
 ## Summary
 
-You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it keyless inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.  
+You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.  
 You also met the hand-off that the rest of the workshop builds on.  
 Continue to - [Exercise 2 - Chat with the interactive agent](../ex2/README.md)

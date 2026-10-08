@@ -1,4 +1,4 @@
-# Appendix 3 - The making of your runtime (Day-1 operations)
+# Appendix 4 - The making of your runtime (Day-1 operations)
 
 Throughout this workshop you were told *"everything is already deployed for you."* This appendix shows **how**.
 
