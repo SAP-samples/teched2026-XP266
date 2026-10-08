@@ -1,13 +1,13 @@
 # Exercise 2 - Chat with the interactive agent
 
-The Goose diagnostic jobs (Exercise 1) run *autonomously*.  
+The Goose diagnostic jobs run *autonomously*.  
 The other half of the story is an **interactive** AI agent — a chat UI (for instance **OpenClaw**, or a similar chat front-end) running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy.  
 In this exercise you chat with it and see how it picks up where the diagnostic jobs leave off.
 
 ```
 You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SAP AI Core (Claude Opus by default)
                       │
-                      └── reads the diagnostic artifacts from Exercise 1
+                      └── reads the diagnostic artifacts
                           (ClusterHealthReport · goose-raw-* ConfigMaps)
 ```
 
@@ -33,7 +33,7 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
    > *Explain, in three sentences, what SAP BTP, Kyma runtime gives me over plain Kubernetes.*
 
 > [!NOTE]
-> **Model routing.** The chat agent defaults to the `reasoning-hard` tier — **Claude Opus** on SAP AI Core — with automatic fallbacks (Sonnet, GPT-5.5, GPT-4.1, Nova, Mistral) if a model is busy. That's why interactive traffic shows up as *Opus* on the spend dashboard, while the Goose jobs (Sonnet) show up as *diagnostics* — you'll see that split in [Exercise 3](../ex3/README.md).
+> **Model routing.** The chat agent defaults to the `reasoning-hard` tier — **Claude Opus** on SAP AI Core — with automatic fallbacks (Sonnet, GPT-5.5, GPT-4.1, Nova, Mistral) if a model is busy. That's why interactive traffic shows up as *Opus* on the spend dashboard, while the Goose jobs (Sonnet) show up as *diagnostics*.
 
 ## Exercise 2.2 - The hand-off: ask about your cluster's diagnosis
 
@@ -50,7 +50,7 @@ The agent reasons over the diagnostic findings and gives you a conversational, f
 
 ## Exercise 2.3 - Autonomous vs interactive — when to use which
 
-| | Goose diagnostic jobs (ex1) | Chat agent (this exercise) |
+| | Goose diagnostic jobs | Chat agent (this exercise) |
 |---|---|---|
 | Trigger | scheduled CronJob (or manual kick) | you, in chat |
 | Output | structured `ClusterHealthReport` CR | conversation |
@@ -61,4 +61,4 @@ The agent reasons over the diagnostic findings and gives you a conversational, f
 ## Summary
 
 You chatted with the interactive agent, saw it route to SAP AI Core (Claude Opus) via the same LiteLLM proxy, and used it to interrogate the diagnostic findings the autonomous jobs produced — the interactive half of the "autonomous sweep + human follow-up" pattern.  
-Continue to - [Exercise 3 - Observability and spend](../ex3/README.md)
+Continue to - [Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks](../ex3/README.md)

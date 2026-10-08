@@ -1,341 +1,119 @@
-# Exercise 6 - External agents: Pi, opencode & Qwen via OpenRouter 🔧 *(advanced — CLI)*
+# Exercise 6 - Observability and spend
 
-> [!WARNING]
-> **Advanced / builds on [Exercise 5](../ex5/README.md).** You need the `openshell` CLI (pre-installed in the Busola
-> web terminal) and an active gateway session (ex5 §5.1, device-code login). If you don't have the `openshell-admin`
-> role, watch the instructor demo. Everything runs on **your own** `xp266-NNN` runtime.
+Running LLMs in production raises an obvious question: **what is this costing, and who is spending it?**  
+In this exercise you see how the stack answers that — every call is metered by the LiteLLM proxy, scraped by **Kyma Telemetry**, shipped to **SAP Cloud Logging**, and rendered as dashboards you read straight from Busola.
 
-> [!TIP]
-> **Easy path — run it as a workflow (no CLI).** Everything below is the manual CLI flow. To run the external coding
-> agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
->
-> | Run this workflow | What it does |
-> |---|---|
-> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. Pick your `student_cluster` (`xp266-NNN`), the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`), a **`model`** (a `:free` OpenRouter model), and a **`scenario`** → **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. Same agents, same containment, zero local tooling. |
->
-> Prefer the hands-on CLI? Continue below.
-
-In Exercise 5 the sandbox had **no internet** — its only exit was the in-cluster LiteLLM proxy, and §5.4 *proved* the
-agent couldn't reach the apiserver or the public web.  
-👉 This exercise flips exactly one dial: a **4th trust tier** — a
-still-contained sandbox with **one external endpoint allow-listed** (`openrouter.ai`), so you can drive terminal
-coding agents against public **OpenRouter** models.  
-The real OpenRouter key never enters the box: it lives in the
-gateway's `openrouter` **provider**, which injects a **resolve-sentinel** and swaps the real key at egress — and
-*only* for the agent binaries named in the provider profile (binary-scoped injection).
+```
+LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma Telemetry MetricPipeline
+                                                                        │
+                                                                        ▼
+                                                              SAP Cloud Logging (OpenSearch)
+                                                                        │
+                                              ┌─────────────────────────┴───────────────┐
+                                              ▼                                           ▼
+                                    LiteLLM Spend dashboard                      LLM Overview dashboard
+                                    (opened from Busola)                         (opened from Busola)
+```
 
 **Contents**
 
-- 🧩 [How it works: profile → provider → sandbox](#how-it-works--profile--provider--sandbox)
-- 🔀 [OpenRouter vs SAP AI Core](#openrouter-vs-sap-ai-core--the-same-shape-to-litellm)
-- 🔍 [Inspect the pieces](#exercise-61---inspect-the-pieces-ui)
-- 📦 [Create a sandbox with the agents + OpenRouter](#exercise-62---create-a-sandbox-with-the-agents--openrouter-)
-- ▶️ [Run an agent against a free model](#exercise-63---run-an-agent-against-a-free-model-)
-- 🛡️ [Prove it's still contained](#exercise-64---prove-its-still-contained-)
-- 🏗️ [From draft to deployable: a correct KRO RGD](#exercise-65---from-draft-to-deployable-a-correct-kro-rgd-)
+- 📡 [The telemetry path](#exercise-61---the-telemetry-path-concept)
+- 💰 [Open the spend dashboards](#exercise-62---open-the-spend-dashboards)
+- 🩺 [The FleetStatus card](#exercise-63---the-fleetstatus-card)
 
 
-## How it works — profile → provider → sandbox
+## Exercise 6.1 - The telemetry path (concept)
 
-Three concepts, one key that never leaves the gateway:
+1. In Busola, open **Custom Resources → MetricPipeline** and open **`sap-cloud-logging`**. It's **cluster-scoped** — one declarative pipe that forwards scraped metrics to SAP Cloud Logging, with no Prometheus server to run and no Grafana to host:
 
-- **Profile** — a reusable *spec* (no secret): which credential env var, which auth style, which **endpoints** egress
-  may reach, and which **binaries** are allowed to use the credential.
-- **Provider** — a profile **bound to a real key**. The key (`sk-or-…`) is stored **only in the gateway**.
-- **Sandbox** — `--provider openrouter` attaches it: the box receives a **sentinel** (not the key) + scoped egress;
-  the supervisor swaps the sentinel for the real key **at the wire**, only for a listed binary → a listed endpoint.
+   ```yaml
+   apiVersion: telemetry.kyma-project.io/v1alpha1
+   kind: MetricPipeline
+   metadata:
+     name: sap-cloud-logging          # cluster-scoped — one pipeline for the whole cluster
+   spec:
+     input:
+       prometheus:                    # scrape Prometheus-style metrics from these namespaces
+         enabled: true
+         namespaces:
+           include:
+             - kube-system            # cilium-agent, cilium-operator, hubble-relay
+             - default                # litellm-proxy — the LLM spend metrics
+       istio:
+         enabled: false
+       runtime:                       # kubelet volume metrics → PVC usage as an alertable series
+         enabled: true
+         resources:
+           volume:
+             enabled: true
+           # pod / container / node / statefulset / deployment / daemonset / job: disabled (keep it lean)
+     output:
+       otlp:                          # ship via OTLP to SAP Cloud Logging (mTLS)
+         endpoint:
+           valueFrom:
+             secretKeyRef:
+               name: sap-cloud-logging       # the CLS ingest Secret (endpoint + client cert/key), pre-created for you
+               key: ingest-otlp-endpoint
+         headers:
+           - name: cluster
+             value: xp266-NNN               # tags every metric with your runtime, so fleet dashboards split by cluster
+         tls:
+           cert:
+             valueFrom:
+               secretKeyRef:
+                 name: sap-cloud-logging
+                 key: ingest-otlp-cert
+           key:
+             valueFrom:
+               secretKeyRef:
+                 name: sap-cloud-logging
+                 key: ingest-otlp-key
+   ```
 
-```
-                   ┌──────────────────── OpenShell gateway (holds the real key) ────────────────────┐
-  PROFILE          │  profile "openrouter"                                                           │
-  (template:       │    credential: OPENROUTER_API_KEY (bearer)                                      │
-   what & where)   │    endpoints : openrouter.ai, models.dev   ← the ONLY hosts egress is opened to │
-                   │    binaries  : node, opencode.exe          ← only THESE may send egress traffic │
-  PROVIDER         │  provider "openrouter" = profile + REAL KEY (sk-or-…)   ← key lives ONLY here    │
-  (profile + key)  └───────────────────────────────────┬─────────────────────────────────────────────┘
-                           sandbox create --provider openrouter
-                                                        ▼
-                   ┌──────────────────────── your sandbox (the box) ─────────────────────────┐
-  SANDBOX          │  OPENROUTER_API_KEY = openshell:resolve:…   ← a SENTINEL, not the key    │
-  (--provider      │  agent (opencode / pi / qwen)  ──▶  Authorization: Bearer <sentinel>     │
-   attaches it)    └───────────────────────────────────────┬───────────────────────────────────┘
-                                                            ▼  (allowed binary + allowed host)
-                        supervisor swaps  <sentinel> → sk-or-…  AT THE WIRE
-                                                            ▼
-                                                      openrouter.ai   (sees the real key; the box never did)
-```
+   👉 Look it up live on your own cluster — open it directly in Busola (replace `xp266-NNN` and `<workshop-domain>`):
 
-One image, three agents (all installed in `openrouter-agents:latest`):
-
-| Agent | What it is | Run it |
-|---|---|---|
-| **opencode** | [opencode.ai](https://opencode.ai) coding agent (Bun binary) | `opencode run -m openrouter/<model> "…"` (headless) or `opencode` (TUI) |
-| **Pi** | `@earendil-works/pi-coding-agent` | `pi -p --model openrouter/<model> "…"` (headless) or `pi` (TUI) |
-| **Qwen Code** | `@qwen-code/qwen-code` (OpenAI-compat) | `qwen` (TUI) — reads `OPENAI_API_KEY`/`OPENAI_BASE_URL` (pre-set in the box) |
-
-## OpenRouter vs SAP AI Core — the same shape to LiteLLM
-
-**OpenRouter** is a public LLM *aggregator*: one OpenAI-compatible endpoint + one key, routing to many models
-(OpenAI, Anthropic, Google, Qwen, NVIDIA…).  
-**SAP AI Core** — the provider you used in ex5 — is SAP's
-managed inference gateway, reached in-cluster through the **LiteLLM proxy**.  
-To LiteLLM they're the **same shape** (an
-OpenAI-compatible gateway behind one credential), so one proxy can front **both**.  
-The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.**  
-OpenRouter only routes to its own public
-upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
-the reverse.
-
-| | ex5 (in-cluster) | ex6 (this exercise — **direct**) |
-|---|---|---|
-| Path | agent → LiteLLM proxy → **SAP AI Core** | agent → **OpenRouter** (one allow-listed external host) |
-| Key | none in the box (ClusterIP, plain-HTTP) | real key in the gateway; box sees a sentinel |
-| Internet | none | one host: `openrouter.ai` |
-
-ex6 keeps the agent talking to OpenRouter **directly** — that external, allow-listed, keyed endpoint *is* the 4th
-tier.  
-(In production you'd often put OpenRouter *behind* LiteLLM too — one in-cluster exit, spend-tracked, key never
-leaves the proxy — but then it looks just like ex5.)
-
-> [!TIP]
-> **Picking a `:free` model.** The agents are *agentic*, so the model must be a **chat/completion model with
-> tool-calling**. **Embedding and rerank models won't work** (ids with `-embed-` / `-rerank-` are RAG parts, not chat
-> — the agent will error). The `:free` lineup **rotates** (models go paid without notice). Known-good free picks:
-> **`qwen/qwen3.8-27b:free`** (default) and **`nvidia/nemotron-3-super-120b-a12b:free`**. Find current ones at
-> [openrouter.ai/models?max_price=0](https://openrouter.ai/models) or the NVIDIA model dashboard
-> ([`sherman-yang/nvidia-model-info`](https://github.com/sherman-yang/nvidia-model-info), `agent` filter). This
-> exercise replicates NVIDIA's [*Run Pi with OpenRouter*](https://docs.nvidia.com/openshell/latest/tutorials/run-pi-with-openrouter).
-
-## Exercise 6.1 - Inspect the pieces (UI)
-
-1. In Busola, open **namespace `openshell` → Custom Resources** and find the pre-built image build (`KanikoAgent`
-   `kaniko-agent`) and the `openrouter` provider (it's created by the provider-setup Job because your runtime was
-   given a shared OpenRouter key). The agents image is pushed to the in-cluster registry as
-   `openrouter-agents:latest`.
+   ```
+   https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/metricpipelines/sap-cloud-logging
+   ```
+<br>![](images/05_01_0010.png)
 
 > [!NOTE]
-> The OpenRouter key is **shared and platform-provided** for the workshop — you never handle it. Use the `:free`
-> models (they cost nothing). The gateway holds the key; your sandbox only ever sees `openshell:resolve:…`.
+> The LiteLLM proxy exposes Prometheus-style metrics (spend per key, tokens in/out, per-model latency). A **pod annotation** marks it for scraping; the `MetricPipeline` (managed by the Kyma **Telemetry** module) ships those metrics out via OTLP to **SAP Cloud Logging**, where they're stored in OpenSearch and visualized. This is the same managed-telemetry pattern SAP BTP gives you for logs, metrics, and traces — you *use* it, you don't operate it.
 
-## Exercise 6.2 - Create a sandbox with the agents + OpenRouter 🔧
+## Exercise 6.2 - Open the spend dashboards
 
-In a web terminal (Appendix 2), with your gateway session active (ex5 §5.1):  
-Command:
-```bash
-openshell sandbox create --name agents \
-  --from localhost:32137/openrouter-agents:latest \
-  --provider openrouter \
-  --env OPENAI_BASE_URL=https://openrouter.ai/api/v1 \
-  --env OPENAI_MODEL=qwen/qwen3.8-27b:free \
-  --detach -- sleep infinity
-openshell sandbox list        # wait for PHASE=Ready
-```
-`--provider openrouter` grants the sandbox egress to `openrouter.ai` (+ `models.dev`) **for the agent binaries only**
-and injects the key sentinel.
+The dashboards are one click away from Busola's left navigation.
 
-`--env` passes the base URL + default model (OpenAI-compat agents need them).
+1. In Busola, open the **SAP Cloud Logging** navigation entry, then the **LiteLLM Spend** dashboard link. It opens SAP Cloud Logging (OpenSearch Dashboards) in a new tab, single sign-on.
+<br>![](images/05_02_0010.png)
 
-## Exercise 6.3 - Run an agent against a free model 🔧
+2. Read the split. You'll see spend attributed by **API key / caller** and by **model**:
 
-Command (opencode — the cleanest):
-```bash
-openshell sandbox exec --name agents -- opencode run -m openrouter/qwen/qwen3.8-27b:free "Reply with one word: PONG"
-```
-Output:
-```
-PONG
-```
-Try Pi too:
-```bash
-openshell sandbox exec --name agents -- pi -p --model openrouter/qwen/qwen3.8-27b:free "List 3 facts about Kyma."
-```
+   | Caller | Tier / model | Typical share |
+   |---|---|---|
+   | Goose diagnostic jobs | `reasoning-fast` — Sonnet | steady, scheduled |
+   | Chat + terminal agents | `reasoning-hard` — Opus | bursty, interactive |
+   | JupyterHub notebooks | whatever you call | your experiments show up here |
+
+3. Open the **LLM Overview** dashboard for request volume, token throughput, and per-model latency.
 
 > [!TIP]
-> **Pick a model:** `openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'`
-> lists the free models. opencode/Pi take `openrouter/<id>`. Qwen Code (`qwen`, interactive) uses whatever
-> `OPENAI_MODEL` you set at create — some models reject its tool-calling request shape, so if `qwen` errors `400`,
-> switch `OPENAI_MODEL` to another `:free` model and recreate the sandbox.
+> This is the pay-off of routing **everything through one proxy**: because no agent talks to a model directly, *every* token is attributable. Trigger a diagnose run or chat with the agent, wait a minute, and watch your own activity appear on the dashboard.
 
-## Exercise 6.4 - Prove it's still contained 🔧
+## Exercise 6.3 - The FleetStatus card
 
-The agent reaches OpenRouter — and **nothing else**:  
-Command:
-```bash
-openshell sandbox exec --name agents -- sh -c 'curl -sS -m8 -o /dev/null -w "openrouter.ai: %{http_code}\n" https://openrouter.ai/api/v1/models; curl -sS -m8 https://example.com >/dev/null 2>&1 && echo "example.com: REACHED" || echo "example.com: blocked"; curl -sS -m8 https://kubernetes.default.svc >/dev/null 2>&1 && echo "apiserver: REACHED" || echo "apiserver: blocked"; echo "key in box: $OPENROUTER_API_KEY"'
-```
-Output:
-```
-openrouter.ai: 200
-example.com: blocked
-apiserver: blocked
-key in box: openshell:resolve:env:…      ← a sentinel, NOT the real key
-```
+1. In Busola, switch to namespace **`dev-toolbox-system`**.
 
-So this is a *different* tier than ex5, not a weaker one:
+2. In the left navigation, open **Autonomous Fleet → Autonomous Fleet Status**, then the **`fleet-status`** resource. It displays the **LLM Dashboards** / **SAP Cloud Logging** shortcuts as cards.
 
-| | ex5 (scoped-ops) | **ex6 (external agent)** |
-|---|---|---|
-| LLM | in-cluster LiteLLM → SAP AI Core | **public OpenRouter (keyed, key in gateway only)** |
-| Egress | in-cluster proxy only; **no internet** | **`openrouter.ai` + `models.dev` only; nothing else** |
-| Cluster | read-only kubectl (sandbox-viewer) | none |
-| Key in box | sentinel | sentinel |
+   👉 Or open it directly in Busola (replace `xp266-NNN` and `<workshop-domain>`):
 
-Clean up: `openshell sandbox delete agents`
-
-## Exercise 6.5 - From draft to deployable: a correct KRO RGD 🔧
-
-When you ask an agent for *"a KRO ResourceGraphDefinition"*, a free model's first draft is usually **confident but
-wrong** — it reaches for OpenAPI schema (`type`/`properties`/`x-kro`), Helm templating (`{{ .spec.x }}`), or invented
-fields (`spec.nodes`/`components`/`graph`).  
-KRO is a niche CRD the model hasn't memorised.  
-That's the real lesson of
-this exercise: **the agent drafts, the cluster adjudicates — you iterate.**  
-Always validate before trusting:
-
-```bash
-kubectl apply --dry-run=server -f weather-rgd.yaml   # the API server + KRO reject an invalid RGD
-```
-
-KRO's actual rules (what the drafts get wrong):
-- **`spec.schema` is KRO *simple-schema*, not OpenAPI** — each field is `name: type | markers` (types `string`,
-  `integer`, `float`, `boolean`; markers `required=true`, `default=…`). No `properties:`, no `required:` list, no `x-kro`.
-- **Status fields are CEL strings** that read a created resource by its `id`: `${weatherpod.status.phase}`.
-- **Templates substitute instance inputs with CEL** `${schema.spec.<field>}` — **not** `{{ }}`.
-- **The instance's `apiVersion` is `kro.run/v1alpha1`** (group `kro.run`), kind = your `schema.kind`.
-- KRO is **already installed** on your teched runtime — just `kubectl apply`.
-
-A **corrected, deployable** version (keeps the production touches — namespace, ServiceAccount + RBAC, `securityContext`,
-resource limits, two example instances — but uses *real* KRO):
-
-```yaml
----
-apiVersion: v1
-kind: Namespace
-metadata: { name: weather-system }
----
-apiVersion: v1
-kind: ServiceAccount
-metadata: { name: weather-checker, namespace: weather-system }
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata: { name: weather-checker, namespace: weather-system }
-rules:
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list", "watch"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata: { name: weather-checker, namespace: weather-system }
-roleRef: { apiGroup: rbac.authorization.k8s.io, kind: Role, name: weather-checker }
-subjects:
-  - { kind: ServiceAccount, name: weather-checker, namespace: weather-system }
----
-apiVersion: kro.run/v1alpha1
-kind: ResourceGraphDefinition
-metadata: { name: weather }          # RGDs are cluster-scoped (no namespace)
-spec:
-  schema:
-    apiVersion: v1alpha1
-    kind: Weather
-    spec:                            # KRO simple-schema (strings → drop straight into env + the URL)
-      name: string | required=true
-      latitude: string | required=true
-      longitude: string | required=true
-      currentFields: string | default="temperature_2m,relative_humidity_2m,wind_speed_10m"
-      timezone: string | default="auto"
-      sleepSeconds: string | default="3600"
-    status:                          # CEL reading the created Pod by its resource id
-      podPhase: ${weatherpod.status.phase}
-      podIp: ${weatherpod.status.podIP}
-      containerImage: ${weatherpod.status.containerStatuses[0].image}
-  resources:
-    - id: weatherpod
-      template:
-        apiVersion: v1
-        kind: Pod
-        metadata:
-          name: ${schema.spec.name}
-          namespace: weather-system
-          labels: { app.kubernetes.io/name: weather-check, app.kubernetes.io/managed-by: kro }
-        spec:
-          restartPolicy: Never
-          serviceAccountName: weather-checker
-          securityContext: { fsGroup: 1000 }
-          containers:
-            - name: weather-query
-              image: curlimages/curl:latest
-              env:
-                - { name: LATITUDE,       value: ${schema.spec.latitude} }
-                - { name: LONGITUDE,      value: ${schema.spec.longitude} }
-                - { name: CURRENT_FIELDS, value: ${schema.spec.currentFields} }
-                - { name: TIMEZONE,       value: ${schema.spec.timezone} }
-                - { name: SLEEP_SECONDS,  value: ${schema.spec.sleepSeconds} }
-              command: ["/bin/sh", "-c"]
-              args:
-                - |
-                  set -e
-                  echo "Weather for $LATITUDE,$LONGITUDE ($CURRENT_FIELDS)"
-                  curl -sS "https://api.open-meteo.com/v1/forecast?latitude=$LATITUDE&longitude=$LONGITUDE&current=$CURRENT_FIELDS&timezone=$TIMEZONE" | head -c 4096
-                  echo; sleep "$SLEEP_SECONDS"
-              resources:
-                requests: { cpu: 50m, memory: 64Mi }
-                limits:   { cpu: 100m, memory: 128Mi }
-              securityContext:
-                allowPrivilegeEscalation: false
-                runAsNonRoot: true
-                runAsUser: 1000
-                capabilities: { drop: ["ALL"] }
----
-apiVersion: kro.run/v1alpha1       # ← instance of the generated kind, group kro.run
-kind: Weather
-metadata: { name: berlin, namespace: weather-system }
-spec:
-  name: weather-berlin
-  latitude: "52.52"
-  longitude: "13.41"
-  currentFields: "temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m"
-  timezone: "Europe/Berlin"
-  sleepSeconds: "1800"
----
-apiVersion: kro.run/v1alpha1
-kind: Weather
-metadata: { name: newyork, namespace: weather-system }
-spec:
-  name: weather-newyork
-  latitude: "40.7128"
-  longitude: "-74.0060"
-  currentFields: "temperature_2m,relative_humidity_2m,wind_speed_10m"
-  timezone: "America/New_York"
-  sleepSeconds: "3600"
-```
-
-```bash
-kubectl apply --dry-run=server -f weather-rgd.yaml   # validate first
-```
-
-```bash
-kubectl apply -f weather-rgd.yaml                    # then deploy
-```
-
-```bash
-kubectl -n weather-system get weather,pods
-```
-
-```bash
-kubectl -n weather-system get weather berlin -o jsonpath='{.status}'   # CEL-derived status
-```
-
-> [!NOTE]
-> Treat this as *the shape KRO accepts*, not gospel — always `--dry-run=server` first. That round-trip (draft → reject
-> → fix) **is** the skill ex6 is teaching.
+   ```
+   https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/fleetstatuses/fleet-status
+   ```
+<br>![](images/05_03_0010.png)
 
 ## Summary
 
-You added an **external, keyed** LLM provider to the contained-sandbox model, ran three different terminal coding
-agents (opencode, Pi, Qwen Code) against free OpenRouter models, and proved the sandbox still can't reach anything
-but the one allow-listed endpoint — with the real key staying in the gateway.  
-That's the OpenShell provider model
-generalizing from "the in-cluster proxy" to "any governed external endpoint."  
-Back to - [Overview](../../README.md)
+You followed one LLM call's metrics from the LiteLLM proxy through a Kyma Telemetry `MetricPipeline` into SAP Cloud Logging, and read the **LiteLLM Spend** and **LLM Overview** dashboards from Busola — seeing the autonomous-jobs (Sonnet) vs interactive-agents (Opus) spend split that the single-proxy design makes possible.  
+Continue to - [Overview](../../README.md)

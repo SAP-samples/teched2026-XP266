@@ -51,7 +51,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 2. Look at the **run-stats** line in each report's header: **Model · Duration · Cost · Tokens · Agent**.
 
-   That's the real SAP AI Core spend and latency of that single run — the same numbers roll up into the spend dashboard in [Exercise 3](../ex3/README.md).
+   That's the real SAP AI Core spend and latency of that single run — the same numbers roll up into the spend dashboard.
 
 3. Open the same report in **Busola** → namespace `dev-toolbox-system` → **Custom Resources → ClusterHealthReport → `cluster-health-v2`**.
 
@@ -98,7 +98,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 👉 The shipped **v1/v2/v3 recipes are read-only** in the UI — your custom prompts live alongside them and never change the defaults, so you can experiment safely.
 
 > [!NOTE]
-> Your prompt runs inside the **same OpenShell sandbox** as the built-in ones: a read-only cluster token, no internet, writes → `403`. So even a prompt you wrote can only **look and reason** — it can't mutate the cluster or exfiltrate anything. (That containment is [Exercise 5](../ex5/README.md).)
+> Your prompt runs inside the **same OpenShell sandbox** as the built-in ones: a read-only cluster token, no internet, writes → `403`. So even a prompt you wrote can only **look and reason** — it can't mutate the cluster or exfiltrate anything.
 
 ## Exercise 1.4 - The guardrails: read, reason, but don't touch
 
@@ -110,7 +110,7 @@ Three overlapping fences wrap every run:
 - **An unprivileged pod.** The workload runs **non-root** with a read-only root filesystem and dropped capabilities.
 
 > [!NOTE]
-> **Defense in depth.** No single control is trusted alone: the read-only token (can't write or read secrets), the sandbox boundary (no internet, no API-server mutation), non-root + read-only rootfs (can't escalate on the node), and `drop_params` at the proxy (can't send SAP AI Core a malformed request). The agent is useful *because* it's boxed in. The deep dive is [Exercise 5](../ex5/README.md).
+> **Defense in depth.** No single control is trusted alone: the read-only token (can't write or read secrets), the sandbox boundary (no internet, no API-server mutation), non-root + read-only rootfs (can't escalate on the node), and `drop_params` at the proxy (can't send SAP AI Core a malformed request). The agent is useful *because* it's boxed in.
 
 🔧 **Prove it yourself (optional — go deeper).** In a **web terminal** ([Appendix 2](../Appendices/2-web-terminal/README.md)), ask the API server what the web-terminal identity may do, and read the report artifacts directly:  
 Command:
@@ -134,7 +134,7 @@ cluster-admin:    no
 ```
 
 > [!IMPORTANT]
-> **Hand-off — remember this for later.** A run's output is a *shared artifact*: the `ClusterHealthReport` / `cluster-audit` custom resources, plus the raw Goose transcripts. Two downstream consumers read them — the **interactive chat agent** ([Exercise 2](../ex2/README.md)) answers questions about the findings, and a **JupyterHub notebook** ([Exercise 4](../ex4/README.md)) analyses them in Python. *Jobs produce → agents and notebooks consume.*
+> **Hand-off — remember this for later.** A run's output is a *shared artifact*: the `ClusterHealthReport` / `cluster-audit` custom resources, plus the raw Goose transcripts. Two downstream consumers read them — the **interactive chat agent** answers questions about the findings, and a **JupyterHub notebook** analyses them in Python. *Jobs produce → agents and notebooks consume.*
 
 ## Summary
 

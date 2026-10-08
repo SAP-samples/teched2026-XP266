@@ -1,119 +1,76 @@
-# Exercise 3 - Observability and spend
+# Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks
 
-Running LLMs in production raises an obvious question: **what is this costing, and who is spending it?**  
-In this exercise you see how the stack answers that — every call is metered by the LiteLLM proxy, scraped by **Kyma Telemetry**, shipped to **SAP Cloud Logging**, and rendered as dashboards you read straight from Busola.
-
-```
-LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma Telemetry MetricPipeline
-                                                                        │
-                                                                        ▼
-                                                              SAP Cloud Logging (OpenSearch)
-                                                                        │
-                                              ┌─────────────────────────┴───────────────┐
-                                              ▼                                           ▼
-                                    LiteLLM Spend dashboard                      LLM Overview dashboard
-                                    (opened from Busola)                         (opened from Busola)
-```
+👉 This is your **Python playground**.  
+A full **JupyterHub** runs in your cluster, pre-loaded with notebooks and wired — like everything else — to **SAP AI Core through the LiteLLM proxy**.  
+Here you drive **OpenShell sandboxes** from Python: create one, run a command inside it, then let an **agent (goose)** investigate your cluster from within a sandbox.
 
 **Contents**
 
-- 📡 [The telemetry path](#exercise-31---the-telemetry-path-concept)
-- 💰 [Open the spend dashboards](#exercise-32---open-the-spend-dashboards)
-- 🩺 [The FleetStatus card](#exercise-33---the-fleetstatus-card)
+- 🚀 [Sign in and spawn your server](#exercise-31---sign-in-and-spawn-your-server)
+- 📦 [Drive an OpenShell sandbox from Python](#exercise-32---drive-an-openshell-sandbox-from-python)
+- 🪿 [Run an agent inside a sandbox](#exercise-33---run-an-agent-inside-a-sandbox)
 
 
-## Exercise 3.1 - The telemetry path (concept)
+## Exercise 3.1 - Sign in and spawn your server
 
-1. In Busola, open **Custom Resources → MetricPipeline** and open **`sap-cloud-logging`**. It's **cluster-scoped** — one declarative pipe that forwards scraped metrics to SAP Cloud Logging, with no Prometheus server to run and no Grafana to host:
-
-   ```yaml
-   apiVersion: telemetry.kyma-project.io/v1alpha1
-   kind: MetricPipeline
-   metadata:
-     name: sap-cloud-logging          # cluster-scoped — one pipeline for the whole cluster
-   spec:
-     input:
-       prometheus:                    # scrape Prometheus-style metrics from these namespaces
-         enabled: true
-         namespaces:
-           include:
-             - kube-system            # cilium-agent, cilium-operator, hubble-relay
-             - default                # litellm-proxy — the LLM spend metrics
-       istio:
-         enabled: false
-       runtime:                       # kubelet volume metrics → PVC usage as an alertable series
-         enabled: true
-         resources:
-           volume:
-             enabled: true
-           # pod / container / node / statefulset / deployment / daemonset / job: disabled (keep it lean)
-     output:
-       otlp:                          # ship via OTLP to SAP Cloud Logging (mTLS)
-         endpoint:
-           valueFrom:
-             secretKeyRef:
-               name: sap-cloud-logging       # the CLS ingest Secret (endpoint + client cert/key), pre-created for you
-               key: ingest-otlp-endpoint
-         headers:
-           - name: cluster
-             value: xp266-NNN               # tags every metric with your runtime, so fleet dashboards split by cluster
-         tls:
-           cert:
-             valueFrom:
-               secretKeyRef:
-                 name: sap-cloud-logging
-                 key: ingest-otlp-cert
-           key:
-             valueFrom:
-               secretKeyRef:
-                 name: sap-cloud-logging
-                 key: ingest-otlp-key
-   ```
-
-   👉 Look it up live on your own cluster — open it directly in Busola (replace `xp266-NNN` and `<workshop-domain>`):
+1. Open your JupyterHub URL in the browser (handed out with your runtime), e.g.:
 
    ```
-   https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/metricpipelines/sap-cloud-logging
+   https://jupyterhub.xp266-NNN.<workshop-domain>/
    ```
-<br>![](images/05_01_0010.png)
+
+2. Sign in with single sign-on and click **Start My Server**. After a moment JupyterLab opens.
+<br>![](images/07_01_0010.png)
+
+3. In the file browser (left) you'll find the pre-loaded OpenShell notebooks:
+
+   | Notebook | Track | What it does |
+   |---|---|---|
+   | `04-OpenShell-Sandbox-SDK` | 📦 OpenShell SDK | Sandbox create → exec → list → delete; gateway via CLI device-code login. |
+   | `04b-OpenShell-Sandbox-SDK-Headless` | 📦 OpenShell SDK | Same lifecycle, **no CLI** — pure `SandboxClient(tls=None, bearer_token=…)`. |
+   | `05-OpenShell-Goose-Diagnostics-Live` | 🪿 OpenShell + goose | Agent runs **live read-only kubectl** in a scoped sandbox and writes a report. |
+   | `05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK` | 🪿 OpenShell + goose | The same live investigation, headless (client-credentials) / pure SDK. |
+   | `06-OpenShell-Goose-Diagnostics-Snapshot` | 🪿 OpenShell + goose | goose over a **static** `kyma diagnose` snapshot — no live cluster access. |
+   | `07-OpenShell-Goose-Diagnostics-FromReport` | 🪿 OpenShell + goose | Triage a **stored** `ClusterHealthReport`. |
 
 > [!NOTE]
-> The LiteLLM proxy exposes Prometheus-style metrics (spend per key, tokens in/out, per-model latency). A **pod annotation** marks it for scraping; the `MetricPipeline` (managed by the Kyma **Telemetry** module) ships those metrics out via OTLP to **SAP Cloud Logging**, where they're stored in OpenSearch and visualized. This is the same managed-telemetry pattern SAP BTP gives you for logs, metrics, and traces — you *use* it, you don't operate it.
+> The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
 
-## Exercise 3.2 - Open the spend dashboards
+## Exercise 3.2 - Drive an OpenShell sandbox from Python
 
-The dashboards are one click away from Busola's left navigation.
+A **sandbox** is a disposable, per-session pod that _by construction_ can't reach the internet or the cluster API.  
+Here you drive its whole lifecycle from Python.
 
-1. In Busola, open the **SAP Cloud Logging** navigation entry, then the **LiteLLM Spend** dashboard link. It opens SAP Cloud Logging (OpenSearch Dashboards) in a new tab, single sign-on.
-<br>![](images/05_02_0010.png)
+👉 Open **`04-OpenShell-Sandbox-SDK.ipynb`** and run every cell.  
+It registers the in-cluster OpenShell gateway, then uses the Python `SandboxClient` to **create → exec → list → delete** a minimal sandbox.
 
-2. Read the split. You'll see spend attributed by **API key / caller** and by **model**:
+- When a cell triggers a one-time **device-code login**, open the printed URL in your browser and complete it with your workshop single sign-on — the notebook then holds the session for you.
+- Watch the lifecycle: a sandbox is created, your `exec` runs a command inside it, you list the live sandboxes, and the sandbox is deleted — nothing is left running.
 
-   | Caller | Tier / model | Typical share |
-   |---|---|---|
-   | Goose diagnostic jobs (ex1) | `reasoning-fast` — Sonnet | steady, scheduled |
-   | Chat + terminal agents (Appendix 2, ex2) | `reasoning-hard` — Opus | bursty, interactive |
-   | JupyterHub notebooks (ex4) | whatever you call | your experiments show up here |
-
-3. Open the **LLM Overview** dashboard for request volume, token throughput, and per-model latency.
+> [!NOTE]
+> This minimal sandbox is **compute-only**: it has no cluster credentials and no route out. It's the blank canvas; the next step adds an agent and a scoped, read-only cluster identity.
 
 > [!TIP]
-> This is the pay-off of routing **everything through one proxy** (Appendix 1): because no agent talks to a model directly, *every* token is attributable. Trigger a diagnose run (ex1) or chat with the agent (ex2), wait a minute, and watch your own activity appear on the dashboard.
+> Prefer no browser step? **`04b-OpenShell-Sandbox-SDK-Headless.ipynb`** runs the identical lifecycle with **no CLI** — a direct `SandboxClient(tls=None, bearer_token=…)` against the in-cluster gateway. Same result, machine-to-machine auth.
 
-## Exercise 3.3 - The FleetStatus card
+## Exercise 3.3 - Run an agent inside a sandbox
 
-1. In Busola, switch to namespace **`dev-toolbox-system`**.
+Now put an agent **in** the box: **goose**, through the LiteLLM proxy, reasoning over your cluster from inside a sandbox that bounds what it can touch.
 
-2. In the left navigation, open **Autonomous Fleet → Autonomous Fleet Status**, then the **`fleet-status`** resource. It displays the **LLM Dashboards** / **SAP Cloud Logging** shortcuts as cards.
+1. 👉 Open **`05-OpenShell-Goose-Diagnostics-Live.ipynb`** and run all cells.  
+   goose runs **live, read-only `kubectl`** inside a scoped sandbox (the `scoped-ops` policy) and writes a cluster-health report.
 
-   👉 Or open it directly in Busola (replace `xp266-NNN` and `<workshop-domain>`):
+2. Open **`06-OpenShell-Goose-Diagnostics-Snapshot.ipynb`** and run all cells.  
+   Same agent, **no live cluster access** — it reasons over a **static** `kyma diagnose` snapshot inside a fixed-policy sandbox. Compare its report with the live one from step 1.
 
-   ```
-   https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/fleetstatuses/fleet-status
-   ```
-<br>![](images/05_03_0010.png)
+> [!IMPORTANT]
+> The sandbox is the guardrail, not the prompt. In step 1 goose gets a short-lived **read-only** identity (`get`/`list`/`watch`, no secrets) and no internet; a write or a secret-read comes back `403`. In step 2 it has **no cluster access at all**. You can hand either one any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt.
+
+> [!TIP]
+> Advanced variants of the same investigation live alongside: **`05b`** (headless client-credentials, no browser), **`05c`** (pure SDK, no CLI), and **`07`** (triage a stored `ClusterHealthReport` instead of the cluster).
 
 ## Summary
 
-You followed one LLM call's metrics from the LiteLLM proxy through a Kyma Telemetry `MetricPipeline` into SAP Cloud Logging, and read the **LiteLLM Spend** and **LLM Overview** dashboards from Busola — seeing the autonomous-jobs (Sonnet) vs interactive-agents (Opus) spend split that the single-proxy design makes possible.  
-Continue to - [Exercise 4 - Explore OpenShell sandboxes with JupyterHub notebooks](../ex4/README.md)
+You signed in to JupyterHub, drove the full **OpenShell sandbox lifecycle** from the Python SDK, and ran an **agent inside a sandbox** — live read-only `kubectl` and a static snapshot — watching the same read-only, no-egress guardrails that bound the CLI agent.  
+You now have the sandboxed-agent pattern in Python, inside your own Kyma cluster.  
+Continue to - [Exercise 4 - Your own sandboxed agent: OpenShell on Kyma](../ex4/README.md)

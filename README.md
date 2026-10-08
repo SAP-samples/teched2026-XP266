@@ -43,10 +43,10 @@ Everything is **already deployed and wired up for you** on your personal Kyma ru
 
 - 🩺 **experiment with the diagnostics' prompts** and watch the Cluster Health Reports change ([Exercise 1](exercises/ex1/));
 - 💬 chat with the **interactive chat agent** ([Exercise 2](exercises/ex2/));
-- 💰 read the **spend dashboards** ([Exercise 3](exercises/ex3/));
-- 📓 explore **OpenShell sandboxes** with **JupyterHub notebooks** ([Exercise 4](exercises/ex4/)) — and SAP AI Core from Python ([Appendix 3](exercises/Appendices/3-sap-ai-core-python/));
-- 🛡️ watch a **sandboxed agent** hit its guardrails — denied the internet and the API server ([Exercise 5](exercises/ex5/));
-- ⚙️ and run the **OpenShell-admin** and **NVIDIA** GitHub Actions workflows ([Exercise 5](exercises/ex5/) · [Exercise 6](exercises/ex6/)).
+- 📓 explore **OpenShell sandboxes** with **JupyterHub notebooks** ([Exercise 3](exercises/ex3/));
+- 🛡️ watch a **sandboxed agent** hit its guardrails — denied the internet and the API server ([Exercise 4](exercises/ex4/));
+- ⚙️ run the **OpenShell-admin** and **NVIDIA** GitHub Actions workflows ([Exercise 4](exercises/ex4/) · [Exercise 5](exercises/ex5/));
+- 💰 and close with the **spend dashboards** ([Exercise 6](exercises/ex6/)).
 
 The **LLM gateway** (calling SAP AI Core through the proxy) and the **in-cluster web terminal** are covered in the appendices.  
 This is the **self-hosted agent layer** of the SAP AI landscape — everything below runs **inside your Kyma runtime** and reaches SAP AI Core through one proxy:
@@ -106,10 +106,10 @@ flowchart LR
 - [Getting Started](exercises/ex0/) — access your Kyma runtime and tour the pre-deployed AI-ops stack
 - [Exercise 1 - Trigger and shape the Cluster Health Reports](exercises/ex1/) — drive the v1/v2/v3 reports from the dev-toolbox UI, write your own prompt, and see the read-only sandbox guardrails
 - [Exercise 2 - Chat with the interactive agent](exercises/ex2/) — the interactive chat UI, and the hand-off from the diagnostic jobs
-- [Exercise 3 - Observability and spend](exercises/ex3/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards
-- [Exercise 4 - Explore OpenShell sandboxes with JupyterHub notebooks](exercises/ex4/) — drive the OpenShell sandbox lifecycle from Python and run an agent inside a sandbox (SAP AI Core from Python → Appendix 3)
-- [Exercise 5 - Your own sandboxed agent: the OpenShell CLI dance](exercises/ex5/) 🔧 *(advanced / instructor-demo)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
-- [Exercise 6 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex6/) 🔧 *(advanced / CLI)* — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
+- [Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks](exercises/ex3/) — drive the OpenShell sandbox lifecycle from Python and run an agent inside a sandbox
+- [Exercise 4 - Your own sandboxed agent: OpenShell on Kyma](exercises/ex4/) 🔧 *(advanced / instructor-demo)* — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
+- [Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex5/) 🔧 *(advanced / CLI)* — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
+- [Exercise 6 - Observability and spend](exercises/ex6/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards; the closing activity of the session
 
 ### Appendix
 

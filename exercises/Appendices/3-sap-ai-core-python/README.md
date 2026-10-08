@@ -13,7 +13,7 @@ openai client  ──▶  http://litellm-proxy.default:4001/v1  ──▶  SAP A
 ```
 
 > [!NOTE]
-> First spin up your server — the sign-in and **Start My Server** steps are in [Exercise 4.1](../../ex4/README.md#exercise-41---sign-in-and-spawn-your-server). This appendix picks up in JupyterLab with the notebooks open.
+> First spin up your server — the sign-in and **Start My Server** steps are in [Exercise 3.1](../../ex3/README.md#exercise-31---sign-in-and-spawn-your-server). This appendix picks up in JupyterLab with the notebooks open.
 
 **Contents**
 
@@ -34,7 +34,7 @@ openai client  ──▶  http://litellm-proxy.default:4001/v1  ──▶  SAP A
 3. Open **`03-SAP-AI-Core-Model-Test.ipynb`** and run it to compare several models side by side.
 
 > [!TIP]
-> Every completion you run here shows up on the **spend dashboard** from [Exercise 3](../../ex3/README.md) — go back and watch your own JupyterHub activity appear.
+> Every completion you run here shows up on the **spend dashboard** — go back and watch your own JupyterHub activity appear.
 
 ## Appendix 3.2 - Guided exercises (copy-paste into a new cell)
 
@@ -125,10 +125,10 @@ The SAP AI Core notebooks and the upstream JupyterLab samples pre-loaded in your
 
 > [!NOTE]
 > Notebooks ship in the image and are copied to your home at spawn — **open a fresh server to pick up any changes.**  
-> The OpenShell sandbox notebooks (`04`–`07`) are in [Exercise 4](../../ex4/README.md#exercise-41---sign-in-and-spawn-your-server).
+> The OpenShell sandbox notebooks (`04`–`07`) are in [Exercise 3](../../ex3/README.md#exercise-31---sign-in-and-spawn-your-server).
 
 ## Summary
 
 You ran the pre-loaded SAP AI Core notebooks, did guided Python exercises (chat, embeddings, tool calling, and the diagnostic hand-off), and created your own notebook with a copy-paste connection snippet — a full Python playground against SAP AI Core running inside your own Kyma cluster.  
-To drive **OpenShell sandboxes** from the same JupyterHub, see [Exercise 4](../../ex4/README.md).  
+To drive **OpenShell sandboxes** from the same JupyterHub, see [Exercise 3](../../ex3/README.md).  
 Back to - [Overview](../../../README.md)

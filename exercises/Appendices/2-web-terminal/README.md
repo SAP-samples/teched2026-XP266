@@ -202,6 +202,6 @@ Same proxy, same SAP AI Core, now driven interactively by you.
 Next, the same recipe runs on its own.
 
 > [!TIP]
-> Want the same agents but **fenced inside a contained, read-only sandbox** (no internet, `secrets` excluded, writes → 403)? [**Exercise 5**](../../ex5/README.md) (§5.5) runs Goose/Claude from *this same terminal* via one command — **`scoped-ops`** — which provisions an OpenShell sandbox with a short-lived read-only token and drops you inside.
+> Want the same agents but **fenced inside a contained, read-only sandbox** (no internet, `secrets` excluded, writes → 403)? [**Exercise 4**](../../ex4/README.md) (§4.5) runs Goose/Claude from *this same terminal* via one command — **`scoped-ops`** — which provisions an OpenShell sandbox with a short-lived read-only token and drops you inside.
 
 Back to - [Overview](../../../README.md)
