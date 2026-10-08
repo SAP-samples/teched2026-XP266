@@ -1,5 +1,14 @@
 # Exercise 4 - Your own sandboxed agent: OpenShell on Kyma 🔧
 
+**OpenShell** runs the workshop's tools image (`goose` / Claude Code / `kubectl` / `kyma`) inside a **runtime-isolated `Sandbox`** that can reason via SAP AI Core yet is **physically unable** to touch the cluster API or the public internet — *the sandbox itself is the guardrail*.  
+The *why*, the protection layers, the architecture, and a glossary are in **[Appendix 4 - OpenShell: concepts & architecture](../Appendices/4-openshell-concepts/README.md)**.  
+This exercise is the **hands-on** — run it either way:
+
+**Contents**
+
+- ⚡ **4a** *(easy path)* — run it as a **GitHub Action** (the Tip below)
+- 🛠️ **4b** *(optional)* — [Hands-on: the OpenShell CLI in the Busola web terminal](#hands-on-the-openshell-cli-in-the-busola-web-terminal) — 4.1 CLI & gateway · 4.2 provider · 4.3 sandbox · 4.4 guardrail · 4.5 scoped-ops
+
 > [!TIP]
 > **Easy path — run it as a workflow (no CLI, no admin role).** The hands-on below is the full manual OpenShell CLI
 > dance — do it if you want to *feel* every layer. But you can see **Goose running inside a contained OpenShell sandbox**
@@ -11,17 +20,9 @@
 >
 > Want to see it under the hood? Keep reading — the manual walk-through is below.
 
-**OpenShell** runs the workshop's tools image (`goose` / Claude Code / `kubectl` / `kyma`) inside a **runtime-isolated `Sandbox`** that can reason via SAP AI Core yet is **physically unable** to touch the cluster API or the public internet — *the sandbox itself is the guardrail*.  
-The *why*, the protection layers, the architecture, and a glossary are in **[Appendix 4 - OpenShell: concepts & architecture](../Appendices/4-openshell-concepts/README.md)**.  
-This exercise is the **hands-on**: the one-click **GitHub Action** above (4a), or the full **manual CLI dance** below (4b, optional).
-
-**Contents**
-
-- 🛠️ [Hands-on: the OpenShell CLI dance](#hands-on-the-openshell-cli-dance) — 4.1 CLI & gateway · 4.2 provider · 4.3 sandbox · 4.4 guardrail · 4.5 scoped-ops
-
 ---
 
-## Hands-on: the OpenShell CLI dance
+## Hands-on: the OpenShell CLI in the Busola web terminal
 
 You'll register the gateway (4.1), wire the contained inference provider once (4.2), create a contained sandbox and drive
 an agent inside it (4.3), prove the guardrail holds (4.4), then open the read-only **scoped-ops** tier (4.5).

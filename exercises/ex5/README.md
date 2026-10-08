@@ -1,15 +1,5 @@
 # Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter 🔧
 
-> [!TIP]
-> **Easy path — run it as a workflow (no CLI).** Everything below is the manual CLI flow. To run the external coding
-> agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
->
-> | Run this workflow | What it does |
-> |---|---|
-> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. Pick your `student_cluster` (`xp266-NNN`), the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`), a **`model`** (a `:free` OpenRouter model), and a **`scenario`** → **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. Same agents, same containment, zero local tooling. |
->
-> Prefer the hands-on CLI? Continue below.
-
 The contained OpenShell sandbox has **no internet** — its only exit is the in-cluster LiteLLM proxy, so the
 agent can't reach the apiserver or the public web.  
 👉 This exercise flips exactly one dial: a **4th trust tier** — a
@@ -22,11 +12,24 @@ How the provider/profile model works and how OpenRouter compares to SAP AI Core 
 
 **Contents**
 
-- 🔍 [Inspect the pieces](#exercise-51---inspect-the-pieces-ui)
-- 📦 [Create a sandbox with the agents + OpenRouter](#exercise-52---create-a-sandbox-with-the-agents--openrouter-)
-- ▶️ [Run an agent against a free model](#exercise-53---run-an-agent-against-a-free-model-)
-- 🛡️ [Prove it's still contained](#exercise-54---prove-its-still-contained-)
-- 🏗️ [From draft to deployable: a correct KRO RGD](#exercise-55---from-draft-to-deployable-a-correct-kro-rgd-)
+- ⚡ **5a** *(easy path)* — run it as a **GitHub Action** (the Tip below)
+- 🛠️ **5b** *(optional)* — the OpenShell CLI in the Busola web terminal:
+  - 🔍 [Inspect the pieces](#exercise-51---inspect-the-pieces-ui)
+  - 📦 [Create a sandbox with the agents + OpenRouter](#exercise-52---create-a-sandbox-with-the-agents--openrouter-)
+  - ▶️ [Run an agent against a free model](#exercise-53---run-an-agent-against-a-free-model-)
+  - 🛡️ [Prove it's still contained](#exercise-54---prove-its-still-contained-)
+  - 🏗️ [From draft to deployable: a correct KRO RGD](#exercise-55---from-draft-to-deployable-a-correct-kro-rgd-)
+
+> [!TIP]
+> **Easy path — run it as a workflow (no CLI).** Everything below is the manual CLI flow. To run the external coding
+> agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
+>
+> | Run this workflow | What it does |
+> |---|---|
+> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. Pick your `student_cluster` (`xp266-NNN`), the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`), a **`model`** (a `:free` OpenRouter model), and a **`scenario`** → **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. Same agents, same containment, zero local tooling. |
+>
+> Prefer the hands-on CLI? Continue below.
+
 
 
 ## Exercise 5.1 - Inspect the pieces (UI)
