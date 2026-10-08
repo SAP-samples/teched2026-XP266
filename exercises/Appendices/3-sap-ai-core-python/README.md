@@ -20,6 +20,7 @@ openai client  ──▶  http://litellm-proxy.default:4001/v1  ──▶  SAP A
 - 📓 [Walk the sample notebooks](#appendix-31---walk-the-sample-notebooks)
 - 🐍 [Guided exercises](#appendix-32---guided-exercises-copy-paste-into-a-new-cell)
 - ✨ [Create your own](#appendix-33---create-your-own)
+- 📚 [The notebook set](#appendix-34---the-notebook-set)
 
 
 ## Appendix 3.1 - Walk the sample notebooks
@@ -108,6 +109,23 @@ print("connected:", [m.id for m in client.models.list().data][:5])
 
 > [!NOTE]
 > This is the same LLM path as every other exercise — the `openai` client simply points at the in-cluster LiteLLM proxy. Anything you prototype here uses the exact routing, auth, and cost-tracking that the production agents use.
+
+## Appendix 3.4 - The notebook set
+
+The SAP AI Core notebooks and the upstream JupyterLab samples pre-loaded in your JupyterHub:
+
+| Notebook | Track | What it demonstrates |
+|---|---|---|
+| `00-SAP-AI-Core-Credentials` | ☁️ AI Core | Builds the `client` (proxy → SAP AI Core). **Run first** on this track. |
+| `01-Bedrock-Models-via-SAP-AI-Core` | ☁️ AI Core | Chat completions against Claude models on SAP AI Core. |
+| `02-Tool-Calling-Bedrock-via-SAP-AI-Core` | ☁️ AI Core | Function / tool calling. |
+| `03-SAP-AI-Core-Model-Test` | ☁️ AI Core | Sweep several models and compare responses. |
+| `Cluster_Health` | ☁️ AI Core | The Python hand-off — reads the Goose diagnostic artifacts from [Exercise 1](../../ex1/README.md) and analyzes them. |
+| `Lorenz`, `Crank_Nicolson`, `Complex Location`, `Earthdata`, `JupyterLab APOD` | 🧪 upstream | Stock JupyterLab samples — a familiar playground (`Lorenz` is a quick "does my kernel work?" check). |
+
+> [!NOTE]
+> Notebooks ship in the image and are copied to your home at spawn — **open a fresh server to pick up any changes.**  
+> The OpenShell sandbox notebooks (`04`–`07`) are in [Exercise 4](../../ex4/README.md#exercise-44---the-openshell-notebook-set).
 
 ## Summary
 

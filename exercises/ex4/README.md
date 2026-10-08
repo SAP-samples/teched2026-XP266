@@ -14,7 +14,7 @@ It is the Python twin of the CLI walkthrough in [Exercise 5](../ex5/README.md) �
 - 🚀 [Sign in and spawn your server](#exercise-41---sign-in-and-spawn-your-server)
 - 📦 [Drive an OpenShell sandbox from Python](#exercise-42---drive-an-openshell-sandbox-from-python)
 - 🪿 [Run an agent inside a sandbox](#exercise-43---run-an-agent-inside-a-sandbox)
-- 📚 [The full notebook set](#exercise-44---the-full-notebook-set)
+- 📚 [The OpenShell notebook set](#exercise-44---the-openshell-notebook-set)
 
 
 ## Exercise 4.1 - Sign in and spawn your server
@@ -36,7 +36,7 @@ It is the Python twin of the CLI walkthrough in [Exercise 5](../ex5/README.md) �
    | `05`, `06`, `07` | 🪿 OpenShell + goose | run an agent **inside** a sandbox against your cluster |
    | `00`–`03` | ☁️ SAP AI Core | call AI Core models from Python — see [Appendix 3](../Appendices/3-sap-ai-core-python/README.md) |
 
-   The full list (every variant, plus the upstream JupyterLab samples) is in [Exercise 4.4](#exercise-44---the-full-notebook-set).
+   The SAP AI Core notebooks (`00`–`03`, `Cluster_Health`) and the upstream JupyterLab samples live in [Appendix 3](../Appendices/3-sap-ai-core-python/README.md); the OpenShell set is in [Exercise 4.4](#exercise-44---the-openshell-notebook-set).
 
 > [!NOTE]
 > The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
@@ -74,9 +74,9 @@ Now put an agent **in** the box: **goose**, through the LiteLLM proxy, reasoning
 > [!TIP]
 > Advanced variants of the same investigation live alongside: **`05b`** (headless client-credentials, no browser), **`05c`** (pure SDK, no CLI), and **`07`** (triage the stored `ClusterHealthReport` from [Exercise 1](../ex1/README.md) instead of the cluster).
 
-## Exercise 4.4 - The full notebook set
+## Exercise 4.4 - The OpenShell notebook set
 
-Everything pre-loaded in your JupyterHub:
+The OpenShell notebooks pre-loaded in your JupyterHub:
 
 | Notebook | Track | What it demonstrates |
 |---|---|---|
@@ -86,12 +86,10 @@ Everything pre-loaded in your JupyterHub:
 | `05b` / `05c` | 🪿 goose | The same live investigation, headless (client-credentials) / pure SDK. |
 | `06-…-Snapshot` | 🪿 goose | goose over a **static** `kyma diagnose` snapshot — no live cluster access. |
 | `07-…-FromReport` | 🪿 goose | Triage the **stored** `ClusterHealthReport` from [Exercise 1](../ex1/README.md). |
-| `00-SAP-AI-Core-Credentials` | ☁️ AI Core | Builds the `client` (proxy → SAP AI Core) — [Appendix 3](../Appendices/3-sap-ai-core-python/README.md). |
-| `01`–`03`, `Cluster_Health` | ☁️ AI Core | Chat, tool calling, model sweep, the Python hand-off — [Appendix 3](../Appendices/3-sap-ai-core-python/README.md). |
-| `Lorenz`, `Crank_Nicolson`, `Complex Location`, `Earthdata`, `JupyterLab APOD` | 🧪 upstream | Stock JupyterLab samples — a familiar playground (`Lorenz` is a quick "does my kernel work?" check). |
 
 > [!NOTE]
-> Notebooks ship in the image and are copied to your home at spawn — **open a fresh server to pick up any changes.**
+> Notebooks ship in the image and are copied to your home at spawn — **open a fresh server to pick up any changes.**  
+> The SAP AI Core notebooks and the upstream JupyterLab samples are listed in [Appendix 3 - SAP AI Core from Python](../Appendices/3-sap-ai-core-python/README.md).
 
 ## Summary
 
