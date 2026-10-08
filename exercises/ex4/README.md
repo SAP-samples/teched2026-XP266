@@ -8,11 +8,11 @@ This exercise is the **hands-on** — run it either way:
 
 - ⚡ **4a** *(easy path)* — run it as a **GitHub Action** (the Tip below)
 - 🛠️ **4b** *(optional)* — [Hands-on: the OpenShell CLI in the Busola web terminal](#hands-on-the-openshell-cli-in-the-busola-web-terminal)
-  - 🔑 4.1 CLI & gateway
-  - 🔀 4.2 provider
-  - 📦 4.3 sandbox
-  - 🛡️ 4.4 guardrail
-  - 🔎 4.5 scoped-ops
+  - 🔑 [4.1 CLI & gateway](#41---get-the-cli-and-reach-the-gateway)
+  - 🔀 [4.2 provider](#42---wire-the-contained-inference-provider-one-time-per-gateway)
+  - 📦 [4.3 sandbox](#43---create-a-sandbox-from-the-tools-image-and-use-it)
+  - 🛡️ [4.4 guardrail](#44---see-the-guardrail-hold)
+  - 🔎 [4.5 scoped-ops](#45---scoped-ops-an-agent-that-reads-the-cluster-one-command-)
 
 > [!TIP]
 > **Easy path — run it as a workflow (no CLI, no admin role).** The hands-on below is the full manual OpenShell CLI
