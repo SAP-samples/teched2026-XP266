@@ -64,15 +64,22 @@ Now `openshell sandbox list` works from the terminal — continue with 5.2.
 
 ## Exercise 5.2 - Create a sandbox with the agents + OpenRouter 🔧
 
-In a web terminal, with your gateway session active:  
-Command:
+In a web terminal, with your gateway session active.
+
+👉 First pick a **current** `:free` model — the lineup **rotates** (models go paid without notice, as `qwen/qwen3.8-27b:free` did). Browse [openrouter.ai/models?max_price=0](https://openrouter.ai/models?max_price=0) for a free, tool-calling chat model and export your choice:
+```bash
+export FREE_MODEL=<provider/model:free>   # e.g. a current :free Qwen or NVIDIA Nemotron model
+```
+
+Then create the sandbox:
 ```bash
 openshell sandbox create --name agents \
   --from localhost:32137/openrouter-agents:latest \
   --provider openrouter \
   --env OPENAI_BASE_URL=https://openrouter.ai/api/v1 \
-  --env OPENAI_MODEL=qwen/qwen3.8-27b:free \
-  --detach -- sleep infinity
+  --env OPENAI_MODEL=$FREE_MODEL \
+  --detach -- sleep infinity &
+# ^ backgrounded with & — press Enter after it prints "Created sandbox" to get your prompt back
 openshell sandbox list        # wait for PHASE=Ready
 ```
 `--provider openrouter` grants the sandbox egress to `openrouter.ai` (+ `models.dev`) **for the agent binaries only**
@@ -84,7 +91,7 @@ and injects the key sentinel.
 
 Command (opencode — the cleanest):
 ```bash
-openshell sandbox exec --name agents -- opencode run -m openrouter/qwen/qwen3.8-27b:free "Reply with one word: PONG"
+openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "Reply with one word: PONG"
 ```
 Output:
 ```
@@ -92,7 +99,7 @@ PONG
 ```
 Try Pi too:
 ```bash
-openshell sandbox exec --name agents -- pi -p --model openrouter/qwen/qwen3.8-27b:free "List 3 facts about Kyma."
+openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."
 ```
 
 > [!TIP]
