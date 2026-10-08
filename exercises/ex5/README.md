@@ -66,9 +66,9 @@ Now `openshell sandbox list` works from the terminal — continue with 5.2.
 
 In a web terminal, with your gateway session active.
 
-👉 First pick a **current** `:free` model — the lineup **rotates** (models go paid without notice, as `qwen/qwen3.8-27b:free` did). Browse [openrouter.ai/models?max_price=0](https://openrouter.ai/models?max_price=0) for a free, tool-calling chat model and export your choice:
+👉 First pick a **current** `:free` model — the lineup **rotates** (models go paid without notice, as `qwen/qwen3.8-27b:free` did). Browse [openrouter.ai/models?max_price=0&q=nvidia](https://openrouter.ai/models?max_price=0&q=nvidia) — free NVIDIA models (this workshop follows NVIDIA's OpenRouter tutorial) — pick a tool-calling chat model and export your choice:
 ```bash
-export FREE_MODEL=<provider/model:free>   # e.g. a current :free Qwen or NVIDIA Nemotron model
+export FREE_MODEL=nvidia/nemotron-3.5-lightning:free   # a current :free NVIDIA model — swap if it goes paid
 ```
 
 Then create the sandbox:
