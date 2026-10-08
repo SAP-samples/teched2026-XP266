@@ -21,9 +21,9 @@ agent can't reach the apiserver or the public web.
 > To run the external coding
 > agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
 >
-> | Run this workflow | What it does |
-> |---|---|
-> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster.<br>👉 Pick your `student_cluster` (`xp266-NNN`),<br>the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`),<br>a **`model`** (a `:free` OpenRouter model),<br>and a **`scenario`** →<br>👉 **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. Same agents, same containment, zero local tooling. |
+> | Run this workflow | What it does | Workflow inputs |
+> |---|---|---|
+> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. Same agents, same containment, zero local tooling. | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`)<br>• a **`model`** (a `:free` OpenRouter model)<br>• a **`scenario`**<br>👉 **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. |
 >
 > Prefer the hands-on CLI? Continue below.
 
