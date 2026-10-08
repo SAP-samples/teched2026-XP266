@@ -7,7 +7,7 @@ This exercise is the **hands-on** — run it either way:
 **Contents**
 
 - ⚡ **4a** *(easy path)* — run it as a **GitHub Action** (the Tip below)
-- 🛠️ **4b** *(optional)* — [Hands-on: the OpenShell CLI in the Busola web terminal](#hands-on-the-openshell-cli-in-the-busola-web-terminal)
+- 🛠️ **4b** *(optional)* — [Practice the OpenShell CLI in the in-cluster web terminal](#4b-practice-the-openshell-cli-in-the-in-cluster-web-terminal)
   - 🔑 [4.1 terminal & gateway](#41---open-the-terminal-and-reach-the-gateway)
   - 🔀 [4.2 providers (pre-created)](#42---providers-pre-created--nothing-to-wire)
   - 📦 [4.3 sandbox](#43---create-a-sandbox-from-the-tools-image-and-use-it)
@@ -27,14 +27,14 @@ This exercise is the **hands-on** — run it either way:
 
 ---
 
-## Hands-on: the OpenShell CLI in the Busola web terminal
+## 4b. Practice the OpenShell CLI in the in-cluster web terminal
 
 You'll reach the gateway (4.1), check the pre-created providers (4.2), create a contained sandbox and drive
 an agent inside it (4.3), prove the guardrail holds (4.4), then open the read-only **scoped-ops** tier (4.5).
 
 ### 4.1 - Open the terminal and reach the gateway
 
-The `openshell` CLI is **pre-installed in the Busola web terminal** — nothing to download.  
+The `openshell` CLI is **pre-installed in the embedded web terminal** — nothing to download.  
 The terminal runs *inside* the cluster, so you reach the gateway's in-cluster Service directly (no HTTPS host, no port-forward).  
 The gateway is **OIDC-gated** — it validates your Keycloak token itself.
 
