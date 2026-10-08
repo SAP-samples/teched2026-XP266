@@ -124,10 +124,11 @@ known-good free picks:
 | **`nvidia/nemotron-3-ultra-550b-a55b:free`** | large, higher-quality — your `$FREE_MODEL` default |
 | **`nvidia/nemotron-3.5-lightning:free`** | smaller and faster — if the ultra is busy or rate-limited |
 
-The `:free` lineup **rotates** — to list the models that are free right now, run:
-```bash
-openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'
-```
+> [!TIP]
+> The `:free` lineup **rotates** — to list the models that are free right now, run:
+> ```bash
+> openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'
+> ```
 
 Run opencode:
 ```bash
