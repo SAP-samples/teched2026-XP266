@@ -112,7 +112,7 @@ The agent never sees the real key, and the sandbox reaches nothing but the gatew
 |---|---|---|
 | 🧩 **opencode** | the open-source [opencode.ai](https://opencode.ai) coding agent (one Bun binary) | `opencode run -m openrouter/<id> "…"` (one-shot) · `opencode` (full-screen TUI) |
 | 🥧 **Pi** | [`@earendil-works/pi-coding-agent`](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) — a small Node coding agent | `pi -p --model openrouter/<id> "…"` (one-shot) · `pi` (TUI) |
-| 🐉 **Qwen Code** | [`@qwen-code/qwen-code`](https://github.com/QwenLM/qwen-code) — an **OpenAI-compatible** agent | `qwen` (TUI only) — takes **no** `-m` flag; reads `OPENAI_MODEL` (pre-set to your `$FREE_MODEL`) |
+| 🐉 **Qwen Code** | [`@qwen-code/qwen-code`](https://github.com/QwenLM/qwen-code) — an **OpenAI-compatible** agent | `qwen -p "…"` (one-shot) · `qwen` (TUI) — takes **no** `-m` flag; reads `OPENAI_MODEL` (pre-set to your `$FREE_MODEL`) |
 
 **The models — NVIDIA Nemotron, free on OpenRouter.** OpenRouter puts many providers behind one endpoint, and its
 `:free` tier includes NVIDIA's **Nemotron** family. Because the agents call tools, the model must be a
@@ -141,11 +141,11 @@ Try Pi too:
 ```bash
 openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."
 ```
-Run Qwen Code — it's **interactive**, so this drops you into its TUI (already using your `$FREE_MODEL`):
+Qwen Code too — it takes **no** `-m` flag (it uses the `OPENAI_MODEL` set in the box, your `$FREE_MODEL`), and `-p` runs it headless:
 ```bash
-openshell sandbox exec --name agents -- qwen
+openshell sandbox exec --name agents -- qwen -p "List 3 facts about Kyma."
 ```
-Type a prompt at the TUI (e.g. *List 3 facts about Kyma.*); `/quit` (or `Ctrl-C`) to leave — the sandbox keeps running.
+(Drop the `-p "…"` for its interactive TUI: `openshell sandbox exec --name agents -- qwen`.)
 
 ## Exercise 5.4 - Prove it's still contained 🔧
 
