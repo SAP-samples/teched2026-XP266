@@ -54,7 +54,8 @@ One image, three agents (all installed in `openrouter-agents:latest`):
 **SAP AI Core** is SAP's
 managed inference gateway, reached in-cluster through the **LiteLLM proxy**.  
 To LiteLLM they're the **same shape** (an
-OpenAI-compatible gateway behind one credential), so one proxy can front **both**.  
+OpenAI-compatible gateway behind one credential) — and LiteLLM has a native `openrouter/…` route, so a single
+in-cluster LiteLLM proxy can be pointed at **either** AI Core or OpenRouter.  
 The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.**  
 OpenRouter only routes to its own public
 upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
@@ -63,7 +64,7 @@ the reverse.
 | | SAP AI Core (in-cluster) | OpenRouter (this exercise — **direct**) |
 |---|---|---|
 | Path | agent → LiteLLM proxy → **SAP AI Core** | agent → **OpenRouter** (one allow-listed external host) |
-| Key | none in the box (ClusterIP, plain-HTTP) | real key in the gateway; box sees a sentinel |
+| Key in box | **sentinel** (real key in the gateway) | **sentinel** (real key in the gateway) |
 | Internet | none | one host: `openrouter.ai` |
 
 This exercise keeps the agent talking to OpenRouter **directly** — that external, allow-listed, keyed endpoint *is* the 4th
