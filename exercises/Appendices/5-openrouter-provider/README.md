@@ -5,7 +5,7 @@
 **Contents**
 
 - 🧩 [How it works: profile → provider → sandbox](#how-it-works--profile--provider--sandbox)
-- 🔀 [OpenRouter vs SAP AI Core](#openrouter-vs-sap-ai-core--the-same-shape-to-litellm)
+- 🔀 [OpenRouter vs SAP AI Core](#openrouter-vs-sap-ai-core--the-same-shape)
 
 ---
 
@@ -47,28 +47,26 @@ One image, three agents (all installed in `openrouter-agents:latest`):
 | **Pi** | `@earendil-works/pi-coding-agent` | `pi -p --model openrouter/<model> "…"` (headless) or `pi` (TUI) |
 | **Qwen Code** | `@qwen-code/qwen-code` (OpenAI-compat) | `qwen` (TUI) — reads `OPENAI_MODEL`/`OPENAI_BASE_URL` (pre-set in the box) |
 
-## OpenRouter vs SAP AI Core — the same shape to LiteLLM
+## OpenRouter vs SAP AI Core — the same shape
 
-**OpenRouter** is a public LLM *aggregator*: one OpenAI-compatible endpoint + one key, routing to many models
-(OpenAI, Anthropic, Google, Qwen, NVIDIA…).  
-**SAP AI Core** is SAP's managed inference gateway, reached in-cluster through a proxy.  
-They're the **same shape** (an OpenAI-compatible gateway behind one credential), so to the sandbox's **provider** model
-OpenRouter is just another provider — no new integration.  
-The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.**  
-OpenRouter only routes to its own public
-upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
-the reverse.
+Because OpenRouter and SAP AI Core are the **same shape** to a proxy: an OpenAI-compatible gateway behind one credential.
 
-| | SAP AI Core (in-cluster) | OpenRouter (this exercise — **direct**) |
+- **OpenRouter** is a public aggregator (one endpoint, many upstreams — OpenAI, Anthropic, Google, Qwen, NVIDIA…).
+- **SAP AI Core** is SAP's managed inference gateway, reached in-cluster through a proxy.
+
+One proxy can front both.
+
+| | SAP AI Core (via in-cluster LLM proxy) | OpenRouter (via direct path) |
 |---|---|---|
-| Path | agent → LiteLLM proxy → **SAP AI Core** | agent → **OpenRouter** (one allow-listed external host) |
-| Key in box | **sentinel** (real key in the gateway) | **sentinel** (real key in the gateway) |
+| Path | agent → in-cluster proxy → **SAP AI Core** | agent → **OpenRouter** (one allow-listed external host) |
+| Key in box | none — a sentinel (real key in the gateway) | none — a sentinel (real key in the gateway) |
 | Internet | none | one host: `openrouter.ai` |
 
-This exercise keeps the agent talking to OpenRouter **directly** — that external, allow-listed, keyed endpoint *is* the 4th
-tier.  
-(In production you'd often put OpenRouter *behind* LiteLLM too — one in-cluster exit, spend-tracked, key never
-leaves the proxy — but then it looks just like the in-cluster path.)
+In summary:
+
+👉 The key story is **identical** — in both, the real credential lives only in the gateway and the box carries a sentinel.  
+👉 The only things that differ are the **egress path** (an in-cluster service vs one public host) and whether any **internet** is opened at all.  
+⚠️ The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.** OpenRouter only routes to its own public upstreams — it can't reach an in-cluster proxy.
 
 > [!TIP]
 > **Picking a `:free` model.** The agents are *agentic*, so the model must be a **chat/completion model with
