@@ -51,11 +51,9 @@ One image, three agents (all installed in `openrouter-agents:latest`):
 
 **OpenRouter** is a public LLM *aggregator*: one OpenAI-compatible endpoint + one key, routing to many models
 (OpenAI, Anthropic, Google, Qwen, NVIDIA…).  
-**SAP AI Core** is SAP's
-managed inference gateway, reached in-cluster through the **LiteLLM proxy**.  
-To LiteLLM they're the **same shape** (an
-OpenAI-compatible gateway behind one credential) — and LiteLLM has a native `openrouter/…` route, so a single
-in-cluster LiteLLM proxy can be pointed at **either** AI Core or OpenRouter.  
+**SAP AI Core** is SAP's managed inference gateway, reached in-cluster through a proxy.  
+They're the **same shape** (an OpenAI-compatible gateway behind one credential), so to the sandbox's **provider** model
+OpenRouter is just another provider — no new integration.  
 The one thing that does **not** work: **OpenRouter cannot call SAP AI Core.**  
 OpenRouter only routes to its own public
 upstreams and can't reach our in-cluster LiteLLM proxy — the arrow is always LiteLLM → (AI Core | OpenRouter), never
