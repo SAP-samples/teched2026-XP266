@@ -8,7 +8,7 @@
     "strategy":
       "fail-fast": false
       "matrix": "${{ fromJSON(needs.setup.outputs.matrix) }}"
-      "max-parallel": 5
+      "max-parallel": 10
     "uses": "./.github/workflows/_gardener-teched-fleet-reusable.yaml"
     "with":
       "goose_mode": "${{ inputs.goose_mode }}"
@@ -28,7 +28,7 @@
     "strategy":
       "fail-fast": false
       "matrix": "${{ fromJSON(needs.setup.outputs.matrix) }}"
-      "max-parallel": 5
+      "max-parallel": 10
     "uses": "./.github/workflows/_gardener-teched-fleet-reusable-ghes.yaml"
     "with":
       "goose_mode": "${{ inputs.goose_mode }}"
