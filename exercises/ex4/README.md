@@ -119,6 +119,18 @@ openshell sandbox list        # wait for PHASE=Ready
 > Attach **both** inference providers — `litellm` (claude, Anthropic-native) and `litellm-openai` (goose, OpenAI-compat) — so either agent works inside the box; each gets only a resolve sentinel.  
 > The box is **contained by default**: its only egress is the providers' endpoint (`litellm-proxy:4001`) — the apiserver, other pods, and the internet are all denied (you'll prove it in 4.4).
 
+> [!TIP]
+> **A different option — the hardened Garden-Linux image.** Separately from `dev-toolbox-bash` (used above), your
+> cluster also carries **`ops-toolbelt-bash`**: the agent kit (goose + Claude Code + `openshell` + `kubectl`/`kyma`/`k9s`)
+> built on **SAP Garden Linux** — a security-hardened, minimal distribution (the same userland Gardener nodes run). It is
+> its own image; run that option by pointing `--from` at it:
+> ```bash
+> openshell sandbox create --name $XP266_CLUSTER-devbox \
+>   --from localhost:32137/ops-toolbelt-bash:latest \
+>   --provider litellm --provider litellm-openai --detach -- sleep infinity &
+> ```
+> `cat /etc/os-release` inside shows `Garden Linux 2150.9.0`. The sandbox flow is the same; what differs is the hardened base.
+
 👉 **Prove it reasons through SAP AI Core — two options below.**
 
 **A — one-shot `exec`** (run a command in the box without entering it):
@@ -267,6 +279,10 @@ scoped-ops                     # or give it a name:  scoped-ops $XP266_CLUSTER-d
 #   >> scoped-ops agent ready — read-only cluster + goose/claude via SAP AI Core. Try:
 #      kubectl get nodes   |   goose run --text '…'   |   claude -p '…'
 ```
+> [!TIP]
+> **The hardened Garden-Linux option applies here too:** `scoped-ops --from ops-toolbelt-bash` runs this same read-only
+> tier on the `ops-toolbelt-bash` image instead of the default `dev-toolbox-bash`. (`scoped-ops` also accepts a full ref
+> or `OPS_IMAGE=…`; a bare short name expands to your cluster's registry.)
 You're now inside the box (`[<shoot>] goose@default--…:~$` — the prompt shows your logical shoot name, e.g. `xp266-001`),
 env auto-loaded.  
 Prove the read-only cluster access, then let the agents drive it:
