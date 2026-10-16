@@ -1,7 +1,7 @@
 # Exercise 6 - Observability and spend
 
 Running LLMs in production raises an obvious question: **what is this costing, and who is spending it?**  
-In this exercise you see how the stack answers that — every call is metered by the LiteLLM proxy, scraped by **Kyma Telemetry**, shipped to **SAP Cloud Logging**, and rendered as dashboards you read straight from Busola.
+In this exercise you see how the stack answers that — every call is metered by the LiteLLM proxy, scraped by **Kyma Telemetry**, shipped to **SAP Cloud Logging**, and surfaced as spend you read straight from the **Cluster Directory** portal (one click, no Busola navigation).
 
 ```
 LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma Telemetry MetricPipeline
@@ -12,7 +12,7 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
                                               ┌─────────────────────────┴───────────────┐
                                               ▼                                           ▼
                                     LiteLLM Spend dashboard                      LLM Overview dashboard
-                                    (opened from Busola)                         (opened from Busola)
+                                    (one click from the Cluster Directory)       (one click from the Cluster Directory)
 ```
 
 **Contents**
@@ -83,9 +83,18 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
 
 ## Exercise 6.2 - Open the spend dashboards
 
-The dashboards are one click away from Busola's left navigation.
+The dashboards are one click away from the **Cluster Directory** — no Busola navigation needed.
 
-1. In Busola, open the **SAP Cloud Logging** navigation entry, then the **LiteLLM Spend** dashboard link. It opens SAP Cloud Logging (OpenSearch Dashboards) in a new tab, single sign-on.
+1. Open the Cluster Directory and scroll to the **LiteLLM spend** section (replace `xp266-NNN` and `<workshop-domain>`):
+
+   ```
+   https://busola.xp266-NNN.<workshop-domain>/clusterdir/
+   ```
+
+   It shows **today's spend** for your cluster inline — attributed by model and caller — plus two buttons that open the full **SAP Cloud Logging** (OpenSearch) dashboards in a new tab, single sign-on:
+
+   - **LiteLLM Overview — today by model** — today's spend split
+   - **LiteLLM Overview** — request volume, token throughput, and per-model latency
 <br>![](images/05_02_0010.png)
 
 2. Read the split. You'll see spend attributed by **API key / caller** and by **model**:
@@ -96,26 +105,18 @@ The dashboards are one click away from Busola's left navigation.
    | Chat + terminal agents | `reasoning-hard` — Opus | bursty, interactive |
    | JupyterHub notebooks | whatever you call | your experiments show up here |
 
-3. Open the **LLM Overview** dashboard for request volume, token throughput, and per-model latency.
-
 > [!TIP]
 > This is the pay-off of routing **everything through one proxy**: because no agent talks to a model directly, *every* token is attributable.  
 > Trigger a diagnose run or chat with the agent, wait a minute, and watch your own activity appear on the dashboard.
 
 ## Exercise 6.3 - The FleetStatus card
 
-1. In Busola, switch to namespace **`dev-toolbox-system`**.
+1. Back on the **Cluster Directory** (`https://busola.xp266-NNN.<workshop-domain>/clusterdir/`), find the **Cluster launchpad** section — it follows the cluster selector.
 
-2. In the left navigation, open **Autonomous Fleet → Autonomous Fleet Status**, then the **`fleet-status`** resource. It displays the **LLM Dashboards** / **SAP Cloud Logging** shortcuts as cards.
-
-   👉 Or open it directly in Busola (replace `xp266-NNN` and `<workshop-domain>`):
-
-   ```
-   https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/fleetstatuses/fleet-status
-   ```
+2. Click the **Fleet Status + Spend** tile. In one click it opens your cluster's **`fleet-status`** card — the aggregated view with the **LLM Dashboards** / **SAP Cloud Logging** shortcuts — with no hunting through the Busola navigation tree.
 <br>![](images/05_03_0010.png)
 
 ## Summary
 
-You followed one LLM call's metrics from the LiteLLM proxy through a Kyma Telemetry `MetricPipeline` into SAP Cloud Logging, and read the **LiteLLM Spend** and **LLM Overview** dashboards from Busola — seeing the autonomous-jobs (Sonnet) vs interactive-agents (Opus) spend split that the single-proxy design makes possible.  
+You followed one LLM call's metrics from the LiteLLM proxy through a Kyma Telemetry `MetricPipeline` into SAP Cloud Logging, and read the **LiteLLM Spend** and **LLM Overview** dashboards straight from the **Cluster Directory** — seeing the autonomous-jobs (Sonnet) vs interactive-agents (Opus) spend split that the single-proxy design makes possible.  
 Continue to - [Overview](../../README.md)
