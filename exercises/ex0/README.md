@@ -79,18 +79,18 @@ flowchart TB
   subgraph kyma["🟣 Your Kyma runtime — self-hosted, in-cluster agent layer (deployed as one KRO unit)"]
     direction TB
     goose["🪿 Goose<br/>autonomous diagnostic agent<br/>(dev-toolbox-system CronJobs / Jobs)"]
-    chat["💬 chatAgent (OpenClaw)<br/>interactive"]
+    chat["💬 chatAgent — OpenClaw<br/>interactive"]
     openshell["🛡️ OpenShell gateway<br/>sandbox orchestrator · keyless egress"]
     llm["🔀 LiteLLM proxy :4001"]
     k8s[("Kubernetes API<br/>logs · metrics · events · kubectl")]
     crs["📋 Findings → KRO custom resources<br/>ClusterHealthReport · AuditLogCatalog · FleetStatus"]
     busola["🖥️ Busola dashboard"]
     goose -->|reads| k8s
-    goose -->|runs inside sandbox| openshell
-    chat -->|runs inside sandbox| openshell
-    openshell -->|sentinel-swap at egress<br/>(keyless)| llm
+    goose -->|"runs inside sandbox"| openshell
+    chat -->|"runs inside sandbox"| openshell
+    openshell -->|"sentinel-swap at egress — keyless"| llm
     goose -->|writes| crs
-    crs -->|Busola extension| busola
+    crs -->|"Busola extension"| busola
   end
   subgraph sap["🔵 SAP AI platform — consumed"]
     direction TB
