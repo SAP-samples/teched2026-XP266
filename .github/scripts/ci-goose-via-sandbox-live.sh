@@ -184,10 +184,16 @@ if [ "$PROMPT_SRC" = "-" ]; then
   PROMPT=$(cat)
 elif [ -n "$PROMPT_SRC" ]; then
   PROMPT=$(cat "$PROMPT_SRC")
+elif [ -f "/etc/prompts/$PROMPT_KEY" ]; then
+  # In-pod path: /etc/prompts honors the API-side volume swap (managed OR adhoc CM mounted here).
+  # Reading from the file picks up whichever CM the API chose for this run — fixes the adhoc flow where
+  # the hardcoded `PROMPT_CM=dev-toolbox-prompts` kubectl lookup missed keys that live in the adhoc CM.
+  PROMPT=$(sed "s/__SHOOT__/$SHOOT/g; s/__NS__/$PROMPT_CM_NS/g; s/__WINDOW_START__/${WINDOW_START:-}/g; s/__WINDOW_END__/${WINDOW_END:-}/g; s/__PRIOR_RUN_TS__/${PRIOR_RUN_TS:-}/g" < "/etc/prompts/$PROMPT_KEY")
 else
+  # Standalone fallback (script run outside a Job pod with no /etc/prompts mount): read via kubectl.
   PROMPT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$PROMPT_KEY}" 2>/dev/null | sed "s/__SHOOT__/$SHOOT/g; s/__NS__/$PROMPT_CM_NS/g; s/__WINDOW_START__/${WINDOW_START:-}/g; s/__WINDOW_END__/${WINDOW_END:-}/g; s/__PRIOR_RUN_TS__/${PRIOR_RUN_TS:-}/g")
-  [ -n "$PROMPT" ] || { echo "ERROR: CH v2 prompt '$PROMPT_KEY' not in cm/$PROMPT_CM (ns $PROMPT_CM_NS)" >&2; exit 2; }
 fi
+[ -n "$PROMPT" ] || { echo "ERROR: CH v2 prompt '$PROMPT_KEY' not in cm/$PROMPT_CM (ns $PROMPT_CM_NS) and no /etc/prompts/$PROMPT_KEY file" >&2; exit 2; }
 printf '%s' "$PROMPT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/p'
 
 # ── 8. report extractor (goose --output-format json → the FINAL report only) ──────
