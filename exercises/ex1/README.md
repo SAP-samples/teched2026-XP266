@@ -25,6 +25,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 | **v1** · `cluster-health` | a **frozen** `kyma alpha diagnose` snapshot — no live cluster access | cheap, deterministic — catches regressions between runs |
 | **v2** · `cluster-health-v2` | **live**, read-only `kubectl` on a leash — a fixed health playbook | the balanced default |
 | **v3** · `cluster-health-v3` | **live**, read-only `kubectl`, real-time and uncapped | richest and priciest — a lead list to confirm |
+| **forensic** · `cluster-health-forensic` | **post-mortem** of the latest v2 run — reads the stored report + LiteLLM spend + Job state and emits a 🎯/🟡/⚪ (CONFIRMED/LIKELY/INCONCLUSIVE) verdict | daily right after v3 + on-failure of v2/v3; also triggerable on-demand |
 | **audit** · `cluster-audit` | **live**, adaptive **security** investigation | produced as part of a **v2** run — no separate trigger; refresh by running v2 |
 
 **Open a report directly in Busola** — copy a link and replace `xp266-NNN` (and `<workshop-domain>`) with your runtime's:
