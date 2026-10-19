@@ -32,7 +32,7 @@ LITELLM_HOST=${LITELLM_HOST:-http://litellm-proxy.default.svc.cluster.local:4001
 KEEP_SANDBOX=${KEEP_SANDBOX:-false}                            # true → do NOT delete the sandbox (students inspect logs)
 PROMPT_CM=${PROMPT_CM:-dev-toolbox-prompts}                    # CH v2 prompt source
 PROMPT_CM_NS=${PROMPT_CM_NS:-dev-toolbox-system}
-PROMPT_KEY=${PROMPT_KEY:-health-v2-report-first}
+PROMPT_KEY=${HEALTH_PROMPT_KEY:-${PROMPT_KEY:-health-v2-report-first}}
 REFORMAT_KEY=${REFORMAT_KEY:-reformat-remediation-guide}       # 2nd-pass reformat prompt (empty → skip reformat)
 SHOOT=${SHOOT_NAME:-$(kubectl config current-context 2>/dev/null || echo cluster)}
 # CLI version: MATCH the cluster's deployed gateway (self-adapting to a per-shoot openshell_version).
