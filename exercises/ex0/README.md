@@ -80,7 +80,7 @@ flowchart TB
     direction TB
     goose["🪿 Goose<br/>autonomous diagnostic agent<br/>(dev-toolbox-system CronJobs / Jobs)"]
     chat["💬 chatAgent — OpenClaw<br/>interactive"]
-    openshell["🛡️ OpenShell gateway<br/>sandbox orchestrator · keyless egress"]
+    openshell["🛡️ OpenShell gateway<br/>sandbox orchestrator · egress interceptor"]
     llm["🔀 LiteLLM proxy :4001"]
     k8s[("Kubernetes API<br/>logs · metrics · events · kubectl")]
     crs["📋 Findings → KRO custom resources<br/>ClusterHealthReport · AuditLogCatalog · FleetStatus"]
@@ -88,7 +88,7 @@ flowchart TB
     goose -->|reads| k8s
     goose -->|"runs inside sandbox"| openshell
     chat -->|"runs inside sandbox"| openshell
-    openshell -->|"sentinel-swap at egress — keyless"| llm
+    openshell -->|"sentinel-swap at egress"| llm
     goose -->|writes| crs
     crs -->|"Busola extension"| busola
   end
@@ -130,9 +130,9 @@ flowchart TB
    │   ┌──────────────────────────────┐    ┌──────────────────────────────┐        │
    │   │ 🛡 OpenShell gateway          │◀───│ 💬 chatAgent (OpenClaw)       │        │
    │   │   sandbox orchestrator       │    │   interactive                 │        │
-   │   │   keyless egress intercept   │    └──────────────────────────────┘        │
+   │   │   egress interceptor         │    └──────────────────────────────┘        │
    │   └─────────────┬────────────────┘                                            │
-   │                 │ sentinel-swap at egress (keyless)                           │
+   │                 │ sentinel-swap at egress                                     │
    │                 ▼                                                             │
    │   ┌──────────────────────────────┐                                            │
    │   │ 🔀 LiteLLM proxy  port 4001  │                                            │
