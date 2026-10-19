@@ -79,14 +79,16 @@ flowchart TB
   subgraph kyma["🟣 Your Kyma runtime — self-hosted, in-cluster agent layer (deployed as one KRO unit)"]
     direction TB
     goose["🪿 Goose<br/>autonomous diagnostic agent<br/>(dev-toolbox-system CronJobs / Jobs)"]
-    chat["💬 Chat agent — OpenClaw<br/>(interactive)"]
+    chat["💬 chatAgent (OpenClaw)<br/>interactive"]
+    openshell["🛡️ OpenShell gateway<br/>sandbox orchestrator · keyless egress"]
     llm["🔀 LiteLLM proxy :4001"]
     k8s[("Kubernetes API<br/>logs · metrics · events · kubectl")]
     crs["📋 Findings → KRO custom resources<br/>ClusterHealthReport · AuditLogCatalog · FleetStatus"]
     busola["🖥️ Busola dashboard"]
     goose -->|reads| k8s
-    goose --> llm
-    chat --> llm
+    goose -->|runs inside sandbox| openshell
+    chat -->|runs inside sandbox| openshell
+    openshell -->|sentinel-swap at egress<br/>(keyless)| llm
     goose -->|writes| crs
     crs -->|Busola extension| busola
   end
@@ -99,20 +101,75 @@ flowchart TB
   llm ==>|"sap/ provider · OAuth2 token<br/>(the one arrow that matters)"| aicore
 ```
 
+**Same picture, ASCII (for the terminal / plain-text reader):**
+
+```
+   ┌─ 🟣 Your Kyma runtime (xp266-NNN) ────────────────────────────────────────────┐
+   │        self-hosted, in-cluster agent layer (deployed as one KRO unit)          │
+   │                                                                                │
+   │   ┌──────────────────────┐    reads logs/      ┌─────────────────────────┐    │
+   │   │ 🪿 Goose             │ ◀── metrics/events ─│  Kubernetes API         │    │
+   │   │ autonomous diagnostic│    (read-only       │  (your cluster's state) │    │
+   │   │ (CronJobs / Jobs in  │     kubectl)        └─────────────────────────┘    │
+   │   │  dev-toolbox-system) │                                                    │
+   │   └──────┬──────┬────────┘                                                    │
+   │          │      │ writes findings                                             │
+   │          │      ▼                                                             │
+   │          │  ┌───────────────────────────────────────────────────────────────┐ │
+   │          │  │ 📋 KRO custom resources                                       │ │
+   │          │  │     ClusterHealthReport · AuditLogCatalog · FleetStatus       │ │
+   │          │  └──────┬────────────────────────────────────────────────────────┘ │
+   │          │         │ Busola extension (one widget per CR type)                │
+   │          │         ▼                                                          │
+   │          │  ┌──────────────────────────────┐                                  │
+   │          │  │ 🖥  Busola dashboard          │                                  │
+   │          │  └──────────────────────────────┘                                  │
+   │          │                                                                    │
+   │          │ runs inside sandbox                                                │
+   │          ▼                                                                    │
+   │   ┌──────────────────────────────┐    ┌──────────────────────────────┐        │
+   │   │ 🛡 OpenShell gateway          │◀───│ 💬 chatAgent (OpenClaw)       │        │
+   │   │   sandbox orchestrator       │    │   interactive                 │        │
+   │   │   keyless egress intercept   │    └──────────────────────────────┘        │
+   │   └─────────────┬────────────────┘                                            │
+   │                 │ sentinel-swap at egress (keyless)                           │
+   │                 ▼                                                             │
+   │   ┌──────────────────────────────┐                                            │
+   │   │ 🔀 LiteLLM proxy  port 4001  │                                            │
+   │   └─────────────┬────────────────┘                                            │
+   └─────────────────┼────────────────────────────────────────────────────────────┘
+                     │  sap/ provider · OAuth2 token
+                     │  (the one arrow that matters)
+                     ▼
+   ┌─ 🔵 SAP AI platform — consumed ───────────────────────────────────────────────┐
+   │                                                                                │
+   │   ┌──────────────────────────────────────────────┐                             │
+   │   │  SAP AI Core                                 │                             │
+   │   │   LLM Module · Generative AI Hub             │                             │
+   │   └────────────────────┬─────────────────────────┘                             │
+   │                        ▼                                                       │
+   │   ┌──────────────────────────────────────────────┐                             │
+   │   │   Claude · GPT · Mistral · Nova              │                             │
+   │   └──────────────────────────────────────────────┘                             │
+   │                                                                                │
+   └────────────────────────────────────────────────────────────────────────────────┘
+```
+
+
 > [!TIP]
 > Want the full story behind this stack? Read the deep-dive on the SAP Community:
 > [**Autonomous Diagnostics on Kyma Unplugged: Goose + LiteLLM + KRO + SAP AI Core in Production**](https://community.sap.com/t5/technology-blog-posts-by-sap/autonomous-diagnostics-on-kyma-unplugged-goose-litellm-kro-sap-ai-core-in/ba-p/14435287).
 
 ## The TechEd 2026 landscape at a glance
 
-👉 Here is the whole fleet — one picture. Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions**, all **federated to a single hub** (`kyma4s-005`, on AWS `eu-west-1`) that holds the shared identity + state.
+👉 Here is the whole fleet — one picture. Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions**, all **federated to a single hub** (on AWS, separate from the student runtimes) that holds the shared identity + state.
 
 ```
                  ┌────────────────────────────────────────────┐
-                 │  🛰  HUB — kyma4s-005  ·  aws / eu-west-1   │
+                 │  🛰  HUB  ·  aws / eu-west-1                │
                  │                                            │
-                 │    argocd      SCI state     bootstrapper  │
-                 │    keycloak    TF backend    OIDC brokers  │
+                 │    keycloak    SCI state     bootstrapper  │
+                 │    TF state    OIDC brokers                │
                  └─────────────────────┬──────────────────────┘
                                        │  federated OIDC
                                        │  (aud=bootstrapper)
@@ -137,8 +194,8 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-    subgraph HUB["🛰 HUB — kyma4s-005  (aws · eu-west-1)"]
-      HA["ArgoCD · Keycloak · bootstrapper SA · TF state · SCI state · OIDC brokers"]
+    subgraph HUB["🛰 HUB  (aws · eu-west-1)"]
+      HA["Keycloak · bootstrapper SA · TF state · SCI state · OIDC brokers"]
     end
     subgraph GWC["📍 azure · germanywestcentral"]
       T1["teched-01 · xp266-001 … 010"]
@@ -151,7 +208,6 @@ flowchart TB
       T3["teched-03 · xp266-021 … 030"]
       T5["teched-05 · xp266-041 … 050"]
     end
-    HUB -. "argocd apply (pull reconcile)" .-> T1 & T2 & T3 & T4 & T5
     T1 & T2 & T3 & T4 & T5 ==> |"federated OIDC · aud=bootstrapper"| HUB
 ```
 

@@ -95,7 +95,9 @@ The dashboards are one click away from the **Cluster Directory** — no Busola n
 
    - **LiteLLM Overview — today by model** — today's spend split
    - **LiteLLM Overview** — request volume, token throughput, and per-model latency
-<br>![](images/05_02_0010.png)
+
+   The **LiteLLM Overview — today by model** dashboard looks like this — a headline **Total spend today** gauge, a cluster filter (pre-scoped to your `xp266-NNN`), and three bar charts attributing today's **spend / calls / tokens** per model:
+<br>![LiteLLM Overview — today by model](images/06_02_0010.png)
 
 2. Read the split. You'll see spend attributed by **API key / caller** and by **model**:
 
