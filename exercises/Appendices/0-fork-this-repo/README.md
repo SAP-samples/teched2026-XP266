@@ -74,4 +74,4 @@ You now have:
 - ✅ A personal fork of `SAP-samples/teched2026-XP266`.
 - ✅ GitHub Actions enabled on your fork.
 
-Head back to the [main README](../../../README.md#exercises) and pick your first exercise, or jump straight to [Exercise 1 — Cluster Health Reports](../../ex1/README.md).
+Head back to the [main README](../../../README.md#exercises) and pick your first exercise, or jump straight to [Exercise 0 — Getting Started](../../ex0/README.md) to sign in to Busola and tour the AI-ops stack.
