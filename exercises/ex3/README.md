@@ -20,7 +20,21 @@ Here you drive **OpenShell sandboxes** from Python: create one, run a command in
    ```
 
 2. Sign in with single sign-on and click **Start My Server**. After a moment JupyterLab opens.
-<br>![](images/07_01_0010.png)
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/07_01_0010.png" width="820" alt="" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 3. In the file browser (left) you'll find the pre-loaded OpenShell notebooks:
 

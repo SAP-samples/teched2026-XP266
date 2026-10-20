@@ -75,7 +75,21 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
    ```
    https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/metricpipelines/sap-cloud-logging
    ```
-<br>![](images/05_01_0010.png)
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/05_01_0010.png" width="820" alt="" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 > [!NOTE]
 > The LiteLLM proxy exposes Prometheus-style metrics (spend per key, tokens in/out, per-model latency). A **pod annotation** marks it for scraping; the `MetricPipeline` (managed by the Kyma **Telemetry** module) ships those metrics out via OTLP to **SAP Cloud Logging**, where they're stored in OpenSearch and visualized.  
@@ -97,7 +111,21 @@ The dashboards are one click away from the **Cluster Directory** — no Busola n
    - **LiteLLM Overview** — request volume, token throughput, and per-model latency
 
    The **LiteLLM Overview — today by model** dashboard looks like this — a headline **Total spend today** gauge, a cluster filter (pre-scoped to your `xp266-NNN`), and three bar charts attributing today's **spend / calls / tokens** per model:
-<br>![LiteLLM Overview — today by model](images/06_02_0010.png)
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/06_02_0010.png" width="820" alt="LiteLLM Overview — today by model" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 2. Read the split. You'll see spend attributed by **API key / caller** and by **model**:
 
@@ -116,7 +144,21 @@ The dashboards are one click away from the **Cluster Directory** — no Busola n
 1. Back on the **Cluster Directory** (`https://busola.xp266-NNN.<workshop-domain>/clusterdir/`), find the **Cluster launchpad** section — it follows the cluster selector.
 
 2. Click the **Fleet Status + Spend** tile. In one click it opens your cluster's **`fleet-status`** card — the aggregated view with the **LLM Dashboards** / **SAP Cloud Logging** shortcuts — with no hunting through the Busola navigation tree.
-<br>![](images/05_03_0010.png)
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/05_03_0010.png" width="820" alt="" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 ## Summary
 

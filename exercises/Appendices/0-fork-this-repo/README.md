@@ -33,11 +33,39 @@
 1. Open the main page of this workshop repo: **[github.com/SAP-samples/teched2026-XP266](https://github.com/SAP-samples/teched2026-XP266)**.
 2. Click **Fork** (top right of the repo header).
 
-<p float="left"><img src="images/00_02_0010.png" width="820" alt="Fork button on the SAP-samples/teched2026-XP266 repo header" /></p>
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/00_02_0010.png" width="820" alt="Fork button on the SAP-samples/teched2026-XP266 repo header" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 3. On the **"Create a new fork"** page, make sure the **Owner** is your GitHub account (not an organisation you don't want this in). Leave everything else at its default. Click **Create fork**.
 
-<p float="left"><img src="images/00_02_0020.png" width="820" alt="Create a new fork — Owner = your GitHub account" /></p>
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/00_02_0020.png" width="820" alt="Create a new fork — Owner = your GitHub account" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 4. GitHub redirects you to your copy of the repo at **`https://github.com/<your-username>/teched2026-XP266`**. Confirm the top-left reads *"<your-username>/teched2026-XP266· forked from SAP-samples/teched2026-XP266"*.
 
@@ -50,7 +78,21 @@ Forks have GitHub Actions **disabled by default** as a safety measure. Enable th
 2. GitHub shows a yellow banner: *"Workflows aren't being run on this forked repository"* with a green **"I understand my workflows, go ahead and enable them"** button.
 3. Click the green button.
 
-<p float="left"><img src="images/00_03_0010.png" width="820" alt="Activate GitHub Actions on the fork — green consent button" /></p>
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/00_03_0010.png" width="820" alt="Activate GitHub Actions on the fork — green consent button" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 4. The Actions tab reloads with the workflow list visible. You are good to go.
 

@@ -26,7 +26,21 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
    https://openclaw.xp266-NNN.<workshop-domain>/
    ```
    Sign in with the workshop identity provider (same single sign-on as Busola).
-<br>![](images/04_01_0010.png)
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/04_01_0010.png" width="820" alt="" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 2. Ask it something general to confirm it's live and reasoning via SAP AI Core:
 

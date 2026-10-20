@@ -14,9 +14,21 @@
 https://dev-toolbox.xp266-NNN.<workshop-domain>/
 ```
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
 <p float="left">
+  <a href="#">
   <img src="images/01_00_0010.png" width="820" alt="SAP TechEd 2026 — Diagnostic Toolbox" />
+  </a>
 </p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 > [!NOTE]
 > - ✅ Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else.   
@@ -26,9 +38,21 @@ https://dev-toolbox.xp266-NNN.<workshop-domain>/
 
 They trade **fidelity for cost** — all run the same way (Goose in an OpenShell sandbox → LiteLLM → SAP AI Core), but differ in how much live cluster access Goose gets.
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
 <p float="left">
+  <a href="#">
   <img src="images/cluster-health-01.png" width="820" alt="Cluster Health report — v1/v2/v3 badges" />
+  </a>
 </p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 | Report | What Goose sees | Notes |
 |---|---|---|
