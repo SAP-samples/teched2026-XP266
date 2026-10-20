@@ -72,6 +72,10 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 ## Exercise 1.1 - Read the latest reports
 
+1. 👉 In the Diagnostic Toolbox UI, find the **Latest health reports** panel.
+
+   Each report shows an **executive summary** and a **status badge** (HEALTHY / WARNING / CRITICAL).
+
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
@@ -88,9 +92,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 </tbody>
 </table>
 
-1. 👉 In the Diagnostic Toolbox UI, find the **Latest health reports** panel.
-
-   Each report shows an **executive summary**, a **status badge** (HEALTHY / WARNING / CRITICAL), and a **detailed Goose report** expander with the agent's unedited output. The panel auto-refreshes every ~15 s.
+   Furthermore, there is a **detailed Goose report** expander with the agent's unedited output.
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
@@ -107,6 +109,9 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 </tr>
 </tbody>
 </table>
+
+> [!TIP]
+> The panel auto-refreshes every ~15 s.
 
 2. 👉 Look at the **run-stats** line in each report's header: **Model · Duration · Cost · Tokens · Agent**.
 
