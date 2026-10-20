@@ -21,6 +21,12 @@ In this exercise you inspect the running proxy, understand *why* it's there, and
 
 1. In Busola, go to **namespace `default` → Workloads → Deployments** and open **`litellm-proxy`**. It listens on port **4001** and exposes an **OpenAI-compatible** API at `/v1`.
 
+<table style="width: 100%; max-width:100%; table-layout: fixed; overflow:auto; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+
 ```mermaid
 flowchart LR
   subgraph callers["In-cluster callers · OpenAI-compatible"]
@@ -54,6 +60,12 @@ flowchart LR
   proxy -.->|"cost + tokens, every call"| pg[("🗄️ PostgreSQL<br/>LiteLLM_SpendLogs")]
   proxy -.->|"/metrics"| cls["📊 Kyma Telemetry → SAP Cloud Logging<br/>spend dashboard (ex3)"]
 ```
+
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 2. Open **namespace `default` → Configuration → Config Maps → `litellm-proxy-config`** and look at `config.yaml`. Three things to notice:
 

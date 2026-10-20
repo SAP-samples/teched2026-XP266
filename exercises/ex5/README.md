@@ -93,6 +93,12 @@ and injects the key sentinel.
 
 The sandbox image ships **three** terminal coding agents — all pre-installed, all pointed at OpenRouter.
 
+<table style="width: 100%; max-width:100%; table-layout: fixed; overflow:auto; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+
 ```mermaid
 flowchart LR
   subgraph SB["📦 contained sandbox"]
@@ -107,6 +113,12 @@ flowchart LR
   OR -- "routes to" --> M
   M -. "reply" .-> AG
 ```
+
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 The agent never sees the real key, and the sandbox reaches nothing but the gateway's one allowed hop to OpenRouter.
 

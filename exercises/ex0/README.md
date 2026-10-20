@@ -104,6 +104,12 @@ every LLM call  ──▶  LiteLLM proxy  ──▶  SAP AI Core  (Claude · GPT
 
 The next exercise walks the **LiteLLM → SAP AI Core** hop end-to-end.
 
+<table style="width: 100%; max-width:100%; table-layout: fixed; overflow:auto; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+
 ```mermaid
 flowchart LR
   subgraph KYMA["☸️ Your SAP BTP, Kyma runtime — all pre-deployed"]
@@ -129,6 +135,12 @@ flowchart LR
   LITELLM --> CLS
 ```
 
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
 > [!TIP]
 > Want the full story behind this stack? Read the deep-dive on the SAP Community:
 > [**Autonomous Diagnostics on Kyma Unplugged: Goose + LiteLLM + KRO + SAP AI Core in Production**](https://community.sap.com/t5/technology-blog-posts-by-sap/autonomous-diagnostics-on-kyma-unplugged-goose-litellm-kro-sap-ai-core-in/ba-p/14435287).
@@ -138,6 +150,12 @@ flowchart LR
 - ✅ Here is the whole fleet — one picture.  
 - ✅ Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions**
 
+
+<table style="width: 100%; max-width:100%; table-layout: fixed; overflow:auto; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
 
 ```mermaid
 flowchart TB
@@ -157,6 +175,12 @@ flowchart TB
     end
     T1 & T2 & T3 & T4 & T5 ==> |"federated OIDC · aud=bootstrapper"| HUB
 ```
+
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 **What that means in practice:**  
 
