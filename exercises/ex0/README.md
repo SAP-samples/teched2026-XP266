@@ -17,7 +17,8 @@ You will not deploy anything — everything is in place; you are here to underst
 
 - ✅ Everything starts at the **Cluster Directory** — one launcher page for the whole TechEd fleet.  
 - ✅ From here you pick your runtime, read your sign-in details, and jump straight into the right dashboard.  
-👉 Open the directory URL you were given:
+
+👉 Open the student's portal:
 
 ```
 https://busola.xp266-NNN.<workshop-domain>/clusterdir/

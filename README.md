@@ -27,10 +27,10 @@ It also streams its **LLM** spend to **SAP Cloud Logging** — all routed throug
 
 👉 The whole premise is in the title: the agent is **sandboxed**.
 
-- Giving an AI agent a shell and a kubeconfig normally means a bad prompt — or a prompt-injection — can delete your workloads or leak a token.
-- Here the **sandbox itself is the guardrail**: each agent runs in a disposable, per-session pod that _by construction_ cannot reach the internet or the API server, and never holds the LLM key — it sends a placeholder, and the gateway injects the real key at the edge.
-- The same tools image is dialed to three trust tiers — **contained** (no cluster access) → **scoped-ops** (read-only) → **web terminal** (RBAC-scoped) — so you choose how much to trust each workload.
-- It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on Kyma, no fork.
+- ✅ Giving an AI agent a shell and a kubeconfig normally means a bad prompt — or a prompt-injection — can delete your workloads or leak a token.
+- ✅ Here the **sandbox itself is the guardrail**: each agent runs in a disposable, per-session pod that _by construction_ cannot reach the internet or the API server, and never holds the LLM key — it sends a sentinel, and the gateway injects the real key at the edge.
+- ✅ The same container image runs at three trust levels — **contained** (no cluster access), **scoped-ops** (read-only), or **web terminal** (whatever your own account is allowed to do) — pick the level that matches each workload.
+- ✅ It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on Kyma, no fork.
 
 👉 The sandbox blocks the agent **from the outside**
 - ✅ Kubernetes RBAC refuses writes
