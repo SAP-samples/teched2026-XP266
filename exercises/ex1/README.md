@@ -159,6 +159,22 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 ## Exercise 1.3 - Write your own prompt
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/diagnostics-02.png" width="820" alt="Run a diagnostic — custom prompt dropdown and prompt-text editor" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
 👉 The real power of the Diagnostic Toolbox is this: **you change what Goose investigates by changing the prompt** — no code, no redeploy.
 
 1. In the **Run a diagnostic** card, open the **Prompt** dropdown and choose **— custom prompt —**.
