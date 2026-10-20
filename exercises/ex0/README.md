@@ -52,11 +52,11 @@ Now sign in:
 > [!NOTE]
 > **How sign-in works.** Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers*
 > several corporate identity providers.  
-> For TechEd the default is **SAP IAS** — enter your workshop account and you are
-> straight in.  
+> For TechEd students the default is **SAP IAS** — enter your workshop account and you are
+> straight in. 
+> 
 > If you are an **SAP employee** (an `@sap.com` address), IAS automatically forwards you to **SAP corporate
-> single sign-on** (with 2FA); the first time it quietly links that to your account, so you never see an "account already
-> exists" prompt.  
+> single sign-on** (with 2FA)
 > Either way you end up in the same Busola session — no passwords are stored by the workshop.
 
 > [!TIP]
@@ -75,86 +75,29 @@ every LLM call  ──▶  LiteLLM proxy  ──▶  SAP AI Core  (Claude · GPT
 You'll follow that **LiteLLM → SAP AI Core** arrow in the next exercise.
 
 ```mermaid
-flowchart TB
-  subgraph kyma["🟣 Your Kyma runtime — self-hosted, in-cluster agent layer (deployed as one KRO unit)"]
+flowchart LR
+  subgraph KYMA["☸️ Your SAP BTP, Kyma runtime — all pre-deployed"]
     direction TB
-    goose["🪿 Goose<br/>autonomous diagnostic agent<br/>(dev-toolbox-system CronJobs / Jobs)"]
-    chat["💬 chatAgent — OpenClaw<br/>interactive"]
-    openshell["🛡️ OpenShell gateway<br/>sandbox orchestrator · egress interceptor"]
-    llm["🔀 LiteLLM proxy :4001"]
-    k8s[("Kubernetes API<br/>logs · metrics · events · kubectl")]
-    crs["📋 Findings → KRO custom resources<br/>ClusterHealthReport · AuditLogCatalog · FleetStatus"]
-    busola["🖥️ Busola dashboard"]
-    goose -->|reads| k8s
-    goose -->|"runs inside sandbox"| openshell
-    chat -->|"runs inside sandbox"| openshell
-    openshell -->|"sentinel-swap at egress"| llm
-    goose -->|writes| crs
-    crs -->|"Busola extension"| busola
+    TERM["🖥️ Busola web terminal<br/>Goose · Claude Code"]
+    GOOSE["🔎 Goose diagnostic jobs<br/>autonomous kubectl"]
+    OC["💬 Chat UI<br/>interactive agent"]
+    JH["📓 JupyterHub<br/>Python + notebooks"]
+    LITELLM["🔀 LiteLLM proxy :4001<br/>tier aliases · drop_params"]
+    CHR["📄 ClusterHealthReport ·<br/>AuditLogCatalog · FleetStatus<br/>(Busola custom resources)"]
+    CLS["📊 Kyma Telemetry →<br/>SAP Cloud Logging<br/>spend dashboards"]
   end
-  subgraph sap["🔵 SAP AI platform — consumed"]
-    direction TB
-    aicore["SAP AI Core<br/>LLM Module · Generative AI Hub"]
-    models["Claude · GPT · Mistral · Nova"]
-    aicore --> models
-  end
-  llm ==>|"sap/ provider · OAuth2 token<br/>(the one arrow that matters)"| aicore
-```
+  AICORE["☁️ SAP AI Core<br/>Claude · GPT · Mistral · Nova"]
 
-**Same picture, ASCII (for the terminal / plain-text reader):**
-
+  TERM --> LITELLM
+  GOOSE --> LITELLM
+  OC --> LITELLM
+  JH --> LITELLM
+  LITELLM --> AICORE
+  GOOSE --> CHR
+  GOOSE -. hand-off .-> OC
+  GOOSE -. hand-off .-> JH
+  LITELLM --> CLS
 ```
-   ┌─ 🟣 Your Kyma runtime (xp266-NNN) ────────────────────────────────────────────┐
-   │        self-hosted, in-cluster agent layer (deployed as one KRO unit)          │
-   │                                                                                │
-   │   ┌──────────────────────┐    reads logs/      ┌─────────────────────────┐    │
-   │   │ 🪿 Goose             │ ◀── metrics/events ─│  Kubernetes API         │    │
-   │   │ autonomous diagnostic│    (read-only       │  (your cluster's state) │    │
-   │   │ (CronJobs / Jobs in  │     kubectl)        └─────────────────────────┘    │
-   │   │  dev-toolbox-system) │                                                    │
-   │   └──────┬──────┬────────┘                                                    │
-   │          │      │ writes findings                                             │
-   │          │      ▼                                                             │
-   │          │  ┌───────────────────────────────────────────────────────────────┐ │
-   │          │  │ 📋 KRO custom resources                                       │ │
-   │          │  │     ClusterHealthReport · AuditLogCatalog · FleetStatus       │ │
-   │          │  └──────┬────────────────────────────────────────────────────────┘ │
-   │          │         │ Busola extension (one widget per CR type)                │
-   │          │         ▼                                                          │
-   │          │  ┌──────────────────────────────┐                                  │
-   │          │  │ 🖥  Busola dashboard          │                                  │
-   │          │  └──────────────────────────────┘                                  │
-   │          │                                                                    │
-   │          │ runs inside sandbox                                                │
-   │          ▼                                                                    │
-   │   ┌──────────────────────────────┐    ┌──────────────────────────────┐        │
-   │   │ 🛡 OpenShell gateway          │◀───│ 💬 chatAgent (OpenClaw)       │        │
-   │   │   sandbox orchestrator       │    │   interactive                 │        │
-   │   │   egress interceptor         │    └──────────────────────────────┘        │
-   │   └─────────────┬────────────────┘                                            │
-   │                 │ sentinel-swap at egress                                     │
-   │                 ▼                                                             │
-   │   ┌──────────────────────────────┐                                            │
-   │   │ 🔀 LiteLLM proxy  port 4001  │                                            │
-   │   └─────────────┬────────────────┘                                            │
-   └─────────────────┼────────────────────────────────────────────────────────────┘
-                     │  sap/ provider · OAuth2 token
-                     │  (the one arrow that matters)
-                     ▼
-   ┌─ 🔵 SAP AI platform — consumed ───────────────────────────────────────────────┐
-   │                                                                                │
-   │   ┌──────────────────────────────────────────────┐                             │
-   │   │  SAP AI Core                                 │                             │
-   │   │   LLM Module · Generative AI Hub             │                             │
-   │   └────────────────────┬─────────────────────────┘                             │
-   │                        ▼                                                       │
-   │   ┌──────────────────────────────────────────────┐                             │
-   │   │   Claude · GPT · Mistral · Nova              │                             │
-   │   └──────────────────────────────────────────────┘                             │
-   │                                                                                │
-   └────────────────────────────────────────────────────────────────────────────────┘
-```
-
 
 > [!TIP]
 > Want the full story behind this stack? Read the deep-dive on the SAP Community:
