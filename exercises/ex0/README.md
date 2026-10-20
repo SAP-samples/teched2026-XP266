@@ -102,14 +102,14 @@ Every LLM call goes down to **SAP AI Core** (SAP's LLM Module / Generative AI Hu
 every LLM call  ──▶  LiteLLM proxy  ──▶  SAP AI Core  (Claude · GPT · Mistral · Nova)
 ```
 
-The next exercise walks the **LiteLLM → SAP AI Core** hop end-to-end.
-
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr style="height: 193px;">
 <td style="width: 71.6%; height: 193px;">
 
 <div>
+
+The next exercise walks the **LiteLLM → SAP AI Core** hop end-to-end.
 
 ```mermaid
 flowchart LR

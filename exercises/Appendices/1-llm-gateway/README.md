@@ -28,6 +28,8 @@ In this exercise you inspect the running proxy, understand *why* it's there, and
 
 <div>
 
+**LiteLLM proxy** on `:4001` — one in-cluster hop for every LLM call: tier aliases, cost tracking, OAuth2 to SAP AI Core.
+
 ```mermaid
 flowchart LR
   subgraph callers["In-cluster callers · OpenAI-compatible"]
