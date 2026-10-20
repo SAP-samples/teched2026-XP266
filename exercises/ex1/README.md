@@ -2,9 +2,9 @@
 
 👉 This is the heart of the workshop.
 
-- A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit** and a **forensic post-mortem** that fires when a run skips.
-- Every run executes Goose **inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
-- You drive all of it from one place: the **Diagnostic Toolbox** UI.
+- ✅ A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit** and a **forensic post-mortem** that fires when a run skips.
+- ✅ Every run executes Goose **inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
+- ✅ You drive all of it from one place: the **Diagnostic Toolbox** UI.
 
 👉 Open it (same single sign-on as Busola):
 
@@ -17,10 +17,10 @@ https://dev-toolbox.xp266-NNN.<workshop-domain>/
 </p>
 
 > [!NOTE]
-> Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else.  
-> The reports live in namespace `dev-toolbox-system`; each run spins up a short-lived OpenShell sandbox with a **read-only** cluster token.
+> - ✅ Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else.   
+> - ✅ The reports live in namespace `dev-toolbox-system`; each run spins up a short-lived OpenShell sandbox with a **read-only** cluster token.
 
-### The three report generations
+### The three report generations plus security audit nad forensic reports
 
 They trade **fidelity for cost** — all run the same way (Goose in an OpenShell sandbox → LiteLLM → SAP AI Core), but differ in how much live cluster access Goose gets.
 
@@ -42,15 +42,15 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 ## Exercise 1.1 - Read the latest reports
 
-1. In the Diagnostic Toolbox UI, find the **Latest health reports** panel.
+1. 👉 In the Diagnostic Toolbox UI, find the **Latest health reports** panel.
 
    Each report shows an **executive summary**, a **status badge** (HEALTHY / WARNING / CRITICAL), and a **raw Goose** expander with the agent's unedited output. The panel auto-refreshes every ~15 s.
 
-2. Look at the **run-stats** line in each report's header: **Model · Duration · Cost · Tokens · Agent**.
+2. 👉 Look at the **run-stats** line in each report's header: **Model · Duration · Cost · Tokens · Agent**.
 
    That's the real SAP AI Core spend and latency of that single run — the same numbers roll up into the spend dashboard.
 
-3. Open the same report in **Busola** → namespace `dev-toolbox-system` → **Custom Resources → ClusterHealthReport → `cluster-health-v2`**.
+3. 👉 Open the same report in **Busola** → namespace `dev-toolbox-system` → **Custom Resources → ClusterHealthReport → `cluster-health-v2`**.
 
    While a run is in flight, Busola shows a live **Activity** badge (`RUNNING`) and an **Elapsed** timer — the report is a Kubernetes custom resource the agent writes into, so the whole fleet can read it.
 
