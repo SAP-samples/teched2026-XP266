@@ -148,9 +148,6 @@ flowchart LR
 
 ## The TechEd 2026 landscape at a glance
 
-- ✅ Here is the whole fleet — one picture.  
-- ✅ Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions**
-
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
@@ -158,6 +155,9 @@ flowchart LR
 <td style="width: 71.6%; height: 193px;">
 
 <div>
+
+- ✅ Here is the whole fleet — one picture.  
+- ✅ Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions**
 
 ```mermaid
 flowchart TB
