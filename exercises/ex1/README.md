@@ -179,8 +179,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 1. 👉 In the **Run a diagnostic** card, pick the **v3** job (so Goose gets live, real-time `kubectl`), then open the **Prompt** dropdown and choose **— custom prompt —**. Click **Run** once you've pasted the prompt text (step 2).
 
-   Your prompt is saved to your own **adhoc prompt** store under an **auto-generated name** and used for this run; it then appears in the dropdown so you can **reuse** it. The **delete** button removes your custom prompts (the shipped ones are read-only).  
-👉 The shipped **v1/v2/v3 recipes are read-only** in the UI — your custom prompts live alongside them and never change the defaults, so you can experiment safely.
+   Your prompt is saved to your own **adhoc prompt** store under an **auto-generated name** and used for this run — it then appears in the dropdown so you can **reuse** it, and the **delete** button clears it. The shipped **v1/v2/v3 recipes are read-only** in the UI; your custom prompts live alongside them without changing the defaults, so you can experiment safely.
 
 2. 👉 Paste your **prompt text**. For example:
 
