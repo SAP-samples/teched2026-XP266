@@ -59,8 +59,9 @@ This is the **self-hosted agent layer** of the SAP AI landscape — everything b
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
-<tr>
-<td>
+<tr style="height: 193px;">
+<td style="width: 71.6%; height: 193px;">
+
 <div>
 
 ```mermaid
