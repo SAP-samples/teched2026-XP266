@@ -74,7 +74,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 1. 👉 In the Diagnostic Toolbox UI, find the **Latest health reports** panel.
 
-   Each report shows an **executive summary** and a **status badge** (HEALTHY / WARNING / CRITICAL).
+   Each report shows an **executive summary** and a **status badge** (HEALTHY / WARNING / CRITICAL). The header also carries a **run-stats** line — **Model · Duration · Cost · Tokens · Agent** — the real SAP AI Core spend and latency of that single run (the same numbers roll up into the spend dashboard).
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
@@ -113,11 +113,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 > [!TIP]
 > The panel auto-refreshes every ~15 s.
 
-2. 👉 Look at the **run-stats** line in each report's header: **Model · Duration · Cost · Tokens · Agent**.
-
-   That's the real SAP AI Core spend and latency of that single run — the same numbers roll up into the spend dashboard.
-
-3. 👉 Open the same report in **Busola** by clicking the <kbd>&nbsp;🧭&nbsp; Open in Busola ↗ &nbsp;</kbd> button in the right upper corner.
+2. 👉 Open the same report in **Busola** by clicking the <kbd>&nbsp;🧭&nbsp; Open in Busola ↗ &nbsp;</kbd> button in the right upper corner.
 
    While a run is in flight, Busola shows a live **Activity** badge (`RUNNING`) and an **Elapsed** timer — the report is a Kubernetes custom resource the agent writes into, so the whole fleet can read it.
 
