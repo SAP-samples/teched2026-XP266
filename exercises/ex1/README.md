@@ -188,6 +188,19 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
    a one-line overall verdict.
    ```
 
+   Or a tighter variant that forces concise, prettified output and suppresses the auto-footer:
+
+   ```text
+   You are a Kubernetes SRE. Using read-only kubectl, review this cluster's workloads and
+   produce a prioritized markdown report: the top 3 risks (each with concrete evidence —
+   resource names, counts, event messages) and a specific remediation for each. Finish with
+   a one-line overall verdict.
+   Output ONLY the report. No preamble. Be concise. Do NOT write a footer, closing line, or
+   any "Report generated / Cluster / Region / Kubernetes / Provider" block — END immediately
+   after the last section; a footer is appended automatically afterwards.
+   Prettify the markdown — icons, colors etc.
+   ```
+
 3. Pick the **v2** job (so Goose gets live, read-only `kubectl`) and click **Run**.
 
    Your prompt is saved to your own **adhoc prompt** store and used for this run; it then appears in the dropdown so you can **reuse** it. The **delete** button removes your custom prompts (the shipped ones are read-only).  
