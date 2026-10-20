@@ -177,9 +177,12 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 👉 The real power of the Diagnostic Toolbox is this: **you change what Goose investigates by changing the prompt** — no code, no redeploy.
 
-1. In the **Run a diagnostic** card, open the **Prompt** dropdown and choose **— custom prompt —**.
+1. 👉 In the **Run a diagnostic** card, pick the **v3** job (so Goose gets live, real-time `kubectl`), then open the **Prompt** dropdown and choose **— custom prompt —**. Click **Run** once you've pasted the prompt text (step 2).
 
-2. Give it a **name** and paste your **prompt text**. For example:
+   Your prompt is saved to your own **adhoc prompt** store under an **auto-generated name** and used for this run; it then appears in the dropdown so you can **reuse** it. The **delete** button removes your custom prompts (the shipped ones are read-only).  
+👉 The shipped **v1/v2/v3 recipes are read-only** in the UI — your custom prompts live alongside them and never change the defaults, so you can experiment safely.
+
+2. 👉 Paste your **prompt text**. For example:
 
    ```text
    You are a Kubernetes SRE. Using read-only kubectl, review this cluster's workloads and
@@ -200,11 +203,6 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
    after the last section; a footer is appended automatically afterwards.
    Prettify the markdown — icons, colors etc.
    ```
-
-3. Pick the **v2** job (so Goose gets live, read-only `kubectl`) and click **Run**.
-
-   Your prompt is saved to your own **adhoc prompt** store and used for this run; it then appears in the dropdown so you can **reuse** it. The **delete** button removes your custom prompts (the shipped ones are read-only).  
-👉 The shipped **v1/v2/v3 recipes are read-only** in the UI — your custom prompts live alongside them and never change the defaults, so you can experiment safely.
 
 > [!NOTE]
 > Your prompt runs inside the **same OpenShell sandbox** as the built-in ones: a read-only cluster token, no internet, writes → `403`. So even a prompt you wrote can only **look and reason** — it can't mutate the cluster or exfiltrate anything.
