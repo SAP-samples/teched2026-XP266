@@ -32,15 +32,6 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 | **forensic** · `cluster-health-forensic` | **post-mortem** of the latest v2 run — reads the stored report + LiteLLM spend + Job state and emits a 🎯/🟡/⚪ (CONFIRMED/LIKELY/INCONCLUSIVE) verdict | daily right after v3 + on-failure of v2/v3; also triggerable on-demand |
 | **audit** · `cluster-audit` | **live**, adaptive **security** investigation | produced as part of a **v2** run — no separate trigger; refresh by running v2 |
 
-**Open a report directly in Busola** — copy a link and replace `xp266-NNN` (and `<workshop-domain>`) with your runtime's:
-
-| Report | Deep link |
-|---|---|
-| v1 | `https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/clusterhealthreports/cluster-health` |
-| v2 | `https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/clusterhealthreports/cluster-health-v2` |
-| v3 | `https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/clusterhealthreports/cluster-health-v3` |
-| audit | `https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/namespaces/dev-toolbox-system/clusterhealthreports/cluster-audit` |
-
 **Contents**
 
 - 📋 [Read the latest reports](#exercise-11---read-the-latest-reports)
