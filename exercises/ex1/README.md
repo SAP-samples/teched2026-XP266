@@ -12,6 +12,10 @@
 https://dev-toolbox.xp266-NNN.<workshop-domain>/
 ```
 
+<p float="left">
+  <img src="images/01_00_0010.png" width="820" alt="SAP TechEd 2026 — Diagnostic Toolbox" />
+</p>
+
 > [!NOTE]
 > Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else.  
 > The reports live in namespace `dev-toolbox-system`; each run spins up a short-lived OpenShell sandbox with a **read-only** cluster token.
