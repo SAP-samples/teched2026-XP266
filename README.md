@@ -32,7 +32,9 @@ It also streams its **LLM** spend to **SAP Cloud Logging** — all routed throug
 - The same tools image is dialed to three trust tiers — **contained** (no cluster access) → **scoped-ops** (read-only) → **web terminal** (RBAC-scoped) — so you choose how much to trust each workload.
 - It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on Kyma, no fork.
 
-👉 A prompt-injected or buggy agent hits the exact same walls a well-behaved one does — that is the difference between a guardrail and a guideline, and why you can say *"yes, run it"*.
+👉 The sandbox blocks the agent **from the outside** — Kubernetes RBAC refuses writes, there is no network route to the internet, and the LLM key never enters the pod.  
+A prompt-injected or buggy agent hits the exact same walls as a well-behaved one — it cannot argue its way out, because the walls are not written in the prompt.  
+That is why you can let it run unsupervised.
 
 > [!TIP]
 > The sandboxing story has its own deep-dive on the SAP Community:
