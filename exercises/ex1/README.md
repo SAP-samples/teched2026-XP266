@@ -2,7 +2,9 @@
 
 👉 This is the heart of the workshop.
 
-- ✅ A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit** and a **forensic post-mortem** that fires when a run skips.
+- ✅ A **Goose** agent inspects your cluster on a schedule and writes what it finds as **in-cluster health reports**  
+  — three generations, **v1 / v2 / v3** 
+  — plus a security **audit** and a **forensic post-mortem** that fires when a run skips.  
 - ✅ Every run executes Goose **inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
 - ✅ You drive all of it from one place: the **Diagnostic Toolbox** UI.
 
@@ -20,13 +22,13 @@ https://dev-toolbox.xp266-NNN.<workshop-domain>/
 > - ✅ Everything runs on **your own** `xp266-NNN` runtime, so tweak freely — you won't affect anyone else.   
 > - ✅ The reports live in namespace `dev-toolbox-system`; each run spins up a short-lived OpenShell sandbox with a **read-only** cluster token.
 
-### The three report generations plus security audit nad forensic reports
+### The three report generations plus security audit and forensic reports
 
 They trade **fidelity for cost** — all run the same way (Goose in an OpenShell sandbox → LiteLLM → SAP AI Core), but differ in how much live cluster access Goose gets.
 
 | Report | What Goose sees | Notes |
 |---|---|---|
-| **v1** · `cluster-health` | a **frozen** `kyma alpha diagnose` snapshot — no live cluster access | cheap, deterministic — catches regressions between runs |
+| **v1** · `cluster-health` | a **periodic** `kyma alpha diagnose` snapshot — no live cluster access | cheap, deterministic — catches regressions between runs |
 | **v2** · `cluster-health-v2` | **live**, read-only `kubectl` on a leash — a fixed health playbook | the balanced default |
 | **v3** · `cluster-health-v3` | **live**, read-only `kubectl`, real-time and uncapped | richest and priciest — a lead list to confirm |
 | **forensic** · `cluster-health-forensic` | **post-mortem** of the latest v2 run — reads the stored report + LiteLLM spend + Job state and emits a 🎯/🟡/⚪ (CONFIRMED/LIKELY/INCONCLUSIVE) verdict | daily right after v3 + on-failure of v2/v3; also triggerable on-demand |
