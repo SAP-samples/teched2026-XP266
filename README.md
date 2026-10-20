@@ -86,7 +86,7 @@ flowchart LR
 > - ✅ A **GitHub account** — several exercises run as **GitHub Actions** workflows. If you don't have one, [sign up](https://github.com/signup) before the session (or at the very start).
 
 > [!IMPORTANT]
-> The session content is provided *exclusively* on the public **SAP-samples** GitHub, and several exercises are implemented as CI/CD [GitHub Actions workflows](https://docs.github.com/en/actions/get-started/understand-github-actions) (GHA). To run them you **fork this repository to your own GitHub account and enable GitHub Actions on your fork**. That is the only setup, it is all done in the browser, and it is **mandatory** for the GHA-based exercises.
+> The session content is provided *exclusively* on the public **SAP-samples** GitHub, and several exercises are implemented as CI/CD [GitHub Actions workflows](https://docs.github.com/en/actions/get-started/understand-github-actions) (GHA). To run them you **fork this repository to your own GitHub account and enable GitHub Actions on your fork**. That is the only setup, it is all done in the browser, and it is **mandatory** for the GHA-based exercises. 👉 Walk-through: [Appendix 0 — Fork this repo & enable GitHub Actions](exercises/Appendices/0-fork-this-repo/) (about 2 minutes).
 
 > [!IMPORTANT]
 > **Security is paramount — you never handle a credential.** The GHA exercises use GitHub's OIDC-delegated authentication, so there are **no Kubernetes or BTP credentials to copy anywhere** ([why OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect#benefits-of-using-oidc)):
@@ -117,6 +117,7 @@ flowchart LR
 
 ### Appendix
 
+- [Appendix 0 - Fork this repo & enable GitHub Actions](exercises/Appendices/0-fork-this-repo/) 🚦 *(one-time setup — mandatory before GHA exercises)*
 - [Appendix 1 - The LLM gateway: LiteLLM and SAP AI Core](exercises/Appendices/1-llm-gateway/) — how the proxy routes to SAP AI Core, and call it yourself
 - [Appendix 2 - The Busola web terminal](exercises/Appendices/2-web-terminal/) 🔧 *(optional)* — run Goose and Claude Code against your cluster, in-browser
 - [Appendix 3 - SAP AI Core from Python](exercises/Appendices/3-sap-ai-core-python/) — the JupyterHub SAP AI Core track: chat, embeddings, tool calling, and the diagnostic hand-off in Python
