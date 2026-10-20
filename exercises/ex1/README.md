@@ -65,7 +65,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 **Contents**
 
 - 📋 [Read the latest reports](#exercise-11---read-the-latest-reports)
-- ▶️ [Trigger a run](#exercise-12---trigger-a-run)
+- ▶️ [Trigger a diagnostic run](#exercise-12---trigger-a-diagnostic-run)
 - ✍️ [Write your own prompt](#exercise-13---write-your-own-prompt)
 - 🛡️ [The guardrails](#exercise-14---the-guardrails-read-reason-but-dont-touch)
 
@@ -122,7 +122,23 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 > In production the same pipeline caught things static monitoring missed — **402 ingress-gateway revisions** piled up in five days (a pod cycling every 17 minutes), **18 leftover cluster-admin bindings** from dev tooling, and a cert-manager ACME solver **stuck for 5+ days** on a DNS mismatch.  
 > Reasoning over correlated state finds what probes can't.
 
-## Exercise 1.2 - Trigger a run
+## Exercise 1.2 - Trigger a diagnostic run
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/diagnostics-01.png" width="820" alt="Run a diagnostic card — job, model, prompt, Run button" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 1. In the **Run a diagnostic** card, choose a **job** — start with **v2** (live, balanced).
 
