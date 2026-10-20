@@ -72,6 +72,22 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 ## Exercise 1.1 - Read the latest reports
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/latest-health-reports-01.png" width="820" alt="Latest health reports panel in the Diagnostic Toolbox" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
 1. 👉 In the Diagnostic Toolbox UI, find the **Latest health reports** panel.
 
    Each report shows an **executive summary**, a **status badge** (HEALTHY / WARNING / CRITICAL), and a **raw Goose** expander with the agent's unedited output. The panel auto-refreshes every ~15 s.
