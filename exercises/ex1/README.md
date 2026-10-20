@@ -90,7 +90,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 1. 👉 In the Diagnostic Toolbox UI, find the **Latest health reports** panel.
 
-   Each report shows an **executive summary**, a **status badge** (HEALTHY / WARNING / CRITICAL), and a **raw Goose** expander with the agent's unedited output. The panel auto-refreshes every ~15 s.
+   Each report shows an **executive summary**, a **status badge** (HEALTHY / WARNING / CRITICAL), and a **detailed Goose report** expander with the agent's unedited output. The panel auto-refreshes every ~15 s.
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
