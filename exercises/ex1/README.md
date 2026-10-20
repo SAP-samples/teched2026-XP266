@@ -197,7 +197,7 @@ cluster-admin:    no
 ```
 
 > [!IMPORTANT]
-> **Hand-off — remember this for later.** A run's output is a *shared artifact*: the `ClusterHealthReport` / `cluster-audit` custom resources, plus the raw Goose transcripts.  
+> **Hand-off — remember this for later.** A run's output is a *shared artifact*: the `ClusterHealthReport` / `cluster-audit` custom resources, plus the detailed Goose transcripts.  
 > Two downstream consumers read them — the **interactive chat agent** answers questions about the findings, and a **JupyterHub notebook** analyses them in Python.  
 > *Jobs produce → agents and notebooks consume.*
 
