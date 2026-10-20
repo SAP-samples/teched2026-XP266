@@ -92,6 +92,22 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
    Each report shows an **executive summary**, a **status badge** (HEALTHY / WARNING / CRITICAL), and a **raw Goose** expander with the agent's unedited output. The panel auto-refreshes every ~15 s.
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/latest-health-reports-02.png" width="820" alt="Latest health reports — detail view with run-stats" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
 2. 👉 Look at the **run-stats** line in each report's header: **Model · Duration · Cost · Tokens · Agent**.
 
    That's the real SAP AI Core spend and latency of that single run — the same numbers roll up into the spend dashboard.
