@@ -32,10 +32,10 @@ It also streams its **LLM** spend to **SAP Cloud Logging** — all routed throug
 - The same tools image is dialed to three trust tiers — **contained** (no cluster access) → **scoped-ops** (read-only) → **web terminal** (RBAC-scoped) — so you choose how much to trust each workload.
 - It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on Kyma, no fork.
 
-👉 The sandbox blocks the agent **from the outside** 
-— Kubernetes RBAC refuses writes, 
-- there is no network route to the internet, 
-- and the LLM key never enters the pod.  
+👉 The sandbox blocks the agent **from the outside**
+- ✅ Kubernetes RBAC refuses writes
+- ✅ there is no network route to the internet
+- ✅ and the LLM key never enters the pod.  
 
 👉 A prompt-injected or buggy agent hits the exact same walls as a well-behaved one — it cannot argue its way out, because the walls are not written in the prompt.  
 👉 That is why you can let it run unsupervised.
@@ -92,10 +92,11 @@ flowchart LR
 > - ✅ A **GitHub account** — several exercises run as **GitHub Actions** workflows. If you don't have one, [sign up](https://github.com/signup) before the session (or at the very start).
 
 > [!IMPORTANT]
-> 👉 The session content is provided *exclusively* on the public **SAP-samples** GitHub.
+> - ✅ The session content is provided *exclusively* on the public **SAP-samples** GitHub.
 > A couple of exercises are implemented as CI/CD [GitHub Actions workflows](https://docs.github.com/en/actions/get-started/understand-github-actions) (GHA).  
-> To run them you need to **fork this repository to your own GitHub account and enable GitHub Actions on your fork**.  
-> That is the only setup, it is all done in the browser, and it is **required** for the GHA-based exercises.  
+> - ✅ To run them you need to **fork this repository to your own GitHub account and enable GitHub Actions on your fork**.  
+> - ✅ That is the only setup, it is all done in the browser, and it is **required** for the GHA-based exercises.
+>
 > 👉 Walk-through: [Appendix 0 — Fork this repo & enable GitHub Actions](exercises/Appendices/0-fork-this-repo/) (about 2 minutes).
 
 > [!IMPORTANT]
@@ -106,10 +107,8 @@ flowchart LR
 > - ✅ **SAP Cloud Identity Services** (the BTP platform IDP) is federated with the GitHub Actions OIDC provider.
 > - ✅ As a result, **short-lived** [tokens](https://docs.github.com/en/actions/concepts/security/openid-connect#understanding-the-oidc-token) are fetched and rotated automatically on your behalf, for both Kubernetes and BTP operations.
 
-> [!WARNING]
-> Personal devices ought not to be used for this session — please use the **provided TechEd laptop**.
-
 > [!NOTE]
+> 👉 Personal devices ought not to be used for this session — please use the **provided TechEd laptop**.
 > 👉 Every exercise runs in the browser — Busola, JupyterHub, and GitHub Actions. 
 > 👉 No local `kubectl`, no IDE, no cloud account, **nothing to install**. 
 
