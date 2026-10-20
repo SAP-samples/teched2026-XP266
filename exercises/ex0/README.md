@@ -25,7 +25,7 @@ https://busola.xp266-NNN.<workshop-domain>/clusterdir/
 ```
 
 <p float="left">
-  <img src="images/00_01_0005.jpg" width="820" alt="SAP TechEd 2026 Cluster Directory" />
+  <img src="images/00_00_0010.png" width="820" alt="SAP TechEd 2026 Cluster Directory" />
 </p>
 
 The page is organised top-to-bottom:
@@ -133,13 +133,15 @@ flowchart TB
 
 | | |
 |---|---|
-| 🧭 **Where you are** | Your `xp266-NNN` lives in exactly one shard (the shard = `(NNN-1) / 10 + 1`). Your shard-mates share your Azure region. |
-| 🔐 **Who vouches for you** | Your runtime trusts the hub's identity (`OpenIDConnect` CR `quovadis-federated`). The automation (CI, Goose, the dev-toolbox jobs) authenticates via a short-lived token minted on the hub — no cloud credential lives on your runtime. |
+| 🧭 **Where you are** | Your `xp266-NNN` lives in exactly one shard.  |
+| 🔐 **Who vouches for you** | Your runtime trusts the hub's identity (`OpenIDConnect` CR `quovadis-federated`). The automation (CI, Goose, the Cluster Health cronjobs) authenticates via a short-lived token minted on the hub — no cloud credential lives on your runtime. |
 | 🗺️ **Where the shared state lives** | A few things are hub-wide (the Keycloak realm config, the SCI integration state, the Terraform state secrets). Your runtime reads them on demand; it never writes to the hub. |
-| 🧘 **Why cross-cloud** | The hub runs on an SAP-managed AWS Kyma shoot (purpose-built for control-plane work). The student runtimes run on Azure where the workshop capacity is pre-provisioned. Only control-plane calls cross — your student traffic (Busola, dev-toolbox, JupyterHub) stays on Azure. |
+| 🧘 **Why cross-cloud** | The hub runs on an SAP-managed AWS Kyma shoot (purpose-built for control-plane work). The student runtimes run on Azure where the workshop capacity is pre-provisioned. Only control-plane calls cross — your student traffic (Busola, Cluster Health, JupyterHub) stays on Azure. |
 
 > [!NOTE]
-> You never interact with the hub directly in this workshop. Everything you do — Busola, dev-toolbox, chat agent, JupyterHub — happens on your own `xp266-NNN` runtime. The hub shows up only as the identity provider that signs you in. If you're curious about the full architecture (hub-side TF state model, trust direction, rollout mechanics), the SRE/architect view lives in the parent repo's `docs/teched2026-landscape-arch.md`.
+> 👉 You never interact with the hub directly in this workshop.  
+> 👉 Everything you do — happens on your own `xp266-NNN` spoke.  
+> 👉 The hub shows up only as the identity provider that signs you in.
 
 ---
 
