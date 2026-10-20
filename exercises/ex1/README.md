@@ -26,6 +26,10 @@ https://dev-toolbox.xp266-NNN.<workshop-domain>/
 
 They trade **fidelity for cost** — all run the same way (Goose in an OpenShell sandbox → LiteLLM → SAP AI Core), but differ in how much live cluster access Goose gets.
 
+<p float="left">
+  <img src="images/cluster-health-01.png" width="820" alt="Cluster Health report — v1/v2/v3 badges" />
+</p>
+
 | Report | What Goose sees | Notes |
 |---|---|---|
 | **v1** · `cluster-health` | a **periodic** `kyma alpha diagnose` snapshot — no live cluster access | cheap, deterministic — catches regressions between runs |
