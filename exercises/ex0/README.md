@@ -38,9 +38,6 @@ The page is organised top-to-bottom:
 | **Modules Health** | Fleet-wide Kyma module versions + state (Istio, API Gateway, Serverless, Telemetry, …) — the same `kyma alpha diagnose` data, split by module. |
 | **Busola Web Terminal** | Quick-launch deep-link into the in-cluster web terminal — the pod with pre-installed `goose` / `claude` / `kubectl` / `kyma` that Appendix 2 walks through. |
 | **LiteLLM spend** | Today's SAP AI Core spend for your runtime, inline (model + caller breakdown). Full dashboards one click away (SAP Cloud Logging). You'll explore this in Exercise 6. |
-| **Local access** | This cluster's raw-access variants — a copy-pastable `kubectl config` snippet for the few scenarios where you want to drive the cluster from an outside shell. **Not needed for any workshop exercise** — browser is enough. |
-| **Appendix: Other SAP Managed clusters** | Cross-links to the other TechEd fleet clusters' directories — handy if you want to peek at a neighbour's dashboards or compare numbers. Read-only for other students' runtimes. |
-| **Appendix: Unplugged clusters** | Cross-links to the "Kyma Unplugged" reference clusters (the SAP-managed hub + a few open-source variants) — out-of-scope for the workshop; included for the curious. |
 
 **Two ways in:**
 
