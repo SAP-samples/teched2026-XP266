@@ -96,7 +96,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
    That's the real SAP AI Core spend and latency of that single run — the same numbers roll up into the spend dashboard.
 
-3. 👉 Open the same report in **Busola** → namespace `dev-toolbox-system` → **Custom Resources → ClusterHealthReport → `cluster-health-v2`**.
+3. 👉 Open the same report in **Busola** by clicking the **Open in Busola ↗** button in the right upper corner.
 
    While a run is in flight, Busola shows a live **Activity** badge (`RUNNING`) and an **Elapsed** timer — the report is a Kubernetes custom resource the agent writes into, so the whole fleet can read it.
 
