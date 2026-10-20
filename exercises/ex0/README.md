@@ -33,8 +33,14 @@ The page is organised top-to-bottom:
 | Section | What it's for |
 |---|---|
 | **Navigate to your Kyma cluster** | Pick your runtime with the **selector** (top-right), e.g. `xp266-NNN`. The card shows your **User login** (`XP266-NNN`, `xp266-nnn@education.cloud.sap`) and the shared **Instructor login** (`XP266-000`) — plus two ways in (below). |
-| **Cluster launchpad** | One-click deep-links into every endpoint for the selected cluster — Cluster Health, Fleet Status + Spend, Audit Log, Jobs, and the apps (dev-toolbox, LiteLLM Spend, JupyterHub, Chat agent). Follows the selector. |
-| **LiteLLM spend** + **Appendix** | Today's spend, plus this cluster's raw access variants and the other fleet clusters — you can ignore these for now. |
+| **Cluster launchpad** | One-click deep-links into every endpoint for the selected cluster — **Cluster Health Report** (v2/v3/Forensic/Audit), **Fleet Status + Spend**, **Audit Log**, **Jobs**, and the apps (**dev-toolbox**, **LiteLLM Spend**, **JupyterHub**, **Chat agent (OpenClaw)**). Follows the selector. |
+| **Cluster Health** | Fleet-wide view of the latest **Cluster Health Report** per cluster (the autonomous Goose output you'll meet in Exercise 1) — HEALTHY / WARNING / CRITICAL at a glance across all 50 runtimes. |
+| **Modules Health** | Fleet-wide Kyma module versions + state (Istio, API Gateway, Serverless, Telemetry, …) — the same `kyma alpha diagnose` data, split by module. |
+| **Busola Web Terminal** | Quick-launch deep-link into the in-cluster web terminal — the pod with pre-installed `goose` / `claude` / `kubectl` / `kyma` that Appendix 2 walks through. |
+| **LiteLLM spend** | Today's SAP AI Core spend for your runtime, inline (model + caller breakdown). Full dashboards one click away (SAP Cloud Logging). You'll explore this in Exercise 6. |
+| **Local access** | This cluster's raw-access variants — a copy-pastable `kubectl config` snippet for the few scenarios where you want to drive the cluster from an outside shell. **Not needed for any workshop exercise** — browser is enough. |
+| **Appendix: Other SAP Managed clusters** | Cross-links to the other TechEd fleet clusters' directories — handy if you want to peek at a neighbour's dashboards or compare numbers. Read-only for other students' runtimes. |
+| **Appendix: Unplugged clusters** | Cross-links to the "Kyma Unplugged" reference clusters (the SAP-managed hub + a few open-source variants) — out-of-scope for the workshop; included for the curious. |
 
 **Two ways in:**
 
