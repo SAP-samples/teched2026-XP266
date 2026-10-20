@@ -17,7 +17,7 @@ You will not deploy anything — everything is in place; you are here to underst
 
 Everything starts at the **Cluster Directory** — one launcher page for the whole TechEd fleet.  
 From here you pick your runtime, read your sign-in details, and jump straight into the right dashboard.  
-Open the directory URL you were given:
+👉 Open the directory URL you were given:
 
 ```
 https://busola.xp266-NNN.<workshop-domain>/clusterdir/
@@ -105,35 +105,9 @@ flowchart LR
 
 ## The TechEd 2026 landscape at a glance
 
-👉 Here is the whole fleet — one picture. Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions**, all **federated to a single hub** (on AWS, separate from the student runtimes) that holds the shared identity + state.
+👉 Here is the whole fleet — one picture.  
+👉 Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions**
 
-```
-                 ┌────────────────────────────────────────────┐
-                 │  🛰  HUB  ·  aws / eu-west-1                │
-                 │                                            │
-                 │    keycloak    SCI state     bootstrapper  │
-                 │    TF state    OIDC brokers                │
-                 └─────────────────────┬──────────────────────┘
-                                       │  federated OIDC
-                                       │  (aud=bootstrapper)
-            ┌──────────────────────────┼──────────────────────────┐
-            ▼                          ▼                          ▼
-    ┌───────────────┐          ┌───────────────┐          ┌───────────────┐
-    │   azure /     │          │   azure /     │          │   azure /     │
-    │  germany-     │          │   uksouth     │          │ northeurope   │
-    │  westcentral  │          │               │          │               │
-    ├───────────────┤          ├───────────────┤          ├───────────────┤
-    │  teched-01    │          │  teched-02    │          │  teched-03    │
-    │  001–010      │          │  011–020      │          │  021–030      │
-    │               │          ├───────────────┤          ├───────────────┤
-    │  (10 shoots)  │          │  teched-04    │          │  teched-05    │
-    │               │          │  031–040      │          │  041–050      │
-    │               │          │  (20 shoots)  │          │  (20 shoots)  │
-    └───────────────┘          └───────────────┘          └───────────────┘
-       10 students                20 students                20 students
-```
-
-**Same picture, Mermaid-rendered:**
 
 ```mermaid
 flowchart TB
@@ -154,7 +128,7 @@ flowchart TB
     T1 & T2 & T3 & T4 & T5 ==> |"federated OIDC · aud=bootstrapper"| HUB
 ```
 
-**What that means in practice:**
+**What that means in practice:**  
 
 | | |
 |---|---|

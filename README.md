@@ -32,9 +32,13 @@ It also streams its **LLM** spend to **SAP Cloud Logging** — all routed throug
 - The same tools image is dialed to three trust tiers — **contained** (no cluster access) → **scoped-ops** (read-only) → **web terminal** (RBAC-scoped) — so you choose how much to trust each workload.
 - It is the **100% stock** NVIDIA OpenShell + Kubernetes `agent-sandbox` chart on Kyma, no fork.
 
-👉 The sandbox blocks the agent **from the outside** — Kubernetes RBAC refuses writes, there is no network route to the internet, and the LLM key never enters the pod.  
-A prompt-injected or buggy agent hits the exact same walls as a well-behaved one — it cannot argue its way out, because the walls are not written in the prompt.  
-That is why you can let it run unsupervised.
+👉 The sandbox blocks the agent **from the outside** 
+— Kubernetes RBAC refuses writes, 
+- there is no network route to the internet, 
+- and the LLM key never enters the pod.  
+
+👉 A prompt-injected or buggy agent hits the exact same walls as a well-behaved one — it cannot argue its way out, because the walls are not written in the prompt.  
+👉 That is why you can let it run unsupervised.
 
 > [!TIP]
 > The sandboxing story has its own deep-dive on the SAP Community:
@@ -88,23 +92,27 @@ flowchart LR
 > - ✅ A **GitHub account** — several exercises run as **GitHub Actions** workflows. If you don't have one, [sign up](https://github.com/signup) before the session (or at the very start).
 
 > [!IMPORTANT]
-> The session content is provided *exclusively* on the public **SAP-samples** GitHub, and several exercises are implemented as CI/CD [GitHub Actions workflows](https://docs.github.com/en/actions/get-started/understand-github-actions) (GHA).  
-> To run them you **fork this repository to your own GitHub account and enable GitHub Actions on your fork**.  
-> That is the only setup, it is all done in the browser, and it is **mandatory** for the GHA-based exercises.  
+> 👉 The session content is provided *exclusively* on the public **SAP-samples** GitHub.
+> A couple of exercises are implemented as CI/CD [GitHub Actions workflows](https://docs.github.com/en/actions/get-started/understand-github-actions) (GHA).  
+> To run them you need to **fork this repository to your own GitHub account and enable GitHub Actions on your fork**.  
+> That is the only setup, it is all done in the browser, and it is **required** for the GHA-based exercises.  
 > 👉 Walk-through: [Appendix 0 — Fork this repo & enable GitHub Actions](exercises/Appendices/0-fork-this-repo/) (about 2 minutes).
 
 > [!IMPORTANT]
-> **Security is paramount — you never handle a credential.** The GHA exercises use GitHub's OIDC-delegated authentication, so there are **no Kubernetes or BTP credentials to copy anywhere** ([why OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect#benefits-of-using-oidc)):
+> **Security is paramount — you never handle a credential.** 
+> The GHA exercises use GitHub's OIDC-delegated authentication, so there are **no Kubernetes or BTP credentials to copy anywhere** ([why OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect#benefits-of-using-oidc)):
 > - ✅ The GitHub Actions workflow acts as the [OIDC provider](https://docs.github.com/en/actions/concepts/security/openid-connect).
 > - ✅ Every Kyma runtime in the landscape is pre-configured to **trust GitHub's token issuer** (via the built-in Gardener OIDC shoot extension).
 > - ✅ **SAP Cloud Identity Services** (the BTP platform IDP) is federated with the GitHub Actions OIDC provider.
 > - ✅ As a result, **short-lived** [tokens](https://docs.github.com/en/actions/concepts/security/openid-connect#understanding-the-oidc-token) are fetched and rotated automatically on your behalf, for both Kubernetes and BTP operations.
 
 > [!WARNING]
-> Personal devices ought not to be used for this session — please use the **provided TechEd laptop**. The good news: you fork the repo and run the **GHA-based exercises** directly from your fork, in Chrome, on the provided laptop.
+> Personal devices ought not to be used for this session — please use the **provided TechEd laptop**.
 
 > [!NOTE]
-> Every exercise runs in the browser — Busola, JupyterHub, and GitHub Actions. No local `kubectl`, no IDE, no cloud account, **nothing to install**. Where an exercise deploys something, you do it the same way the platform was built — by clicking **Run workflow** on a GitHub Actions pipeline (from your fork), never with local tooling.
+> 👉 Every exercise runs in the browser — Busola, JupyterHub, and GitHub Actions. 
+> 👉 No local `kubectl`, no IDE, no cloud account, **nothing to install**. 
+
 
 ## Exercises
 
