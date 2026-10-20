@@ -2,9 +2,9 @@
 
 👉 This is the heart of the workshop.
 
-- A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit**.
+- A **Goose** agent inspects your cluster on a schedule and writes what it finds as **Busola in-cluster health reports** — three generations, **v1 / v2 / v3** — plus a security **audit** and a **forensic post-mortem** that fires when a run skips.
 - Every run executes Goose **inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
-- You drive all of it from one place: the **dev-toolbox UI**.
+- You drive all of it from one place: the **Diagnostic Toolbox** UI.
 
 👉 Open it (same single sign-on as Busola):
 
@@ -42,7 +42,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 ## Exercise 1.1 - Read the latest reports
 
-1. In the dev-toolbox UI, find the **Latest health reports** panel.
+1. In the Diagnostic Toolbox UI, find the **Latest health reports** panel.
 
    Each report shows an **executive summary**, a **status badge** (HEALTHY / WARNING / CRITICAL), and a **raw Goose** expander with the agent's unedited output. The panel auto-refreshes every ~15 s.
 
@@ -80,7 +80,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
 ## Exercise 1.3 - Write your own prompt
 
-👉 The real power of the dev-toolbox is this: **you change what Goose investigates by changing the prompt** — no code, no redeploy.
+👉 The real power of the Diagnostic Toolbox is this: **you change what Goose investigates by changing the prompt** — no code, no redeploy.
 
 1. In the **Run a diagnostic** card, open the **Prompt** dropdown and choose **— custom prompt —**.
 
@@ -141,6 +141,6 @@ cluster-admin:    no
 
 ## Summary
 
-You read the v1/v2/v3 Cluster Health Reports in the dev-toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.  
+You read the v1/v2/v3 Cluster Health Reports in the Diagnostic Toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.  
 You also met the hand-off that the rest of the workshop builds on.  
 Continue to - [Exercise 2 - Chat with the interactive agent](../ex2/README.md)
