@@ -108,9 +108,9 @@ flowchart LR
 > - ✅ As a result, **short-lived** [tokens](https://docs.github.com/en/actions/concepts/security/openid-connect#understanding-the-oidc-token) are fetched and rotated automatically on your behalf, for both Kubernetes and BTP operations.
 
 > [!NOTE]
-> 👉 Personal devices ought not to be used for this session — please use the **provided TechEd laptop**.
-> 👉 Every exercise runs in the browser — Busola, JupyterHub, and GitHub Actions. 
-> 👉 No local `kubectl`, no IDE, no cloud account, **nothing to install**. 
+> 👉 Personal devices ought not to be used for this session — please use the **provided TechEd laptop**.  
+> 👉 Every exercise runs in the browser — Busola, JupyterHub, and GitHub Actions.  
+> 👉 No local `kubectl`, no IDE, no cloud account, **nothing to install**.  
 
 
 ## Exercises
