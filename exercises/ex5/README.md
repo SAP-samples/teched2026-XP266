@@ -93,7 +93,7 @@ and injects the key sentinel.
 
 The sandbox image ships **three** terminal coding agents — all pre-installed, all pointed at OpenRouter.
 
-<table style="width: 100%; max-width:100%; table-layout: fixed; overflow:auto; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
 <td>

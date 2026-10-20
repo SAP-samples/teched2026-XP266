@@ -104,7 +104,7 @@ every LLM call  ──▶  LiteLLM proxy  ──▶  SAP AI Core  (Claude · GPT
 
 The next exercise walks the **LiteLLM → SAP AI Core** hop end-to-end.
 
-<table style="width: 100%; max-width:100%; table-layout: fixed; overflow:auto; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
 <td>
@@ -151,7 +151,7 @@ flowchart LR
 - ✅ Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions**
 
 
-<table style="width: 100%; max-width:100%; table-layout: fixed; overflow:auto; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
 <td>
