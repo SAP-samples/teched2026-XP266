@@ -116,7 +116,7 @@ flowchart LR
 ## Exercises
 
 - [Getting Started](exercises/ex0/) — access your Kyma runtime and tour the pre-deployed AI-ops stack
-- [Exercise 1 - Trigger and shape the Cluster Health Reports](exercises/ex1/) — drive the v1/v2/v3 reports from the dev-toolbox UI, write your own prompt, and see the read-only sandbox guardrails
+- [Exercise 1 - Trigger and shape the Cluster Health Reports](exercises/ex1/) — drive the v1/v2/v3 reports from the Diagnostic Toolbox UI, write your own prompt, and see the read-only sandbox guardrails
 - [Exercise 2 - Chat with the interactive agent](exercises/ex2/) — the interactive chat UI, and the hand-off from the diagnostic jobs
 - [Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks](exercises/ex3/) — drive the OpenShell sandbox lifecycle from Python and run an agent inside a sandbox
 - [Exercise 4 - Your own sandboxed agent: OpenShell on Kyma](exercises/ex4/) 🔧 — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
