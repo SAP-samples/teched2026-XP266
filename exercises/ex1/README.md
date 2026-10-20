@@ -140,13 +140,13 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 </tbody>
 </table>
 
-1. In the **Run a diagnostic** card, choose a **job** — start with **v2** (live, balanced).
+1. 👉 In the **Run a diagnostic** card, choose a **job** and a **prompt** — start with **v2** (live, balanced).
 
-2. *(optional)* Pick a **Model**.
+2. 👉 *(optional)* Pick a **Model**.
 
    The dropdown is the **intersection** of what's actually deployed and `RUNNING` in your SAP AI Core, and what the LiteLLM proxy is configured to route — so you can only pick a model the proxy will accept. (v2/v3 honour your choice; v1 keeps its fixed model.)
 
-3. Click **Run**.
+3. 👉 Click **Run**.
 
    A one-off sandboxed run starts immediately (no waiting for the schedule). Watch the **Recent runs** table; click **logs** on the new row to tail the sandbox and see the extracted *Goose answer*.
 
