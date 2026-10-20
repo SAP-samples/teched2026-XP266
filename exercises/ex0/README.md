@@ -84,23 +84,22 @@ Now sign in:
 > several corporate identity providers.  
 > For TechEd students the default is **SAP IAS** — enter your workshop account and you are
 > straight in. 
-> 
-> If you are an **SAP employee** (an `@sap.com` address), IAS automatically forwards you to **SAP corporate
-> single sign-on** (with 2FA)
-> Either way you end up in the same Busola session — no passwords are stored by the workshop.
+
 
 > [!TIP]
 > The **Cluster Overview** shows one or more **banner cards** with handy shortcut **buttons** into the workshop features (dashboards, quick actions). If you dismiss a card, it **stays hidden in that browser**. To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
 
 ## Exercise 0.2 - See what is already deployed *(optional)*
 
-Your runtime's **self-hosted, in-cluster agent layer** — the LiteLLM proxy, the Goose diagnostic jobs, the interactive chat agent, JupyterHub, the telemetry and spend pipeline — was deployed for you declaratively with **KRO** (Kubernetes Resource Orchestrator) as a single unit.  
-Your agent **consumes** the SAP AI platform — it hosts no model itself.  
-Every LLM call goes down to **SAP AI Core** (SAP's LLM Module / Generative AI Hub) and the generation comes back.  
+Your runtime's **self-hosted, in-cluster agent layer** is composed of:
+- ✅ a LiteLLM proxy, 
+- ✅ Goose diagnostic jobs, 
+- ✅ an interactive chat agent, 
+- ✅ a JupyterHub Openshell Playground, 
+- ✅ the telemetry and spend pipeline  
 
-```text
-every LLM call  ──▶  LiteLLM proxy  ──▶  SAP AI Core  (Claude · GPT · Mistral · Nova)
-```
+Your agent **consumes** the SAP BAIP platform AICore services — it hosts no model itself.  
+
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
@@ -109,7 +108,8 @@ every LLM call  ──▶  LiteLLM proxy  ──▶  SAP AI Core  (Claude · GPT
 
 <div>
 
-The next exercise walks the **LiteLLM → SAP AI Core** hop end-to-end.
+Every LLM call goes down to **SAP AI Core** (SAP's LLM Module / Generative AI Hub) and the generation comes back.  
+
 
 ```mermaid
 flowchart LR
@@ -141,6 +141,14 @@ flowchart LR
 </tr>
 </tbody>
 </table>
+
+
+```text
+every LLM call  ──▶  LiteLLM proxy  ──▶  SAP AI Core  (Claude · GPT · Mistral · Nova)
+```
+
+The next exercise walks the **LiteLLM → SAP AI Core** hop end-to-end.
+
 
 > [!TIP]
 > Want the full story behind this stack? Read the deep-dive on the SAP Community:

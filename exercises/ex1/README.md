@@ -8,7 +8,7 @@
 - ✅ Every run executes Goose **inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
 - ✅ You drive all of it from one place: the **Diagnostic Toolbox** UI.
 
-👉 Open it (same single sign-on as Busola):
+👉 Open the diagnostics portal
 
 ```
 https://dev-toolbox.xp266-NNN.<workshop-domain>/
