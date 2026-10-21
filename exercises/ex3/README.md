@@ -143,10 +143,6 @@ This notebook drives the OpenShell gateway programmatically via the **OpenShell 
 
 That's the **richest flavour**: goose runs in an OpenShell sandbox with **live read-only `kubectl`** and investigates the cluster itself.
 
-- ✅ the sandbox gets a read-only **`sandbox-viewer`** identity + the canonical policy (apiserver read-only **+** keyless LiteLLM),
-- ✅ goose shells out to the allowlisted `kubectl`,
-- ✅ auth = **device-code** (your identity) — **required**: the supervisor's egress interception is sustained by the device-code refresh token (a headless/static token can't sustain it, which is why this works interactively, not from CI client-credentials).
-
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
@@ -164,7 +160,10 @@ That's the **richest flavour**: goose runs in an OpenShell sandbox with **live r
 </table>
 
 > [!IMPORTANT]
-> **The sandbox is the guardrail, not the prompt.** goose gets a short-lived **read-only** identity (`get`/`list`/`watch`, no secrets) and no internet; a write or a secret-read comes back `403`. You can hand it any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt.
+> **The sandbox is the guardrail, not the prompt.** You can hand goose any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt:
+> - ✅ the sandbox gets a short-lived read-only **`sandbox-viewer`** identity (`get`/`list`/`watch`, **no secrets**) + the canonical policy (apiserver read-only **+** keyless LiteLLM) — a write or a secret-read comes back `403`,
+> - ✅ goose shells out to the allowlisted `kubectl`; no internet,
+> - ✅ auth = **device-code** (your identity) — **required**: the supervisor's egress interception is sustained by the device-code refresh token (a headless/static token can't sustain it, which is why this works interactively, not from CI client-credentials).
 
 ### Exercise 3.2.4 - `05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`
 
