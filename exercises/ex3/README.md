@@ -88,7 +88,7 @@
 | Notebook | 🪿 OpenShell + goose — live `kubectl` investigation |
 |---|---|
 | 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | Richest flavour — the `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then opens a sandbox in which the agent gets **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + LiteLLM proxy). |
-| 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Same investigation as **05**, run **headless** — the `openshell` **CLI** still registers the gateway, but with **client-credentials** instead of device-code (no browser). |
+| 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Same rich flavour as **05**, just runs **headless** — the `openshell` **CLI** still registers the gateway, with **client-credentials** instead of device-code (no browser). |
 | 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Same investigation as **05b**, but with **no `openshell` CLI** — only the **NVIDIA OpenShell Python SDK**; it mints the client-credentials token itself. |
 
 | Notebook | 🪿 OpenShell + goose — triage from a snapshot / stored report |
