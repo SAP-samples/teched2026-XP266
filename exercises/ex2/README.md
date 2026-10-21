@@ -106,7 +106,7 @@ Links:
 - ✅ This is a classic **producer-consumer** pattern: the autonomous jobs *produce* the findings; the chat agent *consumes* them to help you make sense of what they are.
 - ✅ The Goose **v1** and **v2** jobs already wrote a **Cluster Health Report** and archived their raw findings.
 
-👉 Now ask the *interactive* agent about them:
+👉 Now ask the *interactive* agent the following:
 
 ```
 Summarize the latest cluster health report for this cluster. What are the top risks, and what would you do about the most urgent one?
