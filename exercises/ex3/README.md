@@ -65,12 +65,12 @@ Here you drive its whole lifecycle from Python — then put an **agent (goose)**
 
 | Notebook | Track | What it does |
 |---|---|---|
-| `04-OpenShell-Sandbox-SDK` | 📦 OpenShell SDK | Sandbox create → exec → list → delete; gateway via CLI device-code login. |
-| `04b-OpenShell-Sandbox-SDK-Headless` | 📦 OpenShell SDK | Same lifecycle, **no CLI** — pure `SandboxClient(tls=None, bearer_token=…)`. |
-| `05-OpenShell-Goose-Diagnostics-Live` | 🪿 OpenShell + goose | Agent runs **live read-only kubectl** in a scoped sandbox and writes a report. |
-| `05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK` | 🪿 OpenShell + goose | The same live investigation, headless (client-credentials) / pure SDK. |
-| `06-OpenShell-Goose-Diagnostics-Snapshot` | 🪿 OpenShell + goose | goose over a **static** `kyma diagnose` snapshot — no live cluster access. |
-| `07-OpenShell-Goose-Diagnostics-FromReport` | 🪿 OpenShell + goose | Triage a **stored** `ClusterHealthReport`. |
+| [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | 📦 OpenShell SDK | Sandbox create → exec → list → delete; gateway via CLI device-code login. |
+| [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | 📦 OpenShell SDK | Same lifecycle, **no CLI** — pure `SandboxClient(tls=None, bearer_token=…)`. |
+| [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | 🪿 OpenShell + goose | Agent runs **live read-only kubectl** in a scoped sandbox and writes a report. |
+| [`05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | 🪿 OpenShell + goose | The same live investigation, headless (client-credentials) / pure SDK. |
+| [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | 🪿 OpenShell + goose | goose over a **static** `kyma diagnose` snapshot — no live cluster access. |
+| [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | 🪿 OpenShell + goose | Triage a **stored** `ClusterHealthReport`. |
 
 > [!NOTE]
 > The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
