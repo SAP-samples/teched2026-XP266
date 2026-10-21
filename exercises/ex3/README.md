@@ -63,6 +63,22 @@
 > [!TIP]
 > The notebooks are **self-explanatory** — read the markdown cells as you go. Run them cell by cell with <kbd>Shift</kbd>+<kbd>Enter</kbd>, or in one go via the top menu **Run → Run All Cells** (or **Kernel → Restart Kernel and Run All Cells…** for a clean slate).
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/notebook-01.png" width="820" alt="JupyterLab — Run → Run All Cells" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
 **Notebooks in this section**
 
 - 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk)
