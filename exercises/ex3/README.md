@@ -60,6 +60,9 @@
 > - ✅ A **sandbox** is a disposable, per-session pod that _by construction_ can't reach the internet or the cluster API.
 > - ✅ Here you drive its whole lifecycle from Python — then put an **agent (goose)** inside the box, reasoning over your cluster from behind the guardrails.
 
+> [!TIP]
+> The notebooks are **self-explanatory** — read the markdown cells as you go. Run them cell by cell with <kbd>Shift</kbd>+<kbd>Enter</kbd>, or in one go via the top menu **Run → Run All Cells** (or **Kernel → Restart Kernel and Run All Cells…** for a clean slate).
+
 **Notebooks in this section**
 
 - 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk)
