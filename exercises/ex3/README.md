@@ -132,9 +132,9 @@ This notebook drives the OpenShell gateway programmatically via the **OpenShell 
 
 👉 Prefer no browser step? Open **`04b-OpenShell-Sandbox-SDK-Headless.ipynb`** and run all cells.
 
-The **pure-SDK twin of 04**: the *same* `SandboxClient` lifecycle (**create → exec → list → delete**), verbatim. The ONLY difference is **authentication**. Where 04 registers the gateway with the **CLI** (`openshell gateway add`, device-code) and reuses it via `from_active_cluster()`, this notebook constructs `SandboxClient` **directly** — **no `openshell` binary, no `gateway add`** — with **`tls=None`** (plaintext: the gateway runs `tls=false`, TLS terminates at the Istio ingress) + a **self-minted `bearer_token`** (client-credentials OIDC token from the `openshell-admin-sa` secret).
+The **pure-SDK twin of 04**: the *same* `SandboxClient` lifecycle (**create → exec → list → delete**), verbatim. The **only difference is authentication** — **no browser, no CLI, no `gateway add`**. The notebook mints a client-credentials token itself (from the `openshell-admin-sa` secret) and hands it to `SandboxClient` directly. Same result, machine-to-machine auth.
 
-Everything from the create cell on is 04's proven lifecycle, unchanged. See **3.2.4 (`05c`)** for this same route plus a live read-only-kubectl goose investigation.
+See **3.2.4 (`05c`)** for this same route plus a live read-only-`kubectl` goose investigation.
 
 ### Exercise 3.2.3 - `05-OpenShell-Goose-Diagnostics-Live`
 
