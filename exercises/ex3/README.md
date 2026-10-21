@@ -71,6 +71,9 @@ It registers the in-cluster OpenShell gateway, then uses the Python `SandboxClie
 - Watch the lifecycle: a sandbox is created, your `exec` runs a command inside it, you list the live sandboxes, and the sandbox is deleted — nothing is left running.
 
 > [!NOTE]
+> **About the "Grant Access to openshell-oidc" page** you see in the browser during the device-code login — it's the **OAuth 2.0 Device Authorization Grant** confirmation ([RFC 8628](https://datatracker.ietf.org/doc/html/rfc8628)), not an OIDC consent screen. The protocol REQUIRES the user to explicitly approve the device at the browser side so nobody else can hijack the account by polling the device endpoint. Click **Yes** once per notebook session — it can't be suppressed via Keycloak client config.
+
+> [!NOTE]
 > This minimal sandbox is **compute-only**: it has no cluster credentials and no route out.  
 > It's the blank canvas; the next step adds an agent and a scoped, read-only cluster identity.
 
