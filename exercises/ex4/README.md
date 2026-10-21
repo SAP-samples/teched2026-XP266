@@ -9,7 +9,7 @@
 
 **Contents**
 
-- ⚡ **4a** *(easy path)* — run it as a **GitHub Action** (see the note below)
+- ⚡ **4a** *(easy path)* — [Run it as a GitHub Action](#4a-easy-path--run-it-as-a-github-action)
 - 🛠️ **4b** *(optional)* — [Practice the OpenShell CLI in the in-cluster web terminal](#4b-practice-the-openshell-cli-in-the-in-cluster-web-terminal)
   - 🔑 [4.1 terminal & gateway](#41---open-the-terminal-and-reach-the-gateway)
   - 🔀 [4.2 providers (pre-created)](#42---providers-pre-created--nothing-to-wire)
@@ -17,16 +17,15 @@
   - 🛡️ [4.4 guardrail](#44---see-the-guardrail-hold)
   - 🔎 [4.5 scoped-ops](#45---scoped-ops-an-agent-that-reads-the-cluster-one-command-)
 
-> [!NOTE]
-> **Easy path — run it as a GitHub Action.**  
-> To see **Goose running inside a contained OpenShell sandbox** on your cluster — the production path this exercise
-> builds by hand — **without a terminal**, dispatch one GitHub Actions workflow from your fork:
->
-> | Run this workflow | Workflow inputs | What it does |
-> |---|---|---|
-> | [**`all-fleets-teched-admin`**](../../../../actions/workflows/all-fleets-teched-admin.yaml) | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• a `goose_mode` (`snapshot` / `live`)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report. |
->
-> Prefer the hands-on CLI? Continue below.
+## 4a. Easy path — run it as a GitHub Action
+
+To see **Goose running inside a contained OpenShell sandbox** on your cluster — the production path this exercise builds by hand — **without a terminal**, dispatch one GitHub Actions workflow from your fork:
+
+| Run this workflow | Workflow inputs | What it does |
+|---|---|---|
+| [**`all-fleets-teched-admin`**](../../../../actions/workflows/all-fleets-teched-admin.yaml) | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• a `goose_mode` (`snapshot` / `live`)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report. |
+
+Prefer the hands-on CLI? Continue below.
 
 ---
 
