@@ -32,7 +32,7 @@ LITELLM_HOST=${LITELLM_HOST:-http://litellm-proxy.default.svc.cluster.local:4001
 KEEP_SANDBOX=${KEEP_SANDBOX:-false}                            # true → do NOT delete the sandbox (students inspect logs)
 PROMPT_CM=${PROMPT_CM:-dev-toolbox-prompts}                    # CH v2 prompt source
 PROMPT_CM_NS=${PROMPT_CM_NS:-dev-toolbox-system}
-PROMPT_KEY=${HEALTH_PROMPT_KEY:-${PROMPT_KEY:-health-v2-report-first}}
+PROMPT_KEY=${PROMPT_KEY:-health-v2-report-first}
 REFORMAT_KEY=${REFORMAT_KEY:-reformat-remediation-guide}       # 2nd-pass reformat prompt (empty → skip reformat)
 SHOOT=${SHOOT_NAME:-$(kubectl config current-context 2>/dev/null || echo cluster)}
 # CLI version: MATCH the cluster's deployed gateway (self-adapting to a per-shoot openshell_version).
@@ -94,22 +94,6 @@ OPENSHELL_OIDC_CLIENT_SECRET=$(kubectl -n openshell get secret openshell-admin-s
 export OPENSHELL_OIDC_CLIENT_SECRET
 "$OS" gateway add "$GW_URL" --oidc-issuer "$ISSUER" \
   --oidc-client-id openshell-admin-sa --oidc-audience openshell-oidc >&2
-GW_NAME=$(printf '%s' "$GW_URL" | sed -E 's#^[a-zA-Z]+://##; s#[:/].*##')   # gateway name = host (for the re-mint via `gateway login`)
-
-# Trace the cached gateway token (non-secret fields only) — client, refresh_token presence, expiry (epoch + UTC), seconds left.
-token_info() {
-  _tf=$(find "$HOME/.config/openshell/gateways" -name oidc_token.json 2>/dev/null | head -1)
-  [ -n "$_tf" ] || { echo "DEBUG[token:${1:-?}]: no cached token file under ~/.config/openshell/gateways" >&2; return 0; }
-  _exp=$(grep -oE '"expires_at"[^0-9]*[0-9]+' "$_tf" 2>/dev/null | grep -oE '[0-9]+$' | head -1)
-  _cid=$(sed -nE 's/.*"client_id"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/p' "$_tf" | head -1)
-  # present ONLY if refresh_token is a non-empty string (client_credentials issues none → null/""/absent all read as none)
-  grep -qE '"refresh_token"[[:space:]]*:[[:space:]]*"[^"]+"' "$_tf" 2>/dev/null && _rt=present || _rt=none
-  if [ -n "$_exp" ]; then
-    _utc=$(date -u -d "@$_exp" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || date -u -r "$_exp" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || echo '?')
-    echo "DEBUG[token:${1:-?}]: client=$_cid refresh_token=$_rt expires_at=$_exp ($_utc) remaining=$(( _exp - $(date +%s) ))s" >&2
-  else echo "DEBUG[token:${1:-?}]: $_tf present (expires_at unparsed)" >&2; fi
-}
-token_info after-add
 
 # ── 4. mint a short-lived READ-ONLY sandbox-viewer token → in-box kubeconfig ──────
 SBV_TOKEN=$(kubectl -n openshell create token sandbox-viewer --duration=3600s 2>/dev/null || true)
@@ -135,9 +119,7 @@ network_policies:
       - { host: kubernetes.default.svc.cluster.local, port: 443, protocol: rest, tls: skip, enforcement: enforce, access: read-only }
     binaries:
       - { path: /usr/local/bin/kubectl }
-      - { path: /usr/bin/kubectl }
       - { path: /usr/local/bin/kyma }
-      - { path: /usr/bin/curl }
 POL
 
 echo "==> creating explicit-policy sandbox '$NAME' from $IMAGE …" >&2
@@ -184,16 +166,10 @@ if [ "$PROMPT_SRC" = "-" ]; then
   PROMPT=$(cat)
 elif [ -n "$PROMPT_SRC" ]; then
   PROMPT=$(cat "$PROMPT_SRC")
-elif [ -f "/etc/prompts/$PROMPT_KEY" ]; then
-  # In-pod path: /etc/prompts honors the API-side volume swap (managed OR adhoc CM mounted here).
-  # Reading from the file picks up whichever CM the API chose for this run — fixes the adhoc flow where
-  # the hardcoded `PROMPT_CM=dev-toolbox-prompts` kubectl lookup missed keys that live in the adhoc CM.
-  PROMPT=$(sed "s/__SHOOT__/$SHOOT/g; s/__NS__/$PROMPT_CM_NS/g; s/__WINDOW_START__/${WINDOW_START:-}/g; s/__WINDOW_END__/${WINDOW_END:-}/g; s/__PRIOR_RUN_TS__/${PRIOR_RUN_TS:-}/g" < "/etc/prompts/$PROMPT_KEY")
 else
-  # Standalone fallback (script run outside a Job pod with no /etc/prompts mount): read via kubectl.
-  PROMPT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$PROMPT_KEY}" 2>/dev/null | sed "s/__SHOOT__/$SHOOT/g; s/__NS__/$PROMPT_CM_NS/g; s/__WINDOW_START__/${WINDOW_START:-}/g; s/__WINDOW_END__/${WINDOW_END:-}/g; s/__PRIOR_RUN_TS__/${PRIOR_RUN_TS:-}/g")
+  PROMPT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$PROMPT_KEY}" 2>/dev/null | sed "s/__SHOOT__/$SHOOT/g; s/__NS__/$PROMPT_CM_NS/g")
+  [ -n "$PROMPT" ] || { echo "ERROR: CH v2 prompt '$PROMPT_KEY' not in cm/$PROMPT_CM (ns $PROMPT_CM_NS)" >&2; exit 2; }
 fi
-[ -n "$PROMPT" ] || { echo "ERROR: CH v2 prompt '$PROMPT_KEY' not in cm/$PROMPT_CM (ns $PROMPT_CM_NS) and no /etc/prompts/$PROMPT_KEY file" >&2; exit 2; }
 printf '%s' "$PROMPT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/p'
 
 # ── 8. report extractor (goose --output-format json → the FINAL report only) ──────
@@ -267,11 +243,6 @@ REFMT=""
 [ -n "$REFORMAT_KEY" ] && REFMT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$REFORMAT_KEY}" 2>/dev/null || true)
 if [ -n "$REFMT" ]; then
   echo "==> reformatting the report IN the sandbox via claude -p (keyless; provider sentinel resolved at egress) …" >&2
-  token_info pre-reformat
-  # Re-mint before the reformat exec: client_credentials issues no refresh token, so the 900s gateway token can only be
-  # re-minted (not refreshed) — a long goose run can outlive it, and 0.1.x fails closed on expiry (upstream #4287).
-  "$OS" gateway login "$GW_NAME" >&2 || true
-  token_info post-remint
   printf '%s' "$REFMT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/refmt'
   "$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc '
     # ANTHROPIC_BASE_URL / ANTHROPIC_MODEL / the enforcement flag are injected at sandbox-create via --env (a
