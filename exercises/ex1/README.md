@@ -68,6 +68,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 - ▶️ [Trigger a diagnostic run](#exercise-12---trigger-a-diagnostic-run)
 - ✍️ [Write your own prompt](#exercise-13---write-your-own-prompt)
 - 🛡️ [The guardrails](#exercise-14---the-guardrails-read-reason-but-dont-touch)
+  - 🔧 [Prove it yourself](#-prove-it-yourself-optional--go-deeper)
 
 
 ## Exercise 1.1 - Read the latest reports
@@ -218,7 +219,7 @@ Three overlapping fences wrap every run:
 > [!NOTE]
 > **Defense in depth.** No single control is trusted alone: the read-only token (can't write or read secrets), the sandbox boundary (no internet, no API-server mutation), non-root + read-only rootfs (can't escalate on the node), and `drop_params` at the proxy (can't send SAP AI Core a malformed request). The agent is useful *because* it's boxed in.
 
-🔧 **Prove it yourself (optional — go deeper).**
+### 🔧 Prove it yourself (optional — go deeper)
 
 👉 Open **All Health** (sidebar) and click the terminal `>_` icon in the top-right of the Busola toolbar — a shell pod opens in the browser.
 
