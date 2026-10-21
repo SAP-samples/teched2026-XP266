@@ -56,8 +56,9 @@
 
 ## Exercise 3.2 - OpenShell notebooks
 
-A **sandbox** is a disposable, per-session pod that _by construction_ can't reach the internet or the cluster API.  
-Here you drive its whole lifecycle from Python — then put an **agent (goose)** inside the box, reasoning over your cluster from behind the guardrails.
+> [!NOTE]
+> - ✅ A **sandbox** is a disposable, per-session pod that _by construction_ can't reach the internet or the cluster API.
+> - ✅ Here you drive its whole lifecycle from Python — then put an **agent (goose)** inside the box, reasoning over your cluster from behind the guardrails.
 
 **Notebooks in this section**
 
