@@ -8,11 +8,11 @@
 
 **Contents**
 
-- 🚀 [Sign in and spawn your server](#exercise-31---sign-in-and-spawn-your-server)
+- 🚀 [Sign into JupyterHub](#exercise-31---sign-into-jupyterhub)
 - 📒 [OpenShell notebooks](#exercise-32---openshell-notebooks)
 
 
-## Exercise 3.1 - Sign in and spawn your server
+## Exercise 3.1 - Sign into JupyterHub
 
 1. 👉 Open your JupyterHub UI URL in the browser from the student's portal, e.g.:
 
