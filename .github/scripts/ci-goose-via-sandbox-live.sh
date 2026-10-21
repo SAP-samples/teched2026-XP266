@@ -19,7 +19,7 @@
 #   echo "…" | KUBECONFIG=… ./ci-goose-via-sandbox-live.sh -                    # explicit prompt override (stdin)
 #   KEEP_SANDBOX=true KUBECONFIG=… ./ci-goose-via-sandbox-live.sh               # leave the box alive for log inspection
 #
-# Requires: kubectl (cluster-admin on an OpenShell+dev-toolbox shoot), curl, tar, sha256sum, jq. The openshell CLI is
+# Requires: kubectl (cluster-admin on an OpenShell+dev-toolbox shoot), curl, tar, sha256sum. The openshell CLI is
 # auto-installed (version-matched to the live gateway) if not on PATH. Skips cleanly where the live prereqs are absent.
 set -euo pipefail
 
@@ -96,39 +96,6 @@ export OPENSHELL_OIDC_CLIENT_SECRET
   --oidc-client-id openshell-admin-sa --oidc-audience openshell-oidc >&2
 GW_NAME=$(printf '%s' "$GW_URL" | sed -E 's#^[a-zA-Z]+://##; s#[:/].*##')   # gateway name = host (for the re-mint via `gateway login`)
 
-# Trace the cached gateway token (non-secret claims only) — decodes the JWT access_token itself so this
-# is independent of the surrounding oidc_token.json schema (which drifted between CLI versions and
-# killed the whole script under `set -euo pipefail` on `grep | grep | head` miss, admin-GHA path).
-token_info() {
-  _tf=$(grep -rl 'eyJ' "$HOME/.config/openshell/gateways" 2>/dev/null | head -1 || true)
-  [ -n "$_tf" ] || { echo "DEBUG[token:${1:-?}]: no cached token file under ~/.config/openshell/gateways" >&2; return 0; }
-  # Extract the JWT directly (3-dot base64url) — independent of surrounding JSON schema.
-  _jwt=$(grep -oE 'eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+' "$_tf" 2>/dev/null | head -1 || true)
-  [ -n "$_jwt" ] || { echo "DEBUG[token:${1:-?}]: $_tf present (no JWT found)" >&2; return 0; }
-  # Decode payload (segment 2) — exp + client_id are standard RFC 7519 claims.
-  _claims=$(echo "$_jwt" | jq -R 'split(".") | .[1] | @base64d | fromjson' 2>/dev/null || echo '{}')
-  _exp=$(echo "$_claims" | jq -r '.exp // empty' 2>/dev/null || true)
-  _cid=$(echo "$_claims" | jq -r '.client_id // .azp // empty' 2>/dev/null || true)
-  if [ -n "$_exp" ]; then
-    _utc=$(date -u -d "@$_exp" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || date -u -r "$_exp" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || echo '?')
-    echo "DEBUG[token:${1:-?}]: client=$_cid exp=$_exp ($_utc) remaining=$(( _exp - $(date +%s) ))s" >&2
-  else echo "DEBUG[token:${1:-?}]: $_tf present (JWT exp unparsed)" >&2; fi
-}
-token_info after-add
-
-# DIAGNOSTIC (temporary — remove once we know where OpenShell 0.1.1 CLI parks its gateway state on ubuntu-latest).
-# token_info() reported "no cached token file under ~/.config/openshell/gateways" on the admin-GHA runs; the CLI must
-# write SOMEWHERE (next `sandbox …` call reuses the auth) — likely either the mktemp HOME under a different sub-path,
-# or the REAL user's HOME (bypassing our export HOME=$(mktemp -d) jail). Print the layout so we can point token_info at it.
-{
-  echo "DEBUG[dirs]: mktemp HOME=$HOME  real-HOME=$(getent passwd "$(id -un)" | cut -d: -f6 2>/dev/null || echo '?')  USER=$(id -un)"
-  echo "DEBUG[dirs]: under \$HOME ($HOME):"
-  find "$HOME" -type f 2>/dev/null | head -30
-  for _d in /home /root /tmp; do
-    echo "DEBUG[dirs]: under $_d matching openshell|oidc|token:"
-    find "$_d" -maxdepth 5 -type f \( -iname '*openshell*' -o -iname '*oidc*' -o -iname '*token*' \) 2>/dev/null | head -20
-  done
-} >&2 || true
 
 # ── 4. mint a short-lived READ-ONLY sandbox-viewer token → in-box kubeconfig ──────
 SBV_TOKEN=$(kubectl -n openshell create token sandbox-viewer --duration=3600s 2>/dev/null || true)
@@ -299,11 +266,9 @@ REFMT=""
 [ -n "$REFORMAT_KEY" ] && REFMT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$REFORMAT_KEY}" 2>/dev/null || true)
 if [ -n "$REFMT" ]; then
   echo "==> reformatting the report IN the sandbox via claude -p (keyless; provider sentinel resolved at egress) …" >&2
-  token_info pre-reformat
   # Re-mint before the reformat exec: client_credentials issues no refresh token, so the 900s gateway token can only be
   # re-minted (not refreshed) — a long goose run can outlive it, and 0.1.x fails closed on expiry (upstream #4287).
   "$OS" gateway login "$GW_NAME" >&2 || true
-  token_info post-remint
   printf '%s' "$REFMT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/refmt'
   "$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc '
     # ANTHROPIC_BASE_URL / ANTHROPIC_MODEL / the enforcement flag are injected at sandbox-create via --env (a
