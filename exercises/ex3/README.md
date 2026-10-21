@@ -139,6 +139,22 @@ Now put an agent **in** the box: **goose**, through the LiteLLM proxy, reasoning
 👉 Open **`05-OpenShell-Goose-Diagnostics-Live.ipynb`** and run all cells.  
 goose runs **live, read-only `kubectl`** inside a scoped sandbox (the `scoped-ops` policy) and writes a cluster-health report.
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/notebook-device-code.png" width="820" alt="05 live notebook — device-code login prompt + authenticated gateway" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
 > [!IMPORTANT]
 > **The sandbox is the guardrail, not the prompt.** goose gets a short-lived **read-only** identity (`get`/`list`/`watch`, no secrets) and no internet; a write or a secret-read comes back `403`. You can hand it any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt.
 
