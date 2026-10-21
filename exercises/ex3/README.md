@@ -163,7 +163,7 @@ That's the **richest flavour**: goose runs in an OpenShell sandbox with **live r
 > **The sandbox is the guardrail, not the prompt.** You can hand goose any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt:
 > - ✅ the sandbox gets a short-lived read-only **`sandbox-viewer`** identity (`get`/`list`/`watch`, **no secrets**) + the canonical policy (apiserver read-only **+** keyless LiteLLM) — a write or a secret-read comes back `403`,
 > - ✅ goose shells out to the allowlisted `kubectl`; no internet,
-> - ✅ auth = **device-code** (your identity) — **required**: the supervisor's egress interception is sustained by the device-code refresh token (a headless/static token can't sustain it, which is why this works interactively, not from CI client-credentials).
+> - ✅ auth works both ways — **as you** via **device-code** (`05`) or **headless** via **client-credentials** (`05b` / `05c`); same guardrails apply regardless.
 
 ### Exercise 3.2.4 - `05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`
 
