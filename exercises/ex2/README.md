@@ -24,6 +24,11 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 
    ```
    https://busola.xp266-NNN.<workshop-domain>/
+   ```
+
+   or directly via:
+
+   ```
    https://openclaw.xp266-NNN.<workshop-domain>/
    ```
 
