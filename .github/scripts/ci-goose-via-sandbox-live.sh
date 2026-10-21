@@ -94,6 +94,19 @@ OPENSHELL_OIDC_CLIENT_SECRET=$(kubectl -n openshell get secret openshell-admin-s
 export OPENSHELL_OIDC_CLIENT_SECRET
 "$OS" gateway add "$GW_URL" --oidc-issuer "$ISSUER" \
   --oidc-client-id openshell-admin-sa --oidc-audience openshell-oidc >&2
+GW_NAME=$(printf '%s' "$GW_URL" | sed -E 's#^[a-zA-Z]+://##; s#[:/].*##')   # gateway name = host (for the re-mint via `gateway login`)
+
+# Trace the cached gateway token (non-secret fields only) — client, refresh_token presence, expiry epoch, seconds left.
+token_info() {
+  _tf=$(find "$HOME/.config/openshell/gateways" -name oidc_token.json 2>/dev/null | head -1)
+  [ -n "$_tf" ] || { echo "DEBUG[token:${1:-?}]: no cached token file under ~/.config/openshell/gateways" >&2; return 0; }
+  _exp=$(grep -oE '"expires_at"[^0-9]*[0-9]+' "$_tf" 2>/dev/null | grep -oE '[0-9]+$' | head -1)
+  _cid=$(sed -nE 's/.*"client_id"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/p' "$_tf" | head -1)
+  grep -qE '"refresh_token"[[:space:]]*:[[:space:]]*null' "$_tf" 2>/dev/null && _rt=none || _rt=present
+  if [ -n "$_exp" ]; then echo "DEBUG[token:${1:-?}]: client=$_cid refresh_token=$_rt expires_at=$_exp remaining=$(( _exp - $(date +%s) ))s" >&2
+  else echo "DEBUG[token:${1:-?}]: $_tf present (expires_at unparsed)" >&2; fi
+}
+token_info after-add
 
 # ── 4. mint a short-lived READ-ONLY sandbox-viewer token → in-box kubeconfig ──────
 SBV_TOKEN=$(kubectl -n openshell create token sandbox-viewer --duration=3600s 2>/dev/null || true)
@@ -119,7 +132,9 @@ network_policies:
       - { host: kubernetes.default.svc.cluster.local, port: 443, protocol: rest, tls: skip, enforcement: enforce, access: read-only }
     binaries:
       - { path: /usr/local/bin/kubectl }
+      - { path: /usr/bin/kubectl }
       - { path: /usr/local/bin/kyma }
+      - { path: /usr/bin/curl }
 POL
 
 echo "==> creating explicit-policy sandbox '$NAME' from $IMAGE …" >&2
@@ -243,6 +258,7 @@ REFMT=""
 [ -n "$REFORMAT_KEY" ] && REFMT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$REFORMAT_KEY}" 2>/dev/null || true)
 if [ -n "$REFMT" ]; then
   echo "==> reformatting the report IN the sandbox via claude -p (keyless; provider sentinel resolved at egress) …" >&2
+  token_info pre-reformat
   printf '%s' "$REFMT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/refmt'
   "$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc '
     # ANTHROPIC_BASE_URL / ANTHROPIC_MODEL / the enforcement flag are injected at sandbox-create via --env (a
