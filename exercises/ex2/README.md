@@ -32,7 +32,7 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
    https://openclaw.xp266-NNN.<workshop-domain>/
    ```
 
-   👉 You may need to sign in eventually — the sequence looks like this:
+2. 👉 You may need to sign in eventually — the sequence looks like this:
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
@@ -45,7 +45,7 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 </tbody>
 </table>
 
-   👉 Once signed in, you land on the chat UI. Ask it something general to confirm it's live and reasoning via SAP AI Core:
+3. 👉 Once signed in, you land on the chat UI. Ask it something general to confirm it's live and reasoning via SAP AI Core:
 
    ```
    Explain what is NVIDIA OpenShell.
