@@ -80,18 +80,24 @@
 </tbody>
 </table>
 
+The notebooks come in **three flavours**, from the simplest to the richest:
+
+- 📦 **sandbox lifecycle** — drive the full OpenShell sandbox lifecycle from Python (`04` / `04b`),
+- 🪿 **adaptive investigators** — put the agent **inside** the sandbox with live, read-only `kubectl` (`05` / `05b` / `05c`),
+- 🪿 **forensic sniffers** — same agent, **no live cluster access** — it reasons over a snapshot or stored reports (`06` / `07`).
+
 | Notebook | 📦 OpenShell SDK — dry run sandbox lifecycle |
 |---|---|
 | 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | The `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then drives the sandbox lifecycle: **create → exec → list → delete**. |
 | 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | Much alike **04** — demonstrates the sandbox lifecycle: **create → exec → list → delete** — however, without the `openshell` CLI, only the **NVIDIA OpenShell Python SDK**; it mints a **client-credentials** token itself (headless, no browser). |
 
-| Notebook | 🪿 OpenShell + goose — live `kubectl` investigation |
+| Notebook | 🪿 OpenShell + goose — adaptive investigators (live `kubectl`) |
 |---|---|
 | 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | Richest flavour — the `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then opens a sandbox in which the agent gets **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + LiteLLM proxy). |
 | 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Same rich flavour as **05**, just runs **headless** — the `openshell` **CLI** still registers the gateway, with **client-credentials** instead of device-code (no browser). |
 | 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Like for like as **05b**, but with **no `openshell` CLI** — only the **NVIDIA OpenShell Python SDK**; it mints the client-credentials token itself. |
 
-| Notebook | 🪿 OpenShell + goose — triage from a snapshot / stored report |
+| Notebook | 🪿 OpenShell + goose — forensic sniffers (snapshot / stored report) |
 |---|---|
 | 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | The notebook gathers a **real-time** cluster inventory via the Kubernetes API (unhealthy pods, nodes, recent warning events), then pipes it to the agent inside the sandbox — no live `kubectl` in the box, device-code authentication. |
 | 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | Same sandbox as 06, but the agent reasons over **pre-computed** artifacts from the latest `cluster-health` CronJob run — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) — read from openclaw ConfigMaps. |
