@@ -103,7 +103,7 @@ Links:
 
 ## Exercise 2.2 - The hand-off: ask about your cluster's diagnosis
 
-- ✅ Here's where it all comes together: the autonomous jobs did the heavy lifting; the chat agent helps you make sense of what they found.
+- ✅ This is a classic **producer-consumer** pattern: the autonomous jobs *produce* the findings; the chat agent *consumes* them to help you make sense of what they wrote.
 - ✅ The Goose jobs already wrote a **Cluster Health Report** and archived their raw findings.
 
 👉 Now ask the *interactive* agent about them:
