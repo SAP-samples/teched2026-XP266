@@ -1,8 +1,9 @@
 # Exercise 2 - Chat with the interactive agent
 
-The Goose diagnostic jobs run *autonomously*.  
-The other half of the story is an **interactive** AI agent — a chat UI (for instance **OpenClaw**, or a similar chat front-end) running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy.  
-In this exercise you chat with it and see how it picks up where the diagnostic jobs leave off.
+👉 In this exercise you chat with it and see how it picks up where the diagnostic jobs leave off.
+
+- ✅ The Goose diagnostic jobs run **autonomously**.
+- ✅ The other half of the story is an **interactive** AI agent — a chat UI (for instance **OpenClaw**, or a similar chat front-end) running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy.
 
 ```
 You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SAP AI Core (Claude Opus by default)
