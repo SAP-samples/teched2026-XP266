@@ -13,7 +13,13 @@ Here you drive **OpenShell sandboxes** from Python: create one, run a command in
 
 ## Exercise 3.1 - Sign in and spawn your server
 
-1. Open your JupyterHub URL in the browser (handed out with your runtime), e.g.:
+1. 👉 Open your JupyterHub UI URL in the browser from the student's portal, e.g.:
+
+   ```
+   https://busola.xp266-NNN.<workshop-domain>/
+   ```
+
+   or directly via:
 
    ```
    https://jupyterhub.xp266-NNN.<workshop-domain>/
