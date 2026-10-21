@@ -76,7 +76,7 @@ It registers the in-cluster OpenShell gateway, then uses the Python `SandboxClie
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
-<td align="center" width="50%"><img src="images/device-grant-01.png" height="260" alt="Device-code: enter user code" /><br/><sub><b>1.</b> enter the user code</sub></td>
+<td align="center" width="50%"><img src="images/device-grant-01.png" height="260" alt="Device-code: enter user code" /><br/><sub><b>1.</b> enter the user code — grant openshell-admin access</sub></td>
 <td align="center" width="50%"><img src="images/device-grant-02.png" height="260" alt="Device-code: Grant Access — click Yes" /><br/><sub><b>2.</b> click <b>Yes</b> to approve the device</sub></td>
 </tr>
 </tbody>
