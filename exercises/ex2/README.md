@@ -1,6 +1,6 @@
 # Exercise 2 - Chat with the interactive agent
 
-👉 In this exercise you chat with it and see how it picks up where the diagnostic jobs leave off.
+👉 This exercise is about the **hand-off**: an interactive agent picks up where the diagnostic jobs (or any automated troubleshooting script) leave off, so you can transition into the next phase of work — ask follow-ups, draft fixes, make decisions in plain language.
 
 - ✅ The Goose diagnostic jobs run **autonomously**.
 - ✅ The other half of the story is an **interactive** AI agent — a chat UI (for instance **OpenClaw**, or a similar chat front-end) running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy.
