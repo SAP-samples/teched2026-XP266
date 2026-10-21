@@ -1,9 +1,10 @@
 # Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks
 
-👉 This is your **Python playground**.
-
-- ✅ A full **JupyterHub** runs in your cluster, pre-loaded with notebooks and wired — like everything else — to **SAP AI Core through the LiteLLM proxy**.
-- ✅ Here you drive **OpenShell sandboxes** from Python: create one, run a command inside it, then let an **agent (goose)** investigate your cluster from within a sandbox.
+> [!NOTE]
+> 👉 This is your **Python playground**.
+>
+> - ✅ A full **JupyterHub** runs in your cluster, pre-loaded with notebooks and wired — like everything else — to **SAP AI Core through the LiteLLM proxy**.
+> - ✅ Here you drive **OpenShell sandboxes** from Python: create one, run a command inside it, then let an **agent (goose)** investigate your cluster from within a sandbox.
 
 **Contents**
 
