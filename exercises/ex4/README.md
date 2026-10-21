@@ -69,6 +69,70 @@ You'll walk the full path by hand:
 
 ### 4.2 - Providers (pre-created — nothing to wire)
 
+```mermaid
+flowchart TB
+  You(["👤 You<br/>openshell-admin role"])
+
+  subgraph GW["🚪 OpenShell Gateway — in-cluster, OIDC-gated via Keycloak"]
+    direction LR
+    Profile["📋 Profile<br/>reusable spec — <i>no secret</i><br/>endpoints · binaries · auth style"]
+    Provider["🔑 Provider<br/>Profile + real key<br/><i>key lives ONLY here</i>"]
+    Profile -. bound to .-> Provider
+  end
+
+  You -->|device-code / client-credentials login| GW
+  You -->|openshell sandbox create<br/>--provider &lt;name&gt; --policy pol.yaml| GW
+  GW -->|spawns disposable pod| SBX
+
+  subgraph SBX["📦 Sandbox — runtime-isolated, disposable"]
+    direction LR
+    Agent["🪿 Agent<br/>goose · Claude Code · kubectl"]
+    Super["🛡️ Supervisor<br/>egress enforcer<br/>+ key injection at egress"]
+    Agent --> Super
+  end
+
+  Super ==>|allowed by Provider<br/>key injected at egress| LLM[("📡 LiteLLM proxy :4001<br/>→ SAP AI Core")]
+  Super ==>|allowed by Policy<br/>read-only token| K8s[("⚙️ k8s API :443<br/>get · list · watch")]
+  Super -.->|writes · internet · secrets| X[❌ blocked → 403]
+```
+
+<details>
+<summary>plain-ASCII fallback (same picture, no renderer required)</summary>
+
+```
+   👤 You (openshell-admin role)
+       │
+       │  device-code / client-credentials login (OIDC via Keycloak)
+       │  openshell sandbox create --provider <name> --policy pol.yaml
+       ▼
+   ┌──────────────────────────────────────────────────────────────────────┐
+   │   🚪 OpenShell Gateway  (in-cluster, OIDC-gated via Keycloak)        │
+   │                                                                      │
+   │     📋 Profile  — reusable spec, no secret                           │
+   │                  endpoints · binaries · auth style                   │
+   │                       │                                              │
+   │                       ▼  bound to                                    │
+   │     🔑 Provider — Profile + real key  (key lives ONLY here)          │
+   └──────────────────────────────────────────────────────────────────────┘
+                           │  spawns a disposable pod
+                           ▼
+   ┌──────────────────────────────────────────────────────────────────────┐
+   │   📦 Sandbox  (runtime-isolated, disposable)                         │
+   │                                                                      │
+   │     🪿 Agent  (goose · Claude · kubectl)                             │
+   │         │                                                            │
+   │         ▼                                                            │
+   │     🛡️ Supervisor  — intercepts egress, injects provider key        │
+   │         │                                                            │
+   └─────────┼────────────────────────────────────────────────────────────┘
+             │
+             ├──▶ 📡 LiteLLM proxy :4001 → SAP AI Core   (via Provider)
+             ├──▶ ⚙️  k8s API :443 read-only              (via Policy)
+             └──✘ writes · internet · secrets             → 403 blocked
+```
+
+</details>
+
 Two related concepts, both **already set up** for you on the gateway:
 
 - A **profile** is a reusable *spec* (no secret) — which credential, which auth style, which endpoints egress may reach, which binaries may use it.
