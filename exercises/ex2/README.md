@@ -57,6 +57,7 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 <details>
 <summary>👉 Sample answer (click to expand)</summary>
 
+```markdown
 Got it — this is a real, recent NVIDIA product. Here's the rundown:
 
 **NVIDIA OpenShell** is an open-source, secure runtime for running autonomous AI agents. Think of it as a sandbox + policy engine specifically designed for agents (like OpenClaw, Claude Code, Codex, etc.) that need to do real work — read files, run commands, call APIs, use credentials — without giving them free rein over your system.
@@ -78,6 +79,7 @@ Links:
 - <https://www.nvidia.com/en-us/ai/openshell/>
 - <https://github.com/NVIDIA/OpenShell>
 - <https://docs.nvidia.com/openshell/home>
+```
 
 </details>
 
