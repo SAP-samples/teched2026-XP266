@@ -39,27 +39,20 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 </tbody>
 </table>
 
-   👉 Once signed in, you land on the chat UI:
+   👉 Once signed in, you land on the chat UI. Ask it something general to confirm it's live and reasoning via SAP AI Core:
+
+   ```
+   Explain what is NVIDIA OpenShell.
+   ```
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/04_01_0010.png" width="820" alt="" />
-  </a>
-</p>
-</div>
-</td>
+<td align="center" width="50%"><img src="images/chat-01.png" width="400" alt="OpenClaw chat UI — landing" /><br/><sub><b>1.</b> landing</sub></td>
+<td align="center" width="50%"><img src="images/chat-02.png" width="400" alt="OpenClaw chat UI — answer streaming via SAP AI Core" /><br/><sub><b>2.</b> asked &amp; answered</sub></td>
 </tr>
 </tbody>
 </table>
-
-2. Ask it something general to confirm it's live and reasoning via SAP AI Core:
-
-   > *Explain, in three sentences, what SAP BTP, Kyma runtime gives me over plain Kubernetes.*
 
 > [!NOTE]
 > **Model routing.** The chat agent defaults to the `reasoning-hard` tier — **Claude Opus** on SAP AI Core — with automatic fallbacks (Sonnet, GPT-5.5, GPT-4.1, Nova, Mistral) if a model is busy.  
