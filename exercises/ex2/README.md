@@ -100,8 +100,25 @@ Links:
 The Goose jobs already wrote a **Cluster Health Report** and archived their raw findings.  
 Now ask the *interactive* agent about them:
 
-> *Summarize the latest cluster health report for this cluster.  
-> What are the top risks, and what would you do about the most urgent one?*
+```
+Summarize the latest cluster health report for this cluster. What are the top risks, and what would you do about the most urgent one?
+```
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/chat-02.png" width="820" alt="OpenClaw chat UI — cluster-health hand-off" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 The agent reasons over the diagnostic findings and gives you a conversational, follow-up-able answer — the beginnings of an **on-call assistant**: the overnight autonomous run does the broad sweep, and in the morning you interrogate its findings in plain language.
 
