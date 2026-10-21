@@ -93,10 +93,10 @@
 |---|---|---|
 | [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | 📦 OpenShell SDK | Drive the gateway via the Python SDK — notebook twin of the Busola-terminal `scoped-ops`. Device-code authentication (as you). Full lifecycle: **create → exec → list → delete**. |
 | [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | 📦 OpenShell SDK | Pure-SDK twin of 04 — same lifecycle, **no CLI**: `SandboxClient` with **`tls=None`** + a **self-minted `bearer_token`** against the plaintext in-cluster gateway. |
-| [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | 🪿 OpenShell + goose | Richest flavour — goose with **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + keyless LiteLLM). Device-code or client-credentials authentication (same guardrails apply). |
+| [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | 🪿 OpenShell + goose | Richest flavour — **the agent** gets **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + keyless LiteLLM). Device-code or client-credentials authentication (same guardrails apply). |
 | [`05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | 🪿 OpenShell + goose | Same investigation as 05, run **headless** (client-credentials, no browser) — **05b** via the `openshell` CLI; **05c** via the **NVIDIA OpenShell Python SDK**. |
-| [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | 🪿 OpenShell + goose | admin-GHA (`ci-goose-via-sandbox.sh`) model — gather a cluster-health **snapshot**, then run **goose keyless** inside the sandbox to interpret it (no live `kubectl` in the box). |
-| [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | 🪿 OpenShell + goose | Like 06, but feeds goose the **existing** openclaw-ConfigMap reports — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 goose) — for a fresh triage over pre-computed data. |
+| [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | 🪿 OpenShell + goose | admin-GHA (`ci-goose-via-sandbox.sh`) model — gather a cluster-health **snapshot**, then run **the agent keyless** inside the sandbox to interpret it (no live `kubectl` in the box). |
+| [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | 🪿 OpenShell + goose | Like 06, but feeds **the agent** the **existing** openclaw-ConfigMap reports — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) — for a fresh triage over pre-computed data. |
 
 > [!NOTE]
 > The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
@@ -141,7 +141,7 @@ This notebook drives the OpenShell gateway programmatically via the **OpenShell 
 
 👉 Open **`05-OpenShell-Goose-Diagnostics-Live.ipynb`** and run all cells.
 
-That's the **richest flavour**: goose runs in an OpenShell sandbox with **live read-only `kubectl`** and investigates the cluster itself.
+That's the **richest flavour**: the agent runs in an OpenShell sandbox with **live read-only `kubectl`** and investigates the cluster itself.
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
@@ -160,16 +160,16 @@ That's the **richest flavour**: goose runs in an OpenShell sandbox with **live r
 </table>
 
 > [!IMPORTANT]
-> **The sandbox is the guardrail, not the prompt.** You can hand goose any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt:
+> **The sandbox is the guardrail, not the prompt.** You can hand the agent any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt:
 > - ✅ the sandbox gets a short-lived read-only **`sandbox-viewer`** identity (`get`/`list`/`watch`, **no secrets**) + the canonical policy (apiserver read-only **+** keyless LiteLLM proxy),
-> - ✅ goose shells out to the allowlisted `kubectl`; no internet,
+> - ✅ the agent shells out to the allowlisted `kubectl`; no internet,
 > - ✅ authentication works both ways — **as you** via **device-code** (`05`) or **headless** via **client-credentials** (`05b` / `05c`); same guardrails apply regardless.
 
 ### Exercise 3.2.4 - `05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`
 
 👉 Open **`05b-OpenShell-Goose-Diagnostics-Live-Headless.ipynb`** and run all cells.
 
-Same live read-only `kubectl` goose investigation as **05** — same policy, same guardrails. The only thing that changes is **authentication**: **05** signs in **as you** via device-code (your browser); **05b** runs **headless** with **client-credentials** (a service-account token minted in-notebook) — no browser, no device-code screen.
+Same live read-only `kubectl` investigation as **05** — same policy, same guardrails. The only thing that changes is **authentication**: **05** signs in **as you** via device-code (your browser); **05b** runs **headless** with **client-credentials** (a service-account token minted in-notebook) — no browser, no device-code screen.
 
 👉 Then open **`05c-OpenShell-Sandbox-PureSDK.ipynb`** and run all cells.
 
@@ -195,22 +195,22 @@ Same investigation and same headless authentication as **05b** — **`05c`** is 
 
 👉 Open **`06-OpenShell-Goose-Diagnostics-Snapshot.ipynb`** and run all cells.
 
-The **admin-GHA (`ci-goose-via-sandbox.sh`) model**: this notebook gathers a read-only cluster-health **snapshot**, then runs **goose keyless** inside an OpenShell sandbox to interpret it — goose reasons over the piped snapshot (**no live `kubectl` in the box**).
+The **admin-GHA (`ci-goose-via-sandbox.sh`) model**: this notebook gathers a read-only cluster-health **snapshot**, then runs **the agent keyless** inside an OpenShell sandbox to interpret it — the agent reasons over the piped snapshot (**no live `kubectl` in the box**).
 
-- ✅ Keyless = goose reaches the in-cluster **LiteLLM proxy** (→ SAP AI Core) via the sandbox's `litellm-openai` provider; no real LLM key in the box.
+- ✅ Keyless = the agent reaches the in-cluster **LiteLLM proxy** (→ SAP AI Core) via the sandbox's `litellm-openai` provider; no real LLM key in the box.
 - ✅ Authentication is device-code (your identity), exactly like `04-OpenShell-Sandbox-SDK.ipynb`.
-- ✅ Compare the goose report with the live one from 3.2.3 — same agent, snapshot vs live-kubectl.
+- ✅ Compare its report with the live one from 3.2.3 — same agent, snapshot vs live-kubectl.
 
 ### Exercise 3.2.6 - `07-OpenShell-Goose-Diagnostics-FromReport`
 
 👉 Open **`07-OpenShell-Goose-Diagnostics-FromReport.ipynb`** and run all cells.
 
-Like **3.2.5 (B)**, but instead of gathering a live snapshot, this feeds goose the **existing cluster-health reports** the diagnose job already produced (ConfigMaps in ns `openclaw`, label `app=cluster-health`):
+Like **3.2.5 (B)**, but instead of gathering a live snapshot, this feeds the agent the **existing cluster-health reports** the diagnose job already produced (ConfigMaps in ns `openclaw`, label `app=cluster-health`):
 
 - ✅ `diagnostic` = raw `kyma diagnose` (**v1**),
-- ✅ `analysis` = a prior goose report (**v2**).
+- ✅ `analysis` = a prior agent report (**v2**).
 
-goose runs **keyless** in an OpenShell sandbox (ci-goose model — baked policy + `litellm-openai` provider) and produces a **fresh triage** over the pre-computed report. Reuses `cluster-health-reader`'s existing openclaw-ConfigMap read (no extra RBAC). Authentication = device-code, like `04-…`.
+The agent runs **keyless** in an OpenShell sandbox (ci-goose model — baked policy + `litellm-openai` provider) and produces a **fresh triage** over the pre-computed report. Reuses `cluster-health-reader`'s existing openclaw-ConfigMap read (no extra RBAC). Authentication = device-code, like `04-…`.
 
 ## Summary
 
