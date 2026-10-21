@@ -91,9 +91,9 @@
 
 | Notebook | Track | What it does |
 |---|---|---|
-| [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | 📦 OpenShell SDK | Drive the gateway via the Python SDK — notebook twin of the Busola-terminal `scoped-ops`. Device-code auth (as you). Full lifecycle: **create → exec → list → delete**. |
+| [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | 📦 OpenShell SDK | Drive the gateway via the Python SDK — notebook twin of the Busola-terminal `scoped-ops`. Device-code authentication (as you). Full lifecycle: **create → exec → list → delete**. |
 | [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | 📦 OpenShell SDK | Pure-SDK twin of 04 — same lifecycle, **no CLI**: `SandboxClient` with **`tls=None`** + a **self-minted `bearer_token`** against the plaintext in-cluster gateway. |
-| [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | 🪿 OpenShell + goose | Richest flavour — goose with **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + keyless LiteLLM). Device-code auth required for sustained egress interception. |
+| [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | 🪿 OpenShell + goose | Richest flavour — goose with **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + keyless LiteLLM). Device-code or client-credentials authentication (same guardrails apply). |
 | [`05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | 🪿 OpenShell + goose | Same investigation as 05, run **headless** (client-credentials, no browser) — **05b** via the `openshell` CLI; **05c** via the **NVIDIA OpenShell Python SDK**. |
 | [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | 🪿 OpenShell + goose | admin-GHA (`ci-goose-via-sandbox.sh`) model — gather a cluster-health **snapshot**, then run **goose keyless** inside the sandbox to interpret it (no live `kubectl` in the box). |
 | [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | 🪿 OpenShell + goose | Like 06, but feeds goose the **existing** openclaw-ConfigMap reports — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 goose) — for a fresh triage over pre-computed data. |
@@ -108,7 +108,7 @@
 This notebook drives the OpenShell gateway programmatically via the **OpenShell Python SDK** (`openshell`) — the notebook twin of the Busola-terminal `scoped-ops`. Docs: <https://docs.nvidia.com/openshell/latest/sdk/python>.
 
 > [!NOTE]
-> - ✅ **Auth = device-code (browser), exactly like the Busola terminal.** You log in **as yourself** — the CLI prints a URL + code, you open it in your browser and authenticate with your corp identity (which carries the `openshell-admin` role). No shared secret lives in the notebook.
+> - ✅ **Authentication = device-code (browser), exactly like the Busola terminal.** You log in **as yourself** — the CLI prints a URL + code, you open it in your browser and authenticate with your corp identity (which carries the `openshell-admin` role). No shared secret lives in the notebook.
 > - ✅ It then runs a full sandbox lifecycle: **create → exec → list → delete**.
 > - ✅ Only works on shoots where OpenShell is deployed, and for users with the `openshell-admin` role (in this workshop you are an admin on your own cluster).
 
@@ -163,7 +163,7 @@ That's the **richest flavour**: goose runs in an OpenShell sandbox with **live r
 > **The sandbox is the guardrail, not the prompt.** You can hand goose any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt:
 > - ✅ the sandbox gets a short-lived read-only **`sandbox-viewer`** identity (`get`/`list`/`watch`, **no secrets**) + the canonical policy (apiserver read-only **+** keyless LiteLLM proxy),
 > - ✅ goose shells out to the allowlisted `kubectl`; no internet,
-> - ✅ auth works both ways — **as you** via **device-code** (`05`) or **headless** via **client-credentials** (`05b` / `05c`); same guardrails apply regardless.
+> - ✅ authentication works both ways — **as you** via **device-code** (`05`) or **headless** via **client-credentials** (`05b` / `05c`); same guardrails apply regardless.
 
 ### Exercise 3.2.4 - `05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`
 
@@ -173,7 +173,7 @@ Same live read-only `kubectl` goose investigation as **05** — same policy, sam
 
 👉 Then open **`05c-OpenShell-Sandbox-PureSDK.ipynb`** and run all cells.
 
-Same investigation and same headless auth as **05b** — the only difference is **how we talk to OpenShell**: **05b** uses the `openshell` **CLI**; **05c** uses the **NVIDIA OpenShell Python SDK** (`SandboxClient`) directly — no CLI binary involved.
+Same investigation and same headless authentication as **05b** — **`05c`** is identical to **`05b`**, it just uses the **NVIDIA OpenShell Python SDK** instead of the `openshell` CLI.
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
@@ -182,7 +182,7 @@ Same investigation and same headless auth as **05b** — the only difference is 
 <div>
 <p float="left">
   <a href="#">
-  <img src="images/notebook-headless.png" width="820" alt="05b headless notebook — client-credentials auth, no device-code step" />
+  <img src="images/notebook-headless.png" width="820" alt="05b headless notebook — client-credentials authentication, no device-code step" />
   </a>
 </p>
 </div>
@@ -198,7 +198,7 @@ Same investigation and same headless auth as **05b** — the only difference is 
 The **admin-GHA (`ci-goose-via-sandbox.sh`) model**: this notebook gathers a read-only cluster-health **snapshot**, then runs **goose keyless** inside an OpenShell sandbox to interpret it — goose reasons over the piped snapshot (**no live `kubectl` in the box**).
 
 - ✅ Keyless = goose reaches the in-cluster **LiteLLM proxy** (→ SAP AI Core) via the sandbox's `litellm-openai` provider; no real LLM key in the box.
-- ✅ Auth is device-code (your identity), exactly like `04-OpenShell-Sandbox-SDK.ipynb`.
+- ✅ Authentication is device-code (your identity), exactly like `04-OpenShell-Sandbox-SDK.ipynb`.
 - ✅ Compare the goose report with the live one from 3.2.3 — same agent, snapshot vs live-kubectl.
 
 ### Exercise 3.2.6 - `07-OpenShell-Goose-Diagnostics-FromReport`
@@ -210,7 +210,7 @@ Like **3.2.5 (B)**, but instead of gathering a live snapshot, this feeds goose t
 - ✅ `diagnostic` = raw `kyma diagnose` (**v1**),
 - ✅ `analysis` = a prior goose report (**v2**).
 
-goose runs **keyless** in an OpenShell sandbox (ci-goose model — baked policy + `litellm-openai` provider) and produces a **fresh triage** over the pre-computed report. Reuses `cluster-health-reader`'s existing openclaw-ConfigMap read (no extra RBAC). Auth = device-code, like `04-…`.
+goose runs **keyless** in an OpenShell sandbox (ci-goose model — baked policy + `litellm-openai` provider) and produces a **fresh triage** over the pre-computed report. Reuses `cluster-health-reader`'s existing openclaw-ConfigMap read (no extra RBAC). Authentication = device-code, like `04-…`.
 
 ## Summary
 
