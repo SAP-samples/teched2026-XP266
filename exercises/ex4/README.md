@@ -1,4 +1,4 @@
-# Exercise 4 - Your own sandboxed agent: OpenShell on Kyma 🔧
+# Exercise 4 - Your sandboxed agent: OpenShell practice with Kyma 🔧
 
 > [!NOTE]
 > 👉 **The sandbox itself is the guardrail.**
