@@ -82,25 +82,25 @@
 
 **📦 OpenShell SDK — sandbox lifecycle**
 
-| Notebook | Track | What it does |
-|---|---|---|
-| [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | 📦 OpenShell SDK | Drive the gateway via the Python SDK — notebook twin of the Busola-terminal `scoped-ops`. Device-code authentication (as you). Full lifecycle: **create → exec → list → delete**. |
-| [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | 📦 OpenShell SDK | Pure-SDK twin of 04 — same lifecycle, **no CLI**: `SandboxClient` with **`tls=None`** + a **self-minted `bearer_token`** against the plaintext in-cluster gateway. |
+| Notebook | What it does |
+|---|---|
+| 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | Drive the gateway via the Python SDK — notebook twin of the Busola-terminal `scoped-ops`. Device-code authentication (as you). Full lifecycle: **create → exec → list → delete**. |
+| 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | Pure-SDK twin of 04 — same lifecycle, **no CLI**: `SandboxClient` with **`tls=None`** + a **self-minted `bearer_token`** against the plaintext in-cluster gateway. |
 
 **🪿 OpenShell + goose — live `kubectl` investigation**
 
-| Notebook | Track | What it does |
-|---|---|---|
-| [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | 🪿 OpenShell + goose | Richest flavour — **the agent** gets **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + keyless LiteLLM). Device-code or client-credentials authentication (same guardrails apply). |
-| [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | 🪿 OpenShell + goose | Same investigation as 05, run **headless** (client-credentials, no browser) via the `openshell` CLI. |
-| [`05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | 📦 OpenShell SDK + 🪿 goose | Same goose investigation as **05b**, but uses the **NVIDIA OpenShell Python SDK** instead of the `openshell` CLI. |
+| Notebook | What it does |
+|---|---|
+| 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | Richest flavour — **the agent** gets **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + keyless LiteLLM). Device-code or client-credentials authentication (same guardrails apply). |
+| 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Same investigation as 05, run **headless** (client-credentials, no browser) via the `openshell` CLI. |
+| 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Same goose investigation as **05b**, but uses the **NVIDIA OpenShell Python SDK** instead of the `openshell` CLI. |
 
 **🪿 OpenShell + goose — triage from a snapshot / stored report**
 
-| Notebook | Track | What it does |
-|---|---|---|
-| [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | 🪿 OpenShell + goose | admin-GHA (`ci-goose-via-sandbox.sh`) model — gather a cluster-health **snapshot**, then run **the agent keyless** inside the sandbox to interpret it (no live `kubectl` in the box). |
-| [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | 🪿 OpenShell + goose | Like 06, but feeds **the agent** the **existing** openclaw-ConfigMap reports — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) — for a fresh triage over pre-computed data. |
+| Notebook | What it does |
+|---|---|
+| 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | admin-GHA (`ci-goose-via-sandbox.sh`) model — gather a cluster-health **snapshot**, then run **the agent keyless** inside the sandbox to interpret it (no live `kubectl` in the box). |
+| 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | Like 06, but feeds **the agent** the **existing** openclaw-ConfigMap reports — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) — for a fresh triage over pre-computed data. |
 
 > [!NOTE]
 > The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
