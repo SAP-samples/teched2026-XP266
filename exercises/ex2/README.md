@@ -20,9 +20,10 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 
 ## Exercise 2.1 - Open the chat UI and chat
 
-1. Open your chat UI URL in the browser (handed out with your runtime), e.g.:
+1. 👉 Open your chat UI URL in the browser from the student's portal, e.g.:
 
    ```
+   https://busola.xp266-NNN.<workshop-domain>/
    https://openclaw.xp266-NNN.<workshop-domain>/
    ```
 
