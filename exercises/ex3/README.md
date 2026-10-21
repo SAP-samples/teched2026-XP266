@@ -82,7 +82,7 @@
 
 | Notebook | 📦 OpenShell SDK — sandbox lifecycle |
 |---|---|
-| 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | Drive the gateway via the Python SDK — notebook twin of the Busola-terminal `scoped-ops`. Device-code authentication (as you). Full lifecycle: **create → exec → list → delete**. |
+| 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | Drive the gateway via the Python SDK. Device-code authentication (as you). Full lifecycle: **create → exec → list → delete**. |
 | 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | Pure-SDK twin of 04 — same lifecycle, **no CLI**: `SandboxClient` with **`tls=None`** + a **self-minted `bearer_token`** against the plaintext in-cluster gateway. |
 
 | Notebook | 🪿 OpenShell + goose — live `kubectl` investigation |
