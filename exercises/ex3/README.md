@@ -206,7 +206,7 @@ This notebook gathers a read-only cluster-health **snapshot**, then runs the age
 
 👉 Open **`07-OpenShell-Goose-Diagnostics-FromReport.ipynb`** and run all cells.
 
-Like **3.2.5 (B)**, but instead of gathering a live snapshot, this feeds the agent the **existing cluster-health reports** the diagnose job already produced (ConfigMaps in ns `openclaw`, label `app=cluster-health`):
+Like **3.2.5**, but instead of gathering a live snapshot, this feeds the agent the **existing cluster-health reports** the diagnose job already produced:
 
 - ✅ `diagnostic` = raw `kyma diagnose` (**v1**),
 - ✅ `analysis` = a prior agent report (**v2**).
