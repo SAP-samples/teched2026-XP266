@@ -116,6 +116,20 @@ token_info() {
 }
 token_info after-add
 
+# DIAGNOSTIC (temporary — remove once we know where OpenShell 0.1.1 CLI parks its gateway state on ubuntu-latest).
+# token_info() reported "no cached token file under ~/.config/openshell/gateways" on the admin-GHA runs; the CLI must
+# write SOMEWHERE (next `sandbox …` call reuses the auth) — likely either the mktemp HOME under a different sub-path,
+# or the REAL user's HOME (bypassing our export HOME=$(mktemp -d) jail). Print the layout so we can point token_info at it.
+{
+  echo "DEBUG[dirs]: mktemp HOME=$HOME  real-HOME=$(getent passwd "$(id -un)" | cut -d: -f6 2>/dev/null || echo '?')  USER=$(id -un)"
+  echo "DEBUG[dirs]: under \$HOME ($HOME):"
+  find "$HOME" -type f 2>/dev/null | head -30
+  for _d in /home /root /tmp; do
+    echo "DEBUG[dirs]: under $_d matching openshell|oidc|token:"
+    find "$_d" -maxdepth 5 -type f \( -iname '*openshell*' -o -iname '*oidc*' -o -iname '*token*' \) 2>/dev/null | head -20
+  done
+} >&2 || true
+
 # ── 4. mint a short-lived READ-ONLY sandbox-viewer token → in-box kubeconfig ──────
 SBV_TOKEN=$(kubectl -n openshell create token sandbox-viewer --duration=3600s 2>/dev/null || true)
 [ -n "$SBV_TOKEN" ] || { echo "ERROR: could not mint sandbox-viewer token (RBAC?)" >&2; exit 2; }
