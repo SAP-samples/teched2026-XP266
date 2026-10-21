@@ -19,7 +19,7 @@
 #   echo "…" | KUBECONFIG=… ./ci-goose-via-sandbox-live.sh -                    # explicit prompt override (stdin)
 #   KEEP_SANDBOX=true KUBECONFIG=… ./ci-goose-via-sandbox-live.sh               # leave the box alive for log inspection
 #
-# Requires: kubectl (cluster-admin on an OpenShell+dev-toolbox shoot), curl, tar, sha256sum. The openshell CLI is
+# Requires: kubectl (cluster-admin on an OpenShell+dev-toolbox shoot), curl, tar, sha256sum, jq. The openshell CLI is
 # auto-installed (version-matched to the live gateway) if not on PATH. Skips cleanly where the live prereqs are absent.
 set -euo pipefail
 
@@ -32,7 +32,7 @@ LITELLM_HOST=${LITELLM_HOST:-http://litellm-proxy.default.svc.cluster.local:4001
 KEEP_SANDBOX=${KEEP_SANDBOX:-false}                            # true → do NOT delete the sandbox (students inspect logs)
 PROMPT_CM=${PROMPT_CM:-dev-toolbox-prompts}                    # CH v2 prompt source
 PROMPT_CM_NS=${PROMPT_CM_NS:-dev-toolbox-system}
-PROMPT_KEY=${PROMPT_KEY:-health-v2-report-first}
+PROMPT_KEY=${HEALTH_PROMPT_KEY:-${PROMPT_KEY:-health-v2-report-first}}
 REFORMAT_KEY=${REFORMAT_KEY:-reformat-remediation-guide}       # 2nd-pass reformat prompt (empty → skip reformat)
 SHOOT=${SHOOT_NAME:-$(kubectl config current-context 2>/dev/null || echo cluster)}
 # CLI version: MATCH the cluster's deployed gateway (self-adapting to a per-shoot openshell_version).
@@ -96,15 +96,23 @@ export OPENSHELL_OIDC_CLIENT_SECRET
   --oidc-client-id openshell-admin-sa --oidc-audience openshell-oidc >&2
 GW_NAME=$(printf '%s' "$GW_URL" | sed -E 's#^[a-zA-Z]+://##; s#[:/].*##')   # gateway name = host (for the re-mint via `gateway login`)
 
-# Trace the cached gateway token (non-secret fields only) — client, refresh_token presence, expiry epoch, seconds left.
+# Trace the cached gateway token (non-secret claims only) — decodes the JWT access_token itself so this
+# is independent of the surrounding oidc_token.json schema (which drifted between CLI versions and
+# killed the whole script under `set -euo pipefail` on `grep | grep | head` miss, admin-GHA path).
 token_info() {
-  _tf=$(find "$HOME/.config/openshell/gateways" -name oidc_token.json 2>/dev/null | head -1)
+  _tf=$(grep -rl 'eyJ' "$HOME/.config/openshell/gateways" 2>/dev/null | head -1)
   [ -n "$_tf" ] || { echo "DEBUG[token:${1:-?}]: no cached token file under ~/.config/openshell/gateways" >&2; return 0; }
-  _exp=$(grep -oE '"expires_at"[^0-9]*[0-9]+' "$_tf" 2>/dev/null | grep -oE '[0-9]+$' | head -1)
-  _cid=$(sed -nE 's/.*"client_id"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/p' "$_tf" | head -1)
-  grep -qE '"refresh_token"[[:space:]]*:[[:space:]]*null' "$_tf" 2>/dev/null && _rt=none || _rt=present
-  if [ -n "$_exp" ]; then echo "DEBUG[token:${1:-?}]: client=$_cid refresh_token=$_rt expires_at=$_exp remaining=$(( _exp - $(date +%s) ))s" >&2
-  else echo "DEBUG[token:${1:-?}]: $_tf present (expires_at unparsed)" >&2; fi
+  # Extract the JWT directly (3-dot base64url) — independent of surrounding JSON schema.
+  _jwt=$(grep -oE 'eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+' "$_tf" 2>/dev/null | head -1)
+  [ -n "$_jwt" ] || { echo "DEBUG[token:${1:-?}]: $_tf present (no JWT found)" >&2; return 0; }
+  # Decode payload (segment 2) — exp + client_id are standard RFC 7519 claims.
+  _claims=$(echo "$_jwt" | jq -R 'split(".") | .[1] | @base64d | fromjson' 2>/dev/null || echo '{}')
+  _exp=$(echo "$_claims" | jq -r '.exp // empty' 2>/dev/null || true)
+  _cid=$(echo "$_claims" | jq -r '.client_id // .azp // empty' 2>/dev/null || true)
+  if [ -n "$_exp" ]; then
+    _utc=$(date -u -d "@$_exp" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || date -u -r "$_exp" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || echo '?')
+    echo "DEBUG[token:${1:-?}]: client=$_cid exp=$_exp ($_utc) remaining=$(( _exp - $(date +%s) ))s" >&2
+  else echo "DEBUG[token:${1:-?}]: $_tf present (JWT exp unparsed)" >&2; fi
 }
 token_info after-add
 
@@ -123,9 +131,22 @@ filesystem_policy:
 landlock:
   compatibility: best_effort
 network_policies:
-  # NO `litellm` block: claude + goose egress to litellm-proxy:4001 is owned by the attached provider profiles
-  # (litellm=claude, incl. the resolved ELF; litellm-openai=goose). Only the k8s apiserver (live read-only kubectl,
-  # NOT provider-covered) stays as an explicit egress policy.
+  # NO `litellm` block for the LLM egress: claude + goose dial litellm-proxy:4001 via the attached provider
+  # profiles (litellm=claude, incl. the resolved ELF; litellm-openai=goose) — not /usr/bin/curl. The two curl
+  # blocks below are the forensic-postmortem-v2 step 4/12 HTTP scrapes (sandbox-viewer RBAC blocks postgres
+  # pod-exec; see CHANGELOG 2026-10-19).
+  litellm_metrics:
+    name: litellm-metrics
+    endpoints:
+      - { host: litellm-proxy.default.svc.cluster.local, port: 4001, protocol: rest, enforcement: enforce, access: read-only }
+    binaries:
+      - { path: /usr/bin/curl }   # forensic step 12: GET /metrics/ latency histograms (unauth)
+  pushgateway:
+    name: litellm-pushgateway
+    endpoints:
+      - { host: litellm-proxy-pushgateway.default.svc.cluster.local, port: 9091, protocol: rest, enforcement: enforce, access: read-only }
+    binaries:
+      - { path: /usr/bin/curl }   # forensic step 4: GET /metrics per-model today-UTC roll-up (unauth)
   k8s_api:
     name: k8s-apiserver
     endpoints:
@@ -181,10 +202,16 @@ if [ "$PROMPT_SRC" = "-" ]; then
   PROMPT=$(cat)
 elif [ -n "$PROMPT_SRC" ]; then
   PROMPT=$(cat "$PROMPT_SRC")
+elif [ -f "/etc/prompts/$PROMPT_KEY" ]; then
+  # In-pod path: /etc/prompts honors the API-side volume swap (managed OR adhoc CM mounted here).
+  # Reading from the file picks up whichever CM the API chose for this run — fixes the adhoc flow where
+  # the hardcoded `PROMPT_CM=dev-toolbox-prompts` kubectl lookup missed keys that live in the adhoc CM.
+  PROMPT=$(sed "s/__SHOOT__/$SHOOT/g; s/__NS__/$PROMPT_CM_NS/g; s/__WINDOW_START__/${WINDOW_START:-}/g; s/__WINDOW_END__/${WINDOW_END:-}/g; s/__PRIOR_RUN_TS__/${PRIOR_RUN_TS:-}/g" < "/etc/prompts/$PROMPT_KEY")
 else
-  PROMPT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$PROMPT_KEY}" 2>/dev/null | sed "s/__SHOOT__/$SHOOT/g; s/__NS__/$PROMPT_CM_NS/g")
-  [ -n "$PROMPT" ] || { echo "ERROR: CH v2 prompt '$PROMPT_KEY' not in cm/$PROMPT_CM (ns $PROMPT_CM_NS)" >&2; exit 2; }
+  # Standalone fallback (script run outside a Job pod with no /etc/prompts mount): read via kubectl.
+  PROMPT=$(kubectl -n "$PROMPT_CM_NS" get cm "$PROMPT_CM" -o jsonpath="{.data.$PROMPT_KEY}" 2>/dev/null | sed "s/__SHOOT__/$SHOOT/g; s/__NS__/$PROMPT_CM_NS/g; s/__WINDOW_START__/${WINDOW_START:-}/g; s/__WINDOW_END__/${WINDOW_END:-}/g; s/__PRIOR_RUN_TS__/${PRIOR_RUN_TS:-}/g")
 fi
+[ -n "$PROMPT" ] || { echo "ERROR: CH v2 prompt '$PROMPT_KEY' not in cm/$PROMPT_CM (ns $PROMPT_CM_NS) and no /etc/prompts/$PROMPT_KEY file" >&2; exit 2; }
 printf '%s' "$PROMPT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/p'
 
 # ── 8. report extractor (goose --output-format json → the FINAL report only) ──────
@@ -259,6 +286,10 @@ REFMT=""
 if [ -n "$REFMT" ]; then
   echo "==> reformatting the report IN the sandbox via claude -p (keyless; provider sentinel resolved at egress) …" >&2
   token_info pre-reformat
+  # Re-mint before the reformat exec: client_credentials issues no refresh token, so the 900s gateway token can only be
+  # re-minted (not refreshed) — a long goose run can outlive it, and 0.1.x fails closed on expiry (upstream #4287).
+  "$OS" gateway login "$GW_NAME" >&2 || true
+  token_info post-remint
   printf '%s' "$REFMT" | "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'umask 077; cat > /tmp/refmt'
   "$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc '
     # ANTHROPIC_BASE_URL / ANTHROPIC_MODEL / the enforcement flag are injected at sandbox-create via --env (a
