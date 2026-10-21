@@ -69,6 +69,9 @@ You'll walk the full path by hand:
 
 ### 4.2 - Providers (pre-created — nothing to wire)
 
+<details>
+<summary>🖼️ OpenShell concept diagram — mermaid (rendered)</summary>
+
 ```mermaid
 flowchart TB
   You(["👤 You<br/>openshell-admin role"])
@@ -96,39 +99,36 @@ flowchart TB
   Super -.->|writes · internet · secrets| X[❌ blocked → 403]
 ```
 
+</details>
+
 <details>
-<summary>plain-ASCII fallback (same picture, no renderer required)</summary>
+<summary>🖼️ OpenShell concept diagram — plain ASCII (same picture, no renderer required)</summary>
 
 ```
-   👤 You (openshell-admin role)
-       │
-       │  device-code / client-credentials login (OIDC via Keycloak)
-       │  openshell sandbox create --provider <name> --policy pol.yaml
-       ▼
-   ┌──────────────────────────────────────────────────────────────────────┐
-   │   🚪 OpenShell Gateway  (in-cluster, OIDC-gated via Keycloak)        │
-   │                                                                      │
-   │     📋 Profile  — reusable spec, no secret                           │
-   │                  endpoints · binaries · auth style                   │
-   │                       │                                              │
-   │                       ▼  bound to                                    │
-   │     🔑 Provider — Profile + real key  (key lives ONLY here)          │
-   └──────────────────────────────────────────────────────────────────────┘
-                           │  spawns a disposable pod
-                           ▼
-   ┌──────────────────────────────────────────────────────────────────────┐
-   │   📦 Sandbox  (runtime-isolated, disposable)                         │
-   │                                                                      │
-   │     🪿 Agent  (goose · Claude · kubectl)                             │
-   │         │                                                            │
-   │         ▼                                                            │
-   │     🛡️ Supervisor  — intercepts egress, injects provider key        │
-   │         │                                                            │
-   └─────────┼────────────────────────────────────────────────────────────┘
-             │
-             ├──▶ 📡 LiteLLM proxy :4001 → SAP AI Core   (via Provider)
-             ├──▶ ⚙️  k8s API :443 read-only              (via Policy)
-             └──✘ writes · internet · secrets             → 403 blocked
+👤 You (openshell-admin role)
+   │
+   │  device-code / client-credentials login (OIDC via Keycloak)
+   │  openshell sandbox create --provider <name> --policy pol.yaml
+   ▼
+🚪 OpenShell Gateway  (in-cluster, OIDC-gated via Keycloak)
+   │
+   │  📋 Profile   — reusable spec, no secret
+   │                 endpoints · binaries · auth style
+   │                        │
+   │                        ▼  bound to
+   │  🔑 Provider  — Profile + real key   (key lives ONLY here)
+   │
+   ▼  spawns a disposable pod
+📦 Sandbox  (runtime-isolated, disposable)
+   │
+   │  🪿 Agent      — goose · Claude Code · kubectl
+   │        │
+   │        ▼
+   │  🛡️ Supervisor — intercepts egress, injects provider key at egress
+   │
+   ├──▶ 📡 LiteLLM proxy :4001 → SAP AI Core   (allowed by Provider)
+   ├──▶ ⚙️  k8s API :443 read-only              (allowed by Policy)
+   └──✘ writes · internet · secrets             → 403 blocked
 ```
 
 </details>
