@@ -82,8 +82,8 @@
 
 | Notebook | 📦 OpenShell SDK — sandbox lifecycle |
 |---|---|
-| 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | Drive the gateway via the Python SDK. Device-code authentication (as you). Full lifecycle: **create → exec → list → delete**. |
-| 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | Same as **04**, but with no `openshell` CLI — only the **NVIDIA OpenShell Python SDK**. |
+| 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | The `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then drives the sandbox lifecycle: **create → exec → list → delete**. |
+| 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | Same lifecycle as **04** — but **no `openshell` CLI**, only the **NVIDIA OpenShell Python SDK**; it mints a **client-credentials** token itself (headless, no browser). |
 
 | Notebook | 🪿 OpenShell + goose — live `kubectl` investigation |
 |---|---|
