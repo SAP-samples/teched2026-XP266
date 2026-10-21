@@ -93,8 +93,8 @@
 
 | Notebook | 🪿 OpenShell + goose — triage from a snapshot / stored report |
 |---|---|
-| 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | admin-GHA (`ci-goose-via-sandbox.sh`) model — gather a cluster-health **snapshot**, then run **the agent keyless** inside the sandbox to interpret it (no live `kubectl` in the box). |
-| 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | Like 06, but feeds **the agent** the **existing** openclaw-ConfigMap reports — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) — for a fresh triage over pre-computed data. |
+| 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | The notebook gathers a **real-time** cluster inventory via the Kubernetes API (unhealthy pods, nodes, recent warning events), then pipes it to **the agent running keyless** inside the sandbox — no live `kubectl` in the box, device-code authentication. |
+| 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | Same keyless sandbox as 06, but the agent reasons over **pre-computed** artifacts from the latest `cluster-health` CronJob run — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) — read from openclaw ConfigMaps. |
 
 > [!NOTE]
 > The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
