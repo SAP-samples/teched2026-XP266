@@ -11,11 +11,6 @@
 
 - ⚡ **4a** *(easy path)* — [Run it as a GitHub Action](#4a-easy-path--run-it-as-a-github-action)
 - 🛠️ **4b** *(optional)* — [Practice the OpenShell CLI in the in-cluster web terminal](#4b-practice-the-openshell-cli-in-the-in-cluster-web-terminal)
-  - 🔑 [4.1 terminal & gateway](#41---open-the-terminal-and-reach-the-gateway)
-  - 🔀 [4.2 providers (pre-created)](#42---providers-pre-created--nothing-to-wire)
-  - 📦 [4.3 sandbox](#43---create-a-sandbox-from-the-tools-image-and-use-it)
-  - 🛡️ [4.4 guardrail](#44---see-the-guardrail-hold)
-  - 🔎 [4.5 scoped-ops](#45---scoped-ops-an-agent-that-reads-the-cluster-one-command-)
 
 ## 4a. Easy path — run it as a GitHub Action
 
@@ -31,8 +26,13 @@ Prefer the hands-on CLI? Continue below.
 
 ## 4b. Practice the OpenShell CLI in the in-cluster web terminal
 
-You'll reach the gateway (4.1), check the pre-created providers (4.2), create a contained sandbox and drive
-an agent inside it (4.3), prove the guardrail holds (4.4), then open the read-only **scoped-ops** tier (4.5).
+You'll walk the full path by hand:
+
+- 🔑 [4.1 terminal & gateway](#41---open-the-terminal-and-reach-the-gateway) — reach the in-cluster OpenShell gateway from the embedded web terminal
+- 🔀 [4.2 providers (pre-created)](#42---providers-pre-created--nothing-to-wire) — check the pre-created LLM providers (nothing to wire)
+- 📦 [4.3 sandbox](#43---create-a-sandbox-from-the-tools-image-and-use-it) — create a contained sandbox and drive an agent inside it
+- 🛡️ [4.4 guardrail](#44---see-the-guardrail-hold) — prove the guardrail holds (writes/egress → `403`)
+- 🔎 [4.5 scoped-ops](#45---scoped-ops-an-agent-that-reads-the-cluster-one-command-) — open the read-only **scoped-ops** tier (`kubectl`-on-a-leash)
 
 ### 4.1 - Open the terminal and reach the gateway
 
