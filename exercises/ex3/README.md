@@ -196,7 +196,7 @@ Same investigation and same headless authentication as **05b** — **`05c`** is 
 
 👉 Open **`06-OpenShell-Goose-Diagnostics-Snapshot.ipynb`** and run all cells.
 
-The **admin-GHA (`ci-goose-via-sandbox.sh`) model**: this notebook gathers a read-only cluster-health **snapshot**, then runs **the agent keyless** inside an OpenShell sandbox to interpret it — the agent reasons over the piped snapshot (**no live `kubectl` in the box**).
+This notebook gathers a read-only cluster-health **snapshot**, then runs **the agent keyless** inside an OpenShell sandbox to interpret it — the agent reasons over the piped snapshot (**no live `kubectl` in the box**).
 
 - ✅ Keyless = the agent reaches the in-cluster **LiteLLM proxy** (→ SAP AI Core) via the sandbox's `litellm-openai` provider; no real LLM key in the box.
 - ✅ Authentication is device-code (your identity), exactly like `04-OpenShell-Sandbox-SDK.ipynb`.
