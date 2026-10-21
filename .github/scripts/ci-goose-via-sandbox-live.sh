@@ -100,10 +100,10 @@ GW_NAME=$(printf '%s' "$GW_URL" | sed -E 's#^[a-zA-Z]+://##; s#[:/].*##')   # ga
 # is independent of the surrounding oidc_token.json schema (which drifted between CLI versions and
 # killed the whole script under `set -euo pipefail` on `grep | grep | head` miss, admin-GHA path).
 token_info() {
-  _tf=$(grep -rl 'eyJ' "$HOME/.config/openshell/gateways" 2>/dev/null | head -1)
+  _tf=$(grep -rl 'eyJ' "$HOME/.config/openshell/gateways" 2>/dev/null | head -1 || true)
   [ -n "$_tf" ] || { echo "DEBUG[token:${1:-?}]: no cached token file under ~/.config/openshell/gateways" >&2; return 0; }
   # Extract the JWT directly (3-dot base64url) — independent of surrounding JSON schema.
-  _jwt=$(grep -oE 'eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+' "$_tf" 2>/dev/null | head -1)
+  _jwt=$(grep -oE 'eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+' "$_tf" 2>/dev/null | head -1 || true)
   [ -n "$_jwt" ] || { echo "DEBUG[token:${1:-?}]: $_tf present (no JWT found)" >&2; return 0; }
   # Decode payload (segment 2) — exp + client_id are standard RFC 7519 claims.
   _claims=$(echo "$_jwt" | jq -R 'split(".") | .[1] | @base64d | fromjson' 2>/dev/null || echo '{}')
