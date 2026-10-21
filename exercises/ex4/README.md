@@ -72,6 +72,11 @@ You'll walk the full path by hand:
 <details>
 <summary>🖼️ OpenShell concept diagram — mermaid (rendered)</summary>
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+
 ```mermaid
 flowchart TB
   You(["👤 You<br/>openshell-admin role"])
@@ -99,10 +104,20 @@ flowchart TB
   Super -.->|writes · internet · secrets| X[❌ blocked → 403]
 ```
 
+</td>
+</tr>
+</tbody>
+</table>
+
 </details>
 
 <details>
 <summary>🖼️ OpenShell concept diagram — plain ASCII (same picture, no renderer required)</summary>
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
 
 ```
 👤 You (openshell-admin role)
@@ -130,6 +145,11 @@ flowchart TB
    ├──▶ ⚙️  k8s API :443 read-only              (allowed by Policy)
    └──✘ writes · internet · secrets             → 403 blocked
 ```
+
+</td>
+</tr>
+</tbody>
+</table>
 
 </details>
 
