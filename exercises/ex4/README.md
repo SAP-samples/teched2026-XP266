@@ -2,7 +2,7 @@
 
 > [!NOTE]
 > 👉 **The sandbox itself is the guardrail.**
-> - ✅ **OpenShell** runs the workshop's tools image (`goose` / Claude Code / `kubectl` / `kyma`) inside a **runtime-isolated `Sandbox`** that can reason via SAP AI Core yet is **physically unable** to touch the cluster API or the public internet.
+> - ✅ OpenShell can run the workshop's tools image (`goose` / Claude Code / `kubectl` / `kyma`) inside **runtime-isolated `Sandboxes`** that can reason via SAP AI Core yet are **physically unable** to touch the cluster API or the public internet.
 > - ✅ For the nitty-gritty details — the protection layers, the architecture, the glossary — see **Appendix 4**.
 
 👉 This exercise is an **OpenShell practice** — run it either way:
