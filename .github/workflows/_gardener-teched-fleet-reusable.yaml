@@ -208,10 +208,14 @@
                   echo "## Cluster Health (LIVE investigate) — $SHOOT_NAME" >> "$GITHUB_STEP_SUMMARY"
                   echo "" >> "$GITHUB_STEP_SUMMARY"
                   KEEP_SANDBOX="$KEEP_SANDBOX" NAME="ci-goose-live-${{ github.run_id }}-${{ github.run_attempt }}" \
-                    "$GITHUB_WORKSPACE/.github/scripts/ci-goose-via-sandbox-live.sh" >/tmp/goose_report.md 2>/dev/null || true
+                    "$GITHUB_WORKSPACE/.github/scripts/ci-goose-via-sandbox-live.sh" >/tmp/goose_report.md 2> >(tee /tmp/goose_live.err >&2) || true
                   cp -f /tmp/goose_report.md /tmp/goose_out.txt   # report-only input for the downstream "open GitHub issue" step (clean grep)
                   cat /tmp/goose_live_header.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true   # provenance (agent/model/proxy) + the prompt used
                   cat /tmp/goose_report.md >> "$GITHUB_STEP_SUMMARY"
+                  # Path B diagnostic: surface stderr (unsilenced) when the live run produced no body — folded under <details>
+                  if [ -s /tmp/goose_live.err ] && [ ! -s /tmp/goose_report.md -o $(wc -c < /tmp/goose_report.md) -lt 500 ]; then
+                    { echo ""; echo "<details><summary>live-goose stderr (Path B — remove once stable)</summary>"; echo ""; echo '```'; cat /tmp/goose_live.err; echo '```'; echo ""; echo "</details>"; } >> "$GITHUB_STEP_SUMMARY"
+                  fi
                   exit 0
                 fi
                 # ---- SNAPSHOT (Report) mode (default): goose interprets the kyma-diagnose snapshot, no tools ----
