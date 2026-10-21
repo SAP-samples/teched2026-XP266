@@ -103,9 +103,10 @@ Links:
 
 ## Exercise 2.2 - The hand-off: ask about your cluster's diagnosis
 
-👉 This is the pay-off of the "jobs produce → agents consume" pattern.  
-The Goose jobs already wrote a **Cluster Health Report** and archived their raw findings.  
-Now ask the *interactive* agent about them:
+- ✅ This is the pay-off of the "jobs produce → agents consume" pattern.
+- ✅ The Goose jobs already wrote a **Cluster Health Report** and archived their raw findings.
+
+👉 Now ask the *interactive* agent about them:
 
 ```
 Summarize the latest cluster health report for this cluster. What are the top risks, and what would you do about the most urgent one?
