@@ -15,7 +15,7 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 
 - 💬 [Open the chat UI and chat](#exercise-21---open-the-chat-ui-and-chat)
 - 🤝 [The hand-off: ask about your cluster's diagnosis](#exercise-22---the-hand-off-ask-about-your-clusters-diagnosis)
-- ⚖️ [Autonomous vs interactive — when to use which](#exercise-23---autonomous-vs-interactive--when-to-use-which)
+- ⚖️ [Autonomous vs interactive — when to use which](#autonomous-vs-interactive--when-to-use-which)
 
 
 ## Exercise 2.1 - Open the chat UI and chat
@@ -125,7 +125,9 @@ The agent reasons over the diagnostic findings and gives you a conversational, f
 > [!TIP]
 > Follow up conversationally — *"show me the certificate section"*, *"which of these is safe to ignore?"*, *"draft the kubectl command to fix it"*. Same cluster, same SAP AI Core, but now interactive instead of scheduled.
 
-## Exercise 2.3 - Autonomous vs interactive — when to use which
+## Summary
+
+### Autonomous vs interactive — when to use which
 
 | | Goose diagnostic jobs | Chat agent (this exercise) |
 |---|---|---|
@@ -134,8 +136,6 @@ The agent reasons over the diagnostic findings and gives you a conversational, f
 | Best for | unattended, repeatable, auditable sweeps | ad-hoc questions, "explain this", drafting fixes |
 | Model tier | `reasoning-fast` (Sonnet) | `reasoning-hard` (Opus) |
 | Both route through | **LiteLLM proxy → SAP AI Core** | **LiteLLM proxy → SAP AI Core** |
-
-## Summary
 
 You chatted with the interactive agent, saw it route to SAP AI Core (Claude Opus) via the same LiteLLM proxy, and used it to interrogate the diagnostic findings the autonomous jobs produced — the interactive half of the "autonomous sweep + human follow-up" pattern.  
 Continue to - [Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks](../ex3/README.md)
