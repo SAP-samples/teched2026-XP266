@@ -94,7 +94,7 @@
 | [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | 📦 OpenShell SDK | Drive the gateway via the Python SDK — notebook twin of the Busola-terminal `scoped-ops`. Device-code auth (as you). Full lifecycle: **create → exec → list → delete**. |
 | [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | 📦 OpenShell SDK | Pure-SDK twin of 04 — same lifecycle, **no CLI**: `SandboxClient` with **`tls=None`** + a **self-minted `bearer_token`** against the plaintext in-cluster gateway. |
 | [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | 🪿 OpenShell + goose | Richest flavour — goose with **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + keyless LiteLLM). Device-code auth required for sustained egress interception. |
-| [`05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | 🪿 OpenShell + goose | Same live investigation **headless** — **05b** via CLI + client-credentials (no browser), **05c** via pure SDK + self-minted bearer against the plaintext gRPC gateway. |
+| [`05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | 🪿 OpenShell + goose | Same investigation as 05, run **headless** (client-credentials, no browser) — **05b** via the `openshell` CLI; **05c** via the **NVIDIA OpenShell Python SDK**. |
 | [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | 🪿 OpenShell + goose | admin-GHA (`ci-goose-via-sandbox.sh`) model — gather a cluster-health **snapshot**, then run **goose keyless** inside the sandbox to interpret it (no live `kubectl` in the box). |
 | [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | 🪿 OpenShell + goose | Like 06, but feeds goose the **existing** openclaw-ConfigMap reports — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 goose) — for a fresh triage over pre-computed data. |
 
@@ -169,19 +169,11 @@ That's the **richest flavour**: goose runs in an OpenShell sandbox with **live r
 
 👉 Open **`05b-OpenShell-Goose-Diagnostics-Live-Headless.ipynb`** and run all cells.
 
-**Experimental variant of 05** to test whether a **headless client-credentials** session can drive the live-kubectl (explicit-policy) goose path — i.e. whether the earlier failure was just the **300 s token expiry** (now bumped to **15 min** on `openshell-admin-sa`) rather than a hard need for a device-code refresh token. If this works, the unified admin-GHA "Investigate" mode can run **headless**.
+Same live read-only `kubectl` goose investigation as **05** — same policy, same guardrails. The only thing that changes is **authentication**: **05** signs in **as you** via device-code (your browser); **05b** runs **headless** with **client-credentials** (a service-account token minted in-notebook) — no browser, no device-code screen.
 
-Differences from 05: auth is **client-credentials** (`openshell-admin-sa`, secret read from ns `openshell` — like ci-goose / the provider-setup Job), **no browser**. Everything else is identical (canonical policy + both LiteLLM providers + live read-only `kubectl`).
+👉 Then open **`05c-OpenShell-Sandbox-PureSDK.ipynb`** and run all cells.
 
-👉 Then open **`05c-OpenShell-Sandbox-PureSDK.ipynb`** — the **SDK twin of 05b**.
-
-Where 05b shells out to the `openshell` **CLI** (`gateway add` / `sandbox …`), this notebook uses the **OpenShell Python SDK only** — `SandboxClient` constructed **directly**, no CLI binary is downloaded and no `openshell` subprocess is ever run.
-
-- ✅ It connects **directly to the in-cluster plaintext gRPC gateway** — `openshell.openshell.svc.cluster.local:8080` (host:port, no scheme) — with **`tls=None`** + a **self-minted `bearer_token`**.
-- ✅ The client-credentials OIDC token is minted in-notebook (from Keycloak, using the `openshell-admin-sa` secret read from ns `openshell`) and passed as `bearer_token`, because the SDK **refuses `client_credentials` over plaintext for a non-loopback endpoint** (it requires TLS there); `bearer_token` has no such guard. The gateway runs `tls=false` (TLS terminates at the Istio ingress), so an in-cluster client speaks **plaintext**.
-- ✅ It then runs the **same live read-only `kubectl` goose investigation** as 05b (canonical cluster-ops policy + both LiteLLM providers + a scoped `sandbox-viewer` kubeconfig).
-
-This notebook is the empirical verification that the **pure-SDK + `tls=None` + self-minted bearer** route works against that plaintext gateway.
+Same investigation and same headless auth as **05b** — the only difference is **how we talk to OpenShell**: **05b** uses the `openshell` **CLI**; **05c** uses the **NVIDIA OpenShell Python SDK** (`SandboxClient`) directly — no CLI binary involved.
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
