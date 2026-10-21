@@ -54,6 +54,33 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 </tbody>
 </table>
 
+<details>
+<summary>👉 Sample answer (click to expand)</summary>
+
+Got it — this is a real, recent NVIDIA product. Here's the rundown:
+
+**NVIDIA OpenShell** is an open-source, secure runtime for running autonomous AI agents. Think of it as a sandbox + policy engine specifically designed for agents (like OpenClaw, Claude Code, Codex, etc.) that need to do real work — read files, run commands, call APIs, use credentials — without giving them free rein over your system.
+
+**What it actually does:**
+- **Kernel-level sandboxing** — agents execute in isolated environments, not just a process with hopes and prayers.
+- **Declarative YAML policies** — you spell out what each agent is allowed to touch (filesystem, network, processes, credentials). The runtime enforces it.
+- **Out-of-process enforcement** — policy decisions happen *outside* the agent, so a jailbroken/confused model can't talk its way past the rules.
+- **Full audit trail** — every allow/deny decision is logged.
+- **Agent-agnostic** — agents run unmodified; you don't have to rewrite them to adopt it.
+
+**Bigger picture:** it's the runtime piece of NVIDIA's **Open Agent Safety Platform**, which pairs OpenShell with NVIDIA Sentry and BlueField-4 for in-silicon enforcement — basically a full-stack story for "how do we let agents loose in enterprises without them wrecking the place."
+
+Early adopters cited: Cadence, Slack, Gecko. Current version is 0.1.0.
+
+Relevant to you: **OpenClaw is explicitly listed as one of the agents it supports.**
+
+Links:
+- <https://www.nvidia.com/en-us/ai/openshell/>
+- <https://github.com/NVIDIA/OpenShell>
+- <https://docs.nvidia.com/openshell/home>
+
+</details>
+
 > [!NOTE]
 > **Model routing.** The chat agent defaults to the `reasoning-hard` tier — **Claude Opus** on SAP AI Core — with automatic fallbacks (Sonnet, GPT-5.5, GPT-4.1, Nova, Mistral) if a model is busy.  
 > That's why interactive traffic shows up as *Opus* on the spend dashboard, while the Goose jobs (Sonnet) show up as *diagnostics*.
