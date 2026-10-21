@@ -1,20 +1,14 @@
 # Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks
 
-> [!NOTE]
-> 👉 This is your **Python playground**.  
-> A full **JupyterHub** runs in your cluster, pre-loaded with notebooks and wired — like everything else — to **SAP AI Core through the LiteLLM proxy**.  
-> Here you drive **OpenShell sandboxes** from Python: create one, run a command inside it, then let an **agent (goose)** investigate your cluster from within a sandbox.
+👉 This is your **Python playground**.
+
+- ✅ A full **JupyterHub** runs in your cluster, pre-loaded with notebooks and wired — like everything else — to **SAP AI Core through the LiteLLM proxy**.
+- ✅ Here you drive **OpenShell sandboxes** from Python: create one, run a command inside it, then let an **agent (goose)** investigate your cluster from within a sandbox.
 
 **Contents**
 
 - 🚀 [Sign in and spawn your server](#exercise-31---sign-in-and-spawn-your-server)
 - 📒 [OpenShell notebooks](#exercise-32---openshell-notebooks)
-  - 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk)
-  - 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless)
-  - 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live)
-  - 🪿 [`05b` / `05c` — headless + pure-SDK variants](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk)
-  - 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot)
-  - 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport)
 
 
 ## Exercise 3.1 - Sign in and spawn your server
@@ -63,6 +57,15 @@
 
 A **sandbox** is a disposable, per-session pod that _by construction_ can't reach the internet or the cluster API.  
 Here you drive its whole lifecycle from Python — then put an **agent (goose)** inside the box, reasoning over your cluster from behind the guardrails.
+
+**Notebooks in this section**
+
+- 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk)
+- 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless)
+- 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live)
+- 🪿 [`05b` / `05c` — headless + pure-SDK variants](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk)
+- 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot)
+- 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport)
 
 | Notebook | Track | What it does |
 |---|---|---|
