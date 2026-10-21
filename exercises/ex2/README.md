@@ -26,6 +26,24 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
    https://openclaw.xp266-NNN.<workshop-domain>/
    ```
    Sign in with the workshop identity provider (same single sign-on as Busola).
+
+   You may need to sign in eventually — the sequence looks like this:
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td align="center" width="50%"><img src="images/oauth2-proxy.png" width="400" alt="oauth2-proxy sign-in gate" /><br/><sub><b>1.</b> oauth2-proxy gate</sub></td>
+<td align="center" width="50%"><img src="images/sap-ias-01.png" width="400" alt="SAP IAS — identity provider pick" /><br/><sub><b>2.</b> SAP IAS — pick provider</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="images/sap-ias-02.png" width="400" alt="SAP IAS — credentials" /><br/><sub><b>3.</b> SAP IAS — credentials</sub></td>
+<td align="center"><img src="images/sap-ias-03.png" width="400" alt="SAP IAS — consent / 2FA" /><br/><sub><b>4.</b> SAP IAS — consent / 2FA</sub></td>
+</tr>
+</tbody>
+</table>
+
+   Once signed in, you land on the chat UI:
+
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
