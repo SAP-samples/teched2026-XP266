@@ -204,10 +204,6 @@ Same investigation and same headless authentication as **05b** — **`05c`** is 
 
 This notebook gathers a read-only cluster-health **snapshot**, then runs the agent inside an OpenShell sandbox to interpret it — the agent reasons over the piped snapshot (**no live `kubectl` in the box**).
 
-- ✅ The agent reaches the in-cluster **LiteLLM proxy** (→ SAP AI Core) via the sandbox's `litellm-openai` provider; no real LLM key in the box.
-- ✅ Authentication is device-code (your identity), exactly like `04-OpenShell-Sandbox-SDK.ipynb`.
-- ✅ Compare its report with the live one from 3.2.3 — same agent, snapshot vs live-kubectl.
-
 ### Exercise 3.2.6 - `07-OpenShell-Goose-Diagnostics-FromReport`
 
 👉 Open **`07-OpenShell-Goose-Diagnostics-FromReport.ipynb`** and run all cells.
