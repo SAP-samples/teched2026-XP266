@@ -24,15 +24,30 @@ Here you drive **OpenShell sandboxes** from Python: create one, run a command in
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
-<td align="center" width="25%"><img src="images/jupyterhub-01.png" height="140" alt="JupyterHub sign-in" /><br/><sub><b>1.</b> sign in</sub></td>
-<td align="center" width="25%"><img src="images/jupyterhub-02.png" height="140" alt="JupyterHub Start My Server" /><br/><sub><b>2.</b> start server</sub></td>
-<td align="center" width="25%"><img src="images/jupyterhub-03.png" height="140" alt="JupyterHub spawning" /><br/><sub><b>3.</b> spawning</sub></td>
-<td align="center" width="25%"><img src="images/jupyterhub-04.png" height="140" alt="JupyterLab opens" /><br/><sub><b>4.</b> JupyterLab opens</sub></td>
+<td align="center" width="33%"><img src="images/jupyterhub-01.png" height="140" alt="JupyterHub sign-in" /><br/><sub><b>1.</b> sign in</sub></td>
+<td align="center" width="33%"><img src="images/jupyterhub-02.png" height="140" alt="JupyterHub Start My Server" /><br/><sub><b>2.</b> start server</sub></td>
+<td align="center" width="33%"><img src="images/jupyterhub-03.png" height="140" alt="JupyterHub spawning" /><br/><sub><b>3.</b> spawning</sub></td>
 </tr>
 </tbody>
 </table>
 
-3. In the file browser (left) you'll find the pre-loaded OpenShell notebooks:
+3. 👉 In the file browser (left) you'll find the pre-loaded OpenShell notebooks:
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/jupyterhub-04.png" width="820" alt="JupyterLab file browser — pre-loaded OpenShell notebooks" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
    | Notebook | Track | What it does |
    |---|---|---|
