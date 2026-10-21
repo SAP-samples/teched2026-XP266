@@ -137,13 +137,13 @@ The agent reasons over the diagnostic findings and gives you a conversational, f
 
 ### Autonomous vs interactive — when to use which
 
-| | Goose diagnostic jobs | Chat agent (this exercise) |
+| | 🪿 Goose diagnostic jobs | 💬 Chat agent (this exercise) |
 |---|---|---|
-| Trigger | scheduled CronJob (or manual kick) | you, in chat |
-| Output | structured `ClusterHealthReport` CR | conversation |
-| Best for | unattended, repeatable, auditable sweeps | ad-hoc questions, "explain this", drafting fixes |
-| Model tier | `reasoning-fast` (Sonnet) | `reasoning-hard` (Opus) |
-| Both route through | **LiteLLM proxy → SAP AI Core** | **LiteLLM proxy → SAP AI Core** |
+| ⏰ **Trigger** | scheduled CronJob (or manual kick) | you, in chat |
+| 📄 **Output** | structured `ClusterHealthReport` CR | conversation |
+| 🎯 **Best for** | unattended, repeatable, auditable sweeps | ad-hoc questions, "explain this", drafting fixes |
+| 🧠 **Model tier** | `reasoning-fast` (Sonnet) | `reasoning-hard` (Opus) |
+| 🔀 **Both route through** | **LiteLLM proxy → SAP AI Core** | **LiteLLM proxy → SAP AI Core** |
 
 You chatted with the interactive agent, saw it route to SAP AI Core (Claude Opus) via the same LiteLLM proxy, and used it to interrogate the diagnostic findings the autonomous jobs produced — the interactive half of the "autonomous sweep + human follow-up" pattern.  
 Continue to - [Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks](../ex3/README.md)
