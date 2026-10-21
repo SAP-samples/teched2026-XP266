@@ -218,7 +218,28 @@ Three overlapping fences wrap every run:
 > [!NOTE]
 > **Defense in depth.** No single control is trusted alone: the read-only token (can't write or read secrets), the sandbox boundary (no internet, no API-server mutation), non-root + read-only rootfs (can't escalate on the node), and `drop_params` at the proxy (can't send SAP AI Core a malformed request). The agent is useful *because* it's boxed in.
 
-🔧 **Prove it yourself (optional — go deeper).** In a **web terminal** ([Appendix 2](../Appendices/2-web-terminal/README.md)), ask the API server what the web-terminal identity may do, and read the report artifacts directly:  
+🔧 **Prove it yourself (optional — go deeper).**
+
+👉 Open **All Health** (sidebar) and click the terminal `>_` icon in the top-right of the Busola toolbar — a shell pod opens in the browser.
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/diagnostics-03.png" width="820" alt="Open the Busola web terminal from the All Health view" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
+👉 In the terminal, ask the API server what the **web-terminal identity** may do, and read the report artifacts directly:
+
 Command:
 ```bash
 echo "read anything:    $(kubectl auth can-i list nodes)"
