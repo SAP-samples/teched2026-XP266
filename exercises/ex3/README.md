@@ -169,7 +169,10 @@ That's the **richest flavour**: the agent runs in an OpenShell sandbox with **li
 
 👉 Open **`05b-OpenShell-Goose-Diagnostics-Live-Headless.ipynb`** and run all cells.
 
-Same live read-only `kubectl` investigation as **05** — same policy, same guardrails. The only thing that changes is **authentication**: **05** signs in **as you** via device-code (your browser); **05b** runs **headless** with **client-credentials** (a service-account token minted in-notebook) — no browser, no device-code screen.
+- ✅ Same live read-only `kubectl` goose investigation as **05** — same policy, same guardrails.
+- ✅ The only thing that changes is **authentication**, namely:
+  - **05** signs in **as you** via device-code (your browser),
+  - **05b** runs **headless** with **client-credentials** (a service-account token minted in-notebook) — no browser, no device-code screen.
 
 👉 Then open **`05c-OpenShell-Sandbox-PureSDK.ipynb`** and run all cells.
 
