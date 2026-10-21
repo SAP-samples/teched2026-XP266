@@ -217,8 +217,6 @@ Like **3.2.5**, but instead of gathering a live snapshot, this feeds the agent t
 - ✅ `diagnostic` = raw `kyma diagnose` (**v1**),
 - ✅ `analysis` = a prior agent report (**v2**).
 
-The agent runs inside an OpenShell sandbox (baked policy + `litellm-openai` provider) and produces a **fresh triage** over the pre-computed report. Reuses `cluster-health-reader`'s existing openclaw-ConfigMap read (no extra RBAC). Authentication = device-code, like `04-…`.
-
 ## Summary
 
 You signed in to JupyterHub, drove the full **OpenShell sandbox lifecycle** from the Python SDK, and ran an **agent inside a sandbox** — live read-only `kubectl`, a static snapshot, and a report-only triage — watching the same read-only, no-egress guardrails that bound the CLI agent.  
