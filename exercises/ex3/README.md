@@ -143,6 +143,10 @@ This notebook drives the OpenShell gateway programmatically via the **OpenShell 
 
 That's the **richest flavour**: goose runs in an OpenShell sandbox with **live read-only `kubectl`** and investigates the cluster itself.
 
+- ✅ the sandbox gets a read-only **`sandbox-viewer`** identity + the canonical policy (apiserver read-only **+** keyless LiteLLM),
+- ✅ goose shells out to the allowlisted `kubectl`,
+- ✅ auth = **device-code** (your identity) — **required**: the supervisor's egress interception is sustained by the device-code refresh token (a headless/static token can't sustain it, which is why this works interactively, not from CI client-credentials).
+
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
