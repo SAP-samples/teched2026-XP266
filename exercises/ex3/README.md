@@ -87,14 +87,14 @@
 
 | Notebook | 🪿 OpenShell + goose — live `kubectl` investigation |
 |---|---|
-| 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | Richest flavour — the `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then opens a sandbox in which the agent gets **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + keyless LiteLLM proxy). |
+| 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | Richest flavour — the `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then opens a sandbox in which the agent gets **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + LiteLLM proxy). |
 | 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Same investigation as **05**, run **headless** — the `openshell` **CLI** still registers the gateway, but with **client-credentials** instead of device-code (no browser). |
 | 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Same investigation as **05b**, but with **no `openshell` CLI** — only the **NVIDIA OpenShell Python SDK**; it mints the client-credentials token itself. |
 
 | Notebook | 🪿 OpenShell + goose — triage from a snapshot / stored report |
 |---|---|
-| 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | The notebook gathers a **real-time** cluster inventory via the Kubernetes API (unhealthy pods, nodes, recent warning events), then pipes it to **the agent running keyless** inside the sandbox — no live `kubectl` in the box, device-code authentication. |
-| 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | Same keyless sandbox as 06, but the agent reasons over **pre-computed** artifacts from the latest `cluster-health` CronJob run — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) — read from openclaw ConfigMaps. |
+| 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | The notebook gathers a **real-time** cluster inventory via the Kubernetes API (unhealthy pods, nodes, recent warning events), then pipes it to the agent inside the sandbox — no live `kubectl` in the box, device-code authentication. |
+| 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | Same sandbox as 06, but the agent reasons over **pre-computed** artifacts from the latest `cluster-health` CronJob run — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) — read from openclaw ConfigMaps. |
 
 > [!NOTE]
 > The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
@@ -159,7 +159,7 @@ That's the **richest flavour**: the agent runs in an OpenShell sandbox with **li
 
 > [!IMPORTANT]
 > **The sandbox is the guardrail, not the prompt.** You can hand the agent any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt:
-> - ✅ the sandbox gets a short-lived read-only **`sandbox-viewer`** identity (`get`/`list`/`watch`, **no secrets**) + the canonical policy (apiserver read-only **+** keyless LiteLLM proxy),
+> - ✅ the sandbox gets a short-lived read-only **`sandbox-viewer`** identity (`get`/`list`/`watch`, **no secrets**) + the canonical policy (apiserver read-only **+** LiteLLM proxy),
 > - ✅ the agent shells out to the allowlisted `kubectl`; no internet,
 > - ✅ authentication works both ways — **as you** via **device-code** (`05`) or **headless** via **client-credentials** (`05b` / `05c`); same guardrails apply regardless.
 
@@ -196,9 +196,9 @@ Same investigation and same headless authentication as **05b** — **`05c`** is 
 
 👉 Open **`06-OpenShell-Goose-Diagnostics-Snapshot.ipynb`** and run all cells.
 
-This notebook gathers a read-only cluster-health **snapshot**, then runs **the agent keyless** inside an OpenShell sandbox to interpret it — the agent reasons over the piped snapshot (**no live `kubectl` in the box**).
+This notebook gathers a read-only cluster-health **snapshot**, then runs the agent inside an OpenShell sandbox to interpret it — the agent reasons over the piped snapshot (**no live `kubectl` in the box**).
 
-- ✅ Keyless = the agent reaches the in-cluster **LiteLLM proxy** (→ SAP AI Core) via the sandbox's `litellm-openai` provider; no real LLM key in the box.
+- ✅ The agent reaches the in-cluster **LiteLLM proxy** (→ SAP AI Core) via the sandbox's `litellm-openai` provider; no real LLM key in the box.
 - ✅ Authentication is device-code (your identity), exactly like `04-OpenShell-Sandbox-SDK.ipynb`.
 - ✅ Compare its report with the live one from 3.2.3 — same agent, snapshot vs live-kubectl.
 
@@ -211,7 +211,7 @@ Like **3.2.5 (B)**, but instead of gathering a live snapshot, this feeds the age
 - ✅ `diagnostic` = raw `kyma diagnose` (**v1**),
 - ✅ `analysis` = a prior agent report (**v2**).
 
-The agent runs **keyless** in an OpenShell sandbox (ci-goose model — baked policy + `litellm-openai` provider) and produces a **fresh triage** over the pre-computed report. Reuses `cluster-health-reader`'s existing openclaw-ConfigMap read (no extra RBAC). Authentication = device-code, like `04-…`.
+The agent runs inside an OpenShell sandbox (baked policy + `litellm-openai` provider) and produces a **fresh triage** over the pre-computed report. Reuses `cluster-health-reader`'s existing openclaw-ConfigMap read (no extra RBAC). Authentication = device-code, like `04-…`.
 
 ## Summary
 
