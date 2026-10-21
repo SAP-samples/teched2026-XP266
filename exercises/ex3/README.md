@@ -147,6 +147,22 @@ goose runs **live, read-only `kubectl`** inside a scoped sandbox (the `scoped-op
 👉 Open **`05b-OpenShell-Goose-Diagnostics-Live-Headless.ipynb`** — same live investigation as 3.2.3, but with **client-credentials auth (no browser step)**.  
 And **`05c-OpenShell-Sandbox-PureSDK.ipynb`** — same again, this time **pure SDK, no CLI**.
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/notebook-headless.png" width="820" alt="05b headless notebook — client-credentials auth, no device-code step" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
 ### Exercise 3.2.5 - `06-OpenShell-Goose-Diagnostics-Snapshot`
 
 👉 Open **`06-OpenShell-Goose-Diagnostics-Snapshot.ipynb`** and run all cells.  
