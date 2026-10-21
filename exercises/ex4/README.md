@@ -65,8 +65,7 @@ You'll walk the full path by hand:
    ```
    ✓ Authenticated via device code
    ```
-
-Now `openshell sandbox list` works from the terminal — continue with 4.2.
+5. 👉 Now `openshell sandbox list` works from the terminal — continue with 4.2.
 
 ### 4.2 - Providers (pre-created — nothing to wire)
 
