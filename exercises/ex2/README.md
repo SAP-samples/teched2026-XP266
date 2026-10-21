@@ -48,8 +48,15 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
-<td align="center" width="50%"><img src="images/chat-01.png" width="400" alt="OpenClaw chat UI — landing" /><br/><sub><b>1.</b> landing</sub></td>
-<td align="center" width="50%"><img src="images/chat-02.png" width="400" alt="OpenClaw chat UI — answer streaming via SAP AI Core" /><br/><sub><b>2.</b> asked &amp; answered</sub></td>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/chat-01.png" width="820" alt="OpenClaw chat UI — asked and answered" />
+  </a>
+</p>
+</div>
+</td>
 </tr>
 </tbody>
 </table>
