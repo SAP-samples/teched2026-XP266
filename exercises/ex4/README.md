@@ -312,6 +312,22 @@ claude --version
 claude -p "In one line, what is Kyma?"
 ```
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/practice-05.png" width="820" alt="Claude Code running inside the sandbox — `claude --version` + `claude -p \"In one line, what is Kyma?\"` reaches SAP AI Core via the LiteLLM proxy and returns a one-line answer" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
 > [!TIP]
 > **Why the block above copies the key into `ANTHROPIC_AUTH_TOKEN` and `unset`s `ANTHROPIC_API_KEY`.**  
 > With `ANTHROPIC_API_KEY` set, Claude Code sends it as an `x-api-key` header, which triggers an interactive *"Detected a custom API key — use it?"* prompt — so `claude -p` hangs on a headless run.  
