@@ -18,6 +18,14 @@ the sandbox only ever carries a sentinel.
   - 🛡️ [5.4 Prove it's still contained](#exercise-54---prove-its-still-contained-)
   - 🏗️ [5.5 From draft to deployable: a correct KRO RGD](#exercise-55---from-draft-to-deployable-a-correct-kro-rgd-)
 
+<!-- MAINTAINER NOTE: the `all-fleets-teched-nvidia` workflow link below MUST stay a RELATIVE path
+     (`../../../../actions/workflows/…`). GitHub resolves it against the viewer's current fork URL,
+     so a student browsing their own fork lands on THEIR fork's Actions tab (which is where their
+     admin workflow lives). An absolute `https://github.com/SAP-samples/...` link would always point
+     to the upstream public repo instead — where the student cannot dispatch a run. Keep relative.
+     Same pattern used in last year's teched README, e.g.
+     [k8s-data-context-student](../../../../actions/workflows/k8s-data-context-student.yml). -->
+
 > [!NOTE]
 > **Easy path — run it as a GitHub Action.**  
 > To run the external coding
