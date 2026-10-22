@@ -60,6 +60,22 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
    </tbody>
    </table>
 
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="images/metric-pipeline-02.png" width="820" alt="MetricPipeline sap-cloud-logging — detail view" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
+
    <details>
    <summary>👉 <i>Optional</i> — click to expand the <code>MetricPipeline</code> YAML</summary>
 
@@ -216,9 +232,9 @@ The headline tile is just `top_hits` over that series — **by construction it m
 
 ## 🩺 Exercise 6.3 - The FleetStatus card
 
-1. Back on the **Cluster Directory** (`https://busola.xp266-NNN.<workshop-domain>/clusterdir/`), find the **Cluster launchpad** section — it follows the cluster selector.
+1. From the **Student's Portal**, open **Cluster launchpad** and pick the **Fleet Status + Spend** option.
 
-2. Click the **Fleet Status + Spend** tile. In one click it opens your cluster's **`fleet-status`** card — the aggregated view with the **LLM Dashboards** / **SAP Cloud Logging** shortcuts — with no hunting through the Busola navigation tree.
+2. In one click it opens your cluster's **`fleet-status`** card — the aggregated view with the **LLM Dashboards** / **SAP Cloud Logging** shortcuts — with no hunting through the Busola navigation tree.
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
@@ -227,6 +243,22 @@ The headline tile is just `top_hits` over that series — **by construction it m
 <p float="left">
   <a href="#">
   <img src="images/fleet-status.png" width="820" alt="Fleet Status + Spend tile → fleet-status card with LLM Dashboards / SAP Cloud Logging shortcuts" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/fleet-spend.png" width="820" alt="fleet-status card — LiteLLM spend split (autonomous Sonnet vs interactive Opus)" />
   </a>
 </p>
 </div>
