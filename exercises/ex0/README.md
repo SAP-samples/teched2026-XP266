@@ -214,13 +214,13 @@ flowchart TB
 >
 > | Exercise | Suggested time | Role |
 > |---|---|---|
-> | 🚦 **Appendix 0** — Fork this repo & enable GitHub Actions | **~2 min** | *prerequisite* for ex4a / ex5a GHA runs — can be done while host introduces ex0 |
-> | 📋 **ex1** — Cluster Health Reports | **~30 min** | heart of the workshop — real Goose run + custom prompt |
-> | 💬 **ex2** — Interactive chat agent | **~12 min** | the hand-off: two prompts, mostly reading |
-> | 📒 **ex3** — JupyterHub + OpenShell notebooks | **~20 min** | run **one** notebook end-to-end; peek at the others |
-> | 🛠️ **ex4** — Kyma OpenShell CLI | **~20 min** | 4a easy path (GHA) + 2–3 probes from 4b |
-> | 🤖 **ex5** — External agents (OpenRouter) | **~18 min** | 5a easy path + KRO draft via Busola |
-> | 📊 **ex6** — Observability & spend | **~10 min** | two clicks; 6.3 telemetry is optional |
+> | [🚦 **Appendix 0** — Fork this repo & enable GitHub Actions](../Appendices/0-fork-this-repo/) | **~2 min** | *prerequisite* for ex4a / ex5a GHA runs — can be done while host introduces ex0 |
+> | [📋 **ex1** — Cluster Health Reports](../ex1/) | **~30 min** | heart of the workshop — real Goose run + custom prompt |
+> | [💬 **ex2** — Interactive chat agent](../ex2/) | **~12 min** | the hand-off: two prompts, mostly reading |
+> | [📒 **ex3** — JupyterHub + OpenShell notebooks](../ex3/) | **~20 min** | run **one** notebook end-to-end; peek at the others |
+> | [🛠️ **ex4** — Kyma OpenShell CLI](../ex4/) | **~20 min** | 4a easy path (GHA) + 2–3 probes from 4b |
+> | [🤖 **ex5** — External agents (OpenRouter)](../ex5/) | **~18 min** | 5a easy path + KRO draft via Busola |
+> | [📊 **ex6** — Observability & spend](../ex6/) | **~10 min** | two clicks; 6.3 telemetry is optional |
 >
 > **Finished early?** Dive into the ✅ *optional* / collapsible sections (ex1.4 "Prove it yourself", ex6 "math behind the dashboards", ex6.3 telemetry path, extra notebooks in ex3).  
 > **Running late?** Trim ex3 to one notebook, skip ex4b, and defer ex6.3 — ex1 + ex2 + ex5 + the ex6 click-through are the critical path.
