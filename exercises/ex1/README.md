@@ -275,6 +275,9 @@ cluster-admin:    no
 
 ## Summary
 
-You read the v1/v2/v3 Cluster Health Reports in the Diagnostic Toolbox UI and in Busola, triggered a fresh sandboxed run (choosing the model), **wrote your own prompt** and watched Goose run it inside a read-only OpenShell sandbox — and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.  
-You also met the hand-off that the rest of the workshop builds on.  
+- You read the Cluster Health Reports in the Diagnostic Toolbox UI and in Busola,
+- triggered a fresh sandboxed run (choosing the model),
+- **wrote your own prompt** and watched Goose run it inside a read-only OpenShell sandbox —
+- and saw the layered guardrails (read-only token, no egress, non-root) that make an autonomous `kubectl` agent safe to run.
+
 Continue to - [Exercise 2 - Chat with the interactive agent](../ex2/README.md)
