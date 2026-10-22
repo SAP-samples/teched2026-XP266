@@ -136,7 +136,7 @@ The next exercise walks the **LiteLLM → SAP AI Core** hop end-to-end.
 > Want the full story behind this stack? Read the deep-dive on the SAP Community:
 > [**Autonomous Diagnostics on Kyma Unplugged: Goose + LiteLLM + KRO + SAP AI Core in Production**](https://community.sap.com/t5/technology-blog-posts-by-sap/autonomous-diagnostics-on-kyma-unplugged-goose-litellm-kro-sap-ai-core-in/ba-p/14435287).
 
-## The TechEd 2026 landscape at a glance
+## 🗺️ The TechEd 2026 landscape at a glance
 
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
