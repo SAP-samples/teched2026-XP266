@@ -293,7 +293,9 @@ Either way:
 > [!TIP]
 > The `msg_bdrk_` id prefix is your proof the request round-tripped **SAP AI Core** (Bedrock).
 
-👉 Now **drive Claude Code** from inside the shell (option B) — point it at its one allowed endpoint (`litellm-proxy…:4001`), reuse the injected sentinel as the Bearer token, **and pin the SAP AI Core model ids**:
+#### C — drive Claude Code from inside the shell
+
+👉 From inside the sandbox shell (option B), point Claude Code at its one allowed endpoint (`litellm-proxy…:4001`), reuse the injected sentinel as the Bearer token, **and pin the SAP AI Core model ids**:
 
 ```bash
 # inside the sandbox:
