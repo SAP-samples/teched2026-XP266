@@ -20,29 +20,13 @@
 
 ## 🧰 The Diagnostic Toolbox portal
 
-👉 Open the diagnostics from the **Student's Portal**:
+👉 Open the diagnostics either from the **Student's Portal** —
 
 ```
 https://busola.xp266-NNN.<workshop-domain>/clusterdir/
 ```
 
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/toolbox-01.png" width="820" alt="Student's Portal → Cluster launchpad → Diagnostic Tools" />
-  </a>
-</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-
-or directly with:
+— or directly:
 
 ```
 https://dev-toolbox.xp266-NNN.<workshop-domain>/
@@ -51,15 +35,8 @@ https://dev-toolbox.xp266-NNN.<workshop-domain>/
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/01_00_0010.png" width="820" alt="SAP TechEd 2026 — Diagnostic Toolbox" />
-  </a>
-</p>
-</div>
-</td>
+<td align="center" width="50%"><img src="images/toolbox-01.png" width="100%" alt="Student's Portal — Cluster launchpad → Diagnostic Tools tile" /><br/><sub><b>1.</b> Student's Portal — click <b>Diagnostic Tools</b> in the launchpad</sub></td>
+<td align="center" width="50%"><img src="images/01_00_0010.png" width="100%" alt="SAP TechEd 2026 — Diagnostic Toolbox landing page" /><br/><sub><b>2.</b> Diagnostic Toolbox — reports, run cards, and more</sub></td>
 </tr>
 </tbody>
 </table>
