@@ -15,7 +15,9 @@ To see **Goose running inside a contained OpenShell sandbox** on your cluster �
      (`../../../../actions/workflows/…`). GitHub resolves it against the viewer's current fork URL,
      so a student browsing their own fork lands on THEIR fork's Actions tab (which is where their
      admin workflow lives). An absolute `https://github.com/SAP-samples/...` link would always point
-     to the upstream public repo instead — where the student cannot dispatch a run. Keep relative. -->
+     to the upstream public repo instead — where the student cannot dispatch a run. Keep relative.
+     Same pattern used in last year's teched README, e.g.
+     [k8s-data-context-student](../../../../actions/workflows/k8s-data-context-student.yml). -->
 
 | Run this workflow | Workflow inputs | What it does |
 |---|---|---|
