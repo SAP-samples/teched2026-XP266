@@ -41,6 +41,22 @@ You'll walk the full path by hand:
 > - ✅ The terminal runs *inside* the cluster, so you reach the gateway's in-cluster Service directly (no HTTPS host, no port-forward).
 > - ✅ The gateway is **OIDC-gated** — it validates your Keycloak token itself.
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/practice-01.png" width="820" alt="OpenShell CLI practice — in-cluster web terminal reaching the gateway" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
 1. 👉 In Busola, click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
 2. 👉 Set your runtime once, so the commands below are copy-paste (shell names can't have hyphens, hence `XP266_…`):
    ```bash
