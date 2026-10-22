@@ -383,7 +383,7 @@ claude -p "In one line, what is Kyma?"
   - ✅ it opens connections **only** to policy-allowed hosts.
 - 👉 The contained tier allows just `litellm-proxy…:4001`;
   - ✅ every other host is **refused** (the name may resolve to a synthetic intercept address, still the connection never succeeds).
-- 👉 A bare `kubectl` won't demonstrate this cleanly (with no `KUBECONFIG` it just hits `localhost:8080`), so we probe the network directly with `curl`.
+  - ✅ A bare `kubectl` won't demonstrate this cleanly (with no `KUBECONFIG` it just hits `localhost:8080`), so we probe the network directly with `curl`.
 
 **Probe A — try to reach the apiserver:**
 ```bash
