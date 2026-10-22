@@ -242,7 +242,7 @@ openshell sandbox list        # wait for PHASE=Ready
 
 👉 **Prove it reasons through SAP AI Core — two options below.**
 
-**A — one-shot `exec`** (run a command in the box without entering it):
+#### A — one-shot `exec` (run a command in the box without entering it)
 
 ```bash
 openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash -c \
@@ -252,10 +252,13 @@ openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash -c \
    -d "{\"model\":\"anthropic--claude-4.7-opus\",\"max_tokens\":16,\"messages\":[{\"role\":\"user\",\"content\":\"Reply OK\"}]}"'
 ```
 
-**B — interactive shell** (`exec` in, then run the same without the wrapper or escaping):
+#### B — interactive shell (`exec` in, then run the same without the wrapper or escaping)
 
 ```bash
 openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash   # → goose@default--$XP266_CLUSTER-devbox:~$
+```
+
+```bash
 # inside the sandbox:
 curl -sS -XPOST http://litellm-proxy.default.svc.cluster.local:4001/v1/messages \
   -H "content-type: application/json" -H "anthropic-version: 2023-06-01" \
