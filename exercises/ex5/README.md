@@ -189,7 +189,7 @@ flowchart LR
 </tbody>
 </table>
 
-**The models — NVIDIA Nemotron, free on OpenRouter.**
+**The NVIDIA Nemotron models.**
 
 - ✅ OpenRouter puts many providers behind one endpoint, and its `:free` tier includes models from NVIDIA's **Nemotron** family.
 - ✅ Because the agents call tools, the model must be a **chat/completion model with tool-calling** — embedding/rerank models (ids with `-embed-`/`-rerank-`) won't work for this purpose.
