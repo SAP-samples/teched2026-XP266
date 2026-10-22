@@ -404,9 +404,12 @@ openshell sandbox delete $XP266_CLUSTER-devbox
 
 ### 4.5 - Scoped-ops: an agent that *reads* the cluster (one command) 🔎
 
-- 👉 The contained sandbox (4.3) is a pure **compute** box — zero cluster access.
-- 👉 The **scoped-ops** tier adds exactly one capability: a **read-only** view of the cluster, so an agent can *diagnose* (never mutate).
-- 👉 From the **Busola web terminal** it's a single command — **`scoped-ops`** — which:
+👉 The contained sandbox (4.3) is a pure **compute** box — zero cluster access.
+
+👉 The **scoped-ops** tier adds exactly one capability: a **read-only** view of the cluster, so an agent can *diagnose* (never mutate).
+
+👉 From the **Busola web terminal** it's a single command — **`scoped-ops`** — which:
+
 - ✅ creates the sandbox,
 - ✅ applies the cluster-ops network policy,
 - ✅ mints a short-lived **read-only** token,
