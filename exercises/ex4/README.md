@@ -61,6 +61,8 @@ You'll walk the full path by hand:
 2. 👉 Set your runtime once, so the commands below are copy-paste (shell names can't have hyphens, hence `XP266_…`):
    ```bash
    export XP266_CLUSTER=xp266-NNN          # your runtime number, e.g. xp266-001
+   ```
+   ```bash
    export XP266_DOMAIN=<workshop-domain>   # handed out at the start of the session
    ```
 3. 👉 Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`):
