@@ -5,7 +5,7 @@
 > - ✅ OpenShell can run the workshop's tools image (`goose` / Claude Code / `kubectl` / `kyma`) inside **runtime-isolated `Sandboxes`** that can reason via SAP AI Core yet are **physically unable** to touch the cluster API or the public internet.
 > - ✅ For the nitty-gritty details — the protection layers, the architecture, the glossary — see **Appendix 4**.
 
-👉 This exercise is an **OpenShell practice** — run it either way:
+👉 This is **OpenShell sandboxing practice** — run it either way:
 
 ## ⚡ 4a. Easy path — run it as a GitHub Action
 
