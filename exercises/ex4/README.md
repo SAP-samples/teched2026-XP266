@@ -15,7 +15,7 @@ To see **Goose running inside a contained OpenShell sandbox** on your cluster �
 |---|---|---|
 | [**`all-fleets-teched-admin`**](../../../../actions/workflows/all-fleets-teched-admin.yaml) | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• a `goose_mode` (`snapshot` / `live`)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report. |
 
-Prefer the hands-on CLI? Continue below.
+Prefer the DYI path? Continue below.
 
 ---
 
