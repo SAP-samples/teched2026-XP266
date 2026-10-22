@@ -282,9 +282,6 @@ curl -sS -XPOST http://litellm-proxy.default.svc.cluster.local:4001/v1/messages 
 </tbody>
 </table>
 
-> [!NOTE]
-> You are now **inside the sandbox** — the prompt reads `goose@default--$XP266_CLUSTER-devbox:~$`. Type **`exit`** to leave the sandbox and return to the Busola web-terminal prompt.
-
 Either way:
 ```json
 {"id":"msg_bdrk_...","model":"anthropic--claude-4.7-opus", ... "content":[{"type":"text","text":"OK"}] ... }
@@ -331,7 +328,8 @@ claude -p "In one line, what is Kyma?"
 </tbody>
 </table>
 
-Type **`exit`** to return to the terminal — the sandbox keeps running (re-enter any time with `openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash`).
+> [!NOTE]
+> You are now **inside the sandbox** — the prompt reads `goose@default--$XP266_CLUSTER-devbox:~$`. Type **`exit`** to leave the sandbox and return to the Busola web-terminal prompt.
 
 > [!NOTE]
 > 👉 **Why does the block above copy the key into `ANTHROPIC_AUTH_TOKEN` and `unset` `ANTHROPIC_API_KEY`?**
