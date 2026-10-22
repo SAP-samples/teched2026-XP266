@@ -1,5 +1,7 @@
 # Getting Started — access your Kyma runtime and tour the AI-ops stack
 
+> ⏱ **~10 min** (host-led introduction — no hands-on needed)
+
 In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, get oriented in the **Student's Portal** and in **Busola** (the Kyma dashboard), and take a quick tour of the AI operations stack that is **already running** for you.  
 You will not deploy anything — everything is in place; you are here to understand it and play with it.
 
@@ -201,5 +203,20 @@ flowchart TB
 
 - 📦 met the pre-deployed **AI-ops stack** — LiteLLM proxy, Goose diagnostic jobs, the interactive chat agent, JupyterHub, and the KRO custom resources,
 - 🗺️ and saw where it fits in the **TechEd 2026 landscape** — one of 50 spokes trusting the central hub.
+
+> [!NOTE]
+> ⏱ **How to pace the next 110 minutes.** The workshop is 2 h total: ~10 min here (host-led intro) + ~110 min across ex1–ex6. Recommended split, in order of load:
+>
+> | Exercise | Suggested time | Role |
+> |---|---|---|
+> | 📋 **ex1** — Cluster Health Reports | **~30 min** | heart of the workshop — real Goose run + custom prompt |
+> | 💬 **ex2** — Interactive chat agent | **~12 min** | the hand-off: two prompts, mostly reading |
+> | 📒 **ex3** — JupyterHub + OpenShell notebooks | **~20 min** | run **one** notebook end-to-end; peek at the others |
+> | 🛠️ **ex4** — Kyma OpenShell CLI | **~20 min** | 4a easy path (GHA) + 2–3 probes from 4b |
+> | 🤖 **ex5** — External agents (OpenRouter) | **~18 min** | 5a easy path + KRO draft via Busola |
+> | 📊 **ex6** — Observability & spend | **~10 min** | two clicks; 6.3 telemetry is optional |
+>
+> **Finished early?** Dive into the ✅ *optional* / collapsible sections (ex1.4 "Prove it yourself", ex6 "math behind the dashboards", ex6.3 telemetry path, extra notebooks in ex3).  
+> **Running late?** Trim ex3 to one notebook, skip ex4b, and defer ex6.3 — ex1 + ex2 + ex5 + the ex6 click-through are the critical path.
 
 Continue to - [Exercise 1 - Trigger and shape the Cluster Health Reports](../ex1/README.md)
