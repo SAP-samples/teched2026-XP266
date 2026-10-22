@@ -450,6 +450,8 @@ goose run --text "run 'kubectl get pods -A' and 'kyma alpha diagnose', then summ
 ```bash
 # Clean report only — strip goose's tool-call trail + deliberations and print just the final answer. `--output-format
 # json` emits the whole session; the tiny extractor keeps the assistant text AFTER the last tool call:
+```
+```bash
 goose run --quiet --output-format json --text 'which pods are unhealthy and why, any orphaned pvcs?' \
 | python3 -c '
 import sys, json
@@ -467,6 +469,22 @@ print("\n".join(
 ).strip())
 '
 ```
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/practice-06.png" width="820" alt="goose run with --output-format json piped into the extractor — prints just the final assistant answer about unhealthy pods / orphaned PVCs" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 ```bash
 # claude — give it an IMPERATIVE, tool-directed prompt. A bare question ('which pods are unhealthy?') makes Claude
 # answer conversationally and ask for context; telling it to RUN the commands makes it act like goose:
