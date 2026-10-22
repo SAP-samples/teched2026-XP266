@@ -332,11 +332,12 @@ claude -p "In one line, what is Kyma?"
 </table>
 
 > [!TIP]
-> **Why the block above copies the key into `ANTHROPIC_AUTH_TOKEN` and `unset`s `ANTHROPIC_API_KEY`.**  
-> With `ANTHROPIC_API_KEY` set, Claude Code sends it as an `x-api-key` header, which triggers an interactive *"Detected a custom API key — use it?"* prompt — so `claude -p` hangs on a headless run.  
-> Passing the sentinel as `ANTHROPIC_AUTH_TOKEN` instead makes Claude Code emit `Authorization: Bearer`, which has no prompt.  
-> Don't set both variables at once — Claude Code warns *"Both … set · auth may not work."*  
-> The supervisor resolves the sentinel in either header, so both reach SAP AI Core; only Bearer is prompt-free.
+> 👉 **Why does the block above copy the key into `ANTHROPIC_AUTH_TOKEN` and `unset` `ANTHROPIC_API_KEY`?**
+>
+> - ✅ With `ANTHROPIC_API_KEY` set, Claude Code sends it as an `x-api-key` header, which triggers an interactive *"Detected a custom API key — use it?"* prompt — so `claude -p` hangs on a headless run.
+> - ✅ Passing the sentinel as `ANTHROPIC_AUTH_TOKEN` instead makes Claude Code emit `Authorization: Bearer`, which has no prompt.
+> - ✅ Don't set both variables at once — Claude Code warns *"Both … set · auth may not work."*
+> - ✅ The supervisor resolves the sentinel in either header, so both reach SAP AI Core; only Bearer is prompt-free.
 
 > [!NOTE]
 > It's a **reasoning box, not an ops shell**: `kubectl` / `kyma` / `k9s` are installed but **inert** (no cluster token,
