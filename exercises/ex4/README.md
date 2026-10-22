@@ -116,6 +116,15 @@ You'll walk the full path by hand:
 <tr>
 <td>
 
+**Reading the diagram.**
+
+- ✅ You authenticate with Keycloak (device-code from a browser, or client-credentials headless) and issue `openshell sandbox create` to the in-cluster OpenShell Gateway.
+- ✅ The Gateway pairs a **Profile** — a reusable spec listing allowed endpoints, which binaries may use them, and the auth style — with a **Provider**, which is that same Profile bound to a real key.
+- ✅ The key never leaves the Gateway.
+- ✅ The Gateway spawns a disposable **Sandbox** pod where the **Agent** (goose / claude / kubectl) talks through the **Supervisor**.
+- ✅ The Supervisor intercepts every outbound connection, allows only what the Policy and attached Providers permit, and injects the Provider's key at the wire so the Agent never sees it.
+- ✅ Egress to the in-cluster LiteLLM proxy (→ SAP AI Core) and read-only k8s API is allowed; writes, internet, and secret reads come back `403`.
+
 ```mermaid
 flowchart TB
   You(["👤 You<br/>openshell-admin role"])
@@ -142,14 +151,6 @@ flowchart TB
   Super ==>|allowed by Policy<br/>read-only token| K8s[("⚙️ k8s API :443<br/>get · list · watch")]
   Super -.->|writes · internet · secrets| X[❌ blocked → 403]
 ```
-
-**Reading the diagram.**  
-You authenticate with Keycloak (device-code from a browser, or client-credentials headless) and issue `openshell sandbox create` to the in-cluster OpenShell Gateway.  
-The Gateway pairs a **Profile** — a reusable spec listing allowed endpoints, which binaries may use them, and the auth style — with a **Provider**, which is that same Profile bound to a real key.  
-The key never leaves the Gateway.  
-The Gateway spawns a disposable **Sandbox** pod where the **Agent** (goose / Claude Code / `kubectl`) talks through the **Supervisor**.  
-The Supervisor intercepts every outbound connection, allows only what the Policy and attached Providers permit, and injects the Provider's key at the wire so the Agent never sees it.  
-Egress to the in-cluster LiteLLM proxy (→ SAP AI Core) and read-only k8s API is allowed; writes, internet, and secret reads come back `403`.
 
 </td>
 </tr>
