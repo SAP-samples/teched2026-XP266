@@ -12,7 +12,7 @@
 - 📒 [OpenShell notebooks](#exercise-32---openshell-notebooks)
 
 
-## Exercise 3.1 - Sign into JupyterHub
+## 🚀 Exercise 3.1 - Sign into JupyterHub
 
 1. 👉 Open your JupyterHub UI URL in the browser from the student's portal, e.g.:
 
@@ -54,7 +54,7 @@
 </tbody>
 </table>
 
-## Exercise 3.2 - OpenShell notebooks
+## 📒 Exercise 3.2 - OpenShell notebooks
 
 > [!NOTE]
 > - ✅ A **sandbox** is a disposable, per-session pod that _by construction_ can't reach the internet or the cluster API.
