@@ -384,7 +384,7 @@ claude -p "In one line, what is Kyma?"
   - ✅ every other host is **refused** (the name may resolve to a synthetic intercept address, still the connection never succeeds).
   - ✅ A bare `kubectl` won't demonstrate this cleanly (with no `KUBECONFIG` it just hits `localhost:8080`), so we probe the network directly with `curl`.
 
-**Probe A — try to reach the apiserver:**
+#### Probe A — try to reach the apiserver
 ```bash
 openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash -c \
   'curl -sS -m 5 -o /dev/null -w "apiserver=%{http_code}\n" http://kubernetes.default.svc.cluster.local/version; echo "exit=$?"'
@@ -396,7 +396,7 @@ apiserver=000
 exit=7
 ```
 
-**Probe B — confirm there's no proxy to bypass, and the internet is unreachable:**
+#### Probe B — confirm there's no proxy to bypass, and the internet is unreachable
 ```bash
 openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash -c \
   'echo "HTTPS_PROXY=${HTTPS_PROXY:-<unset>}"; \
@@ -410,7 +410,7 @@ internet=000
 exit=7
 ```
 
-**Probe C — the real LLM key never enters the sandbox (only a sentinel does):**
+#### Probe C — the real LLM key never enters the sandbox (only a sentinel does)
 ```bash
 openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash -c 'echo "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"'
 ```
