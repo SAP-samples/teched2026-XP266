@@ -214,6 +214,7 @@ flowchart TB
 >
 > | Exercise | Suggested time | Role |
 > |---|---|---|
+> | 🚦 **Appendix 0** — Fork this repo & enable GitHub Actions | **~2 min** | *prerequisite* for ex4a / ex5a GHA runs — can be done while host introduces ex0 |
 > | 📋 **ex1** — Cluster Health Reports | **~30 min** | heart of the workshop — real Goose run + custom prompt |
 > | 💬 **ex2** — Interactive chat agent | **~12 min** | the hand-off: two prompts, mostly reading |
 > | 📒 **ex3** — JupyterHub + OpenShell notebooks | **~20 min** | run **one** notebook end-to-end; peek at the others |
