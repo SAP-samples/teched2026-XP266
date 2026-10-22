@@ -10,13 +10,13 @@ You will not deploy anything — everything is in place; you are here to underst
 
 **Contents**
 
-- 🧭 [Find your cluster and sign in to Busola](#exercise-01---find-your-cluster-and-sign-in-to-busola)
+- 🧭 [Sign in to Student's Portal and find your cluster](#exercise-01---sign-in-to-students-portal-and-find-your-cluster)
 - 📦 [See what is already deployed](#exercise-02---see-what-is-already-deployed-optional)
 
 
-## 🧭 Exercise 0.1 - Find your cluster and sign in to Busola
+## 🧭 Exercise 0.1 - Sign in to Student's Portal and find your cluster
 
-- ✅ Everything starts at the **Cluster Directory** — one launcher page for the whole TechEd fleet.  
+- ✅ Everything starts at the **Student's Portal** — one launcher page for the whole TechEd fleet.  
 - ✅ From here you pick your runtime, read your sign-in details, and jump straight into the right dashboard.  
 
 👉 Open the student's portal:
