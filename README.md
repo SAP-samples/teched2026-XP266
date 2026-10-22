@@ -150,7 +150,10 @@ flowchart LR
 - 🌐 [Appendix 5 - External agents & the OpenRouter provider model](exercises/Appendices/5-openrouter-provider/) — how a keyed, external provider plugs into the OpenShell sandbox model, and OpenRouter vs SAP AI Core
 
 > [!IMPORTANT]
-> **Every exercise can be completed entirely in the browser — no terminal experience required.** A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**; wherever one appears there is a UI (Busola) or **Run workflow** (GitHub Actions) way to reach the same result. Whatever your level, you can succeed with clicks alone.
+> - ✅ **Every exercise can be completed entirely in the browser — no terminal experience required.**
+> - ✅ A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**.
+> - ✅ Wherever one appears there is a **UI** (Busola) or **Run workflow** (GitHub Actions) way to reach the same result.
+> - ✅ Whatever your level, you can succeed with clicks alone.
 
 > [!NOTE]
 > Every step is copy-paste ready — the two hours are short by design. If you fall behind, each exercise is self-contained; jump to whichever interests you most.
