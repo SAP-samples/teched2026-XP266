@@ -61,7 +61,7 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
    </table>
 
    <details>
-   <summary>👉 Click to expand the <code>MetricPipeline</code> YAML</summary>
+   <summary>👉 <i>Optional</i> — click to expand the <code>MetricPipeline</code> YAML</summary>
 
    ```yaml
    apiVersion: telemetry.kyma-project.io/v1alpha1
@@ -108,27 +108,6 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
    ```
 
    </details>
-
-   👉 Look it up live on your own cluster — open it directly in Busola (replace `xp266-NNN` and `<workshop-domain>`):
-
-   ```
-   https://busola.xp266-NNN.<workshop-domain>/cluster/?kubeconfigID=xp266-NNN-federated.yaml&path=/metricpipelines/sap-cloud-logging
-   ```
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/05_01_0010.png" width="820" alt="" />
-  </a>
-</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
 
 > [!NOTE]
 > The LiteLLM proxy exposes Prometheus-style metrics (spend per key, tokens in/out, per-model latency). A **pod annotation** marks it for scraping; the `MetricPipeline` (managed by the Kyma **Telemetry** module) ships those metrics out via OTLP to **SAP Cloud Logging**, where they're stored in OpenSearch and visualized.  
