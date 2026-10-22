@@ -234,7 +234,27 @@ The headline tile is just `top_hits` over that series — **by construction it m
 
 1. From the **Student's Portal**, open **Cluster launchpad** and pick the **Fleet Status + Spend** option.
 
-2. In one click it opens your cluster's **`fleet-status`** card — the aggregated view with the **LLM Dashboards** / **SAP Cloud Logging** shortcuts — with no hunting through the Busola navigation tree.
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="images/fleet-spend.png" width="820" alt="Student's Portal → Cluster launchpad → Fleet Status + Spend option" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
+
+2. In one click it opens your cluster's **`fleet-status`** card —
+
+   - the aggregated **LiteLLM Spend of the day**,
+   - the aggregated view with the **LLM Dashboards** / **SAP Cloud Logging** shortcuts,
+   - with no hunting through the Busola navigation tree.
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
@@ -243,22 +263,6 @@ The headline tile is just `top_hits` over that series — **by construction it m
 <p float="left">
   <a href="#">
   <img src="images/fleet-status.png" width="820" alt="Fleet Status + Spend tile → fleet-status card with LLM Dashboards / SAP Cloud Logging shortcuts" />
-  </a>
-</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/fleet-spend.png" width="820" alt="fleet-status card — LiteLLM spend split (autonomous Sonnet vs interactive Opus)" />
   </a>
 </p>
 </div>
