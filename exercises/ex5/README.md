@@ -8,17 +8,11 @@ the sandbox only ever carries a sentinel.
 > [!NOTE]
 > How the provider/profile model works and how OpenRouter compares to SAP AI Core are in **[Appendix 5 - External agents & the OpenRouter provider model](../Appendices/5-openrouter-provider/README.md)**.
 
-**Contents**
+## ⚡ 5a. Easy path — run it as a GitHub Action
 
-- ⚡ **5a** *(easy path)* — run it as a **GitHub Action** (see the note below)
-- 🛠️ **5b** *(optional)* — the OpenShell CLI in the Busola web terminal:
-  - 🔑 [5.1 Open the terminal and reach the gateway](#exercise-51---open-the-terminal-and-reach-the-gateway)
-  - 📦 [5.2 Create a sandbox with the agents + OpenRouter](#exercise-52---create-a-sandbox-with-the-agents--openrouter-)
-  - ▶️ [5.3 Run an agent against a free model](#exercise-53---run-an-agent-against-a-free-model-)
-  - 🛡️ [5.4 Prove it's still contained](#exercise-54---prove-its-still-contained-)
-  - 🏗️ [5.5 From draft to deployable: a correct KRO RGD](#exercise-55---from-draft-to-deployable-a-correct-kro-rgd-)
+Want to run external coding agents against OpenRouter **without opening a terminal**? Dispatch the GitHub Actions workflow below from your fork. It creates the OpenRouter-enabled contained sandbox on your cluster and runs the coding agent(s) inside it — the run **Summary** gives you a verdict table, each agent's output, and the containment proof.
 
-<!-- MAINTAINER NOTE: the `all-fleets-teched-nvidia` workflow link below MUST stay a RELATIVE path
+<!-- MAINTAINER NOTE: the `all-fleets-teched-student-nvidia` workflow link below MUST stay a RELATIVE path
      (`../../../../actions/workflows/…`). GitHub resolves it against the viewer's current fork URL,
      so a student browsing their own fork lands on THEIR fork's Actions tab (which is where their
      admin workflow lives). An absolute `https://github.com/SAP-samples/...` link would always point
@@ -26,18 +20,34 @@ the sandbox only ever carries a sentinel.
      Same pattern used in last year's teched README, e.g.
      [k8s-data-context-student](../../../../actions/workflows/k8s-data-context-student.yml). -->
 
-> [!NOTE]
-> **Easy path — run it as a GitHub Action.**  
-> To run the external coding
-> agents against OpenRouter **without a terminal**, dispatch one GitHub Actions workflow from your fork:
->
-> | Run this workflow | Workflow inputs | What it does |
-> |---|---|---|
-> | [**`all-fleets-teched-nvidia`**](../../../../actions/workflows/all-fleets-teched-nvidia.yaml) | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• the **`agent`** (`pi` / `opencode` / `qwen` / `all-three`)<br>• a **`model`** (a `:free` OpenRouter model)<br>• a **`scenario`**<br>👉 **Run workflow** → read the run **Summary**: a verdict table, each agent's output, and the containment proof. | Creates the OpenRouter-enabled contained sandbox and runs the coding agent(s) on your cluster. |
->
-> Prefer the hands-on CLI? Continue below.
+| Run this workflow | Workflow inputs |
+|---|---|
+| [**`all-fleets-teched-student-nvidia`**](../../../../actions/workflows/all-fleets-teched-student-nvidia.yaml) | 👉 Pick<br>• **`student_cluster`** — type **your** cluster (e.g. `xp266-003`); overwrite the default `xp266-NNN` placeholder<br>• **`agent`** — `pi` / `opencode` / `qwen` / `all-three`<br>• **`model`** — a `:free` OpenRouter model<br>• **`scenario`** — a task preset (pick `custom` to use the free-text prompt field)<br>👉 **Run workflow** → read the run **Summary**. |
 
-## Exercise 5.1 - Open the terminal and reach the gateway
+> [!NOTE]
+> 👉 **Can't run the workflow on your own fork?** No problem —
+> - ✅ open the **Actions** tab on this public upstream repo,
+> - ✅ find a successful **`all-fleets-teched-student-nvidia`** run, and
+> - ✅ read the **Summary** page (verdict table + each agent's output + the containment proof)
+> - ✅ plus any step's **execution log**.
+>
+> 👉 You see the exact same artifacts a dispatcher would, just from someone else's run.
+
+Prefer the Do-It-Yourself path? Continue below.
+
+---
+
+## 🛠️ 5b. OpenShell CLI in the Busola web terminal
+
+You'll walk the full path by hand:
+
+- 🔑 [5.1 Open the terminal and reach the gateway](#-51---open-the-terminal-and-reach-the-gateway) — reach the in-cluster OpenShell gateway from the embedded web terminal
+- 📦 [5.2 Create a sandbox with the agents + OpenRouter](#-52---create-a-sandbox-with-the-agents--openrouter) — spin up the OpenRouter-enabled contained sandbox
+- ▶️ [5.3 Run an agent against a free model](#️-53---run-an-agent-against-a-free-model) — Pi / opencode / Qwen on a `:free` model
+- 🛡️ [5.4 Prove it's still contained](#️-54---prove-its-still-contained) — the sandbox still refuses the apiserver and the public internet
+- 🏗️ [5.5 From draft to deployable: a correct KRO RGD](#️-55---from-draft-to-deployable-a-correct-kro-rgd) — close the loop: produce a working KRO ResourceGraphDefinition
+
+### 🔑 5.1 - Open the terminal and reach the gateway
 
 The `openshell` CLI is **pre-installed in the embedded web terminal** — nothing to download.  
 The terminal runs *inside* the cluster, so you reach the gateway's in-cluster Service directly (no HTTPS host, no port-forward).  
@@ -72,7 +82,7 @@ Now `openshell sandbox list` works from the terminal — continue with 5.2.
 
 
 
-## Exercise 5.2 - Create a sandbox with the agents + OpenRouter 🔧
+### 📦 5.2 - Create a sandbox with the agents + OpenRouter
 
 In a web terminal, with your gateway session active.
 
@@ -97,7 +107,7 @@ and injects the key sentinel.
 
 `--env` passes the base URL + default model (OpenAI-compat agents like Qwen Code need them).
 
-## Exercise 5.3 - Run an agent against a free model 🔧
+### ▶️ 5.3 - Run an agent against a free model
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
@@ -161,7 +171,7 @@ Run each agent in web terminal — same contained sandbox, same model:
 | 🥧 **Pi** | `openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."` |
 | 🐉 **Qwen Code** | `openshell sandbox exec --name agents -- qwen -p "List 3 facts about Kyma."` |
 
-## Exercise 5.4 - Prove it's still contained 🔧
+### 🛡️ 5.4 - Prove it's still contained
 
 The agent reaches OpenRouter — and **nothing else**:  
 Command:
@@ -190,7 +200,7 @@ So this is a *different* tier, not a weaker one:
 | Cluster | read-only kubectl (sandbox-viewer) | none |
 | Key in box | sentinel | sentinel |
 
-## Exercise 5.5 - From draft to deployable: a correct KRO RGD 🔧
+### 🏗️ 5.5 - From draft to deployable: a correct KRO RGD
 
 When you ask an agent for *"a KRO ResourceGraphDefinition"*, a free model's first draft is usually **confident but
 wrong** — it reaches for OpenAPI schema (`type`/`properties`/`x-kro`), Helm templating (`{{ .spec.x }}`), or invented
