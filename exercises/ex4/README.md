@@ -418,10 +418,13 @@ exit=7
 openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash -c 'echo "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"'
 ```
 The value is a **resolve sentinel** — `openshell:resolve:env:<nonce>_ANTHROPIC_API_KEY` — **not** the real key.  
-The
-supervisor swaps it for the real key only at the allow-listed egress; echo it inside the box and you get only the token.  
-(With an admin kubeconfig you can also confirm the sandbox's service account can't read the key from the cluster:
-`kubectl auth can-i get secrets --as=system:serviceaccount:openshell:openshell-sandbox -n openshell` → **no**.)
+The supervisor swaps it for the real key only at the allow-listed egress; echo it inside the box and you get only the token.
+
+With an admin kubeconfig you can also confirm the sandbox's service account can't read the key from the cluster:
+
+```bash
+kubectl auth can-i get secrets --as=system:serviceaccount:openshell:openshell-sandbox -n openshell
+```
 
 So the sandbox can reach **only** `litellm-proxy…:4001` (→ SAP AI Core) — the apiserver, other workloads, and the public
 internet are all **refused** by the egress broker.  
