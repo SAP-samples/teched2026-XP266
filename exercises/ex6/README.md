@@ -26,6 +26,9 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
 
 1. In Busola, open **Custom Resources → MetricPipeline** and open **`sap-cloud-logging`**. It's **cluster-scoped** — one declarative pipe that forwards scraped metrics to SAP Cloud Logging, with no Prometheus server to run and no Grafana to host:
 
+   <details>
+   <summary>👉 Click to expand the <code>MetricPipeline</code> YAML</summary>
+
    ```yaml
    apiVersion: telemetry.kyma-project.io/v1alpha1
    kind: MetricPipeline
@@ -69,6 +72,8 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
                  name: sap-cloud-logging
                  key: ingest-otlp-key
    ```
+
+   </details>
 
    👉 Look it up live on your own cluster — open it directly in Busola (replace `xp266-NNN` and `<workshop-domain>`):
 
@@ -138,6 +143,63 @@ The dashboards are one click away from the **Cluster Directory** — no Busola n
 > [!TIP]
 > This is the pay-off of routing **everything through one proxy**: because no agent talks to a model directly, *every* token is attributable.  
 > Trigger a diagnose run or chat with the agent, wait a minute, and watch your own activity appear on the dashboard.
+
+<details>
+<summary>🧮 <b>The math behind the dashboards</b> (click to expand)</summary>
+
+Every panel on the LiteLLM Overview dashboards reads the same three Postgres-backed gauges that the dev-toolbox diagnose job pushes every 10 min:
+
+```
+litellm_actual_spend_usd  { model, cluster, window="today" }
+litellm_actual_calls      { model, cluster, window="today" }
+litellm_actual_tokens     { model, cluster, window="today" }
+```
+
+Each push is `SUM(spend) WHERE "startTime" >= CURRENT_DATE GROUP BY model` — accumulated-so-far **this UTC day**.
+
+### 1 · The gauge is a **sawtooth that resets at 00:00 UTC**
+
+The label `window="today"` is fixed, but the *value* ramps up through the day and drops back to ~0 at midnight UTC:
+
+| UTC sample | sonnet | opus | means |
+|---|---|---|---|
+| Oct‑1 23:00 | **24.72** | **13.62** | Oct‑1's final day‑total, still being pushed |
+| Oct‑2 00:30 | 0.14 | 0.53 | fresh Oct‑2 total, early |
+| Oct‑2 18:30 | 0.28 | 1.01 | Oct‑2 total **now** = $1.30 |
+
+### 2 · The **timezone trap**
+
+OpenSearch's "Today" picker is interpreted in the **browser's** timezone. On a CEST (UTC+2) laptop, local "Today" starts at **22:00 UTC** the previous day — but the gauge doesn't reset until **00:00 UTC = 02:00 CEST**. So from 00:00 to 02:00 local time, "Today" in the picker still carries yesterday's $24.72 peak. Fix: set *Advanced Settings → `dateFormat:tz = UTC`* globally, and pin every `date_histogram` to `time_zone: "UTC"` — now the picker aligns with the gauge's own calendar.
+
+### 3 · Three aggregations, three meanings — pick the right one
+
+| Aggregation | On "Today" | On multi-day | Correct use |
+|---|---|---|---|
+| **`top_hits`** (size 1, sort by time desc) | latest sample = today ✅ | each model's **latest sample in range** | the **TODAY** headline — tz- & picker-independent |
+| **`max`** over the picker | today's total ✅ | the **single biggest day** (NOT a sum) ⚠️ | a single UTC day, never multi-day |
+| **`sum_bucket { date_histogram(interval=d, tz=UTC), max(value) }`** | today's total | **sum of each day's max = true windowed total** ✅ | "spend over the selected window" |
+| **`date_histogram(interval=d) + max`** as a trend | today's bar | one bar **per UTC day** ✅ | unambiguous **spend-by-day** history |
+
+**The classic wrong answer:** `max` over "Last 7 days" on a sawtooth gauge gives the biggest single day, not the week — because the gauge is already a running total. **`sum_bucket`** fixes this: bucket by UTC day → take `max(value)` in each bucket (= that day's end-of-day running total) → **sum those per-day totals** across the picker. That turns a sawtooth into a true multi-day total.
+
+### 4 · The "Total spend today" headline — a shortcut
+
+A single "all-models" number can't come from the per-model gauge via `top_hits` (that returns one model's latest, not a sum). So the diagnose job pushes **one extra series**:
+
+```
+litellm_actual_spend_total { cluster, window="today" }    # = FS_SPEND_TOTAL (same query the FleetStatus card uses)
+```
+
+The headline tile is just `top_hits` over that series — **by construction it matches the FleetStatus card** (same value, same calendar, no cross-dashboard drift).
+
+### 5 · Why two dashboards ship
+
+- **LiteLLM Overview** — primary — uses `sum_bucket` per‑model graphs → picker-following windowed totals.
+- **LiteLLM Overview — Today (fixed, by model)** — same layout but the per-model graphs use `top_hits` → always "today," ignores the picker.
+
+**TL;DR:** the series is a daily running total that resets at UTC midnight. For "today" use `top_hits` (or the pre-summed `_spend_total`); for a window use `sum_bucket` over a daily histogram; **never** use `max` across more than one day. The timezone picker must be UTC or the first ~2 hours of "Today" show yesterday's peak.
+
+</details>
 
 ## 🩺 Exercise 6.3 - The FleetStatus card
 
