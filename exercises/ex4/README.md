@@ -90,8 +90,7 @@ You'll walk the full path by hand:
      --oidc-issuer https://keycloak.$XP266_CLUSTER.$XP266_DOMAIN/realms/ateam-isveng \
      --oidc-client-id openshell-oidc
    ```
-   > [!TIP]
-   > Already registered from a previous day? Re-auth instead:
+   > 💡 **Tip** — Already registered from a previous day? Re-auth instead:
    > ```bash
    > OPENSHELL_NO_BROWSER=1 openshell gateway login openshell
    > ```
