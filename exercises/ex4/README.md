@@ -42,7 +42,7 @@ Want to see an **ops agent** run safely inside a sandbox on your cluster — **w
 > [!NOTE]
 > 👉 **Can't run the workflow on your own fork?** No problem — open the **Actions** tab on this public upstream repo, find a successful **`all-fleets-teched-student`** run, and read the **Summary** page (verdict + Goose report) plus any step's **execution log**. You see the exact same artifacts a dispatcher would, just from someone else's run.
 
-Prefer the DYI path? Continue below.
+Prefer the Do-It-Yourself path? Continue below.
 
 ---
 
