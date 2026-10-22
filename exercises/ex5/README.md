@@ -323,7 +323,7 @@ kubectl apply --dry-run=server -f weather-rgd.yaml   # the API server + KRO reje
 > ```
 > That's the terminal pod's ClusterRole — `get`/`list`/`watch *` + `configmaps:CRUD` + `pods/exec:create`, **no `create` on anything else** (same role we inspected in [Exercise 4.4 — Probe C](../ex4/README.md#probe-c--the-real-llm-key-never-enters-the-sandbox-only-a-sentinel-does)). Applying an RGD from the web terminal is a dead end **by design**.
 >
-> 👉 **Use the Busola browser instead.** The toolbar has an **Upload YAML** button (top-right). Click it, paste or upload the corrected `weather-rgd.yaml`, and apply — Busola runs the apply as **your** signed-in user, not the terminal pod's narrow SA, so the RGD + instance land cleanly. Everything stays in the browser; no laptop `kubectl`, no fork, no GHA.
+> 👉 **Use the Busola browser instead.** The toolbar has an **Upload YAML** button (top-right). Click it, paste or upload the corrected `weather-rgd.yaml`, and apply — Busola runs the apply as **your** signed-in user, not the terminal pod's narrow SA, so the RGD + instance land cleanly.
 
 The chat agent walks you through **KRO's actual simple-schema rules** AND emits a corrected, deployable YAML — iterate from there. That round-trip (draft → chat review → `--dry-run=server` → fix → apply) **is** the skill this exercise is teaching.
 
