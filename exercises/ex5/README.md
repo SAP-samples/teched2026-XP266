@@ -201,10 +201,12 @@ known-good free picks:
 | **`nvidia/nemotron-3.5-lightning:free`** | smaller and faster — if the ultra is busy or rate-limited |
 
 > [!TIP]
-> The `:free` lineup **rotates** — to list the models that are free right now, run:
+> The `:free` lineup **rotates** — ask one of the sandboxed agents to list the current ones:
 > ```bash
-> openshell sandbox exec --name agents -- curl -s https://openrouter.ai/api/v1/models | grep -o '"id":"[^"]*:free"'
+> openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL \
+>   "List up to 10 OpenRouter model ids whose id ends with ':free'. Comma-separated, no commentary."
 > ```
+> The model answers from its training knowledge, so the list may be slightly stale. The **authoritative live list** is in your browser at <https://openrouter.ai/models?max_price=0&q=nvidia> — from the sandbox you can't `curl` it: the `openrouter` provider's policy only allows the **agent binaries** (`pi`/`opencode`/`qwen`) to reach `openrouter.ai`; `curl` is denied (you'll see that in 5.4).
 
 Run each agent in web terminal — same contained sandbox, same model:
 
@@ -216,23 +218,32 @@ Run each agent in web terminal — same contained sandbox, same model:
 
 ### 🛡️ 5.4 - Prove it's still contained
 
-The agent reaches OpenRouter — and **nothing else**:  
-Command:
+The containment is **binary-scoped**, not just host-scoped — the `openrouter` provider's policy only lets the **agent binaries** (`pi` / `opencode` / `qwen`) talk to `openrouter.ai`. Anything else dialing out from the sandbox — including `curl` — is denied, for every host.
+
+👉 First, confirm `curl` can't reach **anywhere** (not even `openrouter.ai`), and the key in the environment is a sentinel:
 ```bash
 openshell sandbox exec --name agents -- sh -c '
-  curl -sS -m8 -o /dev/null -w "openrouter.ai: %{http_code}\n" https://openrouter.ai/api/v1/models
+  curl -sS -m8 -o /dev/null -w "openrouter.ai (via curl): %{http_code}\n" https://openrouter.ai/api/v1/models
   curl -sS -m8 https://example.com            >/dev/null 2>&1 && echo "example.com: REACHED" || echo "example.com: blocked"
   curl -sS -m8 https://kubernetes.default.svc >/dev/null 2>&1 && echo "apiserver: REACHED"   || echo "apiserver: blocked"
   echo "key in box: $OPENROUTER_API_KEY"
 '
 ```
-Output:
+Expected output:
 ```
-openrouter.ai: 200
+openrouter.ai (via curl): 000       ← even openrouter.ai is blocked for curl (not an allowed binary)
 example.com: blocked
 apiserver: blocked
 key in box: openshell:resolve:env:…      ← a sentinel, NOT the real key
 ```
+
+👉 Then confirm the agent binaries CAN reach `openrouter.ai` (the one allowed exit):
+```bash
+openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "Reply with one word: PONG"
+```
+Expected: `PONG`.
+
+Together: curl blocked for every host, agents work only via the allowed binary + the resolve-sentinel key. Containment is tighter than "only openrouter.ai is allowed" — it's "only `pi`/`opencode`/`qwen` can reach openrouter.ai".
 
 So this is a *different* tier, not a weaker one:
 
