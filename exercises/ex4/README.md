@@ -434,9 +434,6 @@ scoped-ops                     # or give it a name:  scoped-ops $XP266_CLUSTER-d
 ```
 > [!TIP]
 > Alternatively, `scoped-ops` can use the ready-made, **hardened Garden-Linux** image via `scoped-ops --from ops-toolbelt-bash`.
-You're now inside the box (`[<shoot>] goose@default--…:~$` — the prompt shows your logical shoot name, e.g. `xp266-001`),
-env auto-loaded.  
-Prove the read-only cluster access, then let the agents drive it:
 
 ```bash
 kubectl get nodes                        # ✓ read-only (a write → 403, refused by RBAC)
