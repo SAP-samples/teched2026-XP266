@@ -19,7 +19,7 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 - ⚖️ [Autonomous vs interactive — when to use which](#autonomous-vs-interactive--when-to-use-which)
 
 
-## Exercise 2.1 - Open the chat UI and chat
+## 💬 Exercise 2.1 - Open the chat UI and chat
 
 1. 👉 Open your chat UI URL in the browser from the student's portal, e.g.:
 
@@ -101,7 +101,7 @@ Links:
 > **Model routing.** The chat agent defaults to the `reasoning-hard` tier — **Claude Opus** on SAP AI Core — with automatic fallbacks (Sonnet, GPT-5.5, GPT-4.1, Nova, Mistral) if a model is busy.  
 > That's why interactive traffic shows up as *Opus* on the spend dashboard, while the Goose jobs (Sonnet) show up as *diagnostics*.
 
-## Exercise 2.2 - The hand-off: ask about your cluster's diagnosis
+## 🤝 Exercise 2.2 - The hand-off: ask about your cluster's diagnosis
 
 - ✅ This is a classic **producer-consumer** pattern: the autonomous jobs *produce* the findings; the chat agent *consumes* them to help you make sense of what they are.
 - ✅ The Goose **v1** and **v2** jobs already wrote a **Cluster Health Report** and archived their raw findings.

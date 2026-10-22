@@ -71,7 +71,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
   - 🔧 [Prove it yourself](#-prove-it-yourself-optional--go-deeper)
 
 
-## Exercise 1.1 - Read the latest reports
+## 📋 Exercise 1.1 - Read the latest reports
 
 1. 👉 In the Diagnostic Toolbox UI, find the **Latest health reports** panel.
 
@@ -123,7 +123,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 > In production the same pipeline caught things static monitoring missed — **402 ingress-gateway revisions** piled up in five days (a pod cycling every 17 minutes), **18 leftover cluster-admin bindings** from dev tooling, and a cert-manager ACME solver **stuck for 5+ days** on a DNS mismatch.  
 > Reasoning over correlated state finds what probes can't.
 
-## Exercise 1.2 - Trigger a diagnostic run
+## ▶️ Exercise 1.2 - Trigger a diagnostic run
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
@@ -158,7 +158,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 > What shapes a run is the **prompt** (the recipe — next) and the **model** you pick.  
 > The job also **guards the write**: a failed or empty run never overwrites your last good report, so you can experiment freely.
 
-## Exercise 1.3 - Write your own prompt
+## ✍️ Exercise 1.3 - Write your own prompt
 
 👉 The real power of the Diagnostic Toolbox is this: **you change what Goose investigates by changing the prompt** — no code, no redeploy.
 
@@ -207,7 +207,7 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 > [!NOTE]
 > Your prompt runs inside the **same OpenShell sandbox** as the built-in ones: a read-only cluster token, no internet, writes → `403`. So even a prompt you wrote can only **look and reason** — it can't mutate the cluster or exfiltrate anything.
 
-## Exercise 1.4 - The guardrails: read, reason, but don't touch
+## 🛡️ Exercise 1.4 - The guardrails: read, reason, but don't touch
 
 An agent with `kubectl` is powerful — and, unchecked, dangerous. The reason you can hand it a prompt you wrote and let it loose is that it is **boxed in by construction**, not by asking the model to behave.  
 Three overlapping fences wrap every run:

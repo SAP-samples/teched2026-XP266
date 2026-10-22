@@ -13,7 +13,7 @@ You will not deploy anything — everything is in place; you are here to underst
 - 📦 [See what is already deployed](#exercise-02---see-what-is-already-deployed-optional)
 
 
-## Exercise 0.1 - Find your cluster and sign in to Busola
+## 🧭 Exercise 0.1 - Find your cluster and sign in to Busola
 
 - ✅ Everything starts at the **Cluster Directory** — one launcher page for the whole TechEd fleet.  
 - ✅ From here you pick your runtime, read your sign-in details, and jump straight into the right dashboard.  
@@ -89,7 +89,7 @@ Now sign in:
 > [!TIP]
 > The **Cluster Overview** shows one or more **banner cards** with handy shortcut **buttons** into the workshop features (dashboards, quick actions). If you dismiss a card, it **stays hidden in that browser**. To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
 
-## Exercise 0.2 - See what is already deployed *(optional)*
+## 📦 Exercise 0.2 - See what is already deployed *(optional)*
 
 Your runtime's **self-hosted, in-cluster agent layer** is composed of:
 - ✅ a LiteLLM proxy, 
