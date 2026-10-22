@@ -309,6 +309,9 @@ export CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1  # accept the non-
 
 ```bash
 claude --version
+```
+
+```bash
 claude -p "In one line, what is Kyma?"
 ```
 
