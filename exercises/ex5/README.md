@@ -207,14 +207,6 @@ known-good free picks:
 | **`nvidia/nemotron-3-ultra-550b-a55b:free`** | large, higher-quality — your `$FREE_MODEL` default |
 | **`nvidia/nemotron-3.5-lightning:free`** | smaller and faster — if the ultra is busy or rate-limited |
 
-> [!TIP]
-> The `:free` lineup **rotates** — ask one of the sandboxed agents to list the current ones:
-> ```bash
-> openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL \
->   "List up to 10 OpenRouter model ids whose id ends with ':free'. Comma-separated, no commentary."
-> ```
-> The model answers from its training knowledge, so the list may be slightly stale. The **authoritative live list** is in your browser at <https://openrouter.ai/models?max_price=0&q=nvidia> — from the sandbox you can't `curl` it: the `openrouter` provider's policy only allows the **agent binaries** (`pi`/`opencode`/`qwen`) to reach `openrouter.ai`; `curl` is denied (you'll see that in 5.4).
-
 Run each agent in web terminal — same contained sandbox, same model:
 
 | Agent | Command (→ expected output / note) |
