@@ -105,6 +105,14 @@ You'll walk the full path by hand:
    </tbody>
    </table>
 
+   > [!TIP]
+   > 👉 **Clear the terminal screen** at any point:
+   > - ✅ **`Ctrl+L`** — fastest; clears the visible screen, keeps your prompt + scrollback buffer intact.
+   > - ✅ **`clear`** — clears the visible screen (some setups also wipe the scrollback).
+   > - ✅ **`clear -x`** — clears the visible screen but explicitly **keeps** the scrollback buffer.
+   > - ✅ **`reset`** — full terminal re-init; use if the terminal freezes, shows broken escape codes, or is littered with binary artifacts.
+   > - ✅ **`printf "\033c"`** — hard reset: wipes the screen AND flushes scrollback (nothing to scroll back to).
+
 3. 👉 Set your runtime once, so the commands below are copy-paste (shell names can't have hyphens, hence `XP266_…`):
    ```bash
    export XP266_CLUSTER=xp266-NNN          # your runtime number, e.g. xp266-001
