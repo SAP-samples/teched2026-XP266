@@ -201,9 +201,9 @@ flowchart LR
 | **`nvidia/nemotron-3-ultra-550b-a55b:free`** | large, higher-quality — your `$FREE_MODEL` default |
 | **`nvidia/nemotron-3.5-lightning:free`** | smaller and faster — if the ultra is busy or rate-limited |
 
-Run each agent in web terminal — same contained sandbox, same model:
-
 The agent never sees the real key, and the sandbox reaches nothing but the gateway's one allowed hop to OpenRouter.
+
+Run each agent in web terminal — same contained sandbox, same model:
 
 | Agent | How to run it? |
 |---|---|
