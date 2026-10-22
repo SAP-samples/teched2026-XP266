@@ -125,7 +125,7 @@ You'll walk the full path by hand:
 
 In a web terminal, with your gateway session active.
 
-👉 First pick a **current** `:free` model — the lineup **rotates** (models go paid without notice, as `qwen/qwen3.8-27b:free` did). Browse [openrouter.ai/models?max_price=0&q=nvidia](https://openrouter.ai/models?max_price=0&q=nvidia) — free NVIDIA models (this workshop follows NVIDIA's OpenRouter tutorial) — pick a tool-calling chat model and export your choice:
+👉 Pick a current `:free` model:
 ```bash
 export FREE_MODEL=nvidia/nemotron-3-ultra-550b-a55b:free   # a current :free NVIDIA model — swap if it goes paid
 ```
