@@ -458,7 +458,7 @@ cluster network.
 >
 > You can inspect this on your cluster: `kubectl get clusterrole busola-terminal -o yaml`.
 
-Clean up when done:
+👉 Clean up when done:
 
 ```bash
 openshell sandbox delete $XP266_CLUSTER-devbox
