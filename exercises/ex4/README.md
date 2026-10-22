@@ -329,7 +329,8 @@ claude -p "In one line, what is Kyma?"
 </table>
 
 > [!NOTE]
-> You are now **inside the sandbox** — the prompt reads `goose@default--$XP266_CLUSTER-devbox:~$`. Type **`exit`** to leave the sandbox and return to the Busola web-terminal prompt.
+> - 👉 You are now **inside the sandbox** — the prompt reads `goose@default--$XP266_CLUSTER-devbox:~$`.
+> - 👉 Type **`exit`** to leave the sandbox and return to the Busola web-terminal prompt.
 
 > [!NOTE]
 > 👉 **Why does the block above copy the key into `ANTHROPIC_AUTH_TOKEN` and `unset` `ANTHROPIC_API_KEY`?**
