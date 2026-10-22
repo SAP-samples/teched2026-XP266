@@ -2,10 +2,11 @@
 
 > [!NOTE]
 > 👉 This exercise is about the **transition** — the **hand-off**:  
-> - an interactive agent picks up where the autonomous one left off
-> - so you can take over the next phase of work, for instance: ask follow-ups, draft fixes, make decisions in natural language.
+> - ✅ an interactive agent picks up where the autonomous one left off
+> - ✅ so you can take over the next phase of work, for instance: ask follow-ups, draft fixes, make decisions in natural language.
+>
 > - ✅ The Goose diagnostic jobs run **autonomously**.
-> - ✅ The other half of the story is an **interactive** AI agent — a chat UI (for instance **OpenClaw**, or a similar chat front-end) running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy.
+> - ✅ The other half of the story is an **interactive** AI agent — running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy.
 
 ```
 You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SAP AI Core (Claude Opus by default)
@@ -100,8 +101,9 @@ Links:
 </details>
 
 > [!NOTE]
-> **Model routing.** The chat agent defaults to the `reasoning-hard` tier — **Claude Opus** on SAP AI Core — with automatic fallbacks (Sonnet, GPT-5.5, GPT-4.1, Nova, Mistral) if a model is busy.  
-> That's why interactive traffic shows up as *Opus* on the spend dashboard, while the Goose jobs (Sonnet) show up as *diagnostics*.
+> 👉 **Model routing.** 
+> - ✅ The chat agent defaults to the `reasoning-hard` tier — **Claude Opus** on SAP AI Core — with automatic fallbacks (Sonnet, GPT-5.5, GPT-4.1, Nova, Mistral) if a model is busy.  
+> - ✅ That's why interactive traffic shows up as *Lulu* on the spend dashboard, while the diagnostic jobs (Sonnet) show up as *Goose*.
 
 ## 🤝 Exercise 2.2 - The hand-off: ask about your cluster's diagnosis
 
