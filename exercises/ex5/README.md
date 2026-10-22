@@ -307,6 +307,18 @@ This closes the loop started in **ex1 / ex2**: autonomous **Goose** jobs produce
 kubectl apply --dry-run=server -f weather-rgd.yaml   # the API server + KRO reject an invalid RGD
 ```
 
+> [!IMPORTANT]
+> 👉 **The Busola web terminal can't apply this file either way.** Even once the YAML is fixed, you'll see:
+> ```
+> resourcegraphdefinitions.kro.run is forbidden:
+>   User "system:serviceaccount:busola-terminal:default" cannot create ...
+> ```
+> That's the terminal pod's ClusterRole — `get`/`list`/`watch *` + `configmaps:CRUD` + `pods/exec:create`, **no `create` on anything else** (same role we inspected in [Exercise 4.4 — Probe C](../ex4/README.md#probe-c--the-real-llm-key-never-enters-the-sandbox-only-a-sentinel-does)). Applying an RGD from the web terminal is a dead end **by design**.
+>
+> 👉 Two paths that DO work for 5.5 — pick one:
+> - ✅ **cluster-admin kubeconfig** — download your Kyma kubeconfig from BTP cockpit (or use the federated admin kubeconfig), then `kubectl apply -f weather-rgd.yaml` from your laptop.
+> - ✅ **GitHub Action** — add the RGD + instance to your fork and dispatch a workflow that applies them (the GHA runner authenticates as a cluster-admin via the fork's actions-OIDC identity — same trust the student workflows in 4a / 5a use).
+
 KRO's actual rules (what the drafts get wrong):
 - **`spec.schema` is KRO *simple-schema*, not OpenAPI** — each field is `name: type | markers` (types `string`,
   `integer`, `float`, `boolean`; markers `required=true`, `default=…`). No `properties:`, no `required:` list, no `x-kro`.
