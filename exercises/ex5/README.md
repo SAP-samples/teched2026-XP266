@@ -1,5 +1,7 @@
 # Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter 🔧
 
+> ⏱ **~18 min**
+
 This exercise runs a **different** contained sandbox. In the earlier exercises the sandbox's only exit was the
 in-cluster LiteLLM proxy; here it is **OpenRouter** — one external host, and nothing else. The box still can't reach
 the apiserver or the rest of the internet, and the real OpenRouter key never enters it: the gateway holds the key and

@@ -1,5 +1,7 @@
 # Exercise 2 - Chat with the interactive agent
 
+> ⏱ **~12 min**
+
 > [!NOTE]
 > 👉 This exercise is about the **transition** — the **hand-off**:
 > - ✅ an interactive agent picks up where the autonomous one left off

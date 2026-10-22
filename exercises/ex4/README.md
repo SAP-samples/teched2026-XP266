@@ -1,5 +1,7 @@
 # Exercise 4 - Your sandboxed agent: OpenShell practice with Kyma 🔧
 
+> ⏱ **~20 min**
+
 > [!NOTE]
 > 👉 **The sandbox itself is the guardrail.**
 > - ✅ OpenShell can run the workshop's tools image (`goose` / Claude Code / `kubectl` / `kyma`) inside **runtime-isolated `Sandboxes`** that can reason via SAP AI Core yet are **physically unable** to touch the cluster API or the public internet.

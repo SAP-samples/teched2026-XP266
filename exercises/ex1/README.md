@@ -1,5 +1,7 @@
 # Exercise 1 - Trigger and shape the Cluster Health Reports
 
+> ⏱ **~30 min**
+
 > [!NOTE]
 > 👉 This is the heart of the workshop.
 >

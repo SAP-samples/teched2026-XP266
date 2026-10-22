@@ -1,5 +1,7 @@
 # Exercise 6 - Observability and spend
 
+> ⏱ **~10 min**
+
 Running LLMs in production raises an obvious question: **what is this costing, and who is spending it?**  
 In this exercise you see how the stack answers that — every call is metered by the LiteLLM proxy, scraped by **Kyma Telemetry**, shipped to **SAP Cloud Logging**, and surfaced as spend you read straight from the **Cluster Directory** portal (one click, no Busola navigation).
 

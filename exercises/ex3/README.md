@@ -1,5 +1,7 @@
 # Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks
 
+> ⏱ **~20 min**
+
 > [!NOTE]
 > 👉 This is your **Python playground**.
 >
