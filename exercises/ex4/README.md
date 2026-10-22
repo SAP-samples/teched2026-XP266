@@ -11,7 +11,7 @@
 
 To see **Goose running inside a contained OpenShell sandbox** on your cluster — the production path this exercise builds by hand — **without a terminal**, dispatch one GitHub Actions workflow from your fork:
 
-<!-- MAINTAINER NOTE: the `all-fleets-teched-admin` workflow link below MUST stay a RELATIVE path
+<!-- MAINTAINER NOTE: the `all-fleets-teched-student` workflow link below MUST stay a RELATIVE path
      (`../../../../actions/workflows/…`). GitHub resolves it against the viewer's current fork URL,
      so a student browsing their own fork lands on THEIR fork's Actions tab (which is where their
      admin workflow lives). An absolute `https://github.com/SAP-samples/...` link would always point
@@ -21,7 +21,23 @@ To see **Goose running inside a contained OpenShell sandbox** on your cluster �
 
 | Run this workflow | Workflow inputs | What it does |
 |---|---|---|
-| [**`all-fleets-teched-admin`**](../../../../actions/workflows/all-fleets-teched-admin.yaml) | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• a `goose_mode` (`snapshot` / `live`)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report. |
+| [**`all-fleets-teched-student`**](../../../../actions/workflows/all-fleets-teched-student.yaml) | 👉 Pick<br>• **`student_cluster`** — type **your** cluster (e.g. `xp266-003`); overwrite the default `xp266-NNN` placeholder<br>• **`goose_mode`** — `snapshot` (fast, interprets a `kyma diagnose` snapshot) or `live` (richest: goose runs live read-only `kubectl` inside the sandbox)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report. |
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/gha-01.png" width="820" alt="all-fleets-teched-student GHA run — Goose interpreting cluster health in a contained OpenShell sandbox; LIVE mode shown with the apply-manifest / Goose steps succeeding" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 Prefer the DYI path? Continue below.
 
