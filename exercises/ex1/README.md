@@ -1,12 +1,13 @@
 # Exercise 1 - Trigger and shape the Cluster Health Reports
 
-👉 This is the heart of the workshop.
-
-- ✅ A **Goose** agent inspects your cluster on a schedule and writes what it finds as **in-cluster health reports**  
-  — three generations, **v1 / v2 / v3** 
-  — plus a security **audit** and a **forensic post-mortem** that fires when a run skips.  
-- ✅ Every run executes Goose **inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
-- ✅ You drive all of it from one place: the **Diagnostic Toolbox** UI.
+> [!NOTE]
+> 👉 This is the heart of the workshop.
+>
+> - ✅ A **Goose** agent inspects your cluster on a schedule and writes what it finds as **in-cluster health reports**  
+>   — three generations, **v1 / v2 / v3** 
+>   — plus a security **audit** and a **forensic post-mortem** that fires when a run skips.  
+> - ✅ Every run executes Goose **inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
+> - ✅ You drive all of it from one place: the **Diagnostic Toolbox** UI.
 
 **Contents**
 
