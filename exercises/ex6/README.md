@@ -24,7 +24,41 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
 
 ## 📡 Exercise 6.1 - The telemetry path (concept)
 
-1. In Busola, open **Custom Resources → MetricPipeline** and open **`sap-cloud-logging`**. It's **cluster-scoped** — one declarative pipe that forwards scraped metrics to SAP Cloud Logging, with no Prometheus server to run and no Grafana to host:
+1. From the **Student's Portal**, open **Modules Health** and pick the **telemetry** option as depicted below.
+
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="images/telemetry-status.png" width="820" alt="Student's Portal → Modules Health → telemetry option" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
+
+   There, you can look up the **`MetricPipeline`**. It's **cluster-scoped** — one declarative pipe that forwards scraped metrics to SAP Cloud Logging, with no Prometheus server to run and no Grafana to host:
+
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="images/metric-pipeline-01.png" width="820" alt="MetricPipeline sap-cloud-logging — cluster-scoped" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
 
    <details>
    <summary>👉 Click to expand the <code>MetricPipeline</code> YAML</summary>
