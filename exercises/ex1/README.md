@@ -8,6 +8,17 @@
 - ✅ Every run executes Goose **inside an OpenShell sandbox** (read-only, no internet), reasoning through the LiteLLM proxy → SAP AI Core.
 - ✅ You drive all of it from one place: the **Diagnostic Toolbox** UI.
 
+**Contents**
+
+- 🧰 [The Diagnostic Toolbox portal](#-the-diagnostic-toolbox-portal)
+- 📋 [Read the latest reports](#exercise-11---read-the-latest-reports)
+- ▶️ [Trigger a diagnostic run](#exercise-12---trigger-a-diagnostic-run)
+- ✍️ [Write your own prompt](#exercise-13---write-your-own-prompt)
+- 🛡️ [The guardrails](#exercise-14---the-guardrails-read-reason-but-dont-touch)
+  - 🔧 [Prove it yourself](#-prove-it-yourself-optional--go-deeper)
+
+## 🧰 The Diagnostic Toolbox portal
+
 👉 Open the diagnostics portal
 
 ```
@@ -61,14 +72,6 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 | **forensic** · `cluster-health-forensic` | **post-mortem** of the latest v2 run — reads the stored report + LiteLLM spend + Job state and emits a 🎯/🟡/⚪ (CONFIRMED/LIKELY/INCONCLUSIVE) verdict | daily right after v3 + on-failure of v2/v3; also triggerable on-demand |
 | **v2** · `cluster-health-v2` | **live**, read-only `kubectl` on a leash — a fixed health playbook | the balanced default — also drives the Security Audit, so this is the **highest-spend** run |
 | **v3** · `cluster-health-v3` | **live**, read-only `kubectl`, real-time and uncapped | the **deepest cut** — a lead list to confirm |
-
-**Contents**
-
-- 📋 [Read the latest reports](#exercise-11---read-the-latest-reports)
-- ▶️ [Trigger a diagnostic run](#exercise-12---trigger-a-diagnostic-run)
-- ✍️ [Write your own prompt](#exercise-13---write-your-own-prompt)
-- 🛡️ [The guardrails](#exercise-14---the-guardrails-read-reason-but-dont-touch)
-  - 🔧 [Prove it yourself](#-prove-it-yourself-optional--go-deeper)
 
 
 ## 📋 Exercise 1.1 - Read the latest reports
