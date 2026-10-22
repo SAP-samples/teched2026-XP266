@@ -58,6 +58,22 @@ You'll walk the full path by hand:
 </table>
 
 1. 👉 In Busola, click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/practice-02.png" width="820" alt="Open the embedded web terminal — click >_ in the Busola toolbar; the terminal panel shows the full flow (exports, gateway add, device-code URL)" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 2. 👉 Set your runtime once, so the commands below are copy-paste (shell names can't have hyphens, hence `XP266_…`):
    ```bash
    export XP266_CLUSTER=xp266-NNN          # your runtime number, e.g. xp266-001
