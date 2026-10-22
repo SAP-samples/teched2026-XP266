@@ -105,7 +105,7 @@ You'll walk the full path by hand:
    ```
    > 💡 **Tip** — Already registered from a previous day? Re-auth instead:
    > ```bash
-   > OPENSHELL_NO_BROWSER=1 openshell gateway login openshell
+   > OPENSHELL_NO_BROWSER=1 openshell gateway login
    > ```
    It prints a verification URL and a short code, then waits:
    ```
