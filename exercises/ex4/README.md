@@ -435,29 +435,27 @@ cluster network.
 > [!NOTE]
 > **Where is this containment implemented?** Two layers working together:
 > - ✅ **Upstream Kubernetes apiserver** — the `--as=…` flag triggers the apiserver's **impersonation authorizer** on every request. Before letting it through, the apiserver checks whether the caller has an explicit `impersonate` verb grant on `serviceaccounts/openshell-sandbox` in ns `openshell`. If not → `Forbidden`. This is baked into every kube-apiserver (nothing we add).
-> - ✅ **The Busola-terminal RBAC in your cluster** — the `busola-terminal` ClusterRole bound to the terminal pod's SA uses `aggregationRule` to pull in the stock k8s **view** tier only. View is `get`/`list`/`watch` — **it does not contain `impersonate`**. A supplemental ClusterRole adds narrow ConfigMap mutations, also no `impersonate`:
+> - ✅ **The Busola-terminal RBAC in your cluster** — the `busola-terminal` ClusterRole bound to the terminal pod's SA grants a few specific verbs and **none of them is `impersonate`**:
 >
 >   ```yaml
 >   apiVersion: rbac.authorization.k8s.io/v1
 >   kind: ClusterRole
 >   metadata:
 >     name: busola-terminal
->   aggregationRule:
->     clusterRoleSelectors:
->     - matchLabels:
->         rbac.authorization.k8s.io/aggregate-to-view: "true"   # view = get/list/watch, no impersonate
->   ---
->   apiVersion: rbac.authorization.k8s.io/v1
->   kind: ClusterRole
->   metadata:
->     name: busola-terminal-writes       # supplemental, intentionally narrow
 >   rules:
+>   - apiGroups: ["*"]
+>     resources: ["*"]
+>     verbs: [get, list, watch]              # read-anything (no mutations)
 >   - apiGroups: [""]
 >     resources: [configmaps]
->     verbs: [create, update, patch, delete]
+>     verbs: [create, update, patch, delete]  # narrow write path for scratch/reports
+>   - apiGroups: [""]
+>     resources: [pods/exec]
+>     verbs: [create]                         # open the embedded terminal
+>   # (no `impersonate` verb anywhere → `kubectl --as=...` is refused by the apiserver)
 >   ```
 >
-> Net: the apiserver enforces the check; the RBAC design deliberately excludes `impersonate` by using the view-aggregated role. Defense in depth — bypassing one layer still leaves the other.
+> Net: the apiserver enforces the check; the RBAC design deliberately excludes `impersonate` by not listing it in any rule. Defense in depth — bypassing one layer still leaves the other.
 >
 > You can inspect this on your cluster: `kubectl get clusterrole busola-terminal -o yaml`.
 
