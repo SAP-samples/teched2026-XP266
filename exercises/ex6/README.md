@@ -22,7 +22,7 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
 - 🩺 [The FleetStatus card](#exercise-63---the-fleetstatus-card)
 
 
-## Exercise 6.1 - The telemetry path (concept)
+## 📡 Exercise 6.1 - The telemetry path (concept)
 
 1. In Busola, open **Custom Resources → MetricPipeline** and open **`sap-cloud-logging`**. It's **cluster-scoped** — one declarative pipe that forwards scraped metrics to SAP Cloud Logging, with no Prometheus server to run and no Grafana to host:
 
@@ -95,7 +95,7 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
 > The LiteLLM proxy exposes Prometheus-style metrics (spend per key, tokens in/out, per-model latency). A **pod annotation** marks it for scraping; the `MetricPipeline` (managed by the Kyma **Telemetry** module) ships those metrics out via OTLP to **SAP Cloud Logging**, where they're stored in OpenSearch and visualized.  
 > This is the same managed-telemetry pattern SAP BTP gives you for logs, metrics, and traces — you *use* it, you don't operate it.
 
-## Exercise 6.2 - Open the spend dashboards
+## 💰 Exercise 6.2 - Open the spend dashboards
 
 The dashboards are one click away from the **Cluster Directory** — no Busola navigation needed.
 
@@ -139,7 +139,7 @@ The dashboards are one click away from the **Cluster Directory** — no Busola n
 > This is the pay-off of routing **everything through one proxy**: because no agent talks to a model directly, *every* token is attributable.  
 > Trigger a diagnose run or chat with the agent, wait a minute, and watch your own activity appear on the dashboard.
 
-## Exercise 6.3 - The FleetStatus card
+## 🩺 Exercise 6.3 - The FleetStatus card
 
 1. Back on the **Cluster Directory** (`https://busola.xp266-NNN.<workshop-domain>/clusterdir/`), find the **Cluster launchpad** section — it follows the cluster selector.
 
