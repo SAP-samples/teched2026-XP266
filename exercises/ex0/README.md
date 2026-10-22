@@ -63,7 +63,7 @@ Now sign in:
 
 1. In the **Navigate to your Kyma cluster** card, select your runtime and click the **Token-based login** entry `xp266-NNN-federated` — the frictionless path (or just open your Busola URL directly: `https://busola.xp266-NNN.<workshop-domain>/`).
 
-2. The first dashboard you open this session takes you through the gateway (oauth2-proxy) to sign in with the workshop identity provider (single sign-on). After that you land directly on the Busola **Cluster Overview** for your runtime — the token-based entry needs no further Busola sign-in.
+2. The **Student's Portal** itself is behind the gateway (oauth2-proxy), so the first time you open it this session you'll go through the workshop identity provider (single sign-on). After that you're authenticated for the whole session — clicking the **Token-based login** entry opens Busola **already signed in**, landing directly on the **Cluster Overview** for your runtime (no further Busola sign-in).
 
    <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
    <tbody>
