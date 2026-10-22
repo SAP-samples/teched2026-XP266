@@ -266,6 +266,25 @@ curl -sS -XPOST http://litellm-proxy.default.svc.cluster.local:4001/v1/messages 
   -d '{"model":"anthropic--claude-4.7-opus","max_tokens":16,"messages":[{"role":"user","content":"Reply OK"}]}'
 ```
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/practice-04.png" width="820" alt="Interactive shell inside the sandbox — exec in with bash, run the curl, see the SAP AI Core response; type `exit` to leave the sandbox" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
+> [!NOTE]
+> You are now **inside the sandbox** — the prompt reads `goose@default--$XP266_CLUSTER-devbox:~$`. Type **`exit`** to leave the sandbox and return to the Busola web-terminal prompt.
+
 Either way:
 ```json
 {"id":"msg_bdrk_...","model":"anthropic--claude-4.7-opus", ... "content":[{"type":"text","text":"OK"}] ... }
