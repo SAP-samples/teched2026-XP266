@@ -11,6 +11,12 @@
 
 To see **Goose running inside a contained OpenShell sandbox** on your cluster — the production path this exercise builds by hand — **without a terminal**, dispatch one GitHub Actions workflow from your fork:
 
+<!-- MAINTAINER NOTE: the `all-fleets-teched-admin` workflow link below MUST stay a RELATIVE path
+     (`../../../../actions/workflows/…`). GitHub resolves it against the viewer's current fork URL,
+     so a student browsing their own fork lands on THEIR fork's Actions tab (which is where their
+     admin workflow lives). An absolute `https://github.com/SAP-samples/...` link would always point
+     to the upstream public repo instead — where the student cannot dispatch a run. Keep relative. -->
+
 | Run this workflow | Workflow inputs | What it does |
 |---|---|---|
 | [**`all-fleets-teched-admin`**](../../../../actions/workflows/all-fleets-teched-admin.yaml) | 👉 Pick<br>• your `student_cluster` (`xp266-NNN`)<br>• a `goose_mode` (`snapshot` / `live`)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report. |
