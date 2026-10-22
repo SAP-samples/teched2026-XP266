@@ -493,17 +493,19 @@ claude -p 'Use kubectl to find unhealthy pods and explain why. Run: kubectl get 
 👉 Re-enter any time with `openshell sandbox exec --name <name> -- bash`.  
 👉 Delete the sandbox with `openshell sandbox delete <name>` when you're done.
 
-#### Why it's still contained — just a little wider
-- **Network (L7 policy):** exactly two egresses are allowed — the **apiserver** (read-only) and the **LiteLLM proxy**
-  (`litellm-proxy…:4001`, for **both** goose and claude). **Both LLM keys stay in the gateway** — each agent sends only the
-  injected resolve sentinel, swapped for the real key at egress. The public internet and every other workload stay denied —
-  same guardrail you proved in 4.4, just with the apiserver added read-only.
-- **RBAC:** the injected token is a dedicated **read-only** identity — `get`/`list`/`watch` only, and **`secrets` are
-  excluded** — so `kubectl get`/`describe`/`logs` and `kyma alpha diagnose` work, but writes and secret-reads are refused.
-- **Honest trade-off vs 4.3:** the **LLM keys never enter the box** (both agents are sentinel-contained). The one real
-  credential scoped-ops injects is the **kubectl token** — the apiserver needs a *real* token, so it's a deliberately
-  **minimal, read-only, short-lived (2h)** one. The contained tier (4.3) holds **no** cluster credential at all. Choose the
-  tier by how much you trust the workload.
+> [!NOTE]
+> **Why it's still contained — in a nutshell.**
+>
+> - ✅ **Network (L7 policy):** exactly two egresses are allowed — the **apiserver** (read-only) and the **LiteLLM proxy** (`litellm-proxy…:4001`, for both goose and claude).
+> - ✅ **Both LLM keys stay in the gateway** — each agent sends only the injected resolve sentinel, swapped for the real key at egress.
+> - ✅ The **public internet** and **every other workload** stay denied — same guardrail you proved in 4.4, just with the apiserver added read-only.
+> - ✅ **RBAC:** the injected token is a dedicated **read-only** identity — `get`/`list`/`watch` only, and **`secrets` are excluded** — so `kubectl get`/`describe`/`logs` and `kyma alpha diagnose` work, but writes and secret-reads are refused.
+> - ✅ **Trade-off vs the pure-compute box from 4.3:**
+>   - the LLM keys never enter the box (both agents are sentinel-contained).
+>   - the one real credential `scoped-ops` injects is the **`kubectl` token** — the apiserver needs a real token.
+>   - it's a deliberately **minimal, read-only, short-lived (2h)** one.
+>   - the contained tier (4.3) holds **no** cluster credential at all.
+>   - choose the tier by how much you trust the workload.
 
 > [!TIP]
 > **goose vs claude in one line:** `goose run` runs tools on its own; `claude -p` needs the imperative *"Run … then …"*
