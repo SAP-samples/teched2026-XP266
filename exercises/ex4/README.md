@@ -159,48 +159,6 @@ flowchart TB
 
 </details>
 
-<details>
-<summary>🖼️ OpenShell concept diagram — plain ASCII (same picture, no renderer required)</summary>
-
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-
-```
-👤 You (openshell-admin role)
-   │
-   │  device-code / client-credentials login (OIDC via Keycloak)
-   │  openshell sandbox create --provider <name> --policy pol.yaml
-   ▼
-🚪 OpenShell Gateway  (in-cluster, OIDC-gated via Keycloak)
-   │
-   │  📋 Profile   — reusable spec, no secret
-   │                 endpoints · binaries · auth style
-   │                        │
-   │                        ▼  bound to
-   │  🔑 Provider  — Profile + real key   (key lives ONLY here)
-   │
-   ▼  spawns a disposable pod
-📦 Sandbox  (runtime-isolated, disposable)
-   │
-   │  🪿 Agent      — goose · Claude Code · kubectl
-   │        │
-   │        ▼
-   │  🛡️ Supervisor — intercepts egress, injects provider key at egress
-   │
-   ├──▶ 📡 LiteLLM proxy :4001 → SAP AI Core   (allowed by Provider)
-   ├──▶ ⚙️  k8s API :443 read-only              (allowed by Policy)
-   └──✘ writes · internet · secrets             → 403 blocked
-```
-
-</td>
-</tr>
-</tbody>
-</table>
-
-</details>
-
 Two related concepts, both **already set up** for you on the gateway:
 
 - A **profile** is a reusable *spec* (no secret) — which credential, which auth style, which endpoints egress may reach, which binaries may use it.
