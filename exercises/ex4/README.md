@@ -340,9 +340,10 @@ claude -p "In one line, what is Kyma?"
 > - ✅ The supervisor resolves the sentinel in either header, so both reach SAP AI Core; only Bearer is prompt-free.
 
 > [!NOTE]
-> It's a **reasoning box, not an ops shell**: `kubectl` / `kyma` / `k9s` are installed but **inert** (no cluster token,
-> no route to the API server — you'll prove that in 4.4). For an agent whose `kubectl`/`kyma` actually reach the cluster,
-> use the Busola web terminal; the sandbox trades cluster access for hard isolation.
+> 👉 It's a **reasoning box, not an ops shell**:
+>
+> - ✅ `kubectl` / `kyma` / `k9s` are installed but **inert** (no cluster token, no route to the API server — you'll prove that in the next step).
+> - ✅ For an agent whose `kubectl` / `kyma` actually reach the cluster, use the Busola web terminal; the sandbox trades cluster access for hard isolation.
 
 Type **`exit`** to return to the terminal — the sandbox keeps running (re-enter any time with `openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash`).
 
