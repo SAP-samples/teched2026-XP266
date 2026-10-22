@@ -55,7 +55,7 @@ The **Student's Portal** main menu is organised top-to-bottom:
 
 | Login | What it does | When to use |
 |---|---|---|
-| **Token-based** | opens Busola already authenticated with a service-account / federated token — **no second sign-in** (you were already authenticated at the oauth2-proxy gateway) | **frictionless, recommended** — mirrors the headless, CI/CD-style access the automation uses |
+| **Token-based** | opens Busola already authenticated with a service-account / federated token | **frictionless, recommended** — mirrors the headless, CI/CD-style access the automation uses |
 | **OIDC-based** | sign in to Busola **interactively** with your workshop identity | the full interactive login flow; **not** suited to headless / automated environments |
 
 > [!NOTE]
@@ -66,7 +66,10 @@ The **Student's Portal** main menu is organised top-to-bottom:
 
 
 > [!TIP]
-> The **Cluster Overview** shows one or more **banner cards** with handy shortcut **buttons** into the workshop features (dashboards, quick actions). If you dismiss a card, it **stays hidden in that browser**. To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
+> **Busola** (the Kyma dashboard) may show one or more **banner cards** with handy shortcut **buttons** into the workshop features (dashboards, quick actions).
+>
+> - If you dismiss a card, it **stays hidden in that browser**.
+> - To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
 
 ## 📦 Exercise 0.2 - See what is already deployed *(optional)*
 
@@ -146,6 +149,9 @@ The next exercise walks the **LiteLLM → SAP AI Core** hop end-to-end.
 - ✅ Here is the whole fleet — one picture.  
 - ✅ Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions**
 
+<details>
+<summary>👉 Click to expand the fleet topology diagram</summary>
+
 ```mermaid
 flowchart TB
     subgraph HUB["🛰 HUB  (aws · eu-west-1)"]
@@ -164,6 +170,8 @@ flowchart TB
     end
     T1 & T2 & T3 & T4 & T5 ==> |"federated OIDC · aud=bootstrapper"| HUB
 ```
+
+</details>
 
 </div>
 </td>
