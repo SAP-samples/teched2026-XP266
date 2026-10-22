@@ -203,7 +203,7 @@ flowchart LR
 
 The agent never sees the real key, and the sandbox reaches nothing but the gateway's one allowed hop to OpenRouter.
 
-Run each agent in web terminal — same contained sandbox, same model:
+👉 Run each agent in web terminal — same contained sandbox, same model:
 
 | Agent | How to run it? |
 |---|---|
