@@ -95,6 +95,9 @@ Your agent **consumes** the SAP BAIP platform AICore services — it hosts no mo
 Every LLM call goes down to **SAP AI Core** (SAP's LLM Module / Generative AI Hub) and the generation comes back.  
 
 
+<details>
+<summary>👉 Click to expand the AI-ops stack diagram</summary>
+
 ```mermaid
 flowchart LR
   subgraph KYMA["☸️ Your SAP BTP, Kyma runtime — all pre-deployed"]
@@ -119,6 +122,8 @@ flowchart LR
   GOOSE -. hand-off .-> JH
   LITELLM --> CLS
 ```
+
+</details>
 
 </div>
 </td>
