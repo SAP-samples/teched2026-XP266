@@ -197,5 +197,9 @@ flowchart TB
 
 ## Summary
 
-You signed in to your Kyma runtime in Busola, met the pre-deployed AI-ops stack (LiteLLM, Goose, the interactive chat agent, JupyterHub, and the KRO custom resources), and saw where it fits in the SAP AI landscape.  
+🧭 You signed in to the **Student's Portal** and landed in **Busola** on your `xp266-NNN` runtime,
+
+- 📦 met the pre-deployed **AI-ops stack** — LiteLLM proxy, Goose diagnostic jobs, the interactive chat agent, JupyterHub, and the KRO custom resources,
+- 🗺️ and saw where it fits in the **TechEd 2026 landscape** — one of 50 spokes trusting the central hub.
+
 Continue to - [Exercise 1 - Trigger and shape the Cluster Health Reports](../ex1/README.md)
