@@ -436,7 +436,11 @@ scoped-ops                     # or give it a name:  scoped-ops $XP266_CLUSTER-d
 > Alternatively, `scoped-ops` can use the ready-made, **hardened Garden-Linux** image via `scoped-ops --from ops-toolbelt-bash`.
 
 ```bash
-kubectl get nodes                        # ✓ read-only (a write → 403, refused by RBAC)
+# Prove the read-only cluster access:
+kubectl get nodes                              # ✓ list works
+kubectl auth can-i create namespaces           # ✗ "no" — no mutation rights
+kubectl auth can-i get secrets                 # ✗ "no" — secrets excluded
+kubectl create ns dummy-$(date +%s)            # ✗ Error from server (Forbidden): namespaces is forbidden …
 ```
 ```bash
 # goose — agentic by default: it runs kubectl / kyma itself and reasons over the output:
