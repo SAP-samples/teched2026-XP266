@@ -263,13 +263,28 @@ KRO is a niche CRD the model hasn't memorised.
 That's the real lesson of
 this exercise: **the agent drafts, the cluster adjudicates — you iterate.**
 
-👉 Use **Pi** to generate the code — a real coding task against your `:free` model. Pipe its output to a file in the terminal:
+👉 Use one of the agents to generate the code — a real coding task against your `:free` model. Pipe its output to a file in the terminal:
+
 ```bash
+# 🥧 Pi
 openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL \
   'Write a KRO ResourceGraphDefinition (apiVersion kro.run/v1alpha1) that provisions a Pod which curls the open-meteo weather API for a given latitude/longitude. Output ONLY the YAML, no prose or code fences.' \
   > weather-rgd.yaml
 ```
-(opencode works too: `openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "…" > weather-rgd.yaml`.)
+
+```bash
+# 🧩 opencode
+openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL \
+  'Write a KRO ResourceGraphDefinition (apiVersion kro.run/v1alpha1) that provisions a Pod which curls the open-meteo weather API for a given latitude/longitude. Output ONLY the YAML, no prose or code fences.' \
+  > weather-rgd.yaml
+```
+
+```bash
+# 🐉 Qwen Code
+openshell sandbox exec --name agents -- qwen -p \
+  'Write a KRO ResourceGraphDefinition (apiVersion kro.run/v1alpha1) that provisions a Pod which curls the open-meteo weather API for a given latitude/longitude. Output ONLY the YAML, no prose or code fences.' \
+  > weather-rgd.yaml
+```
 
 👉 Always validate before trusting — the draft almost always fails:
 ```bash
