@@ -29,7 +29,7 @@ Prefer the hands-on CLI? Continue below.
 You'll walk the full path by hand:
 
 - 🔑 [4.1 terminal & gateway](#41---open-the-terminal-and-reach-the-gateway) — reach the in-cluster OpenShell gateway from the embedded web terminal
-- 🔀 [4.2 providers (pre-created)](#42---providers-pre-created--nothing-to-wire) — check the pre-created LLM providers (nothing to wire)
+- 🔀 [4.2 OpenShell concepts: Providers and Profiles](#42---introducing-openshell-concepts-providers-and-profiles) — the two building blocks (already set up on your cluster)
 - 📦 [4.3 sandbox](#43---create-a-sandbox-from-the-tools-image-and-use-it) — create a contained sandbox and drive an agent inside it
 - 🛡️ [4.4 prove the sandbox is sealed](#44---prove-the-sandbox-is-sealed) — prove the sandbox blocks writes/egress (→ `403`)
 - 🔎 [4.5 scoped-ops](#45---scoped-ops-an-agent-that-reads-the-cluster-one-command-) — open the read-only **scoped-ops** tier (`kubectl`-on-a-leash)
@@ -106,7 +106,7 @@ You'll walk the full path by hand:
    ```
 6. 👉 Now `openshell sandbox list` works from the terminal — continue with 4.2.
 
-### 4.2 - Providers (pre-created — nothing to wire)
+### 4.2 - Introducing OpenShell concepts: Providers and Profiles
 
 <details>
 <summary>🖼️ OpenShell concept diagram — mermaid (rendered)</summary>
