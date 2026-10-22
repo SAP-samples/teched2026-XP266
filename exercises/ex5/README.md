@@ -308,16 +308,14 @@ kubectl apply --dry-run=server -f weather-rgd.yaml   # the API server + KRO reje
 ```
 
 > [!IMPORTANT]
-> 👉 **The Busola web terminal can't apply this file either way.** Even once the YAML is fixed, you'll see:
+> 👉 **The Busola web terminal can't apply this file.** Even once the YAML is fixed, you'll see:
 > ```
 > resourcegraphdefinitions.kro.run is forbidden:
 >   User "system:serviceaccount:busola-terminal:default" cannot create ...
 > ```
 > That's the terminal pod's ClusterRole — `get`/`list`/`watch *` + `configmaps:CRUD` + `pods/exec:create`, **no `create` on anything else** (same role we inspected in [Exercise 4.4 — Probe C](../ex4/README.md#probe-c--the-real-llm-key-never-enters-the-sandbox-only-a-sentinel-does)). Applying an RGD from the web terminal is a dead end **by design**.
 >
-> 👉 Two paths that DO work for 5.5 — pick one:
-> - ✅ **cluster-admin kubeconfig** — download your Kyma kubeconfig from BTP cockpit (or use the federated admin kubeconfig), then `kubectl apply -f weather-rgd.yaml` from your laptop.
-> - ✅ **GitHub Action** — add the RGD + instance to your fork and dispatch a workflow that applies them (the GHA runner authenticates as a cluster-admin via the fork's actions-OIDC identity — same trust the student workflows in 4a / 5a use).
+> 👉 **Use the Busola browser instead.** The toolbar has an **Upload YAML** button (top-right). Click it, paste or upload the corrected `weather-rgd.yaml`, and apply — Busola runs the apply as **your** signed-in user, not the terminal pod's narrow SA, so the RGD + instance land cleanly. Everything stays in the browser; no laptop `kubectl`, no fork, no GHA.
 
 The chat agent walks you through **KRO's actual simple-schema rules** AND emits a corrected, deployable YAML — iterate from there. That round-trip (draft → chat review → `--dry-run=server` → fix → apply) **is** the skill this exercise is teaching.
 
