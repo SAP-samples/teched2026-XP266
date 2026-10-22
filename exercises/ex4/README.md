@@ -507,16 +507,6 @@ claude -p 'Use kubectl to find unhealthy pods and explain why. Run: kubectl get 
 >   - the contained tier (4.3) holds **no** cluster credential at all.
 >   - choose the tier by how much you trust the workload.
 
-> [!TIP]
-> **goose vs claude in one line:** `goose run` runs tools on its own; `claude -p` needs the imperative *"Run … then …"*
-> phrasing to act rather than ask.  
-> Both reason via SAP AI Core.  
-> The terminal image pre-allows read-only
-> `kubectl get/describe/logs/top` + `kyma` for Claude Code, so those run without a permission prompt.  
-> A deep
-> `kyma alpha diagnose istio` will *time out* — it reaches the mesh sidecars directly, which the sandbox's egress doesn't
-> allow; the apiserver-based diagnostics work fine.
-
 ---
 
 ## Summary
