@@ -119,7 +119,8 @@ You'll walk the full path by hand:
 **Reading the diagram.**
 
 - ✅ You authenticate with Keycloak (device-code from a browser, or client-credentials headless) and issue `openshell sandbox create` to the in-cluster OpenShell Gateway.
-- ✅ The Gateway pairs a **Profile** — a reusable spec listing allowed endpoints, which binaries may use them, and the auth style — with a **Provider**, which is that same Profile bound to a real key.
+- ✅ A **Profile** is a reusable spec — allowed endpoints, which binaries may use them, auth style. No secret.
+- ✅ A **Provider** is a Profile bound to a real key — the Gateway pairs them to attach to a sandbox.
 - ✅ The key never leaves the Gateway.
 - ✅ The Gateway spawns a disposable **Sandbox** pod where the **Agent** (goose / claude / kubectl) talks through the **Supervisor**.
 - ✅ The Supervisor intercepts every outbound connection, allows only what the Policy and attached Providers permit, and injects the Provider's key at the wire so the Agent never sees it.
