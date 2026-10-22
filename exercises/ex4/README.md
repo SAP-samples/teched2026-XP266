@@ -376,11 +376,14 @@ claude -p "In one line, what is Kyma?"
 
 ### 🛡️ 4.4 - Prove the sandbox is sealed
 
-- 👉 The whole point: from **inside** the sandbox, the cluster API and the internet are unreachable.
-- 👉 Two layers stack —
+👉 The whole point: from **inside** the sandbox, the cluster API and the internet are unreachable.  
+👉 Two layers stack —
+
 - ✅ **Identity:** the sandbox has **no service-account token and no cluster CA**, so nothing can even *authenticate* to the API.
 - ✅ **Network:** it has **no direct route out at all** — egress is intercepted **transparently** by the supervisor (there's no `HTTPS_PROXY` to point at); it opens connections **only** to policy-allowed hosts.
-- 👉 The contained tier allows just `litellm-proxy…:4001`;
+
+👉 The contained tier allows just `litellm-proxy…:4001`;
+
 - ✅ every other host is **refused** (the name may resolve to a synthetic intercept address, still the connection never succeeds).
 - ✅ A bare `kubectl` won't demonstrate this cleanly (with no `KUBECONFIG` it just hits `localhost:8080`), so we probe the network directly with `curl`.
 
