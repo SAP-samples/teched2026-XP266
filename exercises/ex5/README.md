@@ -189,8 +189,6 @@ flowchart LR
 </tbody>
 </table>
 
-The agent never sees the real key, and the sandbox reaches nothing but the gateway's one allowed hop to OpenRouter.
-
 **The models — NVIDIA Nemotron, free on OpenRouter.** OpenRouter puts many providers behind one endpoint, and its
 `:free` tier includes NVIDIA's **Nemotron** family. Because the agents call tools, the model must be a
 **chat/completion model with tool-calling** — embedding/rerank models (ids with `-embed-`/`-rerank-`) will error. Two
@@ -203,7 +201,9 @@ known-good free picks:
 
 Run each agent in web terminal — same contained sandbox, same model:
 
-| Agent | Command (→ expected output / note) |
+The agent never sees the real key, and the sandbox reaches nothing but the gateway's one allowed hop to OpenRouter.
+
+| Agent | How to run it? |
 |---|---|
 | 🧩 [**opencode**](https://opencode.ai) | `openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "Reply with one word: PONG"` → `PONG` |
 | 🥧 [**Pi**](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) | `openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."` |
