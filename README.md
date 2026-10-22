@@ -129,15 +129,15 @@ flowchart LR
 ## Exercises
 
 - 🧭 [Getting Started](exercises/ex0/) — access your Kyma runtime and tour the pre-deployed AI-ops stack
-- 📋 [Exercise 1 - Trigger and shape the Cluster Health Reports](exercises/ex1/) — drive the v1/v2/v3 reports from the Diagnostic Toolbox UI, write your own prompt, and see the read-only sandbox guardrails
+- 📋 [Exercise 1 - Trigger and shape the Cluster Health Reports](exercises/ex1/) — drive and shape diagnostic reports, experiment with your own prompts
 - 💬 [Exercise 2 - Chat with the interactive agent](exercises/ex2/) — the interactive chat UI, and the hand-off from the diagnostic jobs
 - 📒 [Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks](exercises/ex3/) — drive the OpenShell sandbox lifecycle from Python and run an agent inside a sandbox
 - 🛠️ [Exercise 4 - Your sandboxed agent: OpenShell practice with Kyma](exercises/ex4/) 🔧 — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
   - **4a** *(easy path)* — run it as a **GitHub Action**
-  - **4b** *(optional)* — do it by hand in the **in-cluster web terminal**
+  - **4b** *(do-it-yourself)* — do it by hand in the **in-cluster web terminal**
 - 🤖 [Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex5/) 🔧 — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
   - **5a** *(easy path)* — run it as a **GitHub Action**
-  - **5b** *(optional)* — do it by hand in the **in-cluster web terminal**
+  - **5b** *(do-it-yourself)* — do it by hand in the **in-cluster web terminal**
 - 📊 [Exercise 6 - Observability and spend](exercises/ex6/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards; the closing activity of the session
 
 ### Appendix
@@ -150,7 +150,7 @@ flowchart LR
 - 🌐 [Appendix 5 - External agents & the OpenRouter provider model](exercises/Appendices/5-openrouter-provider/) — how a keyed, external provider plugs into the OpenShell sandbox model, and OpenRouter vs SAP AI Core
 
 > [!IMPORTANT]
-> - ✅ **Every exercise can be completed entirely in the browser — no terminal experience required.**
+> - ✅ **Every exercise can be completed entirely in the browser — no laptop terminal is required.**
 > - ✅ A few exercises offer an *optional* in-cluster web-terminal step, always marked **🔧 Go deeper (optional)**.
 > - ✅ Wherever one appears there is a **UI** (Busola) or **Run workflow** (GitHub Actions) way to reach the same result.
 > - ✅ Whatever your level, you can succeed with clicks alone.
