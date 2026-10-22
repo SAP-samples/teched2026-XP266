@@ -31,7 +31,7 @@ You'll walk the full path by hand:
 - 🔑 [4.1 terminal & gateway](#41---open-the-terminal-and-reach-the-gateway) — reach the in-cluster OpenShell gateway from the embedded web terminal
 - 🔀 [4.2 providers (pre-created)](#42---providers-pre-created--nothing-to-wire) — check the pre-created LLM providers (nothing to wire)
 - 📦 [4.3 sandbox](#43---create-a-sandbox-from-the-tools-image-and-use-it) — create a contained sandbox and drive an agent inside it
-- 🛡️ [4.4 guardrail](#44---see-the-guardrail-hold) — prove the guardrail holds (writes/egress → `403`)
+- 🛡️ [4.4 prove the sandbox is sealed](#44---prove-the-sandbox-is-sealed) — prove the sandbox blocks writes/egress (→ `403`)
 - 🔎 [4.5 scoped-ops](#45---scoped-ops-an-agent-that-reads-the-cluster-one-command-) — open the read-only **scoped-ops** tier (`kubectl`-on-a-leash)
 
 ### 4.1 - Open the terminal and reach the gateway
@@ -346,7 +346,7 @@ claude -p "In one line, what is Kyma?"
 > - ✅ `kubectl` / `kyma` / `k9s` are installed but **inert** (no cluster token, no route to the API server — you'll prove that in the next step).
 > - ✅ For an agent whose `kubectl` / `kyma` actually reach the cluster, use the Busola web terminal; the sandbox trades cluster access for hard isolation.
 
-### 4.4 - See the guardrail hold
+### 4.4 - Prove the sandbox is sealed
 
 The whole point: from **inside** the sandbox, the cluster API and the internet are unreachable.  
 Two layers stack —
