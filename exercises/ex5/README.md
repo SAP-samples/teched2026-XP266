@@ -191,12 +191,6 @@ flowchart LR
 
 The agent never sees the real key, and the sandbox reaches nothing but the gateway's one allowed hop to OpenRouter.
 
-| Agent | What it is | How you run it |
-|---|---|---|
-| 🧩 **opencode** | the open-source [opencode.ai](https://opencode.ai) coding agent (one Bun binary) | `opencode run -m openrouter/<id> "…"` (headless) · `opencode` (full-screen TUI) |
-| 🥧 **Pi** | [`@earendil-works/pi-coding-agent`](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) — a small Node coding agent | `pi -p --model openrouter/<id> "…"` (headless) · `pi` (TUI) |
-| 🐉 **Qwen Code** | [`@qwen-code/qwen-code`](https://github.com/QwenLM/qwen-code) — an **OpenAI-compatible** agent | `qwen -p "…"` (headless) · `qwen` (TUI) — takes **no** `-m` flag; reads `OPENAI_MODEL` (pre-set to your `$FREE_MODEL`) |
-
 **The models — NVIDIA Nemotron, free on OpenRouter.** OpenRouter puts many providers behind one endpoint, and its
 `:free` tier includes NVIDIA's **Nemotron** family. Because the agents call tools, the model must be a
 **chat/completion model with tool-calling** — embedding/rerank models (ids with `-embed-`/`-rerank-`) will error. Two
@@ -211,9 +205,9 @@ Run each agent in web terminal — same contained sandbox, same model:
 
 | Agent | Command (→ expected output / note) |
 |---|---|
-| 🧩 **opencode** | `openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "Reply with one word: PONG"` → `PONG` |
-| 🥧 **Pi** | `openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."` |
-| 🐉 **Qwen Code** | `openshell sandbox exec --name agents -- qwen -p "List 3 facts about Kyma."` |
+| 🧩 [**opencode**](https://opencode.ai) | `openshell sandbox exec --name agents -- opencode run -m openrouter/$FREE_MODEL "Reply with one word: PONG"` → `PONG` |
+| 🥧 [**Pi**](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) | `openshell sandbox exec --name agents -- pi -p --model openrouter/$FREE_MODEL "List 3 facts about Kyma."` |
+| 🐉 [**Qwen Code**](https://github.com/QwenLM/qwen-code) | `openshell sandbox exec --name agents -- qwen -p "List 3 facts about Kyma."` (takes no `-m`; reads `OPENAI_MODEL` = your `$FREE_MODEL`) |
 
 ### 🛡️ 5.4 - Prove it's still contained
 
