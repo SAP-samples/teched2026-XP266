@@ -9,7 +9,7 @@
 
 ## ⚡ 4a. Easy path — run it as a GitHub Action
 
-To see **Goose running inside a contained OpenShell sandbox** on your cluster — the production path this exercise builds by hand — **without a terminal**, dispatch one GitHub Actions workflow from your fork. It provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report.
+Want to see an **ops agent** run safely inside a sandbox on your cluster — **without opening a terminal**? Dispatch the GitHub Actions workflow below from your fork. It spins up a contained **OpenShell sandbox** on your cluster, runs an ops agent inside it, and gives you back a Cluster Health report.
 
 <!-- MAINTAINER NOTE: the `all-fleets-teched-student` workflow link below MUST stay a RELATIVE path
      (`../../../../actions/workflows/…`). GitHub resolves it against the viewer's current fork URL,
