@@ -25,6 +25,8 @@ You will not deploy anything — everything is in place; you are here to underst
 https://busola.xp266-NNN.<workshop-domain>/clusterdir/
 ```
 
+The **Student's Portal** itself is behind the gateway (oauth2-proxy), so the first time you open it this session you'll go through the workshop identity provider (single sign-on). After that you're authenticated for the whole session — clicking the **Token-based login** entry opens Busola **already signed in**, landing directly on the **Cluster Overview** for your runtime (no further Busola sign-in).
+
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
@@ -63,7 +65,7 @@ Now sign in:
 
 1. In the **Navigate to your Kyma cluster** card, select your runtime and click the **Token-based login** entry `xp266-NNN-federated` — the frictionless path (or just open your Busola URL directly: `https://busola.xp266-NNN.<workshop-domain>/`).
 
-2. The **Student's Portal** itself is behind the gateway (oauth2-proxy), so the first time you open it this session you'll go through the workshop identity provider (single sign-on). After that you're authenticated for the whole session — clicking the **Token-based login** entry opens Busola **already signed in**, landing directly on the **Cluster Overview** for your runtime (no further Busola sign-in).
+2. You land directly on the Busola **Cluster Overview** for your runtime:
 
    <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
    <tbody>
