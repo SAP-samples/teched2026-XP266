@@ -1,11 +1,12 @@
 # Getting Started — access your Kyma runtime and tour the AI-ops stack
 
-In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, get oriented in **Busola** (the Kyma dashboard), and take a quick tour of the AI operations stack that is **already running** for you.  
+In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, get oriented in the **Student's Portal** and in **Busola** (the Kyma dashboard), and take a quick tour of the AI operations stack that is **already running** for you.  
 You will not deploy anything — everything is in place; you are here to understand it and play with it.
 
 > [!NOTE]
-> Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`). Wherever you see `xp266-NNN` below, use the number you were given.  
-> Your Busola URL and sign-in details are handed out at the start of the session.
+> Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`).  
+> Wherever you see `xp266-NNN` below, use the number you were given.  
+> Your **Student's Portal** URL and sign-in details are handed out at the start of the session.
 
 **Contents**
 
@@ -63,21 +64,22 @@ Now sign in:
 1. In the **Navigate to your Kyma cluster** card, select your runtime and click the **Token-based login** entry `xp266-NNN-federated` — the frictionless path (or just open your Busola URL directly: `https://busola.xp266-NNN.<workshop-domain>/`).
 
 2. The first dashboard you open this session takes you through the gateway (oauth2-proxy) to sign in with the workshop identity provider (single sign-on). After that you land directly on the Busola **Cluster Overview** for your runtime — the token-based entry needs no further Busola sign-in.
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/00_01_0010.png" width="820" alt="" />
-  </a>
-</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
+
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="images/busola-01.png" width="820" alt="Busola Cluster Overview — landed after the oauth2-proxy sign-in" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
 
 > [!NOTE]
 > **How sign-in works.** Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers*
