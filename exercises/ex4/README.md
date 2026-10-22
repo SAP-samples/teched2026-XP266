@@ -70,8 +70,10 @@ You'll walk the full path by hand:
    OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \
      --oidc-issuer https://keycloak.$XP266_CLUSTER.$XP266_DOMAIN/realms/ateam-isveng \
      --oidc-client-id openshell-oidc
-   #   already registered from a previous day? re-auth instead:
-   #   OPENSHELL_NO_BROWSER=1 openshell gateway login openshell
+   ```
+   Already registered from a previous day? Re-auth instead:
+   ```bash
+   OPENSHELL_NO_BROWSER=1 openshell gateway login openshell
    ```
    It prints a verification URL and a short code, then waits:
    ```
