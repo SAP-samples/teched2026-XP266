@@ -91,7 +91,7 @@ In a web terminal, with your gateway session active.
 export FREE_MODEL=nvidia/nemotron-3-ultra-550b-a55b:free   # a current :free NVIDIA model — swap if it goes paid
 ```
 
-Then create the sandbox:
+👉 Then create the sandbox:
 ```bash
 openshell sandbox create --name agents \
   --from localhost:32137/openrouter-agents:latest \
@@ -100,7 +100,11 @@ openshell sandbox create --name agents \
   --env OPENAI_MODEL=$FREE_MODEL \
   --detach -- sleep infinity &
 # ^ backgrounded with & — press Enter after it prints "Created sandbox" to get your prompt back
-openshell sandbox list        # wait for PHASE=Ready
+```
+
+👉 Wait for `PHASE=Ready`:
+```bash
+openshell sandbox list
 ```
 `--provider openrouter` grants the sandbox egress to `openrouter.ai` (+ `models.dev`) **for the agent binaries only**
 and injects the key sentinel.
