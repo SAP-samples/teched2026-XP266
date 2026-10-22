@@ -20,7 +20,29 @@
 
 ## 🧰 The Diagnostic Toolbox portal
 
-👉 Open the diagnostics portal
+👉 Open the diagnostics from the **Student's Portal**:
+
+```
+https://busola.xp266-NNN.<workshop-domain>/clusterdir/
+```
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/toolbox-01.png" width="820" alt="Student's Portal → Cluster launchpad → Diagnostic Tools" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
+or directly with:
 
 ```
 https://dev-toolbox.xp266-NNN.<workshop-domain>/
