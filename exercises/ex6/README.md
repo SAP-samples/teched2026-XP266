@@ -151,7 +151,7 @@ The dashboards are one click away from the **Cluster Directory** — no Busola n
 <div>
 <p float="left">
   <a href="#">
-  <img src="images/05_03_0010.png" width="820" alt="" />
+  <img src="images/fleet-status.png" width="820" alt="Fleet Status + Spend tile → fleet-status card with LLM Dashboards / SAP Cloud Logging shortcuts" />
   </a>
 </p>
 </div>
