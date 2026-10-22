@@ -32,7 +32,7 @@ You'll walk the full path by hand:
 - 🔀 [4.2 OpenShell concepts: Providers and Profiles](#42---introducing-openshell-concepts-providers-and-profiles) — the two building blocks (already set up on your cluster)
 - 📦 [4.3 sandbox](#43---create-a-sandbox-from-the-tools-image-and-use-it) — create a contained sandbox and drive an agent inside it
 - 🛡️ [4.4 prove the sandbox is sealed](#44---prove-the-sandbox-is-sealed) — prove the sandbox blocks writes/egress (→ `403`)
-- 🔎 [4.5 scoped-ops](#45---scoped-ops-an-agent-that-reads-the-cluster-one-command) — open the read-only **scoped-ops** tier (`kubectl`-on-a-leash)
+- 🔎 [4.5 scoped-ops](#45---scoped-ops-an-agent-that-reads-the-cluster) — open the read-only **scoped-ops** tier (`kubectl`-on-a-leash)
 
 ### 🔑 4.1 - Open the terminal and reach the gateway
 
@@ -402,7 +402,7 @@ Clean up when done:
 openshell sandbox delete $XP266_CLUSTER-devbox
 ```
 
-### 🔎 4.5 - Scoped-ops: an agent that *reads* the cluster (one command)
+### 🔎 4.5 - Scoped-ops: an agent that *reads* the cluster
 
 👉 The contained sandbox (4.3) is a pure **compute** box — zero cluster access.  
 👉 The **scoped-ops** tier adds exactly one capability: a **read-only** view of the cluster, so an agent can *diagnose* (never mutate).  
