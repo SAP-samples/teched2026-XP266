@@ -90,8 +90,7 @@ You'll walk the full path by hand:
    </tbody>
    </table>
 
-   > [!TIP]
-   > 👉 **Clear the terminal screen** at any point:
+   > 💡 **Tip** — Clear the terminal screen at any point:
    > - ✅ **`Ctrl+L`** — fastest; clears the visible screen, keeps your prompt + scrollback buffer intact.
    > - ✅ **`clear`** — clears the visible screen (some setups also wipe the scrollback).
    > - ✅ **`clear -x`** — clears the visible screen but explicitly **keeps** the scrollback buffer.
