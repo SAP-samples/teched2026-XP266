@@ -205,6 +205,22 @@ openshell sandbox create --name $XP266_CLUSTER-devbox \
 openshell sandbox list        # wait for PHASE=Ready
 ```
 
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/practice-03.png" width="820" alt="Create a sandbox from the dev-toolbox-bash image with both LLM providers attached; `sandbox list` shows PHASE=Ready" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
 > [!NOTE]
 > The trailing `&` backgrounds the create so it doesn't hold the terminal while the box spins up — **press Enter** after it prints `Created sandbox` to return to your prompt.  
 > The sandbox keeps running `sleep infinity`.
