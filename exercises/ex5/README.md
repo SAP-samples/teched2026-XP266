@@ -49,36 +49,75 @@ You'll walk the full path by hand:
 
 ### 🔑 5.1 - Open the terminal and reach the gateway
 
-The `openshell` CLI is **pre-installed in the embedded web terminal** — nothing to download.  
-The terminal runs *inside* the cluster, so you reach the gateway's in-cluster Service directly (no HTTPS host, no port-forward).  
-The gateway is **OIDC-gated** — it validates your Keycloak token itself.
+> [!NOTE]
+> - ✅ The `openshell` CLI is **pre-installed in the embedded web terminal** — nothing to download.
+> - ✅ The terminal runs *inside* the cluster, so you reach the gateway's in-cluster Service directly (no HTTPS host, no port-forward).
+> - ✅ The gateway is **OIDC-gated** — it validates your Keycloak token itself.
 
-1. In Busola, click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
-2. Set your runtime once, so the commands below are copy-paste (shell names can't have hyphens, hence `XP266_…`):
+1. 👉 Open the **Kyma dashboard** — the Busola of your cluster.
+
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="../ex4/images/practice-01.png" width="820" alt="Open the Kyma dashboard — Busola — of your cluster" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
+
+2. 👉 In Busola, click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
+
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="../ex4/images/practice-02.png" width="820" alt="Open the embedded web terminal — click >_ in the Busola toolbar; the terminal panel shows the full flow (exports, gateway add, device-code URL)" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
+
+3. 👉 Set your runtime once, so the commands below are copy-paste (shell names can't have hyphens, hence `XP266_…`):
    ```bash
    export XP266_CLUSTER=xp266-NNN          # your runtime number, e.g. xp266-001
+   ```
+   ```bash
    export XP266_DOMAIN=<workshop-domain>   # handed out at the start of the session
    ```
-3. Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`):
+4. 👉 Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`):
    ```bash
    OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \
      --oidc-issuer https://keycloak.$XP266_CLUSTER.$XP266_DOMAIN/realms/ateam-isveng \
      --oidc-client-id openshell-oidc
-   #   already registered from a previous day? re-auth instead:
-   #   OPENSHELL_NO_BROWSER=1 openshell gateway login openshell
    ```
+   > 💡 **Tip** — Already registered from a previous day? Re-auth instead:
+   > ```bash
+   > OPENSHELL_NO_BROWSER=1 openshell gateway login openshell
+   > ```
    It prints a verification URL and a short code, then waits:
    ```
    To authenticate, visit:
      https://keycloak.xp266-NNN.<workshop-domain>/realms/ateam-isveng/device?user_code=XXXX-XXXX
    Waiting for authorization...
    ```
-4. Open that URL in your **laptop's** browser and sign in (you must hold the **`openshell-admin`** role). On the **Grant Access to `openshell-oidc`** screen (*User roles · User profile · Email address*), click **Yes**. You'll see **Device Login Successful — you may close this browser window** — close it and return to the terminal, which has unblocked:
+5. 👉 Open that URL in your **laptop's** browser, sign in (you must hold the **`openshell-admin`** role), and the terminal unblocks:
    ```
    ✓ Authenticated via device code
    ```
-
-Now `openshell sandbox list` works from the terminal — continue with 5.2.
+6. 👉 Now `openshell sandbox list` works from the terminal — continue with 5.2.
 
 
 
