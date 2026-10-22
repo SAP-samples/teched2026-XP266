@@ -207,14 +207,17 @@
                 if [ "$GOOSE_MODE" = "live" ]; then
                   echo "## Cluster Health (LIVE investigate) — $SHOOT_NAME" >> "$GITHUB_STEP_SUMMARY"
                   echo "" >> "$GITHUB_STEP_SUMMARY"
+                  # Path B stderr-visibility: tee the live-script stderr to a file + stderr (visible in the GHA step log).
+                  # token_info() etc. went silent on the admin-GHA path when `2>/dev/null` ate it; this surfaces real failures
+                  # without noise on happy paths (the collapsed <details> fires only when the report is short/empty).
                   KEEP_SANDBOX="$KEEP_SANDBOX" NAME="ci-goose-live-${{ github.run_id }}-${{ github.run_attempt }}" \
                     "$GITHUB_WORKSPACE/.github/scripts/ci-goose-via-sandbox-live.sh" >/tmp/goose_report.md 2> >(tee /tmp/goose_live.err >&2) || true
                   cp -f /tmp/goose_report.md /tmp/goose_out.txt   # report-only input for the downstream "open GitHub issue" step (clean grep)
                   cat /tmp/goose_live_header.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true   # provenance (agent/model/proxy) + the prompt used
                   cat /tmp/goose_report.md >> "$GITHUB_STEP_SUMMARY"
-                  # Path B diagnostic: surface stderr (unsilenced) when the live run produced no body — folded under <details>
+                  # On a short/empty report, fold the stderr capture under <details> in the step summary for post-mortem.
                   if [ -s /tmp/goose_live.err ] && [ ! -s /tmp/goose_report.md -o $(wc -c < /tmp/goose_report.md) -lt 500 ]; then
-                    { echo ""; echo "<details><summary>live-goose stderr (Path B — remove once stable)</summary>"; echo ""; echo '```'; cat /tmp/goose_live.err; echo '```'; echo ""; echo "</details>"; } >> "$GITHUB_STEP_SUMMARY"
+                    { echo ""; echo "<details><summary>live-goose stderr</summary>"; echo ""; echo '```'; cat /tmp/goose_live.err; echo '```'; echo ""; echo "</details>"; } >> "$GITHUB_STEP_SUMMARY"
                   fi
                   exit 0
                 fi
