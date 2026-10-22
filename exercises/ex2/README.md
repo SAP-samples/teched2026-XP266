@@ -1,12 +1,11 @@
 # Exercise 2 - Chat with the interactive agent
 
 > [!NOTE]
-> 👉 This exercise is about the **transition** — the **hand-off**:  
-> - ✅ an interactive agent picks up where the autonomous one left off  
-> - ✅ so you can take over the next phase of work, for instance: ask follow-ups, draft fixes, make decisions in natural language.  
->
-> - ✅ The Goose diagnostic jobs run **autonomously**.  
-> - ✅ The other half of the story is an **interactive** AI agent — running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy.  
+> 👉 This exercise is about the **transition** — the **hand-off**:
+> - ✅ an interactive agent picks up where the autonomous one left off
+> - ✅ so you can take over the next phase of work, for instance: ask follow-ups, draft fixes, make decisions in natural language.
+> - ✅ The Goose diagnostic jobs run **autonomously**.
+> - ✅ The other half of the story is an **interactive** AI agent — running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy.
 
 ```
 You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SAP AI Core (Claude Opus by default)
