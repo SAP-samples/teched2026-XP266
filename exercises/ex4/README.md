@@ -427,10 +427,8 @@ kubectl auth can-i get secrets --as=system:serviceaccount:openshell:openshell-sa
 ```
 
 So the sandbox can reach **only** `litellm-proxy…:4001` (→ SAP AI Core) — the apiserver, other workloads, and the public
-internet are all **refused** by the egress broker.  
-That containment is **native to the stock OpenShell chart** — no NetworkPolicy required — a
-stronger boundary than the RBAC-fenced Busola terminal, which is still an ordinary pod on the
-cluster network.
+internet are all **refused**.  
+That containment is **built into the stock OpenShell chart** — the chart ships its own **NetworkPolicies** (enforced by the cluster's CNI — Cilium / Calico on the teched fleet) + a **runtime egress supervisor** that intercepts egress at L7 — a stronger boundary than the RBAC-fenced Busola terminal, which is still an ordinary pod on the cluster network.
 
 > [!NOTE]
 > **Where is this containment implemented?** Two layers working together:
