@@ -427,7 +427,15 @@ So the sandbox can reach **only** `litellm-proxy…:4001` (→ SAP AI Core) — 
 internet are all **refused** by the egress broker.  
 That containment is **native to the stock OpenShell chart** — no NetworkPolicy required — a
 stronger boundary than the RBAC-fenced Busola terminal, which is still an ordinary pod on the
-cluster network.  
+cluster network.
+
+> [!NOTE]
+> **Where is this containment implemented?** Two layers working together:
+> - ✅ **Upstream Kubernetes apiserver** — the `--as=…` flag triggers the apiserver's **impersonation authorizer** on every request. Before letting it through, the apiserver checks whether the caller has an explicit `impersonate` verb grant on `serviceaccounts/openshell-sandbox` in ns `openshell`. If not → `Forbidden`. This is baked into every kube-apiserver (nothing we add).
+> - ✅ **Our Busola-terminal RBAC design** — in `modules/k8s/manifests/kro/busola/rgd.yaml`, the `busola-terminal` ClusterRole uses `aggregationRule` with the stock `rbac.authorization.k8s.io/aggregate-to-view=true` label. The view tier is `get`/`list`/`watch` only — **it does not contain `impersonate`**. A supplemental `busola-terminal-writes` ClusterRole adds narrow ConfigMap mutations, also no `impersonate`.
+>
+> Net: the apiserver enforces the check; our RGD controls which verbs the Busola-terminal SA gets, and we deliberately exclude `impersonate` by using the view-aggregated role. Defense in depth — bypassing one layer still leaves the other.
+
 Clean up when done:
 
 ```bash
