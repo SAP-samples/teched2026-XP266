@@ -331,7 +331,9 @@ claude -p "In one line, what is Kyma?"
 </tbody>
 </table>
 
-> [!TIP]
+Type **`exit`** to return to the terminal — the sandbox keeps running (re-enter any time with `openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash`).
+
+> [!NOTE]
 > 👉 **Why does the block above copy the key into `ANTHROPIC_AUTH_TOKEN` and `unset` `ANTHROPIC_API_KEY`?**
 >
 > - ✅ With `ANTHROPIC_API_KEY` set, Claude Code sends it as an `x-api-key` header, which triggers an interactive *"Detected a custom API key — use it?"* prompt — so `claude -p` hangs on a headless run.
@@ -339,13 +341,11 @@ claude -p "In one line, what is Kyma?"
 > - ✅ Don't set both variables at once — Claude Code warns *"Both … set · auth may not work."*
 > - ✅ The supervisor resolves the sentinel in either header, so both reach SAP AI Core; only Bearer is prompt-free.
 
-> [!NOTE]
+> [!TIP]
 > 👉 It's a **reasoning box, not an ops shell**:
 >
 > - ✅ `kubectl` / `kyma` / `k9s` are installed but **inert** (no cluster token, no route to the API server — you'll prove that in the next step).
 > - ✅ For an agent whose `kubectl` / `kyma` actually reach the cluster, use the Busola web terminal; the sandbox trades cluster access for hard isolation.
-
-Type **`exit`** to return to the terminal — the sandbox keeps running (re-enter any time with `openshell sandbox exec --name $XP266_CLUSTER-devbox -- bash`).
 
 ### 4.4 - See the guardrail hold
 
