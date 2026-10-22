@@ -318,10 +318,12 @@ Clean up when done: `openshell sandbox delete agents`
 
 ## Summary
 
-You added an **external, keyed** LLM provider to the contained-sandbox model, ran three terminal coding
-agents (opencode, Pi, Qwen Code) against free OpenRouter models, and proved the sandbox still can't reach anything
-but the one allow-listed endpoint — with the real key staying in the gateway.  
-That's the OpenShell provider model
-generalizing from "the in-cluster proxy" to "any governed external endpoint."  
+You added an **external** LLM provider to the contained-sandbox model,
+
+- ran three terminal coding agents (opencode, Pi, Qwen Code) against free OpenRouter models,
+- and proved the sandbox still can't reach anything but the one allow-listed endpoint,
+- while the real key stays in the gateway.
+
+That's the OpenShell provider model generalizing from "the in-cluster proxy" to "any governed external endpoint."  
 Continue to - [Exercise 6 - Observability and spend](../ex6/README.md)  
 Back to - [Overview](../../README.md)
