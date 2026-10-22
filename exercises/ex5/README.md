@@ -193,7 +193,7 @@ flowchart LR
 
 - ✅ OpenRouter puts many providers behind one endpoint, and its `:free` tier includes models from NVIDIA's **Nemotron** family.
 - ✅ Because the agents call tools, the models must be **chat/completion models with tool-calling**.
-- ✅ Otherwise, embedding/rerank models (ids with `-embed-`/`-rerank-`) won't work for this purpose.
+- ✅ Other, embedding/rerank models (ids with `-embed-`/`-rerank-`) won't work for this purpose.
 - ✅ Two known-good free picks:
 
 | Model | When to use it |
