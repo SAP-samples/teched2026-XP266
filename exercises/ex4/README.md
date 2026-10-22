@@ -7,12 +7,7 @@
 
 👉 This exercise is an **OpenShell practice** — run it either way:
 
-**Contents**
-
-- ⚡ **4a** *(easy path)* — [Run it as a GitHub Action](#4a-easy-path--run-it-as-a-github-action)
-- 🛠️ **4b** *(optional)* — [Practice the OpenShell CLI in the in-cluster web terminal](#4b-practice-the-openshell-cli-in-the-in-cluster-web-terminal)
-
-## 4a. Easy path — run it as a GitHub Action
+## ⚡ 4a. Easy path — run it as a GitHub Action
 
 To see **Goose running inside a contained OpenShell sandbox** on your cluster — the production path this exercise builds by hand — **without a terminal**, dispatch one GitHub Actions workflow from your fork:
 
@@ -24,7 +19,7 @@ Prefer the hands-on CLI? Continue below.
 
 ---
 
-## 4b. Practice the OpenShell CLI in the in-cluster web terminal
+## 🛠️ 4b. Practice the OpenShell CLI in the in-cluster web terminal
 
 You'll walk the full path by hand:
 
