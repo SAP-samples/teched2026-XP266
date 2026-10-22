@@ -493,8 +493,10 @@ print("\n".join(
 claude -p 'Use kubectl to find unhealthy pods and explain why. Run: kubectl get pods -A, then kubectl describe pod / kubectl logs on anything not Running or Completed, and summarize the root causes (CrashLoopBackOff, ImagePullBackOff, OOMKilled, failing probes). Be concise.'
 ```
 
-Type **`exit`** to leave — the sandbox keeps running (re-enter any time with `openshell sandbox exec --name <name> -- bash`);
-`openshell sandbox delete <name>` when you're done.
+👉 Type **`exit`** to leave the sandbox.  
+👉 The sandbox keeps running.  
+👉 Re-enter any time with `openshell sandbox exec --name <name> -- bash`.  
+👉 Delete the sandbox with `openshell sandbox delete <name>` when you're done.
 
 #### Why it's still contained — just a little wider
 - **Network (L7 policy):** exactly two egresses are allowed — the **apiserver** (read-only) and the **LiteLLM proxy**
