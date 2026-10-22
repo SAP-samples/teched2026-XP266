@@ -1,7 +1,10 @@
 # Exercise 2 - Chat with the interactive agent
 
 > [!NOTE]
-> 👉 This exercise is about the **transition**: an interactive agent picks up where the autonomous agent left off, so you can take over the next phase of work — ask follow-ups, draft fixes, make decisions in plain language.
+> 👉 This exercise is about the **transition** — the **hand-off**:
+>
+> - an interactive agent picks up where the autonomous agent left off,
+> - so you can take over the next phase of work, for instance: ask follow-ups, draft fixes, make decisions in natural language.
 >
 > - ✅ The Goose diagnostic jobs run **autonomously**.
 > - ✅ The other half of the story is an **interactive** AI agent — a chat UI (for instance **OpenClaw**, or a similar chat front-end) running in your cluster as a sandboxed workload and, like everything else, routed to SAP AI Core through the LiteLLM proxy.
@@ -146,5 +149,9 @@ The agent reasons over the diagnostic findings and gives you a conversational, f
 | 🧠 **Model tier** | `reasoning-fast` (Sonnet) | `reasoning-hard` (Opus) |
 | 🔀 **Both route through** | **LiteLLM proxy → SAP AI Core** | **LiteLLM proxy → SAP AI Core** |
 
-You chatted with the interactive agent, saw it route to SAP AI Core (Claude Opus) via the same LiteLLM proxy, and used it to interrogate the diagnostic findings the autonomous jobs produced — the interactive half of the "autonomous sweep + human follow-up" pattern.  
+💬 You chatted with the interactive agent,
+
+- 🔀 saw it route to SAP AI Core (Claude Opus) via the same LiteLLM proxy, and
+- 🤝 used it to interrogate the diagnostic findings the autonomous jobs produced — the "autonomous sweep + human follow-up" pattern.
+
 Continue to - [Exercise 3 - Explore OpenShell sandboxes with JupyterHub notebooks](../ex3/README.md)
