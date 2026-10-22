@@ -9,7 +9,7 @@
 
 ## ⚡ 4a. Easy path — run it as a GitHub Action
 
-To see **Goose running inside a contained OpenShell sandbox** on your cluster — the production path this exercise builds by hand — **without a terminal**, dispatch one GitHub Actions workflow from your fork:
+To see **Goose running inside a contained OpenShell sandbox** on your cluster — the production path this exercise builds by hand — **without a terminal**, dispatch one GitHub Actions workflow from your fork. It provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report.
 
 <!-- MAINTAINER NOTE: the `all-fleets-teched-student` workflow link below MUST stay a RELATIVE path
      (`../../../../actions/workflows/…`). GitHub resolves it against the viewer's current fork URL,
@@ -19,9 +19,9 @@ To see **Goose running inside a contained OpenShell sandbox** on your cluster �
      Same pattern used in last year's teched README, e.g.
      [k8s-data-context-student](../../../../actions/workflows/k8s-data-context-student.yml). -->
 
-| Run this workflow | Workflow inputs | What it does |
-|---|---|---|
-| [**`all-fleets-teched-student`**](../../../../actions/workflows/all-fleets-teched-student.yaml) | 👉 Pick<br>• **`student_cluster`** — type **your** cluster (e.g. `xp266-003`); overwrite the default `xp266-NNN` placeholder<br>• **`goose_mode`** — `snapshot` (fast, interprets a `kyma diagnose` snapshot) or `live` (richest: goose runs live read-only `kubectl` inside the sandbox)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). | Provisions a **contained OpenShell sandbox** on your cluster and runs **Goose** inside it to produce a Cluster Health report. |
+| Run this workflow | Workflow inputs |
+|---|---|
+| [**`all-fleets-teched-student`**](../../../../actions/workflows/all-fleets-teched-student.yaml) | 👉 Pick<br>• **`student_cluster`** — type **your** cluster (e.g. `xp266-003`); overwrite the default `xp266-NNN` placeholder<br>• **`goose_mode`** — `snapshot` (fast, interprets a `kyma diagnose` snapshot) or `live` (richest: goose runs live read-only `kubectl` inside the sandbox)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). |
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
