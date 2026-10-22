@@ -217,10 +217,10 @@ Like **3.2.5**, but instead of gathering a live snapshot, this feeds the agent t
 
 🚀 You signed in to JupyterHub and, from Python:
 
-- 📦 drove the full **OpenShell sandbox lifecycle** — create → exec → list → delete,
-- 🪿 put an **agent inside a sandbox** and watched it reason behind the guardrails:
-  - 🔎 live read-only `kubectl`,
-  - 📸 a static snapshot,
-  - 📄 a report-only triage.
+📦 drove the full **OpenShell sandbox lifecycle** — create → exec → list → delete,
+🪿 put an **agent inside a sandbox** and watched it reason behind the guardrails:
+- 🔎 live read-only `kubectl`,
+- 📸 a static snapshot,
+- 📄 a report-only triage.
 
 Continue to - [Exercise 4 - Your sandboxed agent: OpenShell practice with Kyma](../ex4/README.md)
