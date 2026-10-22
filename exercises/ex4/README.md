@@ -489,6 +489,8 @@ print("\n".join(
 ```bash
 # claude — give it an IMPERATIVE, tool-directed prompt. A bare question ('which pods are unhealthy?') makes Claude
 # answer conversationally and ask for context; telling it to RUN the commands makes it act like goose:
+```
+```bash
 claude -p 'Use kubectl to find unhealthy pods and explain why. Run: kubectl get pods -A, then kubectl describe pod / kubectl logs on anything not Running or Completed, and summarize the root causes (CrashLoopBackOff, ImagePullBackOff, OOMKilled, failing probes). Be concise.'
 ```
 
