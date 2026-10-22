@@ -418,7 +418,9 @@ openshell sandbox delete $XP266_CLUSTER-devbox
 > 1. **A `--policy` with a `k8s_api` block** that opens the network path to the apiserver (`kubernetes.default.svc:443`, **read-only**, only for the `kubectl`/`kyma` binaries) — on top of the LLM egress the providers already give. The contained box has no such path, so its §4.4 apiserver probe is refused.
 > 2. **A read-only identity** — `scoped-ops` mints a short-lived `sandbox-viewer` SA token (`get`/`list`/`watch`, **secrets excluded**) and injects a kubeconfig. Network access alone isn't enough; the apiserver still needs a credential.
 >
-> Together: `kubectl get` / `kyma alpha diagnose` work, while writes and secret-reads return `403`. The LLM keys still never enter the box (both agents stay sentinel-contained); the one real credential injected is that minimal read-only kubectl token.
+> Together:
+> - ✅ `kubectl get` / `kyma alpha diagnose` work, while writes and secret-reads return `403`.
+> - ✅ The LLM keys still never enter the box (both agents stay sentinel-contained); the one real credential injected is that minimal read-only kubectl token.
 
 ```bash
 scoped-ops                     # or give it a name:  scoped-ops $XP266_CLUSTER-devbox
