@@ -99,14 +99,7 @@ You'll walk the full path by hand:
    > - ✅ **`reset`** — full terminal re-init; use if the terminal freezes, shows broken escape codes, or is littered with binary artifacts.
    > - ✅ **`printf "\033c"`** — hard reset: wipes the screen AND flushes scrollback (nothing to scroll back to).
 
-3. 👉 Set your runtime once, so the commands below are copy-paste (shell names can't have hyphens, hence `XP266_…`):
-   ```bash
-   export XP266_CLUSTER=xp266-NNN          # your runtime number, e.g. xp266-001
-   ```
-   ```bash
-   export XP266_DOMAIN=<workshop-domain>   # handed out at the start of the session
-   ```
-4. 👉 Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`):
+3. 👉 Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`). The `$XP266_CLUSTER` + `$XP266_DOMAIN` env vars are **already set** in the embedded terminal (baked into the image at build time — `echo $XP266_CLUSTER $XP266_DOMAIN` to confirm):
    ```bash
    OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \
      --oidc-issuer https://keycloak.$XP266_CLUSTER.$XP266_DOMAIN/realms/ateam-isveng \
@@ -122,11 +115,11 @@ You'll walk the full path by hand:
      https://keycloak.xp266-NNN.<workshop-domain>/realms/ateam-isveng/device?user_code=XXXX-XXXX
    Waiting for authorization...
    ```
-5. 👉 Open that URL in your **laptop's** browser, sign in (you must hold the **`openshell-admin`** role), and the terminal unblocks:
+4. 👉 Open that URL in your **laptop's** browser, sign in (you must hold the **`openshell-admin`** role), and the terminal unblocks:
    ```
    ✓ Authenticated via device code
    ```
-6. 👉 Now `openshell sandbox list` works from the terminal — continue with 5.2.
+5. 👉 Now `openshell sandbox list` works from the terminal — continue with 5.2.
 
 
 
