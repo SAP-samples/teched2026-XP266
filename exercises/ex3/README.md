@@ -10,8 +10,8 @@
 
 **Contents**
 
-- 🚀 [Sign into JupyterHub](#exercise-31---sign-into-jupyterhub)
-- 📒 [OpenShell notebooks](#exercise-32---openshell-notebooks)
+- 🚀 [Sign into JupyterHub](#-exercise-31---sign-into-jupyterhub)
+- 📒 [OpenShell notebooks](#-exercise-32---openshell-notebooks)
 
 
 ## 🚀 Exercise 3.1 - Sign into JupyterHub
