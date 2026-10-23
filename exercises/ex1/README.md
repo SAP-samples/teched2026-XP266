@@ -14,10 +14,10 @@
 **Contents**
 
 - 🧰 [The Diagnostic Toolbox portal](#-the-diagnostic-toolbox-portal)
-- 📋 [Read the latest reports](#exercise-11---read-the-latest-reports)
-- ▶️ [Trigger a diagnostic run](#exercise-12---trigger-a-diagnostic-run)
-- ✍️ [Write your own prompt](#exercise-13---write-your-own-prompt)
-- 🛡️ [The guardrails](#exercise-14---the-guardrails-read-reason-but-dont-touch)
+- 📋 [Read the latest reports](#-exercise-11---read-the-latest-reports)
+- ▶️ [Trigger a diagnostic run](#-exercise-12---trigger-a-diagnostic-run)
+- ✍️ [Write your own prompt](#-exercise-13---write-your-own-prompt)
+- 🛡️ [The guardrails](#-exercise-14---the-guardrails-read-reason-but-dont-touch)
   - 🔧 [Prove it yourself](#-prove-it-yourself-optional--go-deeper)
 
 ## 🧰 The Diagnostic Toolbox portal
