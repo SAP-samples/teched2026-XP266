@@ -124,21 +124,23 @@ You'll walk the full path by hand:
      --oidc-client-id openshell-oidc
    ```
 
-   > 💡 **Tip** — Already registered from a previous day? Re-auth instead:
-   > ```bash
-   > OPENSHELL_NO_BROWSER=1 openshell gateway login
-   > ```
    It prints a verification URL and a short code, then waits:
    ```
    To authenticate, visit:
      https://keycloak.xp266-NNN.<workshop-domain>/realms/ateam-isveng/device?user_code=XXXX-XXXX
    Waiting for authorization...
    ```
-4. 👉 Open that URL in your **laptop's** browser, sign in (you must hold the **`openshell-admin`** role), and the terminal unblocks:
+   
+4. 👉 Open that URL in your **laptop's** browser, sign in and the terminal prints:  
    ```
    ✓ Authenticated via device code
    ```
 5. 👉 Now `openshell sandbox list` works from the terminal — continue with 4.2.
+
+> 💡 **Tip** — Already registered from a previous run? Re-auth instead:
+> ```bash
+> OPENSHELL_NO_BROWSER=1 openshell gateway login
+> ```
 
 ### 🔀 4.2 - Introducing OpenShell concepts: Providers and Profiles
 
