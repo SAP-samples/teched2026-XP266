@@ -99,7 +99,10 @@ You'll walk the full path by hand:
    > - ✅ **`reset`** — full terminal re-init; use if the terminal freezes, shows broken escape codes, or is littered with binary artifacts.
    > - ✅ **`printf "\033c"`** — hard reset: wipes the screen AND flushes scrollback (nothing to scroll back to).
 
-3. 👉 Register the gateway. The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`). The `$XP266_CLUSTER` + `$XP266_DOMAIN` env vars are **already set** in the embedded terminal (baked into the image at build time — `echo $XP266_CLUSTER $XP266_DOMAIN` to confirm):
+3. 👉 Register the gateway.
+   - The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`).
+   - The `$XP266_CLUSTER` + `$XP266_DOMAIN` env vars are **already set** in the web terminal.
+   - `echo $XP266_CLUSTER $XP266_DOMAIN` to confirm.
    ```bash
    OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \
      --oidc-issuer https://keycloak.$XP266_CLUSTER.$XP266_DOMAIN/realms/ateam-isveng \
