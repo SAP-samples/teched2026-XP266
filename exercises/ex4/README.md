@@ -437,9 +437,10 @@ With an admin kubeconfig you can also confirm the sandbox's service account can'
 kubectl auth can-i get secrets --as=system:serviceaccount:openshell:openshell-sandbox -n openshell
 ```
 
-So the sandbox can reach **only** `litellm-proxy…:4001` (→ SAP AI Core) — the apiserver, other workloads, and the public
-internet are all **refused**.  
-That containment is **built into the stock OpenShell chart** — the chart ships its own **NetworkPolicies** (enforced by the cluster's CNI — Cilium / Calico on the teched fleet) + a **runtime egress supervisor** that intercepts egress at L7 — a stronger boundary than the RBAC-fenced Busola terminal, which is still an ordinary pod on the cluster network.
+> [!NOTE]
+> So the sandbox can reach **only** `litellm-proxy…:4001` (→ SAP AI Core) — the apiserver, other workloads, and the public
+> internet are all **refused**.
+> That containment is **built into the stock OpenShell chart** — the chart ships its own **NetworkPolicies** (enforced by the cluster's CNI — Cilium / Calico on the teched fleet) + a **runtime egress supervisor** that intercepts egress at L7 — a stronger boundary than the RBAC-fenced Busola terminal, which is still an ordinary pod on the cluster network.
 
 👉 Clean up when done:
 
