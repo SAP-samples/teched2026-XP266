@@ -224,6 +224,6 @@ flowchart TB
 > | [📊 **ex6** — Observability & spend](../ex6/) | **~10 min** | two clicks; 6.3 telemetry is optional |
 >
 > **Finished early?** Dive into the ✅ *optional* / collapsible sections (ex1.4 "Prove it yourself", ex6 "math behind the dashboards", ex6.3 telemetry path, extra notebooks in ex3).  
-> **Running late?** Trim ex3 to one notebook, skip ex4b, and defer ex6.3 — ex1 + ex2 + ex5 + the ex6 click-through are the critical path.
+> **Running late?** Trim ex3 to one notebook, skip ex5, and defer ex6.3 — **ex1 + ex2 + ex4 are the critical path**.
 
 Continue to - [Exercise 1 - Trigger and shape the Cluster Health Reports](../ex1/README.md)
