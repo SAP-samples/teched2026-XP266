@@ -19,9 +19,9 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
 
 **Contents**
 
-- 🩺 [The FleetStatus card](#exercise-61---the-fleetstatus-card)
-- 💰 [Open the spend dashboards](#exercise-62---open-the-spend-dashboards)
-- 📡 [The telemetry path (optional)](#exercise-63---the-telemetry-path-optional)
+- 🩺 [The FleetStatus card](#-exercise-61---the-fleetstatus-card)
+- 💰 [Open the spend dashboards](#-exercise-62---open-the-spend-dashboards)
+- 📡 [The telemetry path (optional)](#-exercise-63---the-telemetry-path-optional)
 
 
 ## 🩺 Exercise 6.1 - The FleetStatus card
