@@ -236,7 +236,6 @@ openshell sandbox create --name $XP266_CLUSTER-devbox \
   --from localhost:32137/dev-toolbox-bash:latest \
   --provider litellm --provider litellm-openai --detach -- sleep infinity &
 # ^ backgrounded with & — press Enter after it prints "Created sandbox" to get your prompt back
-openshell sandbox list        # wait for PHASE=Ready
 ```
 👉 Press Enter after it prints "Created sandbox" to get your prompt back  
 👉 Wait for `PHASE=Ready`:
@@ -270,16 +269,15 @@ openshell sandbox list
 > The box is **contained by default**: its only egress is the providers' endpoint (`litellm-proxy:4001`) — the apiserver, other pods, and the internet are all denied (you'll prove it in 4.4).
 
 > [!TIP]
-> **A different option — the hardened Garden-Linux image.** Separately from `dev-toolbox-bash` (used above), your
-> cluster also carries **`ops-toolbelt-bash`**: the agent kit (goose + Claude Code + `openshell` + `kubectl`/`kyma`/`k9s`)
-> built on **SAP Garden Linux** — a security-hardened, minimal distribution (the same userland Gardener nodes run). It is
-> its own image; run that option by pointing `--from` at it:
+> **Optionally — you can use a security-hardened Garden-Linux image as well.** 
+
 > ```bash
-> openshell sandbox create --name $XP266_CLUSTER-devbox \
+> openshell sandbox create --name $XP266_CLUSTER-devbox-ops \
 >   --from localhost:32137/ops-toolbelt-bash:latest \
 >   --provider litellm --provider litellm-openai --detach -- sleep infinity &
 > ```
-> `cat /etc/os-release` inside shows `Garden Linux 2150.9.0`. The sandbox flow is the same; what differs is the hardened base.
+> `cat /etc/os-release` inside shows `Garden Linux 2150.9.0`. 
+> The sandbox flow is the same; what differs is the hardened base.
 
 👉 **Prove it reasons through SAP AI Core — two options below.**
 
