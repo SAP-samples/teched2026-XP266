@@ -12,9 +12,9 @@ You will not deploy anything — everything is in place; you are here to underst
 
 **Contents**
 
-- 🧭 [Sign in to Student's Portal and find your cluster](#exercise-01---sign-in-to-students-portal-and-find-your-cluster)
-- 📦 [See what is already deployed](#exercise-02---see-what-is-already-deployed-optional)
-- 🗺️ [The TechEd 2026 landscape at a glance](#exercise-03---the-teched-2026-landscape-at-a-glance-optional)
+- 🧭 [Sign in to Student's Portal and find your cluster](#-exercise-01---sign-in-to-students-portal-and-find-your-cluster)
+- 📦 [See what is already deployed](#-exercise-02---see-what-is-already-deployed-optional)
+- 🗺️ [The TechEd 2026 landscape at a glance](#️-exercise-03---the-teched-2026-landscape-at-a-glance-optional)
 
 
 ## 🧭 Exercise 0.1 - Sign in to Student's Portal and find your cluster
