@@ -147,6 +147,7 @@ openshell sandbox create --name agents \
 # ^ backgrounded with & — press Enter after it prints "Created sandbox" to get your prompt back
 ```
 
+👉 Press Enter after it prints "Created sandbox" to get your prompt back  
 👉 Wait for `PHASE=Ready`:
 ```bash
 openshell sandbox list

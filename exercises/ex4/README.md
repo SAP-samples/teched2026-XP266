@@ -238,6 +238,13 @@ openshell sandbox create --name $XP266_CLUSTER-devbox \
 # ^ backgrounded with & — press Enter after it prints "Created sandbox" to get your prompt back
 openshell sandbox list        # wait for PHASE=Ready
 ```
+👉 Press Enter after it prints "Created sandbox" to get your prompt back  
+👉 Wait for `PHASE=Ready`:
+
+```bash
+openshell sandbox list 
+```
+
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
