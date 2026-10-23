@@ -309,13 +309,13 @@ kubectl apply --dry-run=server -f weather-rgd.yaml   # the API server + KRO reje
 > resourcegraphdefinitions.kro.run is forbidden:
 >   User "system:serviceaccount:busola-terminal:default" cannot create ...
 > ```
-> That's the terminal pod's ClusterRole — `get`/`list`/`watch *` + `configmaps:CRUD` + `pods/exec:create`, **no `create` on anything else** (same role we inspected in [Exercise 4.4 — Probe C](../ex4/README.md#probe-c--the-real-llm-key-never-enters-the-sandbox-only-a-sentinel-does)). Applying an RGD from the web terminal is a dead end **by design**.
+> Applying an RGD from the web terminal is a dead end **by design**.
 >
-> 👉 **Use the Busola browser instead.** The toolbar has an **Upload YAML** button (top-right). Click it, paste or upload the corrected `weather-rgd.yaml`, and apply — Busola runs the apply as **your** signed-in user, not the terminal pod's narrow SA, so the RGD + instance land cleanly.
+> 👉 **Use the Kyma dashboard instead.** The toolbar has an **Upload YAML** button (top-right). Click it, paste or upload the corrected `weather-rgd.yaml`, and apply — Busola runs the apply as **your** signed-in user, not the terminal pod's narrow SA, so the RGD + instance land cleanly.
 
 The chat agent walks you through **KRO's actual simple-schema rules** AND emits a corrected, deployable YAML — iterate from there. That round-trip (draft → chat review → `--dry-run=server` → fix → apply) **is** the skill this exercise is teaching.
 
-Clean up when done: `openshell sandbox delete agents`
+👉 Clean up when done: `openshell sandbox delete agents`
 
 ## Summary
 
