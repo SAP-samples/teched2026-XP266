@@ -279,7 +279,9 @@ cluster-admin:    no
 ```
 
 > [!NOTE]
-> This is **your** web-terminal identity (your logged-in Kyma kubeconfig) — intentionally broader than the sandbox. The **sandboxed Goose run** uses a different, more restricted token (`sandbox-viewer`: `get`/`list`/`watch` only, **`secrets` excluded**, no mutations). That's the guardrail that matters — not what *you* can do, but what the *agent* can do.
+> This is **your** web-terminal identity — intentionally broader than the sandbox.
+> The **sandboxed Goose run** uses a different, more restricted token (`sandbox-viewer`: `get`/`list`/`watch` only, **`secrets` excluded**, no mutations).
+> That's the guardrail that matters — not what *you* can do, but what the *agent* can do.
 
 > [!IMPORTANT]
 > **Hand-off — remember this for later.** A run's output is a *shared artifact*: the `ClusterHealthReport` / `cluster-audit` custom resources, plus the detailed Goose transcripts.  
