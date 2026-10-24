@@ -1,0 +1,20 @@
+name: Delete older workflows runs
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  delete-old-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: yanovation/delete-old-actions@v1
+        with:
+          token: ${{ secrets.CICD_TOKEN_FOR_TF_MODULES }}
+          days-ago: 0
+          #keep-latest: 10
+          #dry-run: true
