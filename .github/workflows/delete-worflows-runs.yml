@@ -34,3 +34,23 @@ jobs:
           days-ago: ${{ inputs.days-ago }}
           keep-latest: ${{ inputs.keep-latest }}
           dry-run: ${{ inputs.dry-run }}
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## 🧹 Delete older workflow runs"
+            echo ""
+            echo "| Setting | Value |"
+            echo "|---|---|"
+            echo "| Repository | \`${{ github.repository }}\` |"
+            echo "| Days ago | \`${{ inputs.days-ago }}\` |"
+            echo "| Keep latest | \`${{ inputs.keep-latest }}\` |"
+            echo "| Dry run | \`${{ inputs.dry-run }}\` |"
+            echo "| Outcome | \`${{ job.status }}\` |"
+            echo ""
+            if [ "${{ inputs.dry-run }}" = "true" ]; then
+              echo "> ℹ️ **Dry-run mode** — nothing was deleted. See the \`yanovian/prune-old-actions\` step log for the list of runs that *would* have been pruned."
+            else
+              echo "> 🗑️ **Live mode** — see the \`yanovian/prune-old-actions\` step log for the number of runs actually deleted."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
