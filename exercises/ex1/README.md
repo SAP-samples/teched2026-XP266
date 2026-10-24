@@ -187,20 +187,25 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 
    Your prompt is saved to your own **adhoc prompt** store under an **auto-generated name** and used for this run — it then appears in the dropdown so you can **reuse** it, and the **delete** button clears it. The shipped **v1/v2/v3 recipes are read-only** in the UI; your custom prompts live alongside them without changing the defaults, so you can experiment safely.
 
-2. 👉 Paste your **prompt text**. For example:
+2. 👉 Paste your **prompt text**. For example — a concise variant that forces prettified output and suppresses the auto-footer:
 
    ```text
    You are a Kubernetes SRE. Using read-only kubectl, review this cluster's workloads and
    produce a prioritized markdown report: the top 3 risks (each with concrete evidence —
    resource names, counts, event messages) and a specific remediation for each. Finish with
    a one-line overall verdict.
+   Output ONLY the report. No preamble. Be concise. Do NOT write a footer, closing line, or
+   any "Report generated / Cluster / Region / Kubernetes / Provider" block — END immediately
+   after the last section; a footer is appended automatically afterwards.
+   Prettify the markdown — icons, colors etc.
    ```
 
-   Or a tighter variant that forces concise, prettified output and suppresses the auto-footer:
+   Or a Kyma-aware variant that also pulls in the Kyma CLI (`kyma modules`, `kyma diagnostics`) for module-level signal on top of plain `kubectl`:
 
    ```text
-   You are a Kubernetes SRE. Using read-only kubectl, review this cluster's workloads and
-   produce a prioritized markdown report: the top 3 risks (each with concrete evidence —
+   You are a Kubernetes SRE. Using read-only kubectl and kyma cli diagnostics and modules commands,
+   review this cluster's workloads and modules.
+   Produce a prioritized markdown report: the top 3 risks (each with concrete evidence —
    resource names, counts, event messages) and a specific remediation for each. Finish with
    a one-line overall verdict.
    Output ONLY the report. No preamble. Be concise. Do NOT write a footer, closing line, or
