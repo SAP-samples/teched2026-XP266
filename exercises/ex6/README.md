@@ -97,21 +97,21 @@ The dashboards are one click away from the student's portal.
    - **LiteLLM Overview** — request volume, token throughput, and per-model latency
 
    The **LiteLLM Overview — today by model** dashboard looks like this — a headline **Total spend today** gauge, a cluster filter (pre-scoped to your `xp266-NNN`), and three bar charts attributing today's **spend / calls / tokens** per model:
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/06_02_0010.png" width="820" alt="LiteLLM Overview — today by model" />
-  </a>
-</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="images/06_02_0010.png" width="820" alt="LiteLLM Overview — today by model" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
 
 2. Read the split. You'll see spend attributed by **API key / caller** and by **model**:
 
