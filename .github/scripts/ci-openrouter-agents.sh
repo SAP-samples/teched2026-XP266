@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# ci-openrouter-agents.sh — run the ex10 terminal-coding agents (opencode / Pi / Qwen Code) against public OpenRouter,
+# ci-openrouter-agents.sh — run the nvidia terminal-coding agents (opencode / Pi / Qwen Code) against public OpenRouter,
 # KEYLESS, inside a CONTAINED OpenShell sandbox, HEADLESS (client-credentials) — for a GitHub Actions student workflow.
 # The run renders a clear verdict table + the execution flow + a containment proof + each agent's completion to
 # $GITHUB_STEP_SUMMARY (students have no local tooling — the summary IS the product they read).
 #
-# DESIGN GOAL: a 100%-GREEN run on any ex10 shoot. Infra steps fail loud; per-agent outcomes NEVER fail the job — they
+# DESIGN GOAL: a 100%-GREEN run on any nvidia shoot. Infra steps fail loud; per-agent outcomes NEVER fail the job — they
 # become ✅/⚠️ verdicts in the summary. So "did the workflow succeed?" and "what did each agent say?" are both obvious.
 #
 # OpenRouter twin of ci-goose-via-sandbox.sh; headless CI counterpart of gardener/openrouter-agent-sandbox.sh (which
@@ -34,10 +34,10 @@ flush() { cat "$REPORT" >> "$SUMMARY" 2>/dev/null || cat "$REPORT"; cp -f "$REPO
 
 command -v kubectl >/dev/null || { echo "kubectl required (cluster-admin on an OpenShell shoot)" >&2; exit 2; }
 
-# ── precondition: OpenShell present? (keyless-only — a non-ex10 shoot is a clean, GREEN skip) ──
+# ── precondition: OpenShell present? (keyless-only — a non-nvidia shoot is a clean, GREEN skip) ──
 if ! kubectl -n openshell get secret openshell-admin-sa >/dev/null 2>&1; then
-  md "## ex10 — OpenRouter agents"; md ""
-  md "> ⏭️ **Skipped (not an ex10 shoot)** — OpenShell isn't deployed here (no \`openshell-admin-sa\` secret)."
+  md "## NVIDIA — OpenRouter agents"; md ""
+  md "> ⏭️ **Skipped (not an nvidia shoot)** — OpenShell isn't deployed here (no \`openshell-admin-sa\` secret)."
   flush; exit 0
 fi
 
@@ -98,7 +98,7 @@ if ! "$OS" sandbox create --name "$NAME" --from "$IMAGE" \
      --env OPENAI_BASE_URL=https://openrouter.ai/api/v1 \
      --env OPENAI_MODEL="$MODEL" \
      --policy "$HOME/pol.yaml" --detach -- sleep infinity >"$HOME/create.log" 2>&1; then
-  md "## ex10 — OpenRouter agents · \`$SHOOT\`"; md ""
+  md "## NVIDIA — OpenRouter agents · \`$SHOOT\`"; md ""
   md "> ❌ **\`sandbox create\` failed** — is the \`openrouter\` provider on this gateway and the agents image built?"
   md ""; md '```'; sed 's/^/   /' "$HOME/create.log" | strip >> "$REPORT"; md '```'
   flush; exit 1
@@ -127,7 +127,7 @@ run_agent() {
   esac
   ver=$("$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc "$a --version 2>/dev/null | head -1" </dev/null 2>/dev/null || true)
   echo "==> running '$a' (model openrouter/$MODEL) …" >&2
-  "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'touch /tmp/.ex10_marker' </dev/null 2>/dev/null || true
+  "$OS" sandbox exec --name "$NAME" --no-tty -- sh -c 'touch /tmp/.nvidia_marker' </dev/null 2>/dev/null || true
   t0=$(date +%s)
   out=$(printf '%s' "$PROMPT" | "$OS" sandbox exec --name "$NAME" --no-tty -- \
         bash -lc "source /tmp/openrouter.env; PROMPT=\$(cat); $cmd" 2>&1) || rc=$?
@@ -135,7 +135,7 @@ run_agent() {
   clean=$(printf '%s' "$out" | strip)
   # Some agents (e.g. Pi) SAVE the artifact to files instead of printing it. Collect any yaml/json the agent wrote
   # during the run (the sandbox is ephemeral → this is the only way those files reach the report). Markers → markdown.
-  raw=$("$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc 'for f in $(find /sandbox /home /workspace . -maxdepth 6 -type f -newer /tmp/.ex10_marker -not -path "*/.*" \( -name "*.yaml" -o -name "*.yml" -o -name "*.json" \) 2>/dev/null | sort -u | head -8); do echo "@@FILE@@ $f"; cat "$f" 2>/dev/null; echo; echo "@@END@@"; done' </dev/null 2>/dev/null | strip || true)
+  raw=$("$OS" sandbox exec --name "$NAME" --no-tty -- bash -lc 'for f in $(find /sandbox /home /workspace . -maxdepth 6 -type f -newer /tmp/.nvidia_marker -not -path "*/.*" \( -name "*.yaml" -o -name "*.yml" -o -name "*.json" \) 2>/dev/null | sort -u | head -8); do echo "@@FILE@@ $f"; cat "$f" 2>/dev/null; echo; echo "@@END@@"; done' </dev/null 2>/dev/null | strip || true)
   wrote=$(printf '%s\n' "$raw" | awk '/^@@FILE@@ /{print ""; print "**"substr($0,10)"**"; print "```yaml"; next} /^@@END@@$/{print "```"; next} {print}')
   if [ "$rc" = 0 ] && { [ -n "$(printf '%s' "$clean" | tr -d '[:space:]')" ] || [ -n "$(printf '%s' "$raw" | tr -d '[:space:]')" ]; }; then
     verdict="✅ completed"; note="returned a completion in ${secs}s"
@@ -172,7 +172,7 @@ fi
 
 # ── author the summary — VERDICT TABLE FIRST (clear + unambiguous), then the detail ──
 PASS=$(grep -c '✅' "$RESULTS" 2>/dev/null || echo 0); TOT=$(wc -l < "$RESULTS" | tr -d ' ')
-md "## ex10 — OpenRouter terminal-coding agents · \`$SHOOT\`"
+md "## NVIDIA — OpenRouter terminal-coding agents · \`$SHOOT\`"
 md ""
 md "### ✅ Result: $PASS/$TOT agents returned a completion"
 md ""
@@ -208,7 +208,7 @@ if [ -n "$CONT" ]; then
 fi
 md "### Agent output"; md ""
 cat "$DETAILS" >> "$REPORT"
-md "### Why this is safe — ex10's deliberate 4th trust tier"
+md "### Why this is safe — nvidia's deliberate 4th trust tier"
 md "A **contained** box with default-deny egress and exactly one external endpoint allow-listed (\`openrouter.ai\`, plus"
 md "opencode's \`models.dev\` registry). The OpenRouter key **never enters the box** — the \`openrouter\` provider injects"
 md "an opaque **resolve-sentinel** the gateway swaps at egress. A deliberate step up from ex9's \"no internet\" box."
