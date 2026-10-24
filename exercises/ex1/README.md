@@ -184,9 +184,9 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 </table>
 
 1. In the **Run a diagnostic** card, 
-- 👉 pick the **v3** Goose adapative job then 
-- 👉 open the **Prompt** dropdown and 
-- 👉 choose **— custom prompt —**. 
+- 👉 pick the **v3** Goose adapative job  
+- 👉 open the **Prompt** dropdown  
+- 👉 choose **— custom prompt —**.
 
    Your prompt is saved to your own **adhoc prompt** store under an **auto-generated name** and used for this run — it then appears in the dropdown so you can **reuse** it, and the **delete** button clears it. The shipped **v1/v2/v3 recipes are read-only** in the UI; your custom prompts live alongside them without changing the defaults, so you can experiment safely.
 
