@@ -3,11 +3,11 @@ name: Delete older workflows runs
 on:
   workflow_dispatch:
     inputs:
-      days-ago:
-        description: 'Delete runs older than N days (0 = delete all)'
+      before-date:
+        description: 'Delete runs older than this date (YYYY-MM-DD, UTC). GitHub Actions has no native date picker — type the date.'
         required: true
         type: string
-        default: '0'
+        default: '2026-01-01'
       keep-latest:
         description: 'Keep the N most recent runs (0 = disabled)'
         required: false
@@ -28,10 +28,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Compute days-ago from before-date
+        id: compute
+        run: |
+          set -euo pipefail
+          BEFORE='${{ inputs.before-date }}'
+          if ! date -u -d "$BEFORE" '+%Y-%m-%d' > /dev/null 2>&1; then
+            echo "::error::Invalid date '$BEFORE' — use YYYY-MM-DD (UTC)"
+            exit 1
+          fi
+          TODAY_EPOCH=$(date -u -d "$(date -u +%Y-%m-%d)" +%s)
+          BEFORE_EPOCH=$(date -u -d "$BEFORE" +%s)
+          if [ "$BEFORE_EPOCH" -gt "$TODAY_EPOCH" ]; then
+            echo "::error::before-date '$BEFORE' is in the future (today UTC: $(date -u +%Y-%m-%d))"
+            exit 1
+          fi
+          DAYS=$(( (TODAY_EPOCH - BEFORE_EPOCH) / 86400 ))
+          echo "Computed days-ago=$DAYS from before-date=$BEFORE (today UTC: $(date -u +%Y-%m-%d))"
+          echo "days-ago=$DAYS" >> "$GITHUB_OUTPUT"
       - uses: yanovian/prune-old-actions@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          days-ago: ${{ inputs.days-ago }}
+          days-ago: ${{ steps.compute.outputs.days-ago }}
           keep-latest: ${{ inputs.keep-latest }}
           dry-run: ${{ inputs.dry-run }}
       - name: Summary
@@ -43,7 +61,8 @@ jobs:
             echo "| Setting | Value |"
             echo "|---|---|"
             echo "| Repository | \`${{ github.repository }}\` |"
-            echo "| Days ago | \`${{ inputs.days-ago }}\` |"
+            echo "| Before date (UTC) | \`${{ inputs.before-date }}\` |"
+            echo "| Computed days-ago | \`${{ steps.compute.outputs.days-ago }}\` |"
             echo "| Keep latest | \`${{ inputs.keep-latest }}\` |"
             echo "| Dry run | \`${{ inputs.dry-run }}\` |"
             echo "| Outcome | \`${{ job.status }}\` |"
