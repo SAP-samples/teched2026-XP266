@@ -319,12 +319,13 @@ The chat agent walks you through **KRO's actual simple-schema rules** AND emits 
 
 ## Summary
 
-You added an **external** LLM provider to the contained-sandbox model,
+You added an **external** LLM provider to the contained-sandbox model:
 
-- ran three terminal coding agents (opencode, Pi, Qwen Code) against free OpenRouter models,
-- and proved the sandbox still can't reach anything but the one allow-listed endpoint,
-- while the real key stays in the gateway.
+- 🌐 wired an **external** OpenRouter endpoint into the OpenShell provider model,
+- 🤖 ran three terminal coding agents (**opencode**, **Pi**, **Qwen Code**) against free OpenRouter models,
+- 🚧 proved the sandbox still can't reach anything but the one **allow-listed** endpoint,
+- 🔐 while the real **API key stays in the gateway** — the sandbox never sees it.
 
-That's the OpenShell provider model generalizing from "the in-cluster proxy" to "any governed external endpoint."  
+That's the OpenShell provider model generalizing from "the in-cluster proxy" to "any governed external endpoint."
 Continue to - [Exercise 6 - Observability and spend](../ex6/README.md)  
 Back to - [Overview](../../README.md)
