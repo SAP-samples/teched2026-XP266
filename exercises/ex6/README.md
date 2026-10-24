@@ -323,5 +323,12 @@ The headline tile is just `top_hits` over that series — **by construction it m
 
 ## Summary
 
-You followed one LLM call's metrics from the LiteLLM proxy through a Kyma Telemetry `MetricPipeline` into SAP Cloud Logging, and read the **LiteLLM Spend** and **LLM Overview** dashboards straight from the **Cluster Directory** — seeing the autonomous-jobs (Sonnet) vs interactive-agents (Opus) spend split that the single-proxy design makes possible.  
+You followed one LLM call end-to-end:
+
+- 📡 the **LiteLLM proxy** exposes Prometheus-style metrics (spend / tokens / latency),
+- 📬 **Kyma Telemetry** `MetricPipeline` ships them via OTLP,
+- ☁️ **SAP Cloud Logging** stores them in OpenSearch,
+- 🖥️ the **Cluster Directory** opens the **LiteLLM Spend** and **LLM Overview** dashboards in one click, and
+- 🧠 you saw the **autonomous-jobs (Sonnet)** vs **interactive-agents (Opus)** spend split that the single-proxy design makes possible.
+
 Continue to - [Overview](../../README.md)
