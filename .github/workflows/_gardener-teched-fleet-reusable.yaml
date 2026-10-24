@@ -322,7 +322,7 @@
         "SHOOT_NAME": "${{ inputs.shoot_name }}"
         "SHOW_CONTAINMENT": "${{ inputs.show_containment }}"
       "if": "${{ inputs.task == 'nvidia' }}"
-      "name": "Run OpenRouter agents (ex10) → rich summary"
+      "name": "Run OpenRouter agents (NVIDIA) → rich summary"
       "run": |2
               case "$IN_SCENARIO" in
                 ping)        PROMPT="Reply with exactly one word: PONG." ;;
@@ -349,7 +349,7 @@
               export NAME="ci-or-${{ github.run_id }}-${{ github.run_attempt }}"
               "$GITHUB_WORKSPACE/.github/scripts/ci-openrouter-agents.sh"
     - "if": "${{ always() && inputs.task == 'nvidia' }}"
-      "name": "Upload ex10 report (v7)"
+      "name": "Upload NVIDIA OpenRouter report (v7)"
       "uses": "actions/upload-artifact@v7"
       "with":
         "if-no-files-found": "ignore"

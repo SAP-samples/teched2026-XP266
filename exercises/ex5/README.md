@@ -282,13 +282,13 @@ openshell sandbox exec --name agents -- qwen -p \
   > weather-rgd.yaml
 ```
 
-👉 **Hand the draft to the chat agent from [Exercise 2](../ex2/README.md)** for a review before you apply it — the chat agent (Claude Opus via SAP AI Core) reliably catches the kind of bugs a `:free` first draft tends to ship:
+👉 **Hand the draft to a chat agent (Claude Opus via SAP AI Core)** for a review before you apply it — the chat agent reliably catches the kind of bugs a `:free` first draft tends to ship:
 
 ```bash
 cat weather-rgd.yaml
 ```
 
-Paste the output into the chat UI from ex2 and ask: *"Review this KRO `ResourceGraphDefinition` — what's wrong and how would you fix it?"* Expect it to flag things like:
+Paste the output into the chat UI and ask: *"Review this KRO `ResourceGraphDefinition` — what's wrong and how would you fix it?"* Expect it to flag things like:
 
 - ✅ **Collapsed YAML indentation** — free models often emit flat 1-space nesting that `kubectl` rejects as structurally invalid.
 - ✅ **Instance `apiVersion`** missing the `kro.run/` group prefix (plain `v1alpha1` → the API server returns `no matches for kind …`).
@@ -296,7 +296,7 @@ Paste the output into the chat UI from ex2 and ask: *"Review this KRO `ResourceG
 - ✅ **Status mapping** using Crossplane syntax (`valueFrom.resourceRef` / `jsonPath`) instead of KRO's inline CEL (`${weather-pod.status.…}`).
 - ✅ **Apply order** — the instance CRD only exists AFTER KRO materialises the RGD; two docs in one `kubectl apply` on a fresh cluster fails on the second one.
 
-This closes the loop started in **ex1 / ex2**: autonomous **Goose** jobs produce artifacts in the cluster, the **chat agent** reviews them in plain language — same SAP AI Core, same contained guardrails, different roles.
+This closes the loop between the two roles: autonomous **Goose** jobs produce artifacts in the cluster, the **chat agent** reviews them in plain language — same SAP AI Core, same contained guardrails, different roles.
 
 👉 Then validate against the API server — the draft almost always fails:
 ```bash
