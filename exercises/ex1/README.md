@@ -215,7 +215,8 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
    ```
 
 > [!NOTE]
-> Your prompt runs inside the **same OpenShell sandbox** as the built-in ones: a read-only cluster token, no internet, writes → `403`. So even a prompt you wrote can only **look and reason** — it can't mutate the cluster or exfiltrate anything.
+> Your prompt runs inside the **same OpenShell sandbox** as the built-in ones: a read-only cluster token, no internet.
+> So even a prompt you wrote can only **look and reason** — it can't mutate the cluster or exfiltrate anything.
 
 ## 🛡️ Exercise 1.4 - The guardrails: read, reason, but don't touch
 

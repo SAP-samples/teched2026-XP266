@@ -62,7 +62,7 @@ OpenShell neutralises the familiar agent risks **by construction** — not by as
 | **Unauthorized API usage** | agent sends data to unapproved model providers | **provider profiles + policy** pin model traffic to our in-cluster LiteLLM → SAP AI Core |
 | **Privilege escalation** | `sudo`, setuid, dangerous syscalls | **non-root** identity (uid 10001), **drop ALL** capabilities, `seccomp: RuntimeDefault`, `allowPrivilegeEscalation: false` |
 | **Reading cluster secrets** | broad RBAC | contained tier holds **no cluster token at all**; scoped-ops tier is **read-only with `secrets` excluded** |
-| **Mutating the cluster** | a read-write token | scoped-ops injects a **read-only** token (`get`/`list`/`watch`); writes → 403 |
+| **Mutating the cluster** | a read-write token | scoped-ops injects a **read-only** token (`get`/`list`/`watch` only) |
 
 ### Protection layers at a glance
 
