@@ -67,7 +67,7 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
 
 ## 💰 Exercise 6.2 - Open the spend dashboards
 
-The dashboards are one click away from the **Cluster Directory** — no Busola navigation needed.
+The dashboards are one click away from the student's portal.
 
 1. Open the Cluster Directory and scroll to the **LiteLLM spend** section (replace `xp266-NNN` and `<workshop-domain>`):
 
