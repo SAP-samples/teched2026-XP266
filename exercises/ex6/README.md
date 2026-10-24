@@ -122,10 +122,7 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
    - **LiteLLM Overview — today by model** — today's spend split
    - **LiteLLM Overview** — request volume, token throughput, and per-model latency
 
-   The **LiteLLM Overview — today by model** dashboard looks like this —
-   - a headline **Total spend today** gauge,
-   - a cluster filter (pre-scoped to your `xp266-NNN`),
-   - and three bar charts attributing today's **spend / calls / tokens** per model:
+   For instance, **LiteLLM Overview — today by model** dashboard looks like this:  
    <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
    <tbody>
    <tr>
@@ -141,6 +138,11 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
    </tr>
    </tbody>
    </table>
+
+   - ✅ a headline **Total spend today** gauge,
+   - ✅ a cluster filter (pre-scoped to your `xp266-NNN`),
+   - ✅ a three bar charts attributing today's **spend / calls / tokens** per model.
+
 
 2. Read the split. You'll see spend attributed by **API key / caller** and by **model**:
 
