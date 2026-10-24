@@ -317,8 +317,9 @@ The headline tile is just `top_hits` over that series — **by construction it m
    </details>
 
 > [!NOTE]
-> The LiteLLM proxy exposes Prometheus-style metrics (spend per key, tokens in/out, per-model latency). A **pod annotation** marks it for scraping; the `MetricPipeline` (managed by the Kyma **Telemetry** module) ships those metrics out via OTLP to **SAP Cloud Logging**, where they're stored in OpenSearch and visualized.  
-> This is the same managed-telemetry pattern SAP BTP gives you for logs, metrics, and traces — you *use* it, you don't operate it.
+> The LiteLLM proxy exposes Prometheus-style metrics (spend per key, tokens in/out, per-model latency).
+> - A **pod annotation** marks it for scraping
+> - The `MetricPipeline` (managed by the Kyma **Telemetry** module) ships those metrics out via OTLP to **SAP Cloud Logging**, where they're stored in OpenSearch and visualized.
 
 ## Summary
 
