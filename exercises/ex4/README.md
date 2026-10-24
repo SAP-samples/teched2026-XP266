@@ -565,12 +565,14 @@ claude -p 'Use kubectl to find unhealthy pods and explain why. Run: kubectl get 
 ## Summary
 
 You ran the workshop's tools image as a **runtime-isolated OpenShell `Sandbox`**:
-  - wired the inference providers,
-  - proved the egress guardrail (apiserver + internet unreachable, no route to bypass), and
-  - opened the read-only **scoped-ops** tier for cluster diagnostics.
 
-Under the hood it's a **gated control plane + credential-injecting supervisor + L7 allow-list** riding the stock **agent-sandbox** runtime — no fork, no extra network config.  
-*The sandbox is the guardrail.*
+- 🔌 wired the **inference providers**,
+- 🚧 proved the **egress guardrail** (apiserver + internet unreachable, no route to bypass),
+- 🔍 opened the read-only **scoped-ops** tier for cluster diagnostics.
+
+Under the hood it's a **🚦 gated control plane + 🔐 credential-injecting supervisor + 🧱 L7 allow-list** riding the stock **agent-sandbox** runtime — no fork, no extra network config.
+
+> 🛡️ *The sandbox is the guardrail.*
 
 Continue to - [Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter](../ex5/README.md)  
 Back to - [Overview](../../README.md)
