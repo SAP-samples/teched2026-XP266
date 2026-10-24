@@ -17,6 +17,6 @@ jobs:
        FORKS=$(curl -L \
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${{ secrets.CICD_TOKEN_FOR_TF_MODULES }}" \
-        -H "X-GitHub-Api-Version: 2022-11-28" \
+        -H "X-GitHub-Api-Version: 2026-03-10" \
         https://api.github.com/repos/SAP-samples/teched2026-XP266/forks?per_page=50)
        echo $FORKS | jq -r '.[] | "\(.full_name) with \(.owner.login) \(.owner.html_url)"'
