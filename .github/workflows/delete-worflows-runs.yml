@@ -3,13 +3,18 @@ name: Delete older workflows runs
 on:
   workflow_dispatch:
     inputs:
+      only-failed:
+        description: 'Delete ONLY failed runs (ignores before-date + keep-latest; dry-run still honored)'
+        required: false
+        type: boolean
+        default: false
       before-date:
-        description: 'Delete runs older than this date (YYYY-MM-DD, UTC). GitHub Actions has no native date picker — type the date.'
+        description: 'Delete runs older than this date (YYYY-MM-DD, UTC). Ignored when only-failed is on.'
         required: true
         type: string
         default: '2026-01-01'
       keep-latest:
-        description: 'Keep the N most recent runs (0 = disabled)'
+        description: 'Keep the N most recent runs (0 = disabled). Ignored when only-failed is on.'
         required: false
         type: string
         default: '0'
@@ -28,8 +33,69 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # ─────────────  only-failed path (API loop)  ─────────────
+      - name: Delete failed runs via API
+        id: failed
+        if: inputs.only-failed == true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          DRY: ${{ inputs.dry-run }}
+        run: |
+          set -euo pipefail
+          PAGE=1 TOTAL=0 DELETED=0 WOULD=0
+          while :; do
+            RESP=$(mktemp)
+            HTTP=$(curl -sS -L -o "$RESP" -w '%{http_code}' \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "X-GitHub-Api-Version: 2026-03-10" \
+              "https://api.github.com/repos/${REPO}/actions/runs?status=failure&per_page=100&page=$PAGE")
+            if [ "$HTTP" != "200" ]; then
+              echo "::error::list failed-runs HTTP $HTTP on page $PAGE"
+              cat "$RESP"; exit 1
+            fi
+            IDS=$(jq -r '.workflow_runs[].id' "$RESP")
+            PAGE_COUNT=$(jq '.workflow_runs | length' "$RESP")
+            rm -f "$RESP"
+            [ "$PAGE_COUNT" = "0" ] && break
+            for id in $IDS; do
+              TOTAL=$((TOTAL+1))
+              if [ "$DRY" = "true" ]; then
+                echo "[dry-run] would delete run $id"
+                WOULD=$((WOULD+1))
+              else
+                CODE=$(curl -sS -L -o /dev/null -w '%{http_code}' -X DELETE \
+                  -H "Accept: application/vnd.github+json" \
+                  -H "Authorization: Bearer $GH_TOKEN" \
+                  -H "X-GitHub-Api-Version: 2026-03-10" \
+                  "https://api.github.com/repos/${REPO}/actions/runs/$id")
+                if [ "$CODE" = "204" ]; then
+                  echo "deleted run $id"
+                  DELETED=$((DELETED+1))
+                else
+                  echo "::warning::failed to delete run $id (HTTP $CODE)"
+                fi
+              fi
+            done
+            # Pagination: since we're actively deleting, do NOT advance page —
+            # deletions shift the list; refetch page 1 until it's empty / dry-run advances.
+            if [ "$DRY" = "true" ]; then
+              [ "$PAGE_COUNT" -lt 100 ] && break
+              PAGE=$((PAGE+1))
+            fi
+            # live mode: loop refetches page 1 next iteration until empty
+          done
+          echo "total matched=$TOTAL | deleted=$DELETED | would=$WOULD"
+          echo "total=$TOTAL"     >> "$GITHUB_OUTPUT"
+          echo "deleted=$DELETED" >> "$GITHUB_OUTPUT"
+          echo "would=$WOULD"     >> "$GITHUB_OUTPUT"
+
+      # ─────────────  before-date path (unchanged action)  ─────────────
       - name: Compute days-ago from before-date
         id: compute
+        if: inputs.only-failed != true
         run: |
           set -euo pipefail
           BEFORE='${{ inputs.before-date }}'
@@ -47,11 +113,14 @@ jobs:
           echo "Computed days-ago=$DAYS from before-date=$BEFORE (today UTC: $(date -u +%Y-%m-%d))"
           echo "days-ago=$DAYS" >> "$GITHUB_OUTPUT"
       - uses: yanovian/prune-old-actions@v1
+        if: inputs.only-failed != true
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           days-ago: ${{ steps.compute.outputs.days-ago }}
           keep-latest: ${{ inputs.keep-latest }}
           dry-run: ${{ inputs.dry-run }}
+
+      # ─────────────  Summary (both paths)  ─────────────
       - name: Summary
         if: always()
         run: |
@@ -61,15 +130,22 @@ jobs:
             echo "| Setting | Value |"
             echo "|---|---|"
             echo "| Repository | \`${{ github.repository }}\` |"
-            echo "| Before date (UTC) | \`${{ inputs.before-date }}\` |"
-            echo "| Computed days-ago | \`${{ steps.compute.outputs.days-ago }}\` |"
-            echo "| Keep latest | \`${{ inputs.keep-latest }}\` |"
+            echo "| Mode | \`${{ inputs.only-failed == true && 'only-failed' || 'before-date' }}\` |"
+            if [ "${{ inputs.only-failed }}" = "true" ]; then
+              echo "| Matched failed runs | \`${{ steps.failed.outputs.total }}\` |"
+              echo "| Deleted | \`${{ steps.failed.outputs.deleted }}\` |"
+              echo "| Would-delete (dry-run) | \`${{ steps.failed.outputs.would }}\` |"
+            else
+              echo "| Before date (UTC) | \`${{ inputs.before-date }}\` |"
+              echo "| Computed days-ago | \`${{ steps.compute.outputs.days-ago }}\` |"
+              echo "| Keep latest | \`${{ inputs.keep-latest }}\` |"
+            fi
             echo "| Dry run | \`${{ inputs.dry-run }}\` |"
             echo "| Outcome | \`${{ job.status }}\` |"
             echo ""
             if [ "${{ inputs.dry-run }}" = "true" ]; then
-              echo "> ℹ️ **Dry-run mode** — nothing was deleted. See the \`yanovian/prune-old-actions\` step log for the list of runs that *would* have been pruned."
+              echo "> ℹ️ **Dry-run mode** — nothing was deleted. See the step logs above for the list of runs that *would* have been pruned."
             else
-              echo "> 🗑️ **Live mode** — see the \`yanovian/prune-old-actions\` step log for the number of runs actually deleted."
+              echo "> 🗑️ **Live mode** — see the step logs above for the exact deletions."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
