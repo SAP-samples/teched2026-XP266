@@ -56,7 +56,23 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
 <div>
 <p float="left">
   <a href="#">
-  <img src="images/fleet-status.png" width="820" alt="Fleet Status + Spend tile → fleet-status card with LLM Dashboards / SAP Cloud Logging shortcuts" />
+  <img src="images/fleet-status-02.png" width="820" alt="fleet-status card — aggregated LiteLLM Spend of the day + LLM Dashboards / SAP Cloud Logging shortcuts" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/fleet-overview.png" width="820" alt="fleet-overview — aggregated cross-cluster view" />
   </a>
 </p>
 </div>
