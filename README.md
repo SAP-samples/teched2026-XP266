@@ -11,7 +11,7 @@ This repository contains the material for the SAP TechEd 2026 session **XP266 - 
 
 Modern Kubernetes operations need more than dashboards — they need **reasoning**.  
 In this hands-on you meet a **fully in-cluster, sandboxed AI operations agent** running on **SAP BTP, Kyma runtime** and talking to **SAP AI Core**.  
-It's a [Goose](https://github.com/block/goose) agent with live `kubectl` access: it investigates the cluster autonomously and writes its findings as **Busola** in-cluster health reports.  
+It's a [Goose](https://github.com/aaif-goose/goose) agent with live `kubectl` access: it investigates the cluster autonomously and writes its findings as **Busola** in-cluster health reports.  
 It also streams its **LLM** spend to **SAP Cloud Logging** — all routed through a **LiteLLM proxy** and deployed declaratively with **KRO**.
 
 > [!NOTE]

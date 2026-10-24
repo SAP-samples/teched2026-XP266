@@ -2,3 +2,13 @@ https?://localhost.*
 https://developers.sap.com/*
 https://www.sap.com/events/teched.html
 https://www.sap.com/products/technology-platform/pricing.html
+
+# Lychee / markdown-link-check false-positives (bot-walled; load fine in a real browser)
+# community.sap.com — Imperva/Akamai returns 403 to link-checker UAs
+# github.com/signup — public page, 403 to link-checker UAs
+# www.npmjs.com — 403 to link-checker UAs on package pages
+# api.reuse.software — 404 until this repo is registered with the REUSE service post-publication
+https://community.sap.com/.*
+https://github.com/signup
+https://www.npmjs.com/package/.*
+https://api.reuse.software/info/github.com/SAP-samples/teched2026-XP266

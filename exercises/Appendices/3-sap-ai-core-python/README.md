@@ -27,21 +27,6 @@ openai client  ──▶  http://litellm-proxy.default:4001/v1  ──▶  SAP A
 
 1. Open **`00-SAP-AI-Core-Credentials.ipynb`** and run every cell (**Shift+Enter**, or *Run ▸ Run All Cells*).  
    It builds the `client` you'll reuse everywhere — no OAuth, no API key handling on your part.
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/07_02_0010.png" width="820" alt="" />
-  </a>
-</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
 
 2. Open **`01-Bedrock-Models-via-SAP-AI-Core.ipynb`** and run all cells — you just called Claude on SAP AI Core, from Python, in your own cluster.
 

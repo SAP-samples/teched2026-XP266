@@ -23,7 +23,7 @@ Want to see an **ops agent** run safely inside a sandbox on your cluster — **w
 
 | Run this workflow | Workflow inputs |
 |---|---|
-| [**`all-fleets-teched-student`**](../../../../actions/workflows/all-fleets-teched-student.yaml) | 👉 Pick<br>• **`student_cluster`** — type **your** cluster (e.g. `xp266-003`); overwrite the default `xp266-NNN` placeholder<br>• **`goose_mode`** — `snapshot` (fast, interprets a `kyma diagnose` snapshot) or `live` (richest: goose runs live read-only `kubectl` inside the sandbox)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). |
+| [**`all-fleets-teched-student`**](https://github.com/SAP-samples/teched2026-XP266/actions/workflows/all-fleets-teched-student.yaml) | 👉 Pick<br>• **`student_cluster`** — type **your** cluster (e.g. `xp266-003`); overwrite the default `xp266-NNN` placeholder<br>• **`goose_mode`** — `snapshot` (fast, interprets a `kyma diagnose` snapshot) or `live` (richest: goose runs live read-only `kubectl` inside the sandbox)<br>👉 **Run workflow** → read the run **Summary** (and the report in Busola). |
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>

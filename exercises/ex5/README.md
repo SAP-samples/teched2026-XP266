@@ -24,7 +24,7 @@ Want to run external coding agents against OpenRouter **without opening a termin
 
 | Run this workflow | Workflow inputs |
 |---|---|
-| [**`all-fleets-teched-student-nvidia`**](../../../../actions/workflows/all-fleets-teched-student-nvidia.yaml) | 👉 Pick<br>• **`student_cluster`** — type **your** cluster (e.g. `xp266-003`); overwrite the default `xp266-NNN` placeholder<br>• **`agent`** — `pi` / `opencode` / `qwen` / `all-three`<br>• **`model`** — a `:free` OpenRouter model<br>• **`scenario`** — a task preset (pick `custom` to use the free-text prompt field)<br>👉 **Run workflow** → read the run **Summary**. |
+| [**`all-fleets-teched-student-nvidia`**](https://github.com/SAP-samples/teched2026-XP266/actions/workflows/all-fleets-teched-student-nvidia.yaml) | 👉 Pick<br>• **`student_cluster`** — type **your** cluster (e.g. `xp266-003`); overwrite the default `xp266-NNN` placeholder<br>• **`agent`** — `pi` / `opencode` / `qwen` / `all-three`<br>• **`model`** — a `:free` OpenRouter model<br>• **`scenario`** — a task preset (pick `custom` to use the free-text prompt field)<br>👉 **Run workflow** → read the run **Summary**. |
 
 > [!NOTE]
 > 👉 **Can't run the workflow on your own fork?** No problem —
