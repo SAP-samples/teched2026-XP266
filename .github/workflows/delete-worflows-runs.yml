@@ -2,6 +2,22 @@ name: Delete older workflows runs
 
 on:
   workflow_dispatch:
+    inputs:
+      days-ago:
+        description: 'Delete runs older than N days (0 = delete all)'
+        required: true
+        type: string
+        default: '0'
+      keep-latest:
+        description: 'Keep the N most recent runs (0 = disabled)'
+        required: false
+        type: string
+        default: '0'
+      dry-run:
+        description: 'Dry-run: list deletions without executing'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -15,6 +31,6 @@ jobs:
       - uses: yanovian/prune-old-actions@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          days-ago: 0
-          #keep-latest: 10
-          #dry-run: true
+          days-ago: ${{ inputs.days-ago }}
+          keep-latest: ${{ inputs.keep-latest }}
+          dry-run: ${{ inputs.dry-run }}
