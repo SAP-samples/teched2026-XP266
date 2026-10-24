@@ -80,21 +80,21 @@ The dashboards are one click away from the **Cluster Directory** — no Busola n
    - **LiteLLM Overview — today by model** — today's spend split
    - **LiteLLM Overview** — request volume, token throughput, and per-model latency
 
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/llm-spend.png" width="820" alt="Cluster Directory — LiteLLM spend card (inline today-by-model summary + buttons to the full OpenSearch dashboards)" />
-  </a>
-</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="images/llm-spend.png" width="820" alt="Cluster Directory — LiteLLM spend card (inline today-by-model summary + buttons to the full OpenSearch dashboards)" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
 
    The **LiteLLM Overview — today by model** dashboard looks like this — a headline **Total spend today** gauge, a cluster filter (pre-scoped to your `xp266-NNN`), and three bar charts attributing today's **spend / calls / tokens** per model:
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
