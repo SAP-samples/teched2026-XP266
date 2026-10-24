@@ -12,3 +12,9 @@ https://community.sap.com/.*
 https://github.com/signup
 https://www.npmjs.com/package/.*
 https://api.reuse.software/info/github.com/SAP-samples/teched2026-XP266
+
+# Relative URL that resolves to the GitHub UI route /{owner}/{repo}/actions/workflows/*.yaml
+# (../../../../actions/workflows/*.yaml in ex4/ex5 — intentional, fork-safe: each viewer lands
+# on their OWN Actions tab). Lychee resolves these against the local filesystem and emits
+# file:///.../actions/workflows/*.yaml which doesn't exist; skip them.
+file:///.*/actions/workflows/.*\.yaml
