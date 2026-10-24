@@ -72,7 +72,7 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
    <div>
    <p float="left">
      <a href="#">
-     <img src="images/fleet-overview.png" width="820" alt="fleet-overview — aggregated cross-cluster view" />
+     <img src="images/llm-dashboard.png" width="820" alt="LiteLLM Overview dashboards — picker landing from the Cluster Directory shortcuts" />
      </a>
    </p>
    </div>
@@ -88,7 +88,7 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
    <div>
    <p float="left">
      <a href="#">
-     <img src="images/llm-dashboard.png" width="820" alt="LiteLLM Overview dashboards — picker landing from the Cluster Directory shortcuts" />
+     <img src="images/fleet-overview.png" width="820" alt="fleet-overview — aggregated cross-cluster view" />
      </a>
    </p>
    </div>
