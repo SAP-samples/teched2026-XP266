@@ -91,7 +91,7 @@ The dashboards are one click away from the student's portal.
    </tbody>
    </table>
 
-   It shows **today's spend** for your cluster inline — attributed by model and caller — plus two buttons that open the full **SAP Cloud Logging** (OpenSearch) dashboards in a new tab, single sign-on:
+   It shows **today's spend** for your cluster inline — attributed by model and caller — plus two buttons that open the full **SAP Cloud Logging** (OpenSearch) dashboards in a new tab, [single sign-on](images/cls-login.png):
 
    - **LiteLLM Overview — today by model** — today's spend split
    - **LiteLLM Overview** — request volume, token throughput, and per-model latency
