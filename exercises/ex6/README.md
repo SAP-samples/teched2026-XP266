@@ -81,6 +81,22 @@ LiteLLM proxy  ──(Prometheus metrics: spend, tokens, model)──▶  Kyma T
    </tbody>
    </table>
 
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="images/llm-dashboard.png" width="820" alt="LiteLLM Overview dashboards — picker landing from the Cluster Directory shortcuts" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
+
 ## 💰 Exercise 6.2 - Open the spend dashboards
 
 The dashboards are one click away from the student's portal.
@@ -107,22 +123,6 @@ The dashboards are one click away from the student's portal.
 
    - **LiteLLM Overview — today by model** — today's spend split
    - **LiteLLM Overview** — request volume, token throughput, and per-model latency
-
-   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-   <tbody>
-   <tr>
-   <td>
-   <div>
-   <p float="left">
-     <a href="#">
-     <img src="images/llm-dashboard.png" width="820" alt="LiteLLM Overview dashboards — picker landing from the Cluster Directory shortcuts" />
-     </a>
-   </p>
-   </div>
-   </td>
-   </tr>
-   </tbody>
-   </table>
 
    The **LiteLLM Overview — today by model** dashboard looks like this —
    - a headline **Total spend today** gauge,
