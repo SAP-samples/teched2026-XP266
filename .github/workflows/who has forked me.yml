@@ -5,18 +5,41 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   who-has-forked-me:
     runs-on: ubuntu-latest
     steps:
-    - "name": "who has forked me?"
-      "run": |
-       echo "who has forked me? ..."
-       FORKS=$(curl -L \
-        -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer ${{ secrets.CICD_TOKEN_FOR_TF_MODULES }}" \
-        -H "X-GitHub-Api-Version: 2026-03-10" \
-        https://api.github.com/repos/SAP-samples/teched2026-XP266/forks?per_page=50)
-       echo $FORKS | jq -r '.[] | "\(.full_name) with \(.owner.login) \(.owner.html_url)"'
+      - name: who has forked me?
+        run: |
+          set -euo pipefail
+          REPO='${{ github.repository }}'
+          echo "who has forked ${REPO}? ..."
+          TMP=$(mktemp)
+          HTTP=$(curl -sS -L -o "$TMP" -w '%{http_code}' \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "https://api.github.com/repos/${REPO}/forks?per_page=100")
+          if [ "$HTTP" != "200" ]; then
+            echo "::error::GitHub API returned HTTP $HTTP"
+            cat "$TMP"
+            exit 1
+          fi
+          COUNT=$(jq 'length' "$TMP")
+          echo "Found $COUNT fork(s)."
+          jq -r '.[] | "\(.full_name) with \(.owner.login) \(.owner.html_url)"' "$TMP"
+          {
+            echo "## 🍴 Who has forked \`${REPO}\`"
+            echo ""
+            echo "**Total forks:** $COUNT"
+            echo ""
+            if [ "$COUNT" -gt 0 ]; then
+              echo "| Fork | Owner | Owner URL |"
+              echo "|---|---|---|"
+              jq -r '.[] | "| [\(.full_name)](\(.html_url)) | \(.owner.login) | <\(.owner.html_url)> |"' "$TMP"
+            else
+              echo "> _No forks yet._"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          rm -f "$TMP"
