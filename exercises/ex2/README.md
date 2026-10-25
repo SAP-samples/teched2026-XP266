@@ -61,9 +61,9 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
    <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
    <tbody>
    <tr>
-   <td align="center" width="33%"><img src="images/oauth2-proxy.png" height="200" alt="oauth2-proxy sign-in gate" /><br/><sub><b>1.</b> oauth2-proxy gate</sub></td>
-   <td align="center" width="33%"><img src="images/sap-ias-01.png" height="200" alt="SAP IAS — identity provider pick" /><br/><sub><b>2.</b> SAP IAS — pick provider</sub></td>
-   <td align="center" width="33%"><img src="images/sap-ias-02.png" height="200" alt="SAP IAS — credentials" /><br/><sub><b>3.</b> SAP IAS — credentials</sub></td>
+   <td align="center" width="33%"><img src="images/oauth2-proxy.png" height="260" alt="oauth2-proxy sign-in gate" /><br/><sub><b>1.</b> oauth2-proxy gate</sub></td>
+   <td align="center" width="33%"><img src="images/sap-ias-01.png" height="260" alt="SAP IAS — identity provider pick" /><br/><sub><b>2.</b> SAP IAS — pick provider</sub></td>
+   <td align="center" width="33%"><img src="images/sap-ias-02.png" height="260" alt="SAP IAS — credentials" /><br/><sub><b>3.</b> SAP IAS — credentials</sub></td>
    </tr>
    </tbody>
    </table>
