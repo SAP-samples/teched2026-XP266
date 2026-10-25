@@ -82,11 +82,7 @@
 </tbody>
 </table>
 
-The notebooks come in **three flavours**, from the simplest to the richest:
-
-- 📦 **sandbox lifecycle** — drive the full OpenShell sandbox lifecycle from Python (`04` / `04b`),
-- 🪿 **adaptive investigators** — put the agent **inside** the sandbox with live, read-only `kubectl` (`05` / `05b` / `05c`),
-- 🪿 **forensic sniffers** — same agent, **no live cluster access** — it reasons over a snapshot or stored reports (`06` / `07`).
+The notebooks come in **three flavours**, from the simplest to the richest.
 
 👉 Click any family card below for its full wiring — auth path, what runs inside the sandbox, and what the agent sees.
 
