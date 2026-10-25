@@ -164,7 +164,15 @@ flowchart LR
 
 > What does an AI agent do when something fails in production? Find out by causing the failure yourself. Deploy a reasoning agent into Kyma, connect it to the SAP AI Core foundation, and give it full observability to diagnose what broke. Leave with practical patterns for cost control and monitoring.
 
-| | |
+<table>
+<tr>
+<td align="center" width="30%">
+<img src="exercises/ex0/images/speaker.jpg" width="200" alt="Piotr Tesny" /><br/>
+<sub><b>Piotr Tesny</b><br/>speaker</sub>
+</td>
+<td>
+
+|  |  |
 |---|---|
 | **Session code** | XP266 |
 | **Type** | Hands-on workshop |
@@ -172,6 +180,10 @@ flowchart LR
 | **Room** | Hands-On Room 6 |
 | **Date** | 27 October 2026 (conference runs 27–29 October) |
 | **Time** | 13:30 – 15:30 |
+
+</td>
+</tr>
+</table>
 
 ## Contributing
 Please read the [CONTRIBUTING.md](./CONTRIBUTING.md) to understand the contribution guidelines.
