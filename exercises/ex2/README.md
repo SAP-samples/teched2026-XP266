@@ -111,6 +111,55 @@ Links:
 - ✅ This is a classic **producer-consumer** pattern: the autonomous jobs *produce* the findings; the chat agent *consumes* them to help you make sense of what they are.
 - ✅ The Goose **v1** and **v2** jobs already wrote a **Cluster Health Report** and archived their raw findings.
 
+<details>
+<summary>🔄 <b>How the hand-off actually works</b> — autonomous Jobs write; the chat agent reads</summary>
+
+```mermaid
+flowchart LR
+    subgraph auto["🤖 Autonomous side — scheduled Jobs"]
+      direction TB
+      v1["📸 <b>v1</b> Job<br/><code>dev-toolbox-diagnose</code><br/><i>every 10 min</i>"]
+      v2["🩺 <b>v2</b> Job<br/><code>dev-toolbox-diagnose-v2</code><br/><i>daily</i>"]
+    end
+
+    subgraph shared["📦 Shared artifacts in the cluster"]
+      direction TB
+      cr1["<b>ClusterHealthReport</b><br/><code>cluster-health</code> (v1)"]
+      cr2["<b>ClusterHealthReport</b><br/><code>cluster-health-v2</code>"]
+      cra["<b>ClusterHealthReport</b><br/><code>cluster-audit</code>"]
+      raw1["ConfigMaps<br/><code>goose-raw-health-*</code><br/>(raw transcript)"]
+      raw2["ConfigMaps<br/><code>goose-raw-audit-*</code><br/>(raw transcript)"]
+    end
+
+    subgraph chat["💬 Interactive side — OpenClaw chat agent"]
+      direction TB
+      user(["👤 you ask<br/>'summarize the latest<br/>cluster health report'"])
+      agent["<b>OpenClaw</b><br/>interactive agent<br/>(same SAP AI Core)"]
+      user --> agent
+    end
+
+    v1 --> cr1
+    v1 -.-> raw1
+    v2 --> cr2
+    v2 --> cra
+    v2 -.-> raw1
+    v2 -.-> raw2
+
+    cr1 --> agent
+    cr2 --> agent
+    cra --> agent
+    raw1 -. 'show raw details' .-> agent
+    raw2 -. 'show raw details' .-> agent
+
+    agent --> answer(["📝 conversational answer<br/>(follow-up-able)"])
+```
+
+- **Producers** (autonomous Jobs) run on their own schedules — nobody has to be at the keyboard
+- **Shared artifacts** are plain Kubernetes objects (`ClusterHealthReport` CRs + raw `goose-raw-*` ConfigMaps) — same read path for every consumer
+- **Consumers** (the OpenClaw chat agent, and later a JupyterHub notebook) pull **the latest** of each CR when answering a question — no polling, no custom API, no new auth layer
+- Same SAP AI Core keys back both sides — the chat answer is **free to interrogate** the stored findings; the heavy sweep already happened overnight
+</details>
+
 👉 Now ask the *interactive* agent the following:
 
 ```
