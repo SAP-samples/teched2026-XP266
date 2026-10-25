@@ -245,7 +245,7 @@ So this is a *different* tier, not a weaker one:
 
 | | scoped-ops (previous) | **external agent (this exercise)** |
 |---|---|---|
-| LLM | in-cluster LiteLLM → SAP AI Core | **public OpenRouter (keyed, key in gateway only)** |
+| LLM | in-cluster LiteLLM → SAP AI Core | **public OpenRouter (API key held in the gateway only)** |
 | Egress | in-cluster proxy only; **no internet** | **`openrouter.ai` + `models.dev` only; nothing else** |
 | Cluster | read-only kubectl (sandbox-viewer) | none |
 | Key in box | sentinel | sentinel |

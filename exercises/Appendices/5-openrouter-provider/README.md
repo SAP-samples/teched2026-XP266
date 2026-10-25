@@ -1,6 +1,6 @@
 # Appendix 5 - External agents & the OpenRouter provider model
 
-👉 The concept behind the OpenRouter hands-on in [Exercise 5](../../ex5/README.md): how an **external, keyed provider** plugs into the OpenShell sandbox model (profile → provider → sandbox), and how OpenRouter compares to the in-cluster SAP AI Core path.
+👉 The concept behind the OpenRouter hands-on in [Exercise 5](../../ex5/README.md): how an **external provider** plugs into the OpenShell sandbox model (profile → provider → sandbox), and how OpenRouter compares to the in-cluster SAP AI Core path.
 
 **Contents**
 
