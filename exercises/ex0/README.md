@@ -54,6 +54,14 @@ The **Student's Portal** main menu is organised top-to-bottom:
 | 🖥️ **Busola Web Terminal** | Quick-launch deep-link into the in-cluster web terminal — the pod with pre-installed `goose` / `claude` / `kubectl` / `kyma`. |
 | 💰 **LiteLLM spend** | Today's SAP AI Core spend for your runtime, inline (model + caller breakdown). Full dashboards one click away (SAP Cloud Logging). You'll explore this in Exercise 6. |
 
+
+
+> [!TIP]
+> **Busola** (the Kyma dashboard) may show one or more **banner cards** with handy shortcut **buttons** into the workshop features (dashboards, quick actions).
+>
+> - If you dismiss a card, it **stays hidden in that browser**.
+> - To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
+
 <details>
 <summary>🔐 <b>How sign-in works</b> — click to expand</summary>
 
@@ -120,13 +128,6 @@ flowchart LR
 - Click the **Token-based login** tile → Busola opens on your spoke, already authenticated, no second prompt. The OIDC-based tile exists for interactive comparison but the token path is the recommended default.
 
 </details>
-
-
-> [!TIP]
-> **Busola** (the Kyma dashboard) may show one or more **banner cards** with handy shortcut **buttons** into the workshop features (dashboards, quick actions).
->
-> - If you dismiss a card, it **stays hidden in that browser**.
-> - To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
 
 ## 📦 Exercise 0.2 - See what is already deployed *(optional)*
 
