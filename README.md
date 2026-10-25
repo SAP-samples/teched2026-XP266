@@ -1,5 +1,17 @@
 # XP266 - Ship your own sandboxed AI operations agent to Kyma in two hours
 
+**Contents**
+
+- 📝 [Description](#description)
+- 🧭 [Overview](#overview)
+- ✅ [Requirements](#requirements)
+- 📒 [Exercises](#exercises)
+- 🎤 [See it live — SAP TechEd 2026 (XP266)](#see-it-live--sap-teched-2026-xp266)
+- 🤝 [Contributing](#contributing)
+- 📜 [Code of Conduct](#code-of-conduct)
+- 🆘 [How to obtain support](#how-to-obtain-support)
+- ⚖️ [License](#license)
+
 ## Description
 
 This repository contains the material for the SAP TechEd 2026 session **XP266 - Ship your own sandboxed AI operations agent to Kyma in two hours**.
