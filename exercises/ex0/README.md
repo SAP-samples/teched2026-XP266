@@ -106,7 +106,7 @@ sequenceDiagram
 
 ### 2. Busola rides a federated SA token (hub-and-spokes)
 
-- 🚫 The **55 TechEd runtimes don't each manage their own user identity** for Busola.
+- 🚫 The **55 TechEd runtimes don't each manage their own admin user identity** for Busola.
 - 🏛️ Instead, **one hub** mints a **short-lived ServiceAccount token**.
 - 🛰️ **Every spoke pre-trusts the hub** via a Kubernetes **`OpenIDConnect`** authenticator + **`ClusterRoleBinding`**.
 - ✨ **One identity, 55 spokes.**
