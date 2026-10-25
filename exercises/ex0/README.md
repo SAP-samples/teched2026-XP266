@@ -13,8 +13,26 @@ In this exercise:
 > Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`).  
 > Wherever you see `xp266-NNN` below, use the number you were given.
 >
-> 👉 Your **Student's Portal** short URL per cluster is below — click yours.  
 > 👉 The sign-in details are handed out at the start of the session.
+
+**Contents**
+
+- 🧭 [Sign in to Student's Portal and find your cluster](#-exercise-01---sign-in-to-students-portal-and-find-your-cluster)
+- 📦 [See what is already deployed](#-exercise-02---see-what-is-already-deployed-optional)
+- 🗺️ [The TechEd 2026 landscape at a glance](#️-exercise-03---the-teched-2026-landscape-at-a-glance-optional)
+
+
+## 🧭 Exercise 0.1 - Sign in to Student's Portal and find your cluster
+
+- ✅ Everything starts at the **Student's Portal** — one launcher page for the whole TechEd fleet.  
+- ✅ From here you pick your runtime or jump straight into the right dashboard.  
+
+👉 Open the student's portal directly or look up its shortened URL:
+
+```
+https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/
+```
+
 
 <details>
 <summary>🎓 <b>Student Portal — short URL per cluster</b> (click to expand)</summary>
@@ -142,24 +160,6 @@ In this exercise:
 </table>
 
 </details>
-
-**Contents**
-
-- 🧭 [Sign in to Student's Portal and find your cluster](#-exercise-01---sign-in-to-students-portal-and-find-your-cluster)
-- 📦 [See what is already deployed](#-exercise-02---see-what-is-already-deployed-optional)
-- 🗺️ [The TechEd 2026 landscape at a glance](#️-exercise-03---the-teched-2026-landscape-at-a-glance-optional)
-
-
-## 🧭 Exercise 0.1 - Sign in to Student's Portal and find your cluster
-
-- ✅ Everything starts at the **Student's Portal** — one launcher page for the whole TechEd fleet.  
-- ✅ From here you pick your runtime or jump straight into the right dashboard.  
-
-👉 Open the student's portal:
-
-```
-https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/
-```
 
 > [!NOTE]
 > The **Student's Portal** is behind the gateway (oauth2-proxy), so the first time you open it this session you'll go through the workshop identity provider (single sign-on).
