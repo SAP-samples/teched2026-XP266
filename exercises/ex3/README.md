@@ -103,8 +103,8 @@ flowchart LR
     gw --> sb["Sandbox pod<br/><i>empty workload</i><br/>SDK runs: create / exec / list / delete"]
 ```
 
-- 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) — the `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then drives the lifecycle.
-- 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) — pure-SDK twin, **no `openshell` CLI**; mints a **client-credentials** token itself (headless, no browser).
+- 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-324---04-openshell-sandbox-sdk) — the `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then drives the lifecycle.
+- 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-321---04b-openshell-sandbox-sdk-headless) — pure-SDK twin, **no `openshell` CLI**; mints a **client-credentials** token itself (headless, no browser).
 </details>
 
 <details>
@@ -130,9 +130,9 @@ flowchart LR
     goose --> llm["LiteLLM proxy<br/>→ SAP AI Core"]
 ```
 
-- 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) — richest flavour; CLI registers the gateway via **device-code**, SDK opens the sandbox, agent gets **live read-only `kubectl`**.
-- 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) — same rich flavour, **headless** (CLI uses client-credentials instead of device-code).
-- 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) — like `05b`, but **no `openshell` CLI** — only the **NVIDIA OpenShell Python SDK**; mints the client-credentials token itself.
+- 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-325---05-openshell-goose-diagnostics-live) — richest flavour; CLI registers the gateway via **device-code**, SDK opens the sandbox, agent gets **live read-only `kubectl`**.
+- 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-322---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) — same rich flavour, **headless** (CLI uses client-credentials instead of device-code).
+- 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-322---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) — like `05b`, but **no `openshell` CLI** — only the **NVIDIA OpenShell Python SDK**; mints the client-credentials token itself.
 </details>
 
 <details>
@@ -157,41 +157,14 @@ flowchart LR
     goose --> out["📝 forensic analysis<br/>(returned to the notebook)"]
 ```
 
-- 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) — the notebook gathers a **real-time** cluster inventory via the K8s API (unhealthy pods, nodes, warning events), then pipes it to the agent inside the sandbox — **no live `kubectl` in the box**.
+- 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-323---06-openshell-goose-diagnostics-snapshot) — the notebook gathers a **real-time** cluster inventory via the K8s API (unhealthy pods, nodes, warning events), then pipes it to the agent inside the sandbox — **no live `kubectl` in the box**.
 - 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) — same sandbox as 06; the agent reasons over **pre-computed** openclaw ConfigMaps: `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) from the latest `cluster-health` CronJob run.
 </details>
 
 > [!TIP]
 > **Suggested notebook rehearsals** — one per family, pick in this order: **`04b`** → **`05b`** → **`06`**.
 
-### Exercise 3.2.1 - `04-OpenShell-Sandbox-SDK`
-
-👉 Open **`04-OpenShell-Sandbox-SDK.ipynb`** and run every cell.
-
-This notebook drives the OpenShell gateway programmatically via the **OpenShell Python SDK** (`openshell`) — the notebook twin of the Busola-terminal `scoped-ops`. Docs: <https://docs.nvidia.com/openshell/latest/sdk/python>.
-
-> [!NOTE]
-> - ✅ **Authentication = device-code (browser), exactly like the Busola terminal.** You log in **as yourself** — the CLI prints a URL + code, you open it in your browser and authenticate with your corp identity (which carries the `openshell-admin` role). No shared secret lives in the notebook.
-> - ✅ It then runs a full sandbox lifecycle: **create → exec → list → delete**.
-> - ✅ Only works on shoots where OpenShell is deployed, and for users with the `openshell-admin` role (in this workshop you are an admin on your own cluster).
-
-> [!NOTE]
-> **About the "Grant Access to openshell-oidc" page** you see in the browser during the device-code login — it's the **OAuth 2.0 Device Authorization Grant** confirmation ([RFC 8628](https://datatracker.ietf.org/doc/html/rfc8628)), not an OIDC consent screen. The protocol REQUIRES the user to explicitly approve the device at the browser side so nobody else can hijack the account by polling the device endpoint. Click **Yes** once per notebook session — it can't be suppressed via Keycloak client config.
-
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td align="center" width="50%"><img src="images/device-grant-01.png" height="260" alt="Grant Access to openshell-oidc — click Yes" /><br/><sub><b>1.</b> click <b>Yes</b> to approve the device (your browser)</sub></td>
-<td align="center" width="50%"><img src="images/device-grant-02.png" height="260" alt="Device approved — return to JupyterHub" /><br/><sub><b>2.</b> device approved — you can go back to the JupyterHub screen</sub></td>
-</tr>
-</tbody>
-</table>
-
-> [!NOTE]
-> This minimal sandbox is **compute-only**: it has no cluster credentials and no route out.  
-> It's the blank canvas; the next step adds an agent and a scoped, read-only cluster identity.
-
-### Exercise 3.2.2 - `04b-OpenShell-Sandbox-SDK-Headless`
+### Exercise 3.2.1 - `04b-OpenShell-Sandbox-SDK-Headless`
 
 👉 Prefer no browser step? Open **`04b-OpenShell-Sandbox-SDK-Headless.ipynb`** and run all cells.
 
@@ -200,35 +173,7 @@ This notebook drives the OpenShell gateway programmatically via the **OpenShell 
 - ✅ The notebook mints a client-credentials token itself (from the `openshell-admin-sa` secret) and hands it to `SandboxClient` directly.
 - ✅ Same result, with machine-to-machine authentication.
 
-### Exercise 3.2.3 - `05-OpenShell-Goose-Diagnostics-Live`
-
-👉 Open **`05-OpenShell-Goose-Diagnostics-Live.ipynb`** and run all cells.
-
-That's the **richest flavour**: the agent runs in an OpenShell sandbox with **live read-only `kubectl`** and investigates the cluster itself.
-
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/notebook-device-code.png" width="820" alt="05 live notebook — device-code login prompt + authenticated gateway" />
-  </a>
-</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-
-> [!IMPORTANT]
-> **The sandbox is the guardrail, not the prompt.** You can hand the agent any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt:
-> - ✅ the sandbox gets a short-lived read-only **`sandbox-viewer`** identity (`get`/`list`/`watch`, **no secrets**) + the canonical policy (apiserver read-only **+** LiteLLM proxy),
-> - ✅ the agent shells out to the allowlisted `kubectl`; no internet,
-> - ✅ authentication works both ways — **as you** via **device-code** (`05`) or **headless** via **client-credentials** (`05b` / `05c`); same guardrails apply regardless.
-
-### Exercise 3.2.4 - `05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`
+### Exercise 3.2.2 - `05b-OpenShell-Goose-Diagnostics-Live-Headless` / `05c-OpenShell-Sandbox-PureSDK`
 
 👉 Open **`05b-OpenShell-Goose-Diagnostics-Live-Headless.ipynb`** and run all cells.
 
@@ -257,11 +202,66 @@ Same investigation and same headless authentication as **05b** — **`05c`** is 
 </tbody>
 </table>
 
-### Exercise 3.2.5 - `06-OpenShell-Goose-Diagnostics-Snapshot`
+### Exercise 3.2.3 - `06-OpenShell-Goose-Diagnostics-Snapshot`
 
 👉 Open **`06-OpenShell-Goose-Diagnostics-Snapshot.ipynb`** and run all cells.
 
 This notebook gathers a read-only cluster-health **snapshot**, then runs the agent inside an OpenShell sandbox to interpret it — the agent reasons over the piped snapshot (**no live `kubectl` in the box**).
+
+### Exercise 3.2.4 - `04-OpenShell-Sandbox-SDK`
+
+👉 Open **`04-OpenShell-Sandbox-SDK.ipynb`** and run every cell.
+
+This notebook drives the OpenShell gateway programmatically via the **OpenShell Python SDK** (`openshell`) — the notebook twin of the Busola-terminal `scoped-ops`. Docs: <https://docs.nvidia.com/openshell/latest/sdk/python>.
+
+> [!NOTE]
+> - ✅ **Authentication = device-code (browser), exactly like the Busola terminal.** You log in **as yourself** — the CLI prints a URL + code, you open it in your browser and authenticate with your corp identity (which carries the `openshell-admin` role). No shared secret lives in the notebook.
+> - ✅ It then runs a full sandbox lifecycle: **create → exec → list → delete**.
+> - ✅ Only works on shoots where OpenShell is deployed, and for users with the `openshell-admin` role (in this workshop you are an admin on your own cluster).
+
+> [!NOTE]
+> **About the "Grant Access to openshell-oidc" page** you see in the browser during the device-code login — it's the **OAuth 2.0 Device Authorization Grant** confirmation ([RFC 8628](https://datatracker.ietf.org/doc/html/rfc8628)), not an OIDC consent screen. The protocol REQUIRES the user to explicitly approve the device at the browser side so nobody else can hijack the account by polling the device endpoint. Click **Yes** once per notebook session — it can't be suppressed via Keycloak client config.
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td align="center" width="50%"><img src="images/device-grant-01.png" height="260" alt="Grant Access to openshell-oidc — click Yes" /><br/><sub><b>1.</b> click <b>Yes</b> to approve the device (your browser)</sub></td>
+<td align="center" width="50%"><img src="images/device-grant-02.png" height="260" alt="Device approved — return to JupyterHub" /><br/><sub><b>2.</b> device approved — you can go back to the JupyterHub screen</sub></td>
+</tr>
+</tbody>
+</table>
+
+> [!NOTE]
+> This minimal sandbox is **compute-only**: it has no cluster credentials and no route out.  
+> It's the blank canvas; the next step adds an agent and a scoped, read-only cluster identity.
+
+### Exercise 3.2.5 - `05-OpenShell-Goose-Diagnostics-Live`
+
+👉 Open **`05-OpenShell-Goose-Diagnostics-Live.ipynb`** and run all cells.
+
+That's the **richest flavour**: the agent runs in an OpenShell sandbox with **live read-only `kubectl`** and investigates the cluster itself.
+
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+<p float="left">
+  <a href="#">
+  <img src="images/notebook-device-code.png" width="820" alt="05 live notebook — device-code login prompt + authenticated gateway" />
+  </a>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
+> [!IMPORTANT]
+> **The sandbox is the guardrail, not the prompt.** You can hand the agent any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt:
+> - ✅ the sandbox gets a short-lived read-only **`sandbox-viewer`** identity (`get`/`list`/`watch`, **no secrets**) + the canonical policy (apiserver read-only **+** LiteLLM proxy),
+> - ✅ the agent shells out to the allowlisted `kubectl`; no internet,
+> - ✅ authentication works both ways — **as you** via **device-code** (`05`) or **headless** via **client-credentials** (`05b` / `05c`); same guardrails apply regardless.
 
 ### Exercise 3.2.6 - `07-OpenShell-Goose-Diagnostics-FromReport`
 
