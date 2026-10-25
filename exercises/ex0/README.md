@@ -366,7 +366,10 @@ flowchart TB
       T3["teched-03 · xp266-021 … 030"]
       T5["teched-05 · xp266-041 … 050"]
     end
-    T1 & T2 & T3 & T4 & T5 ==> |"federated OIDC · aud=bootstrapper"| HUB
+    subgraph AWS["📍 aws · eu-central-1"]
+      A1["aws-01 · aws-001 … 005"]
+    end
+    T1 & T2 & T3 & T4 & T5 & A1 ==> |"federated OIDC · aud=bootstrapper"| HUB
 ```
 
 </details>
