@@ -208,6 +208,11 @@ Same investigation and same headless authentication as **05b** — **`05c`** is 
 
 This notebook gathers a read-only cluster-health **snapshot**, then runs the agent inside an OpenShell sandbox to interpret it — the agent reasons over the piped snapshot (**no live `kubectl` in the box**).
 
+---
+
+> [!NOTE]
+> **Optional variants below** — same families, alternative auth paths. Pick these only if you've finished the three rehearsals above and have time left.
+
 ### Exercise 3.2.4 - `04-OpenShell-Sandbox-SDK`
 
 👉 Open **`04-OpenShell-Sandbox-SDK.ipynb`** and run every cell.
