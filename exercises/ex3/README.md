@@ -16,7 +16,7 @@
 
 ## 🚀 Exercise 3.1 - Sign into JupyterHub
 
-1. 👉 From the **Student's Portal** open your **JupyterHub** playground, e.g.:
+1. 👉 From the **Student's Portal**, open your **JupyterHub** playground, e.g.:
 
    ```
    https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/

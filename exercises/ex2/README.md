@@ -25,7 +25,7 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 
 ## 💬 Exercise 2.1 - Open the chat UI and chat
 
-1. 👉 From the **Student's Portal** open the **Chat Agent**, e.g.:
+1. 👉 From the **Student's Portal**, open the **Chat Agent**, e.g.:
 
    ```
    https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/

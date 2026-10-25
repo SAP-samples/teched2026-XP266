@@ -67,7 +67,7 @@ You'll walk the full path by hand:
 > - ✅ The terminal runs *inside* the cluster, so you reach the gateway's in-cluster Service directly (no HTTPS host, no port-forward).
 > - ✅ The gateway is **OIDC-gated** — it validates your Keycloak token itself.
 
-1. 👉 From the **Student's Portal** open the **Kyma dashboard** — the Busola of your cluster.
+1. 👉 From the **Student's Portal**, open the **Kyma dashboard** — the Busola of your cluster.
 
    <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
    <tbody>
