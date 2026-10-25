@@ -25,7 +25,7 @@ The Busola web terminal is fenced with **RBAC + a NetworkPolicy** — but it's
 still an ordinary `exec` pod: those are guardrails *around* it, not isolation *of* it.  
 OpenShell takes the next step —
 **preserve the agent's capability, but enforce explicit controls** — by running the **same tools image**
-(`goose` / Claude Code / kubectl / kyma / k9s) inside a **runtime-isolated `Sandbox`** where the agent can reason via SAP
+(`goose` / claude / kubectl / kyma / k9s) inside a **runtime-isolated `Sandbox`** where the agent can reason via SAP
 AI Core yet is **physically unable** to touch the cluster API or the public internet.  
 **The sandbox itself is the guardrail.**
 

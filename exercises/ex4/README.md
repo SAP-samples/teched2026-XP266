@@ -7,8 +7,6 @@
 > - ✅ OpenShell can run the workshop's tools image (`goose` / Claude Code / `kubectl` / `kyma`) inside **runtime-isolated `Sandboxes`** that can reason via SAP AI Core yet are **physically unable** to touch the cluster API or the public internet.
 > - ✅ For the nitty-gritty details — the protection layers, the architecture, the glossary — see **Appendix 4**.
 
-👉 This is **OpenShell sandboxing practice** — run it either way:
-
 ## ⚡ 4a. Easy path — run it as a GitHub Action
 
 Want to see an **ops agent** run safely inside a sandbox on your cluster — **without opening a terminal**? Dispatch the GitHub Actions workflow below from your fork. It spins up a contained **OpenShell sandbox** on your cluster, runs an ops agent inside it, and gives you back a Cluster Health report.
