@@ -167,8 +167,7 @@ flowchart LR
 <table>
 <tr>
 <td align="center" width="30%">
-<img src="exercises/ex0/images/speaker.jpg" width="200" alt="Piotr Tesny" /><br/>
-<sub><b>Piotr Tesny</b><br/>speaker</sub>
+<img src="exercises/ex0/images/speaker.jpg" width="200" alt="Piotr Tesny" />
 </td>
 <td>
 
