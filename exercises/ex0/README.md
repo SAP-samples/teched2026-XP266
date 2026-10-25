@@ -77,7 +77,7 @@ Your runtime's dashboards all authenticate through two cooperating mechanisms:
 | Login | What it does | When to use |
 |---|---|---|
 | **Token-based** | opens Busola already authenticated with a service-account / federated token | **frictionless, recommended** — mirrors the headless, CI/CD-style access the automation uses |
-| **OIDC-based** | sign in to Busola **interactively** with your workshop identity | the full interactive login flow; **not** suited to headless / automated environments |
+| **OIDC-based** | sign in to Busola **interactively** with your workshop identity | the full interactive login flow; **read-only access** granted; **not** suited to headless / automated environments |
 
 ### 1. You sign in (oauth2-proxy → Keycloak → federated IdP)
 
