@@ -9,8 +9,8 @@ You will not deploy anything — everything is in place; you are here to underst
 > Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`).  
 > Wherever you see `xp266-NNN` below, use the number you were given.
 >
-> Your **Student's Portal** is available here: [**`all-fleets-student-dashboard`**](https://github.com/SAP-samples/teched2026-XP266/actions/workflows/all-fleets-student-dashboard.yaml) → **Summary** → find your `xp266-NNN` row.
-> The sign-in details are handed out at the start of the session.
+> 👉 Your **Student's Portal** is available here: [**`all-fleets-student-dashboard`**](https://github.com/SAP-samples/teched2026-XP266/actions/workflows/all-fleets-student-dashboard.yaml) → **Summary** → find your `xp266-NNN` row.  
+> 👉 The sign-in details are handed out at the start of the session.
 
 **Contents**
 
