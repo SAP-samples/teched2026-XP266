@@ -135,7 +135,7 @@ flowchart LR
 - 🛠️ [Exercise 4 - Your sandboxed agent: OpenShell practice with Kyma](exercises/ex4/) 🔧 — run the tools image as a runtime-isolated `Sandbox` with a contained LLM provider; watch the egress guardrail deny the apiserver and the internet
   - **4a** *(easy path)* — run it as a **GitHub Action**
   - **4b** *(do-it-yourself)* — do it by hand in the **in-cluster web terminal**
-- 🤖 [Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex5/) 🔧 — add an external, keyed provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
+- 🤖 [Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter](exercises/ex5/) 🔧 — add an external provider; run three terminal coding agents against free OpenRouter models in a still-contained sandbox
   - **5a** *(easy path)* — run it as a **GitHub Action**
   - **5b** *(do-it-yourself)* — do it by hand in the **in-cluster web terminal**
 - 📊 [Exercise 6 - Observability and spend](exercises/ex6/) — Kyma Telemetry to SAP Cloud Logging, the LiteLLM spend dashboards; the closing activity of the session
@@ -147,7 +147,7 @@ flowchart LR
 - 🖥️ [Appendix 2 - The Busola web terminal](exercises/Appendices/2-web-terminal/) 🔧 *(optional)* — run Goose and Claude Code against your cluster, in-browser
 - 🐍 [Appendix 3 - SAP AI Core from Python](exercises/Appendices/3-sap-ai-core-python/) — the JupyterHub SAP AI Core track: chat, embeddings, tool calling, and the diagnostic hand-off in Python
 - 📘 [Appendix 4 - OpenShell: concepts & architecture](exercises/Appendices/4-openshell-concepts/) — the why, risks, protection layers, architecture, and glossary behind the sandboxed-agent hands-on
-- 🌐 [Appendix 5 - External agents & the OpenRouter provider model](exercises/Appendices/5-openrouter-provider/) — how a keyed, external provider plugs into the OpenShell sandbox model, and OpenRouter vs SAP AI Core
+- 🌐 [Appendix 5 - External agents & the OpenRouter provider model](exercises/Appendices/5-openrouter-provider/) — how an external provider plugs into the OpenShell sandbox model, and OpenRouter vs SAP AI Core
 
 > [!IMPORTANT]
 > - ✅ **Every exercise can be completed entirely in the browser — no laptop terminal is required.**
