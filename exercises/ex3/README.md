@@ -16,7 +16,7 @@
 
 ## 🚀 Exercise 3.1 - Sign into JupyterHub
 
-1. 👉 Open your JupyterHub UI URL in the browser from the student's portal, e.g.:
+1. 👉 Open your JupyterHub playground from the student's portal, e.g.:
 
    ```
    https://busola.xp266-NNN.<workshop-domain>/
