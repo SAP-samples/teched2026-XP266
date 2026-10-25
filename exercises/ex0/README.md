@@ -67,17 +67,19 @@ The **Student's Portal** main menu is organised top-to-bottom:
 Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers* several corporate identity providers.
 For TechEd students the default is **SAP IAS** — enter your workshop account and you are straight in. Then **Busola** opens already signed in by riding a **hub-minted federated token**. Two mechanisms, one seamless flow:
 
-### 1. You sign in (oauth2-proxy ↔ Keycloak ↔ SAP IAS)
+### 1. You sign in (oauth2-proxy → Keycloak → federated IdP)
+
+Any `/clusterdir/` hit **always** goes through this chain — the user is **resolved via federation** every time; there is no non-federated route.
 
 ```mermaid
 flowchart LR
     user(["👤 Student<br/>browser"])
-    user -->|1| op["oauth2-proxy<br/>(gateway in front<br/>of the portal)"]
-    op -->|2 · 302 to login| kc["Keycloak realm<br/>(brokers IdPs)"]
-    kc -->|3 · broker → default| ias["SAP IAS<br/>(workshop IdP)"]
+    user -->|1 · GET /clusterdir/| op["oauth2-proxy<br/>(gateway in front<br/>of the portal)"]
+    op -->|2 · 302 → login| kc["Keycloak realm<br/>(federates the user)"]
+    kc -->|3 · federated login<br/>→ default IdP| ias["SAP IAS<br/>(workshop IdP)"]
     ias -.->|4 · prompt<br/>workshop account| ias
-    ias -->|5 · SAML assertion| kc
-    kc -->|6 · OIDC token| op
+    ias -->|5 · federated identity<br/>returned to Keycloak| kc
+    kc -->|6 · OIDC token<br/>(federated user)| op
     op -->|7 · session cookie<br/>200 OK| portal["Student's Portal<br/>(Cluster Directory)"]
 ```
 
