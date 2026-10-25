@@ -63,7 +63,7 @@ The **Student's Portal** main menu is organised top-to-bottom:
 > - To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
 
 <details>
-<summary><h3 style="display:inline">🔐 How sign-in works — click to expand</h3></summary>
+<summary>🔐 <b>How sign-in works</b> — click to expand</summary>
 
 Two ways to open **Busola** — same cluster, different identity, different privileges. One table covers how you sign in, who you are on the shoot, and what you can do:
 
