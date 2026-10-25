@@ -75,6 +75,96 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 | 🩺 **v2** · `cluster-health-v2` | **live**, read-only `kubectl` on a leash — a fixed health playbook | the balanced default — also drives the Security Audit, so this is the **highest-spend** run |
 | 🔬 **v3** · `cluster-health-v3` | **live**, read-only `kubectl`, real-time and uncapped | **most thorough** — can run custom prompts |
 
+#### 🔧 How each job is wired — click to expand
+
+<details>
+<summary>📸 <b>v1 — the snapshot path</b></summary>
+
+```mermaid
+flowchart LR
+    cron["⏱️ CronJob<br/><code>dev-toolbox-diagnose</code><br/>schedule: <code>*/10 * * * *</code>"]
+    cron --> job["Job<br/>(one per fire)"]
+    job --> pod["Pod · 1 container<br/><code>diagnose-v1</code>"]
+    cm["ConfigMap<br/><code>dev-toolbox-prompts</code><br/>key: <code>health-v1-from-diagnose</code>"] -. mounted at <code>/etc/prompts</code> .-> pod
+    pod --> snap["<b>kyma alpha diagnose</b><br/>snapshot JSON"]
+    snap --> llm["LiteLLM proxy<br/><code>claude -p</code> reformat"]
+    llm --> cr["ClusterHealthReport<br/><b>cluster-health</b> (v1)"]
+```
+
+- **Cheapest** of the four — ~15–25 s per run, every 10 min, uniform fleet-wide
+- **No cluster access from the agent** — the snapshot comes from `kyma alpha diagnose`; the reformat LLM is `claude -p` through the LiteLLM proxy
+- The prompt is the shipped `health-v1-from-diagnose` key — no sandbox, no sidecar, no live kubectl
+</details>
+
+<details>
+<summary>🩺 <b>v2 + audit — one pod, two sidecars</b></summary>
+
+```mermaid
+flowchart LR
+    cron["⏱️ CronJob<br/><code>dev-toolbox-diagnose-v2</code><br/>daily · 05:17–07:17 UTC (azure)<br/>+ 08:37 UTC (aws)"]
+    cron --> job["Job"]
+    job --> pod{{"Pod · 3 containers"}}
+    pod --> main["<b>diagnose-v2</b> (main)<br/>orchestrator"]
+    pod --> gh["<b>goose-v2-health</b> sidecar<br/>OpenShell Sandbox + goose<br/>prompt: <code>health-v2-report-first</code>"]
+    pod --> ga["<b>goose-v2-audit</b> sidecar<br/>OpenShell Sandbox + goose<br/>prompt: <code>audit-v2-security</code>"]
+    vol["Volume <code>dev-toolbox-prompts</code><br/><i>projected</i>: managed + adhoc CMs merged<br/>→ <code>/etc/prompts</code>"] -. mounted .-> main
+    vol -. mounted .-> gh
+    gh --> sbh["Sandbox pod<br/>read-only <code>sandbox-viewer</code> token"]
+    ga --> sba["Sandbox pod<br/>read-only <code>sandbox-viewer</code> token"]
+    sbh --> llm["LiteLLM proxy"]
+    sba --> llm
+    main --> crH["<b>cluster-health-v2</b>"]
+    main --> crA["<b>cluster-audit</b>"]
+```
+
+- **Highest-spend** of the four — the health run drives the fleet-wide spend dashboard
+- Two independent goose runs in their own **OpenShell Sandboxes** inside the same Pod — one for health, one for security audit
+- Each sandbox gets a fresh **short-lived, read-only `sandbox-viewer` token** (`get`/`list`/`watch`, `secrets` excluded) — the only identity that reaches `kubectl` from inside
+- Pod-level prompts volume is **`projected`** (managed CM + `dev-toolbox-prompts-adhoc` merged) so **custom prompts** work on health runs; audit stays on its hardcoded `audit-v2-security` key
+</details>
+
+<details>
+<summary>🔬 <b>v3 — one container, deepest run, custom prompts</b></summary>
+
+```mermaid
+flowchart LR
+    cron["⏱️ CronJob<br/><code>dev-toolbox-diagnose-v3</code><br/>daily · +15 min after v2"]
+    cron --> job["Job<br/>(volume name<br/>swapped to adhoc CM<br/>at /run via API<br/>when custom prompt used)"]
+    job --> pod["Pod · 1 container<br/><code>diagnose-v3</code>"]
+    cm1["ConfigMap<br/><code>dev-toolbox-prompts</code><br/>(managed keys)"] -. default mount .-> pod
+    cm2["ConfigMap<br/><code>dev-toolbox-prompts-adhoc</code><br/>(custom prompts)"] -. mount <i>when swapped</i> .-> pod
+    pod --> sb["OpenShell Sandbox<br/><i>goose</i> + live read-only <code>kubectl</code>"]
+    sb --> llm["LiteLLM proxy<br/>(custom model honoured)"]
+    sb --> cr["ClusterHealthReport<br/><b>cluster-health-v3</b>"]
+```
+
+- **Most thorough** — uncapped goose turn budget, live `kubectl`, honours the custom **model** picker
+- Supports **adhoc prompts** via a volume-swap at job-create time (API rewrites the pod spec's CM name from `dev-toolbox-prompts` → `dev-toolbox-prompts-adhoc`)
+- Post-teched follow-up: converge this to the same `projected` pattern used by v2 — removes the API swap and matches the uniform v2 mental model
+</details>
+
+<details>
+<summary>🔎 <b>forensic — the post-mortem run</b></summary>
+
+```mermaid
+flowchart LR
+    cron["⏱️ CronJob<br/><code>dev-toolbox-diagnose-forensic</code><br/>daily · +30 min after v2<br/>also fires on-failure of v2/v3"]
+    cron --> job["Job"]
+    job --> pod["Pod · 1 container<br/><code>diagnose-forensic</code>"]
+    inA["<b>cluster-health-v2</b><br/>(latest report)"] --> pod
+    inB["<b>cluster-health-v3</b><br/>(latest report)"] --> pod
+    inC["LiteLLM spend<br/>(SAP Cloud Logging)"] --> pod
+    inD["Kubernetes Job state<br/>(success/failure)"] --> pod
+    pod --> sb["OpenShell Sandbox<br/><i>goose</i> + reformat prompt<br/><code>forensic-postmortem-v2</code>"]
+    sb --> llm["LiteLLM proxy"]
+    sb --> cr["ClusterHealthReport<br/><b>cluster-health-forensic</b><br/>verdict: 🎯 CONFIRMED / 🟡 LIKELY / ⚪ INCONCLUSIVE"]
+```
+
+- **Cross-report analysis** — reads the stored v2 + v3 reports, LiteLLM spend, and Job state; does **not** touch the cluster directly
+- Fires daily right after v3, and reactively **on-failure** of v2/v3 (so a skipped main run still produces a verdict)
+- Also triggerable **on-demand** from the Diagnostic Toolbox UI
+</details>
+
 
 ## 📋 Exercise 1.1 - Read the latest reports
 
