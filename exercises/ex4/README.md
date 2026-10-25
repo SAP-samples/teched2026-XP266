@@ -47,8 +47,6 @@ Want to see an **ops agent** run safely inside a sandbox on your cluster — **w
 > - ✅ find a successful **`all-fleets-teched-student`** run, and
 > - ✅ read the **Summary** page (verdict + Goose report)
 > - ✅ plus any step's **execution log**.
->
-> 👉 You see the exact same artifacts a dispatcher would, just from someone else's run.
 
 Prefer the Do-It-Yourself path? Continue below.
 
@@ -89,7 +87,7 @@ You'll walk the full path by hand:
    </tbody>
    </table>
 
-2. 👉 In Busola, click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
+2. 👉 Click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
 
    <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
    <tbody>
@@ -135,7 +133,7 @@ You'll walk the full path by hand:
    ```
    ✓ Authenticated via device code
    ```
-5. 👉 Now `openshell sandbox list` works from the terminal — continue with 4.2.
+5. 👉 Run `openshell sandbox list` from the terminal — continue with 4.2.
 
 > 💡 **Tip** — Already registered from a previous run? Re-auth instead:
 > ```bash
