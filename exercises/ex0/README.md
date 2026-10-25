@@ -267,6 +267,28 @@ flowchart TB
 - 📦 met the pre-deployed **AI-ops stack** — LiteLLM proxy, Goose diagnostic jobs, the interactive chat agent, JupyterHub, and the KRO custom resources,
 - 🗺️ and saw where it fits in the **TechEd 2026 landscape** — one of 50 spokes trusting the central hub.
 
+### 🗺️ All mermaid diagrams across the workshop
+
+A quick cross-reference — every architecture diagram, grouped by exercise. Each entry jumps to the section; where the diagram sits inside a `<details>` collapsible, click to expand once the section opens.
+
+| Exercise | Diagram | Jump to |
+|---|---|---|
+| **Ex 0 — orientation** | 🔐 OIDC sign-in sequence (oauth2-proxy → Keycloak → SAP IAS) | [§0.1](#-exercise-01---sign-in-to-students-portal-and-find-your-cluster) |
+| | 🏛️ Hub-and-spokes federation (SA token across 55 spokes) | [§0.1](#-exercise-01---sign-in-to-students-portal-and-find-your-cluster) |
+| | 📦 AI-ops stack diagram (what's pre-deployed) | [§0.2](#-exercise-02---see-what-is-already-deployed-optional) |
+| | 🗺️ Fleet topology (50 spokes · 5 shards · 3 Azure regions + hub) | [§0.3](#️-exercise-03---the-teched-2026-landscape-at-a-glance-optional) |
+| **Ex 1 — Diagnostic Toolbox** | 📸 **v1** job (snapshot path) | [ex1 §1 report-generations](../ex1/README.md#️-the-three-report-generations-plus-security-audit-and-forensic-reports) |
+| | 🩺 **v2 + audit** (one pod, two sidecars) | [ex1 §1 report-generations](../ex1/README.md#️-the-three-report-generations-plus-security-audit-and-forensic-reports) |
+| | 🔬 **v3** (one container, custom prompts, uncapped) | [ex1 §1 report-generations](../ex1/README.md#️-the-three-report-generations-plus-security-audit-and-forensic-reports) |
+| | 🔎 **forensic** (post-mortem) | [ex1 §1 report-generations](../ex1/README.md#️-the-three-report-generations-plus-security-audit-and-forensic-reports) |
+| **Ex 2 — chat hand-off** | 🔄 Autonomous Jobs write; interactive agent reads (producer-consumer) | [ex2 §2.2](../ex2/README.md#-exercise-22---the-hand-off-ask-about-your-clusters-diagnosis) |
+| **Ex 3 — notebooks** | 📦 Family 1 · sandbox lifecycle (`04` / `04b`) | [ex3 §3.2](../ex3/README.md#-exercise-32---openshell-notebooks) |
+| | 🪿 Family 2 · adaptive investigators (`05` / `05b` / `05c`) | [ex3 §3.2](../ex3/README.md#-exercise-32---openshell-notebooks) |
+| | 🪿 Family 3 · forensic sniffers (`06` / `07`) | [ex3 §3.2](../ex3/README.md#-exercise-32---openshell-notebooks) |
+| **Ex 4 — OpenShell** | 🖼️ OpenShell concept diagram (gateway, sandbox, provider, profile) | [ex4 §4.2](../ex4/README.md#-42---introducing-openshell-concepts-providers-and-profiles) |
+| **Ex 5 — external agents** | ▶️ Agent run against a free OpenRouter model | [ex5 §5.3](../ex5/README.md#️-53---run-an-agent-against-a-free-model) |
+| **Appendix 1 — LLM gateway** | 🧱 LiteLLM proxy architecture | [App 1.1](../Appendices/1-llm-gateway/README.md#appendix-11---understand-the-proxy) |
+
 > [!NOTE]
 > ⏱ **How to pace the next 110 minutes.** The workshop is 2 h total: ~10 min here (host-led intro) + ~110 min across ex1–ex6. Recommended split, in order of load:
 >
