@@ -61,21 +61,21 @@
 
 3. 👉 In the file browser (left) you'll find the pre-loaded OpenShell notebooks.
 
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/jupyterhub-04.png" width="820" alt="JupyterLab file browser — pre-loaded OpenShell notebooks" />
-  </a>
-</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="images/jupyterhub-04.png" width="820" alt="JupyterLab file browser — pre-loaded OpenShell notebooks" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
 
 ## 📒 Exercise 3.2 - OpenShell notebooks
 
