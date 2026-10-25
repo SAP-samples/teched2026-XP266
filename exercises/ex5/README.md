@@ -2,13 +2,48 @@
 
 > ⏱ **~18 min**
 
-This exercise runs a **different** contained sandbox. In the earlier exercises the sandbox's only exit was the
-in-cluster LiteLLM proxy; here it is **OpenRouter** — one external host, and nothing else. The box still can't reach
-the apiserver or the rest of the internet, and the real OpenRouter key never enters it: the gateway holds the key and
-the sandbox only ever carries a sentinel.
+<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+<tbody>
+<tr>
+<td>
+<div>
+
+**What you'll do** — swap SAP AI Core for a **public** LLM provider, in a sandbox that stays just as contained.
+
+- 🌐 **Different exit** — the only hop out of the sandbox is **OpenRouter**, not the in-cluster LiteLLM proxy.
+- 🔐 **Same key story** — the gateway holds the real OpenRouter key; the sandbox carries a **sentinel**.
+- 🧩 **Three agents, one box** — **opencode** · **Pi** · **Qwen Code**, all pre-installed, all pointed at OpenRouter.
+- 🛡️ **Still walled off** — no apiserver, no `example.com`; even `curl openrouter.ai` is denied — only the agent binaries get out.
+- 🤖 **Free models** — try the current **NVIDIA Nemotron** `:free` picks on OpenRouter.
+
+```mermaid
+flowchart LR
+  subgraph SB["📦 contained sandbox"]
+    AG["🧩 agent<br/>opencode · Pi · Qwen Code"]
+  end
+  GW["🔐 OpenShell gateway<br/>holds the real OpenRouter key"]
+  OR["🌐 OpenRouter"]
+  M["🤖 NVIDIA Nemotron<br/>:free model"]
+
+  AG -- "prompt + key sentinel" --> GW
+  GW -- "swaps sentinel → real key" --> OR
+  OR -- "routes to" --> M
+  M -. "reply" .-> AG
+```
+
+</div>
+</td>
+</tr>
+</tbody>
+</table>
 
 > [!NOTE]
 > How the provider/profile model works and how OpenRouter compares to SAP AI Core are in **[Appendix 5 - External agents & the OpenRouter provider model](../Appendices/5-openrouter-provider/README.md)**.
+
+> [!TIP]
+> **Two ways in — pick either**
+> - ⚡ **5a. Easy path** — run it as a **GitHub Action** (no terminal; read the run **Summary**).
+> - 🛠️ **5b. Do-it-yourself** — use the **OpenShell CLI** in the Busola web terminal.
 
 ## ⚡ 5a. Easy path — run it as a GitHub Action
 
