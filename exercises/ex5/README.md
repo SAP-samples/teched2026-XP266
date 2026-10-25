@@ -70,7 +70,7 @@ You'll walk the full path by hand:
    </tbody>
    </table>
 
-2. 👉 In Busola, click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
+2. 👉 Click the **terminal icon** (**`>_`**) in the top-right of the toolbar to open a web terminal.
 
    <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
    <tbody>
