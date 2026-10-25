@@ -19,7 +19,7 @@
 1. 👉 Open your JupyterHub playground from the student's portal, e.g.:
 
    ```
-   https://busola.xp266-NNN.<workshop-domain>/
+   https://busola.xp266-NNN.<workshop-domain>/clusterdir/
    ```
 
    or directly via:

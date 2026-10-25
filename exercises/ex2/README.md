@@ -28,7 +28,7 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
 1. 👉 Open your chat UI URL in the browser from the student's portal, e.g.:
 
    ```
-   https://busola.xp266-NNN.<workshop-domain>/
+   https://busola.xp266-NNN.<workshop-domain>/clusterdir/
    ```
 
    or directly via:
