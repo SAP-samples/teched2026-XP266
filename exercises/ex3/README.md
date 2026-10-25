@@ -161,9 +161,6 @@ flowchart LR
 - 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) — same sandbox as 06; the agent reasons over **pre-computed** openclaw ConfigMaps: `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) from the latest `cluster-health` CronJob run.
 </details>
 
-> [!NOTE]
-> The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
-
 ### Exercise 3.2.1 - `04-OpenShell-Sandbox-SDK`
 
 👉 Open **`04-OpenShell-Sandbox-SDK.ipynb`** and run every cell.
