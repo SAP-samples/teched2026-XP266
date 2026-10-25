@@ -68,7 +68,8 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 </table>
 
 
-The dev-toolbox ships **four CronJob families** that write **five report CRs** between them. Click any card below for its full wiring — schedule, Pod shape, ConfigMaps, sandbox, and output CR.
+The dev-toolbox ships **four CronJob families** that write **five report CRs** between them.  
+👉 Click any card below for its full wiring — schedule, Pod shape, ConfigMaps, sandbox, and output CR.
 
 <details>
 <summary>📸 <b>v1</b> · <code>cluster-health</code> — periodic <code>kyma alpha diagnose</code> snapshot; cheap, deterministic</summary>
