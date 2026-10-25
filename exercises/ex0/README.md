@@ -65,7 +65,9 @@ The **Student's Portal** main menu is organised top-to-bottom:
 <summary>🔐 <b>How sign-in works</b> — click to expand</summary>
 
 Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers* several corporate identity providers.
-For TechEd students the default is **SAP IAS** — enter your workshop account and you are straight in. The hops a browser makes on first open:
+For TechEd students the default is **SAP IAS** — enter your workshop account and you are straight in. Then **Busola** opens already signed in by riding a **hub-minted federated token**. Two mechanisms, one seamless flow:
+
+### 1. You sign in (oauth2-proxy ↔ Keycloak ↔ SAP IAS)
 
 ```mermaid
 flowchart LR
@@ -77,11 +79,39 @@ flowchart LR
     ias -->|5 · SAML assertion| kc
     kc -->|6 · OIDC token| op
     op -->|7 · session cookie<br/>200 OK| portal["Student's Portal<br/>(Cluster Directory)"]
-    portal -->|8 · click<br/>'Token-based login'| busola["Busola<br/>— Cluster Overview<br/>already signed in<br/>(federated SA token)"]
 ```
 
-- **Steps 1-7** = the oauth2-proxy / Keycloak / SAP IAS handshake — happens once per session; stored as a secure cookie
-- **Step 8** = frictionless hop into **Busola** via the **federated token** (same identity, no extra prompt). The OIDC-based tile exists for interactive comparison but the token path is the recommended default
+### 2. Busola rides a federated SA token (hub-and-spokes)
+
+The 55 TechEd runtimes **do not each manage their own user identity for Busola**. Instead there is **one hub** that mints a short-lived ServiceAccount token, and every spoke **pre-trusts the hub** via a Kubernetes OpenIDConnect authenticator + ClusterRoleBinding. One identity, 55 spokes.
+
+```mermaid
+flowchart LR
+    subgraph hub["🏛️ Hub · kyma4s-005 (quovadis)"]
+      sa["<code>kube-system/</code><br/><b>bootstrapper-federated</b> SA"]
+      iss["Managed SA issuer<br/><code>.well-known/openid-configuration</code><br/>+ public JWKS"]
+      sa --> iss
+    end
+
+    cron["⏱️ <b>federated-token-refresh</b><br/>CronJob (hub-minted, ~1 h TTL)"]
+    cron -->|mints token<br/>aud=bootstrapper| sa
+
+    subgraph spoke["🛰️ Spoke · <code>xp266-001</code> (one of 55)"]
+      oidc["<b>OpenIDConnect</b> CR<br/><code>quovadis-federated</code><br/>• issuer = hub<br/>• audience = bootstrapper<br/>• usernamePrefix = <code>quovadis:</code>"]
+      crb["<b>ClusterRoleBinding</b><br/><code>quovadis-federated-admin</code><br/>→ cluster-admin on this spoke"]
+      oidc --> crb
+    end
+
+    iss -. public JWKS<br/>fetched once<br/>cached & refreshed .-> oidc
+
+    portal["Student's Portal<br/>'Token-based login' tile"] -->|hands current hub token<br/>to Busola kubeconfig| busola["Busola on any spoke<br/>authenticated as<br/><code>quovadis:…bootstrapper-federated</code><br/>→ cluster-admin"]
+    cron -. keeps the token fresh<br/>in the portal kubeconfig .-> portal
+```
+
+- **Hub** signs the token (SA on `kyma4s-005`); the SA issuer is a public URL (`.well-known` + JWKS)
+- **Each spoke** has, applied once at provisioning: an **`OpenIDConnect`** CR that trusts the hub issuer + audience, and a **`ClusterRoleBinding`** that maps the resulting username (`quovadis:…`) to **`cluster-admin`**
+- The hub's **`federated-token-refresh` CronJob** keeps the ~1 h token fresh in the kubeconfig the portal hands to Busola — so **you never see the refresh**
+- Click the **Token-based login** tile → Busola opens on your spoke, already authenticated, no second prompt. The OIDC-based tile exists for interactive comparison but the token path is the recommended default.
 
 </details>
 
