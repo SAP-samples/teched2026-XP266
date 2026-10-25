@@ -180,8 +180,8 @@ The **Student's Portal** main menu is organised top-to-bottom:
 
 | Section | What it's for |
 |---|---|
-| 🧭 **Navigate to your Kyma cluster** | Pick your runtime with the **selector** (top-right), e.g. `xp266-NNN`. The card shows your **User login** (`XP266-NNN`) and the shared **Instructor login** (`XP266-000`) — plus two ways in (below). |
-| 🚀 **Cluster launchpad** | One-click deep-links into every endpoint for the selected cluster — **Cluster Health Report**, **Fleet Status + Spend**, **Audit Log**, **Jobs**, and the apps (**Diagnostic Tools**, **LiteLLM Spend**, **JupyterHub**, **Chat agent**). |
+| 🧭 **Navigate to your Kyma cluster** | Pick your runtime with the **selector** (top-right), e.g. `xp266-NNN`. The card shows your **User login**. |
+| 🚀 **Cluster launchpad** | One-click into **Cluster Health Report**, **Fleet Status + Spend**, **Audit Log**, **Jobs**, and the apps (**Diagnostic Tools**, **LiteLLM Spend**, **JupyterHub**, **Chat agent**). |
 | 🩺 **Cluster Health** | The latest **Cluster Health Report** for your runtime in several flavors. |
 | 🧩 **Modules Health** | Kyma modules default CR state. |
 | 🖥️ **Busola Web Terminal** | Quick-launch deep-link into the in-cluster web terminal — the pod with pre-installed `goose` / `claude` / `kubectl` / `kyma`. |
