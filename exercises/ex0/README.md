@@ -170,7 +170,7 @@ https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
-<td align="center" width="50%"><a href="../../actions/workflows/all-fleets-student-dashboard.yaml"><img src="images/00_00_0010.png" width="100%" alt="SAP TechEd 2026 — Cluster Directory (Student's Portal)" /></a><br/><sub><b>1.</b> Student's Portal — pick your runtime <em>(click the image to open the <code>all-fleets-student-dashboard</code> workflow)</em></sub></td>
+<td align="center" width="50%"><a href="https://github.com/SAP-samples/teched2026-XP266/actions/workflows/all-fleets-student-dashboard.yaml"><img src="images/00_00_0010.png" width="100%" alt="SAP TechEd 2026 — Cluster Directory (Student's Portal)" /></a><br/><sub><b>1.</b> Student's Portal — pick your runtime <em>(click the image to open the <code>all-fleets-student-dashboard</code> workflow)</em></sub></td>
 <td align="center" width="50%"><img src="images/busola-01.png" width="100%" alt="Busola Cluster Overview — landed after the oauth2-proxy sign-in" /><br/><sub><b>2.</b> Busola — Cluster Overview, already signed in</sub></td>
 </tr>
 </tbody>
