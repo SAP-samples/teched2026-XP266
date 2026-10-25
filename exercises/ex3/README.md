@@ -19,13 +19,13 @@
 1. 👉 Open your JupyterHub playground from the student's portal, e.g.:
 
    ```
-   https://busola.xp266-NNN.<workshop-domain>/clusterdir/
+   https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/
    ```
 
    or directly via:
 
    ```
-   https://jupyterhub.xp266-NNN.<workshop-domain>/
+   https://jupyterhub.xp266-NNN.<tenant>.kyma.dev.sap/
    ```
 
    <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">

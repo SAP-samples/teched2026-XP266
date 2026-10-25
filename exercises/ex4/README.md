@@ -127,7 +127,7 @@ You'll walk the full path by hand:
    It prints a verification URL and a short code, then waits:
    ```
    To authenticate, visit:
-     https://keycloak.xp266-NNN.<workshop-domain>/realms/ateam-isveng/device?user_code=XXXX-XXXX
+     https://keycloak.xp266-NNN.<tenant>.kyma.dev.sap/realms/ateam-isveng/device?user_code=XXXX-XXXX
    Waiting for authorization...
    ```
    

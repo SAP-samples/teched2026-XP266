@@ -25,13 +25,13 @@
 👉 Open the diagnostics either from the **Student's Portal** —
 
 ```
-https://busola.xp266-NNN.<workshop-domain>/clusterdir/
+https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/
 ```
 
 — or directly:
 
 ```
-https://dev-toolbox.xp266-NNN.<workshop-domain>/
+https://dev-toolbox.xp266-NNN.<tenant>.kyma.dev.sap/
 ```
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">

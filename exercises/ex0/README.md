@@ -25,7 +25,7 @@ You will not deploy anything — everything is in place; you are here to underst
 👉 Open the student's portal:
 
 ```
-https://busola.xp266-NNN.<workshop-domain>/clusterdir/
+https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/
 ```
 
 > [!NOTE]
