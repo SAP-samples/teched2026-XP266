@@ -79,6 +79,11 @@ Your runtime's dashboards all authenticate through two cooperating mechanisms:
 | **Token-based** | opens Busola already authenticated with a service-account / federated token | **frictionless, recommended** — mirrors the headless, CI/CD-style access the automation uses |
 | **OIDC-based** | sign in to Busola **interactively** with your workshop identity | the full interactive login flow; **read-only access** granted; **not** suited to headless / automated environments |
 
+Why one path writes and the other doesn't — it's RBAC on the shoot, not a sign-in quirk:
+
+- 🪪 **OIDC-based** → shoot authenticates you as `keycloak:<user>` → bound to a **`view`** ClusterRole (read-only). You can **look** at everything but **not mutate** anything from Busola. Browsing-friendly, safe for a workshop.
+- 🎫 **Token-based** → shoot authenticates the hub SA as `quovadis:…bootstrapper-federated` → bound to **`cluster-admin`** via `quovadis-federated-admin`. Full write access, matches what the automation (bootstrapper, cron jobs, GitHub Actions) uses.
+
 ### 1. You sign in (oauth2-proxy → Keycloak → federated IdP)
 
 Any `/clusterdir/` hit **always** goes through this chain — the user is **resolved via federation** every time; there is no non-federated route. **End-to-end OIDC** — no SAML anywhere in the path.
