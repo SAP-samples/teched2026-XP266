@@ -7,8 +7,6 @@
 </td>
 <td>
 
-**Contents**
-
 - 📝 [Description](#description)
 - 🧭 [Overview](#overview)
 - ✅ [Requirements](#requirements)
