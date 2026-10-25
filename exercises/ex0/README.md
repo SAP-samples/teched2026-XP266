@@ -65,24 +65,14 @@ The **Student's Portal** main menu is organised top-to-bottom:
 <details>
 <summary><h3 style="display:inline">🔐 How sign-in works — click to expand</h3></summary>
 
-Your runtime's dashboards all authenticate through two cooperating mechanisms:
+Two ways to open **Busola** — same cluster, different identity, different privileges. One table covers how you sign in, who you are on the shoot, and what you can do:
 
-- 🔑 **One Keycloak realm** — authenticates the user; *brokers* several corporate identity providers.
-- 🪪 **SAP IAS** — the default broker for TechEd students; enter your workshop account and you're straight in.
-- 🎫 **Hub-minted federated token** — Busola opens **already signed in** on your spoke by riding it.
-- 🔄 **Two mechanisms, one seamless flow** — detailed below.
+| Login (tile) | How you're authenticated | Who you are on the shoot | What you can do |
+|---|---|---|---|
+| 🎫 **Token-based** (recommended) | **Hub-minted federated SA token** · no browser · same path the automation uses | `quovadis:…bootstrapper-federated` | **`cluster-admin`** — full write access via `quovadis-federated-admin` CRB |
+| 🪪 **OIDC-based** | Interactive **OIDC login** → Keycloak realm → brokered to **SAP IAS** (workshop IdP) | `keycloak:<your-user>` | **`view`** — read-only, safe for workshop browsing; **not** suited to headless / automated environments |
 
-**Two ways in:**
-
-| Login | What it does | When to use |
-|---|---|---|
-| **Token-based** | opens Busola already authenticated with a service-account / federated token | **frictionless, recommended** — mirrors the headless, CI/CD-style access the automation uses |
-| **OIDC-based** | sign in to Busola **interactively** with your workshop identity | the full interactive login flow; **read-only access** granted; **not** suited to headless / automated environments |
-
-Why one path writes and the other doesn't — it's RBAC on the shoot, not a sign-in quirk:
-
-- 🪪 **OIDC-based** → shoot authenticates you as `keycloak:<user>` → bound to a **`view`** ClusterRole (read-only). You can **look** at everything but **not mutate** anything from Busola. Browsing-friendly, safe for a workshop.
-- 🎫 **Token-based** → shoot authenticates the hub SA as `quovadis:…bootstrapper-federated` → bound to **`cluster-admin`** via `quovadis-federated-admin`. Full write access, matches what the automation (bootstrapper, cron jobs, GitHub Actions) uses.
+> The two paths produce **two distinct identities** on the same cluster; the shoot's **ClusterRoleBindings** decide the privilege level — not the sign-in flow itself. The two subsections below show each path end-to-end.
 
 **1. You sign in (oauth2-proxy → Keycloak → federated IdP)**
 
