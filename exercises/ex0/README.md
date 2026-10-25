@@ -184,7 +184,7 @@ The **Student's Portal** main menu is organised top-to-bottom:
 | 🚀 **Cluster launchpad** | One-click into **Cluster Health Report**, **Fleet Status + Spend**, **Audit Log**, **Jobs**, and the apps (**Diagnostic Tools**, **LiteLLM Spend**, **JupyterHub**, **Chat agent**). |
 | 🩺 **Cluster Health** | The latest **Cluster Health Report** for your runtime in several flavors. |
 | 🧩 **Modules Health** | Kyma modules default CR state. |
-| 🖥️ **Busola Web Terminal** | Quick-launch deep-link into the in-cluster web terminal — the pod with pre-installed `goose` / `claude` / `kubectl` / `kyma`. |
+| 🖥️ **Busola Web Terminal** | Quick-launch deep-link into the in-cluster web terminal. |
 | 💰 **LiteLLM spend** | Today's SAP AI Core spend for your runtime, inline (model + caller breakdown). Full dashboards one click away (SAP Cloud Logging). You'll explore this in Exercise 6. |
 
 
