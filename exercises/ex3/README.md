@@ -130,9 +130,9 @@ flowchart LR
     goose --> llm["LiteLLM proxy<br/>→ SAP AI Core"]
 ```
 
-- 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-325---05-device-code-cli---adaptive-variant-optional) — richest flavour; CLI registers the gateway via **device-code**, SDK opens the sandbox, agent gets **live read-only `kubectl`**.
-- 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-322---05b--05c-headless--pure-sdk-twin---adaptive) — same rich flavour, **headless** (CLI uses client-credentials instead of device-code).
-- 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-322---05b--05c-headless--pure-sdk-twin---adaptive) — like `05b`, but **no `openshell` CLI** — only the **NVIDIA OpenShell Python SDK**; mints the client-credentials token itself.
+- 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-325---05-device-code-cli--05c-pure-sdk---adaptive-variants-optional) — richest flavour; CLI registers the gateway via **device-code**, SDK opens the sandbox, agent gets **live read-only `kubectl`**.
+- 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-322---05b-headless-cli---adaptive) — same rich flavour, **headless** (CLI uses client-credentials instead of device-code).
+- 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-325---05-device-code-cli--05c-pure-sdk---adaptive-variants-optional) — like `05b`, but **no `openshell` CLI** — only the **NVIDIA OpenShell Python SDK**; mints the client-credentials token itself.
 </details>
 
 <details>
@@ -173,17 +173,13 @@ flowchart LR
 - ✅ The notebook mints a client-credentials token itself (from the `openshell-admin-sa` secret) and hands it to `SandboxClient` directly.
 - ✅ Same result, with machine-to-machine authentication.
 
-### Exercise 3.2.2 - `05b` / `05c` (headless + pure-SDK twin) — 🪿 adaptive
+### Exercise 3.2.2 - `05b` (headless CLI) — 🪿 adaptive
 
 👉 Open **`05b-OpenShell-Goose-Diagnostics-Live-Headless.ipynb`** and run all cells.
 
 - ✅ **Live read-only `kubectl` goose investigation** — the agent runs inside the sandbox against a scoped-ops SA token (`get`/`list`/`watch`, `secrets` excluded).
 - ✅ **Headless authentication** — `05b` mints a **client-credentials** token in-notebook (service account), so the sandbox session needs **no browser** and **no device-code screen**.
-- 💡 The device-code twin **`05`** is covered as an optional variant below ([§3.2.5](#exercise-325---05-device-code-cli---adaptive-variant-optional)) — same investigation, same guardrails; only the sign-in flow differs.
-
-👉 Then open **`05c-OpenShell-Sandbox-PureSDK.ipynb`** and run all cells.
-
-Same investigation and same headless authentication as **05b** — **`05c`** is identical to **`05b`**, it just uses the **NVIDIA OpenShell Python SDK** instead of the `openshell` CLI.
+- 💡 The device-code twin **`05`** and the pure-SDK twin **`05c`** are covered as optional variants below ([§3.2.5](#exercise-325---05-device-code-cli--05c-pure-sdk---adaptive-variants-optional)) — same investigation, same guardrails; only the sign-in flow and the client library differ.
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
@@ -239,7 +235,7 @@ This notebook drives the OpenShell gateway programmatically via the **OpenShell 
 > This minimal sandbox is **compute-only**: it has no cluster credentials and no route out.  
 > It's the blank canvas; the next step adds an agent and a scoped, read-only cluster identity.
 
-### Exercise 3.2.5 - `05` (device-code CLI) — 🪿 adaptive variant (optional)
+### Exercise 3.2.5 - `05` (device-code CLI) / `05c` (pure-SDK) — 🪿 adaptive variants (optional)
 
 👉 Open **`05-OpenShell-Goose-Diagnostics-Live.ipynb`** and run all cells.
 
@@ -260,6 +256,10 @@ That's the **richest flavour**: the agent runs in an OpenShell sandbox with **li
 </tr>
 </tbody>
 </table>
+
+👉 Then open **`05c-OpenShell-Sandbox-PureSDK.ipynb`** and run all cells.
+
+Same investigation and same headless authentication as **`05b`** (§3.2.2) — **`05c`** is identical to `05b` under the hood, it just uses the **NVIDIA OpenShell Python SDK** instead of the `openshell` CLI.
 
 > [!IMPORTANT]
 > **The sandbox is the guardrail, not the prompt.** You can hand the agent any prompt and it still can't mutate your cluster or leak a token — the sandbox enforces it, not the prompt:
