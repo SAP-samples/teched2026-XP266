@@ -54,18 +54,18 @@ The **Student's Portal** main menu is organised top-to-bottom:
 | 🖥️ **Busola Web Terminal** | Quick-launch deep-link into the in-cluster web terminal — the pod with pre-installed `goose` / `claude` / `kubectl` / `kyma`. |
 | 💰 **LiteLLM spend** | Today's SAP AI Core spend for your runtime, inline (model + caller breakdown). Full dashboards one click away (SAP Cloud Logging). You'll explore this in Exercise 6. |
 
+<details>
+<summary>🔐 <b>How sign-in works</b> — click to expand</summary>
+
+Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers* several corporate identity providers.
+For TechEd students the default is **SAP IAS** — enter your workshop account and you are straight in. Then **Busola** opens already signed in by riding a **hub-minted federated token**. Two mechanisms, one seamless flow:
+
 **Two ways in:**
 
 | Login | What it does | When to use |
 |---|---|---|
 | **Token-based** | opens Busola already authenticated with a service-account / federated token | **frictionless, recommended** — mirrors the headless, CI/CD-style access the automation uses |
 | **OIDC-based** | sign in to Busola **interactively** with your workshop identity | the full interactive login flow; **not** suited to headless / automated environments |
-
-<details>
-<summary>🔐 <b>How sign-in works</b> — click to expand</summary>
-
-Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers* several corporate identity providers.
-For TechEd students the default is **SAP IAS** — enter your workshop account and you are straight in. Then **Busola** opens already signed in by riding a **hub-minted federated token**. Two mechanisms, one seamless flow:
 
 ### 1. You sign in (oauth2-proxy → Keycloak → federated IdP)
 
