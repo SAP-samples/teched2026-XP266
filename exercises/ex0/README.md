@@ -182,8 +182,8 @@ The **Student's Portal** main menu is organised top-to-bottom:
 |---|---|
 | 🧭 **Navigate to your Kyma cluster** | Pick your runtime with the **selector** (top-right), e.g. `xp266-NNN`. The card shows your **User login** (`XP266-NNN`) and the shared **Instructor login** (`XP266-000`) — plus two ways in (below). |
 | 🚀 **Cluster launchpad** | One-click deep-links into every endpoint for the selected cluster — **Cluster Health Report**, **Fleet Status + Spend**, **Audit Log**, **Jobs**, and the apps (**Diagnostic Tools**, **LiteLLM Spend**, **JupyterHub**, **Chat agent**). |
-| 🩺 **Cluster Health** | The latest **Cluster Health Report** for your runtime in several flavors — **snapshot** (v1), **live** (v2 / v3), **Forensic post-mortem**, **Security Audit** (the autonomous Goose output you'll meet in Exercise 1). **All Health** is the Busola list view of them. |
-| 🧩 **Modules Health** | Fleet-wide Kyma module versions + state (Istio, API Gateway, Serverless, Telemetry, …). |
+| 🩺 **Cluster Health** | The latest **Cluster Health Report** for your runtime in several flavors. |
+| 🧩 **Modules Health** | Kyma module versions + state for your runtime (Istio, API Gateway, Serverless, Telemetry, …). |
 | 🖥️ **Busola Web Terminal** | Quick-launch deep-link into the in-cluster web terminal — the pod with pre-installed `goose` / `claude` / `kubectl` / `kyma`. |
 | 💰 **LiteLLM spend** | Today's SAP AI Core spend for your runtime, inline (model + caller breakdown). Full dashboards one click away (SAP Cloud Logging). You'll explore this in Exercise 6. |
 
