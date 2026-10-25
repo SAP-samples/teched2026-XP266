@@ -2,8 +2,12 @@
 
 > ⏱ **~10 min** (host-led introduction — no hands-on needed)
 
-In this exercise you sign in to your **pre-provisioned** SAP BTP, Kyma runtime, get oriented in the **Student's Portal** and in **Busola** (the Kyma dashboard), and take a quick tour of the AI operations stack that is **already running** for you.  
-You will not deploy anything — everything is in place; you are here to understand it and play with it.
+In this exercise:
+
+- 🔐 **Sign in** to your **pre-provisioned** SAP BTP, Kyma runtime.
+- 🧭 **Get oriented** in the **Student's Portal** and in **Busola** (the Kyma dashboard).
+- 🤖 **Tour the AI-ops stack** that's **already running** for you.
+- 🛠️ **No deploys** — everything is in place; you're here to **understand it** and **play with it**.
 
 > [!NOTE]
 > Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`).  
