@@ -84,7 +84,7 @@ Why one path writes and the other doesn't — it's RBAC on the shoot, not a sign
 - 🪪 **OIDC-based** → shoot authenticates you as `keycloak:<user>` → bound to a **`view`** ClusterRole (read-only). You can **look** at everything but **not mutate** anything from Busola. Browsing-friendly, safe for a workshop.
 - 🎫 **Token-based** → shoot authenticates the hub SA as `quovadis:…bootstrapper-federated` → bound to **`cluster-admin`** via `quovadis-federated-admin`. Full write access, matches what the automation (bootstrapper, cron jobs, GitHub Actions) uses.
 
-### 1. You sign in (oauth2-proxy → Keycloak → federated IdP)
+**1. You sign in (oauth2-proxy → Keycloak → federated IdP)**
 
 Any `/clusterdir/` hit **always** goes through this chain — the user is **resolved via federation** every time; there is no non-federated route. **End-to-end OIDC** — no SAML anywhere in the path.
 
@@ -104,7 +104,7 @@ sequenceDiagram
     OP-->>U: 7. session cookie · 200 OK<br/>→ Student's Portal
 ```
 
-### 2. Busola rides a federated SA token (hub-and-spokes)
+**2. Busola rides a federated SA token (hub-and-spokes)**
 
 - 🚫 The **55 TechEd runtimes don't each manage their own admin user identity** for Busola.
 - 🏛️ Instead, **one hub** mints a **short-lived ServiceAccount token**.
