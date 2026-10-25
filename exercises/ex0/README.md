@@ -69,7 +69,7 @@ For TechEd students the default is **SAP IAS** — enter your workshop account a
 
 ### 1. You sign in (oauth2-proxy → Keycloak → federated IdP)
 
-Any `/clusterdir/` hit **always** goes through this chain — the user is **resolved via federation** every time; there is no non-federated route.
+Any `/clusterdir/` hit **always** goes through this chain — the user is **resolved via federation** every time; there is no non-federated route. **End-to-end OIDC** — no SAML anywhere in the path.
 
 ```mermaid
 sequenceDiagram
@@ -79,10 +79,10 @@ sequenceDiagram
     participant IAS as SAP IAS
 
     U->>OP: 1. GET /clusterdir/
-    OP->>KC: 2. 302 → login
-    KC->>IAS: 3. federated login (default IdP)
+    OP->>KC: 2. 302 → OIDC login
+    KC->>IAS: 3. OIDC federation → default IdP
     Note over IAS: 4. prompt workshop account
-    IAS-->>KC: 5. federated identity
+    IAS-->>KC: 5. OIDC id_token (federated identity)
     KC-->>OP: 6. OIDC token (federated user)
     OP-->>U: 7. session cookie · 200 OK<br/>→ Student's Portal
 ```
