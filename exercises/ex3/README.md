@@ -103,7 +103,7 @@ flowchart LR
     gw --> sb["Sandbox pod<br/><i>empty workload</i><br/>SDK runs: create / exec / list / delete"]
 ```
 
-- 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-324---04-device-code-cli--📦-lifecycle-variant-optional) — the `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then drives the lifecycle.
+- 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-324---04-device-code-cli---lifecycle-variant-optional) — the `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then drives the lifecycle.
 - 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-321---04b-openshell-sandbox-sdk-headless) — pure-SDK twin, **no `openshell` CLI**; mints a **client-credentials** token itself (headless, no browser).
 </details>
 
@@ -130,7 +130,7 @@ flowchart LR
     goose --> llm["LiteLLM proxy<br/>→ SAP AI Core"]
 ```
 
-- 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-325---05-device-code-cli--🪿-adaptive-variant-optional) — richest flavour; CLI registers the gateway via **device-code**, SDK opens the sandbox, agent gets **live read-only `kubectl`**.
+- 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-325---05-device-code-cli---adaptive-variant-optional) — richest flavour; CLI registers the gateway via **device-code**, SDK opens the sandbox, agent gets **live read-only `kubectl`**.
 - 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-322---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) — same rich flavour, **headless** (CLI uses client-credentials instead of device-code).
 - 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-322---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) — like `05b`, but **no `openshell` CLI** — only the **NVIDIA OpenShell Python SDK**; mints the client-credentials token itself.
 </details>
@@ -158,7 +158,7 @@ flowchart LR
 ```
 
 - 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-323---06-openshell-goose-diagnostics-snapshot) — the notebook gathers a **real-time** cluster inventory via the K8s API (unhealthy pods, nodes, warning events), then pipes it to the agent inside the sandbox — **no live `kubectl` in the box**.
-- 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-from-report--🪿-forensic-variant-optional) — same sandbox as 06; the agent reasons over **pre-computed** openclaw ConfigMaps: `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) from the latest `cluster-health` CronJob run.
+- 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-from-report---forensic-variant-optional) — same sandbox as 06; the agent reasons over **pre-computed** openclaw ConfigMaps: `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) from the latest `cluster-health` CronJob run.
 </details>
 
 > [!TIP]
