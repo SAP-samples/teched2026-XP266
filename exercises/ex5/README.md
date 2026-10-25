@@ -30,8 +30,6 @@ Want to run external coding agents against OpenRouter **without opening a termin
 > - ✅ find a successful **`all-fleets-teched-student-nvidia`** run, and
 > - ✅ read the **Summary** page (verdict table + each agent's output + the containment proof)
 > - ✅ plus any step's **execution log**.
->
-> 👉 You see the exact same artifacts a dispatcher would, just from someone else's run.
 
 Prefer the Do-It-Yourself path? Continue below.
 
