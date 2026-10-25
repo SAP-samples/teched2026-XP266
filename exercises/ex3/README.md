@@ -177,10 +177,9 @@ flowchart LR
 
 👉 Open **`05b-OpenShell-Goose-Diagnostics-Live-Headless.ipynb`** and run all cells.
 
-- ✅ Same live read-only `kubectl` goose investigation as **05** — same policy, same guardrails.
-- ✅ The only thing that changes is **authentication**, namely:
-  - **05** signs in **as you** via device-code (your browser),
-  - **05b** runs **headless** with **client-credentials** (a service-account token minted in-notebook) — no browser, no device-code screen.
+- ✅ **Live read-only `kubectl` goose investigation** — the agent runs inside the sandbox against a scoped-ops SA token (`get`/`list`/`watch`, `secrets` excluded).
+- ✅ **Headless authentication** — `05b` mints a **client-credentials** token in-notebook (service account), so the sandbox session needs **no browser** and **no device-code screen**.
+- 💡 The device-code twin **`05`** is covered as an optional variant below ([§3.2.5](#exercise-325---05-device-code-cli---adaptive-variant-optional)) — same investigation, same guardrails; only the sign-in flow differs.
 
 👉 Then open **`05c-OpenShell-Sandbox-PureSDK.ipynb`** and run all cells.
 
