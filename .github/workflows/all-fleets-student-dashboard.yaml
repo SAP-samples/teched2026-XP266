@@ -8,7 +8,7 @@
         URLs)"
       "run": "              {\n                echo '<table>'\n                echo
         '<tr>'\n                echo '<td width=\"30%\" valign=\"top\">'\n                echo
-        '<img src=\"https://raw.githubusercontent.com/SAP-samples/teched2026-XP266/main/exercises/ex0/images/speaker.jpg\"
+        '<img src=\"https://raw.githubusercontent.com/SAP-samples/teched2026-XP266/main/.github/images/speaker.jpg\"
         width=\"320\" alt=\"SAP TechEd 2026 · XP266 — Piotr Tesny\" />'\n                echo
         '</td>'\n                echo '<td valign=\"top\">'\n                echo\n
         \               echo '- \U0001F4DD [Description](https://github.com/SAP-samples/teched2026-XP266#description)'\n

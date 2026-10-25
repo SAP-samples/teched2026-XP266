@@ -3,7 +3,7 @@
 <table width="100%">
 <tr>
 <td align="center" width="35%">
-<img src="exercises/ex0/images/speaker.jpg" width="260" alt="Piotr Tesny" />
+<img src=".github/images/speaker.jpg" width="260" alt="Piotr Tesny" />
 </td>
 <td>
 
@@ -188,7 +188,7 @@ flowchart LR
 <table>
 <tr>
 <td align="center" width="30%">
-<img src="exercises/ex0/images/speaker.jpg" width="200" alt="Piotr Tesny" />
+<img src=".github/images/speaker.jpg" width="200" alt="Piotr Tesny" />
 </td>
 <td>
 
