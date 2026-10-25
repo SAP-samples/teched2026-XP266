@@ -166,12 +166,11 @@ flowchart LR
 
 ### Exercise 3.2.1 - `04b` (headless pure-SDK) — 📦 lifecycle
 
-👉 Prefer no browser step? Open **`04b-OpenShell-Sandbox-SDK-Headless.ipynb`** and run all cells.
+👉 Open **`04b-OpenShell-Sandbox-SDK-Headless.ipynb`** and run all cells.
 
-- ✅ A **pure-SDK twin** (no `openshell` CLI) of the previous notebook.
-- ✅ The only difference is **authentication** — **no browser, no CLI, no `gateway add`**.
-- ✅ The notebook mints a client-credentials token itself (from the `openshell-admin-sa` secret) and hands it to `SandboxClient` directly.
-- ✅ Same result, with machine-to-machine authentication.
+- ✅ **Pure-SDK sandbox lifecycle** — the **NVIDIA OpenShell Python SDK** drives the full `create → exec → list → delete` loop against the in-cluster gateway.
+- ✅ **Headless authentication** — the notebook mints a **client-credentials** token itself (from the `openshell-admin-sa` secret) and hands it to `SandboxClient` directly. **No browser, no `openshell` CLI, no `gateway add`.**
+- 💡 The device-code twin **`04`** is covered as an optional variant below ([§3.2.4](#exercise-324---04-device-code-cli---lifecycle-variant-optional)) — same lifecycle result, you sign in via browser instead of client-credentials.
 
 ### Exercise 3.2.2 - `05b` (headless CLI) — 🪿 adaptive
 
