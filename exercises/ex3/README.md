@@ -46,13 +46,18 @@
 
 2. 👉 Sign in with single sign-on and click **Start My Server**. After a moment JupyterLab opens.
 
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr><td align="center"><img src="images/jupyterhub-01.png" width="700" alt="JupyterHub sign-in" /><br/><sub><b>1.</b> sign in</sub></td></tr>
-<tr><td align="center"><img src="images/jupyterhub-02.png" width="700" alt="JupyterHub Start My Server" /><br/><sub><b>2.</b> start server</sub></td></tr>
-<tr><td align="center"><img src="images/jupyterhub-03.png" width="700" alt="JupyterHub spawning" /><br/><sub><b>3.</b> spawning</sub></td></tr>
-</tbody>
-</table>
+   <details>
+   <summary>📸 Click to expand the sign-in / spawn screenshots</summary>
+
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr><td align="center"><img src="images/jupyterhub-01.png" width="700" alt="JupyterHub sign-in" /><br/><sub><b>1.</b> sign in</sub></td></tr>
+   <tr><td align="center"><img src="images/jupyterhub-02.png" width="700" alt="JupyterHub Start My Server" /><br/><sub><b>2.</b> start server</sub></td></tr>
+   <tr><td align="center"><img src="images/jupyterhub-03.png" width="700" alt="JupyterHub spawning" /><br/><sub><b>3.</b> spawning</sub></td></tr>
+   </tbody>
+   </table>
+
+   </details>
 
 3. 👉 In the file browser (left) you'll find the pre-loaded OpenShell notebooks.
 
