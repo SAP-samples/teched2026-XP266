@@ -67,18 +67,14 @@ They trade **fidelity for cost** — all run the same way (Goose in an OpenShell
 </tbody>
 </table>
 
-| Report | What Goose sees | Notes |
-|---|---|---|
-| 🛡️ **audit** · `cluster-audit` | **live**, adaptive **security** investigation | produced as part of a **v2** run — no separate trigger; refresh by running v2 |
-| 📸 **v1** · `cluster-health` | a **periodic** `kyma alpha diagnose` snapshot — no live cluster access | cheap, deterministic — catches regressions between runs |
-| 🔎 **forensic** · `cluster-health-forensic` | **post-mortem** of the latest v2 run — reads the stored report + LiteLLM spend + Job state and emits a 🎯/🟡/⚪ (CONFIRMED/LIKELY/INCONCLUSIVE) verdict | daily right after v3 + on-failure of v2/v3; also triggerable on-demand |
-| 🩺 **v2** · `cluster-health-v2` | **live**, read-only `kubectl` on a leash — a fixed health playbook | the balanced default — also drives the Security Audit, so this is the **highest-spend** run |
-| 🔬 **v3** · `cluster-health-v3` | **live**, read-only `kubectl`, real-time and uncapped | **most thorough** — can run custom prompts |
 
-#### 🔧 How each job is wired — click to expand
+The dev-toolbox ships **four CronJob families** that write **five report CRs** between them. Click any card below for its full wiring — schedule, Pod shape, ConfigMaps, sandbox, and output CR.
 
 <details>
-<summary>📸 <b>v1 — the snapshot path</b></summary>
+<summary>📸 <b>v1</b> · <code>cluster-health</code> — periodic <code>kyma alpha diagnose</code> snapshot; cheap, deterministic</summary>
+
+**What Goose sees:** nothing live — the snapshot JSON produced by `kyma alpha diagnose`.
+**Why run it:** catches regressions between heavier runs; cheapest tier.
 
 ```mermaid
 flowchart LR
@@ -91,13 +87,16 @@ flowchart LR
     llm --> cr["ClusterHealthReport<br/><b>cluster-health</b> (v1)"]
 ```
 
-- **Cheapest** of the four — ~15–25 s per run, every 10 min, uniform fleet-wide
+- ~15–25 s per run, every 10 min, uniform fleet-wide
 - **No cluster access from the agent** — the snapshot comes from `kyma alpha diagnose`; the reformat LLM is `claude -p` through the LiteLLM proxy
 - The prompt is the shipped `health-v1-from-diagnose` key — no sandbox, no sidecar, no live kubectl
 </details>
 
 <details>
-<summary>🩺 <b>v2 + audit — one pod, two sidecars</b></summary>
+<summary>🩺 <b>v2</b> · <code>cluster-health-v2</code> + 🛡️ <code>cluster-audit</code> — live kubectl on a leash; balanced + security audit</summary>
+
+**What Goose sees:** live, read-only `kubectl` on a leash — a fixed **health** playbook, and a parallel **security** playbook in the same Pod.
+**Why run it:** the balanced default — and the only path to a fresh **Security Audit** (the audit shares the pod, no separate trigger). This is also the **highest-spend** tier.
 
 ```mermaid
 flowchart LR
@@ -117,14 +116,17 @@ flowchart LR
     main --> crA["<b>cluster-audit</b>"]
 ```
 
-- **Highest-spend** of the four — the health run drives the fleet-wide spend dashboard
 - Two independent goose runs in their own **OpenShell Sandboxes** inside the same Pod — one for health, one for security audit
 - Each sandbox gets a fresh **short-lived, read-only `sandbox-viewer` token** (`get`/`list`/`watch`, `secrets` excluded) — the only identity that reaches `kubectl` from inside
 - Pod-level prompts volume is **`projected`** (managed CM + `dev-toolbox-prompts-adhoc` merged) so **custom prompts** work on health runs; audit stays on its hardcoded `audit-v2-security` key
+- The audit report refreshes **only when v2 runs** — there is no separate audit trigger
 </details>
 
 <details>
-<summary>🔬 <b>v3 — one container, deepest run, custom prompts</b></summary>
+<summary>🔬 <b>v3</b> · <code>cluster-health-v3</code> — live, uncapped; most thorough; supports custom prompts</summary>
+
+**What Goose sees:** live, read-only `kubectl`, real-time and **uncapped** (no turn budget).
+**Why run it:** deepest investigation; the only tier that honours your **model** and **custom prompt** picks.
 
 ```mermaid
 flowchart LR
@@ -138,13 +140,16 @@ flowchart LR
     sb --> cr["ClusterHealthReport<br/><b>cluster-health-v3</b>"]
 ```
 
-- **Most thorough** — uncapped goose turn budget, live `kubectl`, honours the custom **model** picker
+- Uncapped goose turn budget, live `kubectl`, honours the custom **model** picker
 - Supports **adhoc prompts** via a volume-swap at job-create time (API rewrites the pod spec's CM name from `dev-toolbox-prompts` → `dev-toolbox-prompts-adhoc`)
 - Post-teched follow-up: converge this to the same `projected` pattern used by v2 — removes the API swap and matches the uniform v2 mental model
 </details>
 
 <details>
-<summary>🔎 <b>forensic — the post-mortem run</b></summary>
+<summary>🔎 <b>forensic</b> · <code>cluster-health-forensic</code> — post-mortem; emits 🎯 / 🟡 / ⚪ verdict</summary>
+
+**What forensic sees:** the stored v2 + v3 reports, LiteLLM spend, and Kubernetes Job state — **not** the cluster directly.
+**Why run it:** daily right after v3, and reactively **on-failure** of v2/v3 so a skipped main run still produces a verdict. Also triggerable **on-demand** from the Diagnostic Toolbox UI.
 
 ```mermaid
 flowchart LR
@@ -160,9 +165,8 @@ flowchart LR
     sb --> cr["ClusterHealthReport<br/><b>cluster-health-forensic</b><br/>verdict: 🎯 CONFIRMED / 🟡 LIKELY / ⚪ INCONCLUSIVE"]
 ```
 
-- **Cross-report analysis** — reads the stored v2 + v3 reports, LiteLLM spend, and Job state; does **not** touch the cluster directly
-- Fires daily right after v3, and reactively **on-failure** of v2/v3 (so a skipped main run still produces a verdict)
-- Also triggerable **on-demand** from the Diagnostic Toolbox UI
+- Cross-report analysis — does **not** touch the cluster directly
+- The output verdict is one of **🎯 CONFIRMED** (strong evidence), **🟡 LIKELY** (plausible but partial), or **⚪ INCONCLUSIVE** (insufficient data)
 </details>
 
 
