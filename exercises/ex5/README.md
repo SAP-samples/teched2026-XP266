@@ -2,13 +2,11 @@
 
 > ⏱ **~18 min**
 
-This exercise runs a **different** contained sandbox. In the earlier exercises the sandbox's only exit was the
-in-cluster LiteLLM proxy; here it is **OpenRouter** — one external host, and nothing else. The box still can't reach
-the apiserver or the rest of the internet, and the real OpenRouter key never enters it: the gateway holds the key and
-the sandbox only ever carries a sentinel.
+A **different** contained sandbox from the earlier exercises:
 
-> [!NOTE]
-> How the provider/profile model works and how OpenRouter compares to SAP AI Core are in **[Appendix 5 - External agents & the OpenRouter provider model](../Appendices/5-openrouter-provider/README.md)**.
+- 🔀 **New exit** — the only hop out is **OpenRouter**, not the in-cluster LiteLLM proxy.
+- 🌐 **One external host, nothing else** — no apiserver, no rest-of-internet.
+- 🔐 **Real key never enters the box** — the gateway holds it; the sandbox only ever carries a **sentinel**.
 
 ## ⚡ 5a. Easy path — run it as a GitHub Action
 
