@@ -88,21 +88,82 @@ The notebooks come in **three flavours**, from the simplest to the richest:
 - 🪿 **adaptive investigators** — put the agent **inside** the sandbox with live, read-only `kubectl` (`05` / `05b` / `05c`),
 - 🪿 **forensic sniffers** — same agent, **no live cluster access** — it reasons over a snapshot or stored reports (`06` / `07`).
 
-| Notebook | 📦 OpenShell SDK — dry run sandbox lifecycle |
-|---|---|
-| 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) | The `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then drives the sandbox lifecycle: **create → exec → list → delete**. |
-| 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) | Much alike **04** — demonstrates the sandbox lifecycle: **create → exec → list → delete** — however, without the `openshell` CLI, only the **NVIDIA OpenShell Python SDK**; it mints a **client-credentials** token itself (headless, no browser). |
+👉 Click any family card below for its full wiring — auth path, what runs inside the sandbox, and what the agent sees.
 
-| Notebook | 🪿 OpenShell + goose — adaptive investigators (live `kubectl`) |
-|---|---|
-| 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) | Richest flavour — the `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then opens a sandbox in which the agent gets **live read-only `kubectl`** (`scoped-ops` recipe: `sandbox-viewer` identity + apiserver-read-only + LiteLLM proxy). |
-| 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Same rich flavour as **05**, just runs **headless** — the `openshell` **CLI** still registers the gateway, with **client-credentials** instead of device-code (no browser). |
-| 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) | Like for like as **05b**, but with **no `openshell` CLI** — only the **NVIDIA OpenShell Python SDK**; it mints the client-credentials token itself. |
+<details>
+<summary>📦 <b>Family 1 · sandbox lifecycle</b> — <code>04</code> (device-code CLI) + <code>04b</code> (headless pure-SDK)</summary>
 
-| Notebook | 🪿 OpenShell + goose — forensic sniffers (snapshot / stored report) |
-|---|---|
-| 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) | The notebook gathers a **real-time** cluster inventory via the Kubernetes API (unhealthy pods, nodes, recent warning events), then pipes it to the agent inside the sandbox — no live `kubectl` in the box, device-code authentication. |
-| 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) | Same sandbox as 06, but the agent reasons over **pre-computed** artifacts from the latest `cluster-health` CronJob run — `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) — read from openclaw ConfigMaps. |
+**Goal:** drive the full OpenShell sandbox lifecycle (`create → exec → list → delete`) from Python — no agent inside, no cluster investigation. The "hello world" of the SDK.
+
+```mermaid
+flowchart LR
+    nb["📓 Notebook<br/>(JupyterHub)"]
+    cli_dc["<b>04</b>: <code>openshell</code> CLI<br/>device-code (browser)"]
+    sdk_cc["<b>04b</b>: NVIDIA OpenShell<br/><b>Python SDK</b> only<br/>client-credentials (SA token)"]
+    nb --> cli_dc
+    nb --> sdk_cc
+    cli_dc --> gw["OpenShell gateway<br/>(in-cluster)"]
+    sdk_cc --> gw
+    gw --> sb["Sandbox pod<br/><i>empty workload</i><br/>SDK runs: create / exec / list / delete"]
+```
+
+- 📦 [`04-OpenShell-Sandbox-SDK`](#exercise-321---04-openshell-sandbox-sdk) — the `openshell` **CLI** registers the gateway via **device-code** (as you); the **Python SDK** then drives the lifecycle.
+- 📦 [`04b-OpenShell-Sandbox-SDK-Headless`](#exercise-322---04b-openshell-sandbox-sdk-headless) — pure-SDK twin, **no `openshell` CLI**; mints a **client-credentials** token itself (headless, no browser).
+</details>
+
+<details>
+<summary>🪿 <b>Family 2 · adaptive investigators</b> — <code>05</code> + <code>05b</code> + <code>05c</code> (live <code>kubectl</code> inside the box)</summary>
+
+**Goal:** put a `goose` agent **inside** the sandbox with the `scoped-ops` recipe — a `sandbox-viewer` identity (read-only, `secrets` excluded) + the LiteLLM proxy, and let it adaptively investigate the cluster.
+
+```mermaid
+flowchart LR
+    nb["📓 Notebook<br/>(JupyterHub)"]
+
+    nb --> p05["<b>05</b>: <code>openshell</code> CLI<br/>device-code (browser)"]
+    nb --> p05b["<b>05b</b>: <code>openshell</code> CLI<br/>client-credentials (headless)"]
+    nb --> p05c["<b>05c</b>: Python SDK only<br/>client-credentials (headless)"]
+
+    p05 --> gw["OpenShell gateway<br/>(in-cluster)"]
+    p05b --> gw
+    p05c --> gw
+
+    gw --> sb{{"Sandbox pod · <code>scoped-ops</code> recipe<br/>• <code>sandbox-viewer</code> SA (read-only)<br/>• LiteLLM proxy egress only"}}
+    sb --> goose["<b>goose</b>"]
+    goose --> kctl["live read-only <code>kubectl</code><br/>→ Kubernetes API server"]
+    goose --> llm["LiteLLM proxy<br/>→ SAP AI Core"]
+```
+
+- 🪿 [`05-OpenShell-Goose-Diagnostics-Live`](#exercise-323---05-openshell-goose-diagnostics-live) — richest flavour; CLI registers the gateway via **device-code**, SDK opens the sandbox, agent gets **live read-only `kubectl`**.
+- 🪿 [`05b-OpenShell-Goose-Diagnostics-Live-Headless`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) — same rich flavour, **headless** (CLI uses client-credentials instead of device-code).
+- 📦 🪿 [`05c-OpenShell-Sandbox-PureSDK`](#exercise-324---05b-openshell-goose-diagnostics-live-headless--05c-openshell-sandbox-puresdk) — like `05b`, but **no `openshell` CLI** — only the **NVIDIA OpenShell Python SDK**; mints the client-credentials token itself.
+</details>
+
+<details>
+<summary>🪿 <b>Family 3 · forensic sniffers</b> — <code>06</code> (snapshot) + <code>07</code> (stored reports)</summary>
+
+**Goal:** keep the agent **boxed-in without live cluster access** — the notebook pre-collects data outside the sandbox and pipes it in. Minimal attack surface; maximum reproducibility.
+
+```mermaid
+flowchart LR
+    nb["📓 Notebook<br/>(JupyterHub)<br/>device-code auth"]
+    nb --> gw["OpenShell gateway"]
+
+    nb --> src06["<b>06</b> source: live <b>K8s API</b><br/>unhealthy pods / nodes /<br/>recent warning events"]
+    nb --> src07["<b>07</b> source: openclaw <b>ConfigMaps</b><br/>• <code>diagnostic</code> (v1 <code>kyma diagnose</code>)<br/>• <code>analysis</code> (prior v2 agent report)"]
+
+    src06 --> payload["pre-collected JSON<br/>payload"]
+    src07 --> payload
+    gw --> sb{{"Sandbox pod<br/><i>no live <code>kubectl</code> in the box</i>"}}
+    payload --> sb
+    sb --> goose["<b>goose</b><br/>reasons over the payload"]
+    goose --> llm["LiteLLM proxy<br/>→ SAP AI Core"]
+    goose --> out["📝 forensic analysis<br/>(returned to the notebook)"]
+```
+
+- 🪿 [`06-OpenShell-Goose-Diagnostics-Snapshot`](#exercise-325---06-openshell-goose-diagnostics-snapshot) — the notebook gathers a **real-time** cluster inventory via the K8s API (unhealthy pods, nodes, warning events), then pipes it to the agent inside the sandbox — **no live `kubectl` in the box**.
+- 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) — same sandbox as 06; the agent reasons over **pre-computed** openclaw ConfigMaps: `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) from the latest `cluster-health` CronJob run.
+</details>
 
 > [!NOTE]
 > The `04`–`07` notebooks drive **OpenShell** and need the gateway running on your cluster — your `xp266-NNN` runtime has it.
