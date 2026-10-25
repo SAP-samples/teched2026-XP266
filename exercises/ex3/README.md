@@ -161,6 +161,9 @@ flowchart LR
 - 🪿 [`07-OpenShell-Goose-Diagnostics-FromReport`](#exercise-326---07-openshell-goose-diagnostics-fromreport) — same sandbox as 06; the agent reasons over **pre-computed** openclaw ConfigMaps: `diagnostic` (v1 `kyma diagnose`) + `analysis` (prior v2 agent report) from the latest `cluster-health` CronJob run.
 </details>
 
+> [!TIP]
+> **Suggested notebook rehearsals** — one per family, pick in this order: **`04b`** → **`05b`** → **`06`**.
+
 ### Exercise 3.2.1 - `04-OpenShell-Sandbox-SDK`
 
 👉 Open **`04-OpenShell-Sandbox-SDK.ipynb`** and run every cell.
