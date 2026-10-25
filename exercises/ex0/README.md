@@ -63,7 +63,7 @@ The **Student's Portal** main menu is organised top-to-bottom:
 > - To bring it back: open your browser's DevTools (**F12**) → **Application ▸ Local Storage** → your Busola site, delete the `hideBanner…` entry, and reload.
 
 <details>
-<summary>🔐 <b>How sign-in works</b> — click to expand</summary>
+<summary><h3 style="display:inline">🔐 How sign-in works — click to expand</h3></summary>
 
 Your runtime's dashboards all authenticate through two cooperating mechanisms:
 
