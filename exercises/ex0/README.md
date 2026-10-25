@@ -9,8 +9,135 @@ You will not deploy anything — everything is in place; you are here to underst
 > Each attendee has their own runtime named `xp266-NNN` (for example `xp266-011`).  
 > Wherever you see `xp266-NNN` below, use the number you were given.
 >
-> 👉 Your **Student's Portal** is available here: [**`all-fleets-student-dashboard`**](https://github.com/SAP-samples/teched2026-XP266/actions/workflows/all-fleets-student-dashboard.yaml) → **Summary** → find your `xp266-NNN` row.  
+> 👉 Your **Student's Portal** short URL per cluster is below — click yours.  
 > 👉 The sign-in details are handed out at the start of the session.
+
+<details>
+<summary>🎓 <b>Student Portal — short URL per cluster</b> (click to expand)</summary>
+
+<table>
+<tr>
+<td valign="top">
+
+#### 🔵 🇪🇺 teched-01
+
+🏛️ **[Subaccount cockpit](https://url.sap/46qi70)**
+
+| ☸️ Cluster |
+|---|
+| [**xp266-001**](https://url.sap/wx372e) |
+| [**xp266-002**](https://url.sap/cdt0no) |
+| [**xp266-003**](https://url.sap/70yrhh) |
+| [**xp266-004**](https://url.sap/1178ld) |
+| [**xp266-005**](https://url.sap/x12wf9) |
+| [**xp266-006**](https://url.sap/mg3g9t) |
+| [**xp266-007**](https://url.sap/58bm4n) |
+| [**xp266-008**](https://url.sap/9ftlmk) |
+| [**xp266-009**](https://url.sap/nx2tmc) |
+| [**xp266-010**](https://url.sap/nk6cp2) |
+
+</td>
+<td valign="top">
+
+#### 🔵 🇪🇺 teched-02
+
+🏛️ **[Subaccount cockpit](https://url.sap/asldty)**
+
+| ☸️ Cluster |
+|---|
+| [**xp266-011**](https://url.sap/6wxoxe) |
+| [**xp266-012**](https://url.sap/h4yo05) |
+| [**xp266-013**](https://url.sap/0ipmxl) |
+| [**xp266-014**](https://url.sap/218lah) |
+| [**xp266-015**](https://url.sap/7puiqf) |
+| [**xp266-016**](https://url.sap/tj7mqs) |
+| [**xp266-017**](https://url.sap/c9ccp7) |
+| [**xp266-018**](https://url.sap/c9ewnq) |
+| [**xp266-019**](https://url.sap/06p3my) |
+| [**xp266-020**](https://url.sap/fxgof1) |
+
+</td>
+<td valign="top">
+
+#### 🔵 🇪🇺 teched-03
+
+🏛️ **[Subaccount cockpit](https://url.sap/aiirmx)**
+
+| ☸️ Cluster |
+|---|
+| [**xp266-021**](https://url.sap/uhc55w) |
+| [**xp266-022**](https://url.sap/k36s63) |
+| [**xp266-023**](https://url.sap/a5gk5c) |
+| [**xp266-024**](https://url.sap/5cxgeo) |
+| [**xp266-025**](https://url.sap/hsyaqi) |
+| [**xp266-026**](https://url.sap/pgpyn0) |
+| [**xp266-027**](https://url.sap/62io1a) |
+| [**xp266-028**](https://url.sap/b09h01) |
+| [**xp266-029**](https://url.sap/pjcc8r) |
+| [**xp266-030**](https://url.sap/a0yj4u) |
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+#### 🔵 🇪🇺 teched-04
+
+🏛️ **[Subaccount cockpit](https://url.sap/t7s0ys)**
+
+| ☸️ Cluster |
+|---|
+| [**xp266-031**](https://url.sap/k1mdm6) |
+| [**xp266-032**](https://url.sap/xn841o) |
+| [**xp266-033**](https://url.sap/4pxp1o) |
+| [**xp266-034**](https://url.sap/wmprmr) |
+| [**xp266-035**](https://url.sap/we7aqy) |
+| [**xp266-036**](https://url.sap/i6l8j7) |
+| [**xp266-037**](https://url.sap/ipar37) |
+| [**xp266-038**](https://url.sap/fory6n) |
+| [**xp266-039**](https://url.sap/ytjp23) |
+| [**xp266-040**](https://url.sap/fe40xx) |
+
+</td>
+<td valign="top">
+
+#### 🔵 🇪🇺 teched-05
+
+🏛️ **[Subaccount cockpit](https://url.sap/m299wr)**
+
+| ☸️ Cluster |
+|---|
+| [**xp266-041**](https://url.sap/hjkb45) |
+| [**xp266-042**](https://url.sap/45ym3f) |
+| [**xp266-043**](https://url.sap/c6aqhc) |
+| [**xp266-044**](https://url.sap/9gyahu) |
+| [**xp266-045**](https://url.sap/pt362d) |
+| [**xp266-046**](https://url.sap/wxn38h) |
+| [**xp266-047**](https://url.sap/mn9e0g) |
+| [**xp266-048**](https://url.sap/lbh1i4) |
+| [**xp266-049**](https://url.sap/ow820u) |
+| [**xp266-050**](https://url.sap/ev92nj) |
+
+</td>
+<td valign="top">
+
+#### 🟠 🇺🇸 aws-01
+
+🏛️ **[Subaccount cockpit](https://url.sap/vy7cta)**
+
+| ☸️ Cluster |
+|---|
+| [**aws-001**](https://url.sap/rtkjd0) |
+| [**aws-002**](https://url.sap/etla09) |
+| [**aws-003**](https://url.sap/v98stq) |
+| [**aws-004**](https://url.sap/q8lj00) |
+| [**aws-005**](https://url.sap/myamyu) |
+
+</td>
+</tr>
+</table>
+
+</details>
 
 **Contents**
 
