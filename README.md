@@ -178,7 +178,7 @@ flowchart LR
 | **Venue** | Messe Berlin — Messedamm 22, 14055 Berlin |
 | **Room** | Hands-On Room 6 |
 | **Date** | 27 October 2026 (conference runs 27–29 October) |
-| **Time** | 13:30 – 15:30 |
+| **Time** | 13:30 – 15:30 **CET** · 18:00 – 20:00 **IST** · 08:30 – 10:30 **EDT** |
 
 </td>
 </tr>
