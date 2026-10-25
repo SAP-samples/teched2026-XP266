@@ -195,7 +195,7 @@ flowchart LR
 - 🏷️ **Session code** — XP266
 - 🎓 **Type** — Hands-on workshop
 - 📍 **Venue** — Messe Berlin · Messedamm 22, 14055 Berlin
-- 🚪 **Room** — Hands-On Room Hall 6.2
+- 🚪 **Room** — Hands-On Room 6
 - 📅 **Date** — 27 October 2026 *(conference runs 27–29 October)*
 - 🕐 **Time** — 13:30 – 15:30 **CET** (Berlin) · 18:00 – 20:00 **IST** (Mumbai) · 08:30 – 10:30 **EDT** (New York)
 
