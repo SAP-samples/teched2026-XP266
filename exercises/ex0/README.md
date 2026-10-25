@@ -61,11 +61,29 @@ The **Student's Portal** main menu is organised top-to-bottom:
 | **Token-based** | opens Busola already authenticated with a service-account / federated token | **frictionless, recommended** — mirrors the headless, CI/CD-style access the automation uses |
 | **OIDC-based** | sign in to Busola **interactively** with your workshop identity | the full interactive login flow; **not** suited to headless / automated environments |
 
-> [!NOTE]
-> **How sign-in works.** Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers*
-> several corporate identity providers.  
-> For TechEd students the default is **SAP IAS** — enter your workshop account and you are
-> straight in. 
+<details>
+<summary>🔐 <b>How sign-in works</b> — click to expand</summary>
+
+Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers* several corporate identity providers.
+For TechEd students the default is **SAP IAS** — enter your workshop account and you are straight in. The hops a browser makes on first open:
+
+```mermaid
+flowchart LR
+    user(["👤 Student<br/>browser"])
+    user -->|1| op["oauth2-proxy<br/>(gateway in front<br/>of the portal)"]
+    op -->|2 · 302 to login| kc["Keycloak realm<br/>(brokers IdPs)"]
+    kc -->|3 · broker → default| ias["SAP IAS<br/>(workshop IdP)"]
+    ias -.->|4 · prompt<br/>workshop account| ias
+    ias -->|5 · SAML assertion| kc
+    kc -->|6 · OIDC token| op
+    op -->|7 · session cookie<br/>200 OK| portal["Student's Portal<br/>(Cluster Directory)"]
+    portal -->|8 · click<br/>'Token-based login'| busola["Busola<br/>— Cluster Overview<br/>already signed in<br/>(federated SA token)"]
+```
+
+- **Steps 1-7** = the oauth2-proxy / Keycloak / SAP IAS handshake — happens once per session; stored as a secure cookie
+- **Step 8** = frictionless hop into **Busola** via the **federated token** (same identity, no extra prompt). The OIDC-based tile exists for interactive comparison but the token path is the recommended default
+
+</details>
 
 
 > [!TIP]
