@@ -65,8 +65,12 @@ The **Student's Portal** main menu is organised top-to-bottom:
 <details>
 <summary>🔐 <b>How sign-in works</b> — click to expand</summary>
 
-Your runtime's dashboards all authenticate against one **Keycloak** realm, which *brokers* several corporate identity providers.
-For TechEd students the default is **SAP IAS** — enter your workshop account and you are straight in. Then **Busola** opens already signed in by riding a **hub-minted federated token**. Two mechanisms, one seamless flow:
+Your runtime's dashboards all authenticate through two cooperating mechanisms:
+
+- 🔑 **One Keycloak realm** — authenticates the user; *brokers* several corporate identity providers.
+- 🪪 **SAP IAS** — the default broker for TechEd students; enter your workshop account and you're straight in.
+- 🎫 **Hub-minted federated token** — Busola opens **already signed in** on your spoke by riding it.
+- 🔄 **Two mechanisms, one seamless flow** — detailed below.
 
 **Two ways in:**
 
