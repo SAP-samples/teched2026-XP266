@@ -345,7 +345,7 @@ The next exercise walks the **LiteLLM → SAP AI Core** hop end-to-end.
 <div>
 
 - ✅ Here is the whole fleet — one picture.  
-- ✅ Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions**
+- ✅ Your `xp266-NNN` cluster is one of **50 student runtimes**, grouped into **5 shards of 10** across **3 Azure regions** — plus **one AWS shard** (`aws-001 … 005`) in `eu-central-1`.
 
 <details>
 <summary>👉 Click to expand the fleet topology diagram</summary>
@@ -412,7 +412,7 @@ A quick cross-reference — every architecture diagram, grouped by exercise. Eac
 | **Ex 0 — orientation** | 🔐 OIDC sign-in sequence (oauth2-proxy → Keycloak → SAP IAS) | [§0.1](#-exercise-01---sign-in-to-students-portal-and-find-your-cluster) |
 | | 🏛️ Hub-and-spokes federation (SA token across 55 spokes) | [§0.1](#-exercise-01---sign-in-to-students-portal-and-find-your-cluster) |
 | | 📦 AI-ops stack diagram (what's pre-deployed) | [§0.2](#-exercise-02---see-what-is-already-deployed-optional) |
-| | 🗺️ Fleet topology (50 spokes · 5 shards · 3 Azure regions + hub) | [§0.3](#️-exercise-03---the-teched-2026-landscape-at-a-glance-optional) |
+| | 🗺️ Fleet topology (50 spokes · 5 Azure shards + 1 AWS shard · hub) | [§0.3](#️-exercise-03---the-teched-2026-landscape-at-a-glance-optional) |
 | **Ex 1 — Diagnostic Toolbox** | 📸 **v1** job (snapshot path) | [ex1 §1 report-generations](../ex1/README.md#️-the-three-report-generations-plus-security-audit-and-forensic-reports) |
 | | 🩺 **v2 + audit** (one pod, two sidecars) | [ex1 §1 report-generations](../ex1/README.md#️-the-three-report-generations-plus-security-audit-and-forensic-reports) |
 | | 🔬 **v3** (one container, custom prompts, uncapped) | [ex1 §1 report-generations](../ex1/README.md#️-the-three-report-generations-plus-security-audit-and-forensic-reports) |
