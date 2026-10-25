@@ -28,6 +28,9 @@ You will not deploy anything — everything is in place; you are here to underst
 https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/
 ```
 
+> [!TIP]
+> 💡 **Your instructor will share a short URL** (`https://url.sap/<slug>`) for your cluster in the session. Alternatively, open the latest run of the [**`all-fleets-student-dashboard`**](https://github.com/SAP-samples/teched2026-XP266/actions/workflows/all-fleets-student-dashboard.yaml) workflow → **Summary** → find your `xp266-NNN` row.
+
 > [!NOTE]
 > The **Student's Portal** is behind the gateway (oauth2-proxy), so the first time you open it this session you'll go through the workshop identity provider (single sign-on).
 >
