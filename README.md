@@ -1,5 +1,12 @@
 # XP266 - Ship your own sandboxed AI operations agent to Kyma in two hours
 
+<table>
+<tr>
+<td align="center" width="30%">
+<img src="exercises/ex0/images/speaker.jpg" width="200" alt="Piotr Tesny" />
+</td>
+<td>
+
 **Contents**
 
 - 📝 [Description](#description)
@@ -11,6 +18,10 @@
 - 📜 [Code of Conduct](#code-of-conduct)
 - 🆘 [How to obtain support](#how-to-obtain-support)
 - ⚖️ [License](#license)
+
+</td>
+</tr>
+</table>
 
 ## Description
 
