@@ -1,0 +1,99 @@
+"jobs":
+  "dashboard":
+    "runs-on": "ubuntu-latest"
+    "steps":
+    - "name": "Check out repository (fleet registry)"
+      "uses": "actions/checkout@v7"
+    - "name": "Render Student Portal dashboard (per shard: subaccount + cluster short
+        URLs)"
+      "run": "              {\n                echo '<table>'\n                echo
+        '<tr>'\n                echo '<td width=\"30%\" valign=\"top\">'\n                echo
+        '<img src=\"https://raw.githubusercontent.com/SAP-samples/teched2026-XP266/main/exercises/ex0/images/speaker.jpg\"
+        width=\"320\" alt=\"SAP TechEd 2026 · XP266 — Piotr Tesny\" />'\n                echo
+        '</td>'\n                echo '<td valign=\"top\">'\n                echo\n
+        \               echo '- \U0001F4DD [Description](https://github.com/SAP-samples/teched2026-XP266#description)'\n
+        \               echo '- \U0001F9ED [Overview](https://github.com/SAP-samples/teched2026-XP266#overview)'\n
+        \               echo '- ✅ [Requirements](https://github.com/SAP-samples/teched2026-XP266#requirements)'\n
+        \               echo '- \U0001F4D2 [Exercises](https://github.com/SAP-samples/teched2026-XP266#exercises)'\n
+        \               echo '- \U0001F3A4 [See it live — SAP TechEd 2026 (XP266)](https://github.com/SAP-samples/teched2026-XP266#see-it-live--sap-teched-2026-xp266)'\n
+        \               echo '- \U0001F91D [Contributing](https://github.com/SAP-samples/teched2026-XP266#contributing)'\n
+        \               echo '- \U0001F4DC [Code of Conduct](https://github.com/SAP-samples/teched2026-XP266#code-of-conduct)'\n
+        \               echo '- \U0001F198 [How to obtain support](https://github.com/SAP-samples/teched2026-XP266#how-to-obtain-support)'\n
+        \               echo '- ⚖️ [License](https://github.com/SAP-samples/teched2026-XP266#license)'\n
+        \               echo\n                echo '</td>'\n                echo '</tr>'\n
+        \               echo '</table>'\n                echo\n                echo
+        '\U0001F5FA️ See the [**TechEd 2026 landscape at a glance**](https://github.com/SAP-samples/teched2026-XP266/blob/main/exercises/ex0/README.md#%EF%B8%8F-exercise-03---the-teched-2026-landscape-at-a-glance-optional)
+        in ex0 for the fleet topology (shards · hub · spokes).'\n                echo\n
+        \               echo '<table>'\n                echo '<tr>'\n                echo
+        '<td valign=\"top\">'\n                echo\n                echo '#### \U0001F535
+        \U0001F1EA\U0001F1FA teched-01'\n                echo\n                echo
+        '\U0001F3DB️ **[Subaccount cockpit](https://url.sap/46qi70)**'\n                echo\n
+        \               echo '| ☸️ Cluster |'\n                echo '|---|'\n                echo
+        '| [**xp266-001**](https://url.sap/wx372e) |'\n                echo '| [**xp266-002**](https://url.sap/cdt0no)
+        |'\n                echo '| [**xp266-003**](https://url.sap/70yrhh) |'\n                echo
+        '| [**xp266-004**](https://url.sap/1178ld) |'\n                echo '| [**xp266-005**](https://url.sap/x12wf9)
+        |'\n                echo '| [**xp266-006**](https://url.sap/mg3g9t) |'\n                echo
+        '| [**xp266-007**](https://url.sap/58bm4n) |'\n                echo '| [**xp266-008**](https://url.sap/9ftlmk)
+        |'\n                echo '| [**xp266-009**](https://url.sap/nx2tmc) |'\n                echo
+        '| [**xp266-010**](https://url.sap/nk6cp2) |'\n                echo\n                echo
+        '</td>'\n                echo '<td valign=\"top\">'\n                echo\n
+        \               echo '#### \U0001F535 \U0001F1EA\U0001F1FA teched-02'\n                echo\n
+        \               echo '\U0001F3DB️ **[Subaccount cockpit](https://url.sap/asldty)**'\n
+        \               echo\n                echo '| ☸️ Cluster |'\n                echo
+        '|---|'\n                echo '| [**xp266-011**](https://url.sap/6wxoxe) |'\n
+        \               echo '| [**xp266-012**](https://url.sap/h4yo05) |'\n                echo
+        '| [**xp266-013**](https://url.sap/0ipmxl) |'\n                echo '| [**xp266-014**](https://url.sap/218lah)
+        |'\n                echo '| [**xp266-015**](https://url.sap/7puiqf) |'\n                echo
+        '| [**xp266-016**](https://url.sap/tj7mqs) |'\n                echo '| [**xp266-017**](https://url.sap/c9ccp7)
+        |'\n                echo '| [**xp266-018**](https://url.sap/c9ewnq) |'\n                echo
+        '| [**xp266-019**](https://url.sap/06p3my) |'\n                echo '| [**xp266-020**](https://url.sap/fxgof1)
+        |'\n                echo\n                echo '</td>'\n                echo
+        '<td valign=\"top\">'\n                echo\n                echo '#### \U0001F535
+        \U0001F1EA\U0001F1FA teched-03'\n                echo\n                echo
+        '\U0001F3DB️ **[Subaccount cockpit](https://url.sap/aiirmx)**'\n                echo\n
+        \               echo '| ☸️ Cluster |'\n                echo '|---|'\n                echo
+        '| [**xp266-021**](https://url.sap/uhc55w) |'\n                echo '| [**xp266-022**](https://url.sap/k36s63)
+        |'\n                echo '| [**xp266-023**](https://url.sap/a5gk5c) |'\n                echo
+        '| [**xp266-024**](https://url.sap/5cxgeo) |'\n                echo '| [**xp266-025**](https://url.sap/hsyaqi)
+        |'\n                echo '| [**xp266-026**](https://url.sap/pgpyn0) |'\n                echo
+        '| [**xp266-027**](https://url.sap/62io1a) |'\n                echo '| [**xp266-028**](https://url.sap/b09h01)
+        |'\n                echo '| [**xp266-029**](https://url.sap/pjcc8r) |'\n                echo
+        '| [**xp266-030**](https://url.sap/a0yj4u) |'\n                echo\n                echo
+        '</td>'\n                echo '</tr>'\n                echo '<tr>'\n                echo
+        '<td valign=\"top\">'\n                echo\n                echo '#### \U0001F535
+        \U0001F1EA\U0001F1FA teched-04'\n                echo\n                echo
+        '\U0001F3DB️ **[Subaccount cockpit](https://url.sap/t7s0ys)**'\n                echo\n
+        \               echo '| ☸️ Cluster |'\n                echo '|---|'\n                echo
+        '| [**xp266-031**](https://url.sap/k1mdm6) |'\n                echo '| [**xp266-032**](https://url.sap/xn841o)
+        |'\n                echo '| [**xp266-033**](https://url.sap/4pxp1o) |'\n                echo
+        '| [**xp266-034**](https://url.sap/wmprmr) |'\n                echo '| [**xp266-035**](https://url.sap/we7aqy)
+        |'\n                echo '| [**xp266-036**](https://url.sap/i6l8j7) |'\n                echo
+        '| [**xp266-037**](https://url.sap/ipar37) |'\n                echo '| [**xp266-038**](https://url.sap/fory6n)
+        |'\n                echo '| [**xp266-039**](https://url.sap/ytjp23) |'\n                echo
+        '| [**xp266-040**](https://url.sap/fe40xx) |'\n                echo\n                echo
+        '</td>'\n                echo '<td valign=\"top\">'\n                echo\n
+        \               echo '#### \U0001F535 \U0001F1EA\U0001F1FA teched-05'\n                echo\n
+        \               echo '\U0001F3DB️ **[Subaccount cockpit](https://url.sap/m299wr)**'\n
+        \               echo\n                echo '| ☸️ Cluster |'\n                echo
+        '|---|'\n                echo '| [**xp266-041**](https://url.sap/hjkb45) |'\n
+        \               echo '| [**xp266-042**](https://url.sap/45ym3f) |'\n                echo
+        '| [**xp266-043**](https://url.sap/c6aqhc) |'\n                echo '| [**xp266-044**](https://url.sap/9gyahu)
+        |'\n                echo '| [**xp266-045**](https://url.sap/pt362d) |'\n                echo
+        '| [**xp266-046**](https://url.sap/wxn38h) |'\n                echo '| [**xp266-047**](https://url.sap/mn9e0g)
+        |'\n                echo '| [**xp266-048**](https://url.sap/lbh1i4) |'\n                echo
+        '| [**xp266-049**](https://url.sap/ow820u) |'\n                echo '| [**xp266-050**](https://url.sap/ev92nj)
+        |'\n                echo\n                echo '</td>'\n                echo
+        '<td valign=\"top\">'\n                echo\n                echo '#### \U0001F7E0
+        \U0001F1FA\U0001F1F8 aws-01'\n                echo\n                echo '\U0001F3DB️
+        **[Subaccount cockpit](https://url.sap/vy7cta)**'\n                echo\n
+        \               echo '| ☸️ Cluster |'\n                echo '|---|'\n                echo
+        '| [**aws-001**](https://url.sap/rtkjd0) |'\n                echo '| [**aws-002**](https://url.sap/etla09)
+        |'\n                echo '| [**aws-003**](https://url.sap/v98stq) |'\n                echo
+        '| [**aws-004**](https://url.sap/q8lj00) |'\n                echo '| [**aws-005**](https://url.sap/myamyu)
+        |'\n                echo\n                echo '</td>'\n                echo
+        '</tr>'\n                echo '</table>'\n              } >> \"$GITHUB_STEP_SUMMARY\"\n"
+"name": "all-fleets-student-dashboard"
+"on":
+  "workflow_dispatch": {}
+"permissions":
+  "contents": "read"
