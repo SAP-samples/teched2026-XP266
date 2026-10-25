@@ -116,7 +116,7 @@ You'll walk the full path by hand:
    ```
    ✓ Authenticated via device code
    ```
-5. 👉 Now `openshell sandbox list` works from the terminal — continue with 5.2.
+5. 👉 Run `openshell sandbox list` from the terminal — continue with 5.2.
 
 
 > 💡 **Tip** — Already registered from a previous day? Re-auth instead:
