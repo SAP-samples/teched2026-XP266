@@ -72,15 +72,19 @@ For TechEd students the default is **SAP IAS** — enter your workshop account a
 Any `/clusterdir/` hit **always** goes through this chain — the user is **resolved via federation** every time; there is no non-federated route.
 
 ```mermaid
-flowchart LR
-    user(["👤 Student<br/>browser"])
-    user -->|1 · GET /clusterdir/| op["oauth2-proxy<br/>(gateway in front<br/>of the portal)"]
-    op -->|2 · 302 → login| kc["Keycloak realm<br/>(federates the user)"]
-    kc -->|3 · federated login<br/>→ default IdP| ias["SAP IAS<br/>(workshop IdP)"]
-    ias -.->|4 · prompt<br/>workshop account| ias
-    ias -->|5 · federated identity<br/>returned to Keycloak| kc
-    kc -->|6 · OIDC token<br/>(federated user)| op
-    op -->|7 · session cookie<br/>200 OK| portal["Student's Portal<br/>(Cluster Directory)"]
+sequenceDiagram
+    actor U as 👤 Student browser
+    participant OP as oauth2-proxy<br/>(gateway)
+    participant KC as Keycloak realm
+    participant IAS as SAP IAS
+
+    U->>OP: 1. GET /clusterdir/
+    OP->>KC: 2. 302 → login
+    KC->>IAS: 3. federated login (default IdP)
+    Note over IAS: 4. prompt workshop account
+    IAS-->>KC: 5. federated identity
+    KC-->>OP: 6. OIDC token (federated user)
+    OP-->>U: 7. session cookie · 200 OK<br/>→ Student's Portal
 ```
 
 ### 2. Busola rides a federated SA token (hub-and-spokes)
