@@ -87,6 +87,9 @@
 > - ✅ The notebooks are **self-explanatory** — read the markdown cells as you go.
 > - ✅ Run them cell by cell with the **▶ play** button (or <kbd>Shift</kbd>+<kbd>Enter</kbd>), or in one go via the **⏩ fast-forward** button in the toolbar — same as the top menu **Run → Run All Cells** (or **Kernel → Restart Kernel and Run All Cells…** for a clean state).
 
+<details>
+<summary>📸 Click to expand the <b>Run → Run All Cells</b> screenshot</summary>
+
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
@@ -102,6 +105,8 @@
 </tr>
 </tbody>
 </table>
+
+</details>
 
 The notebooks come in **three flavours**, from the simplest to the richest.
 
