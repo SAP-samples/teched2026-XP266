@@ -103,12 +103,12 @@ You'll walk the full path by hand:
    </tbody>
    </table>
 
- > 💡 **Tip** — Clear the terminal screen at any point:
- > - ✅ **`Ctrl+L`** — fastest; clears the visible screen, keeps your prompt + scrollback buffer intact.
- > - ✅ **`clear`** — clears the visible screen (some setups also wipe the scrollback).
- > - ✅ **`clear -x`** — clears the visible screen but explicitly **keeps** the scrollback buffer.
- > - ✅ **`reset`** — full terminal re-init; use if the terminal freezes, shows broken escape codes, or is littered with binary artifacts.
- > - ✅ **`printf "\033c"`** — hard reset: wipes the screen AND flushes scrollback (nothing to scroll back to).
+   > 💡 **Tip** — Clear the terminal screen at any point:
+   > - ✅ **`Ctrl+L`** — fastest; clears the visible screen, keeps your prompt + scrollback buffer intact.
+   > - ✅ **`clear`** — clears the visible screen (some setups also wipe the scrollback).
+   > - ✅ **`clear -x`** — clears the visible screen but explicitly **keeps** the scrollback buffer.
+   > - ✅ **`reset`** — full terminal re-init; use if the terminal freezes, shows broken escape codes, or is littered with binary artifacts.
+   > - ✅ **`printf "\033c"`** — hard reset: wipes the screen AND flushes scrollback (nothing to scroll back to).
 
 3. 👉 Register the gateway.
 
