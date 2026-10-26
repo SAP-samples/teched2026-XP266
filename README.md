@@ -1,5 +1,8 @@
 # XP266 - Ship your own sandboxed AI operations agent to Kyma in two hours
 
+[![REUSE status](https://api.reuse.software/badge/github.com/sap-samples/teched2026-XP266)](https://api.reuse.software/info/github.com/sap-samples/teched2026-XP266)
+
+
 <table width="100%">
 <tr>
 <td align="center" width="35%">
