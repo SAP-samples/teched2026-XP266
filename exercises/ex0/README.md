@@ -157,12 +157,6 @@ In this exercise:
 
 </details>
 
-> [!NOTE]
-> The **Student's Portal** is behind the gateway (oauth2-proxy), so the first time you open it this session you'll go through the workshop identity provider (single sign-on).
->
-> - ✅ After that you're authenticated for the whole session — from the **Navigate to your Kyma cluster** card, pick your runtime and click the **Token-based login** entry `xp266-NNN-federated`.
-> - ✅ Busola opens **already signed in**, landing on the **Cluster Overview** for your runtime.
-
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
 <tr>
@@ -171,6 +165,12 @@ In this exercise:
 </tr>
 </tbody>
 </table>
+
+> [!NOTE]
+> The **Student's Portal** is behind the gateway (oauth2-proxy), so the first time you open it this session you'll go through the workshop identity provider (single sign-on).
+>
+> - ✅ After that you're authenticated for the whole session — from the **Navigate to your Kyma cluster** card, pick your runtime and click the **Token-based login** entry `xp266-NNN-federated`.
+> - ✅ Busola opens **already signed in**, landing on the **Cluster Overview** for your runtime.
 
 The **Student's Portal** main menu is organised top-to-bottom:
 
