@@ -18,3 +18,8 @@ https://api.reuse.software/info/github.com/SAP-samples/teched2026-XP266
 # on their OWN Actions tab). Lychee resolves these against the local filesystem and emits
 # file:///.../actions/workflows/*.yaml which doesn't exist; skip them.
 file:///.*/actions/workflows/.*\.yaml
+
+# SAP URL shortener — the per-cluster Student's Portal shorts + per-shard subaccount cockpit
+# shorts. url.sap uses interstitial JS redirects + bot protection, so lychee cannot resolve
+# the ~55 cluster + 6 shard links. Skip the whole domain.
+https://url\.sap/.*
