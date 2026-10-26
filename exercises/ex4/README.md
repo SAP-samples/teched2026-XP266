@@ -136,10 +136,10 @@ You'll walk the full path by hand:
    ```
 5. 👉 Run `openshell sandbox list` from the terminal — continue with 4.2.
 
-> 💡 **Tip** — Already registered from a previous run? Re-auth instead:
-> ```bash
-> OPENSHELL_NO_BROWSER=1 openshell gateway login
-> ```
+   > 💡 **Tip** — Already registered from a previous run? Re-auth instead:
+   > ```bash
+   > OPENSHELL_NO_BROWSER=1 openshell gateway login
+   > ```
 
 ### 🔀 4.2 - Introducing OpenShell concepts: Providers and Profiles
 
