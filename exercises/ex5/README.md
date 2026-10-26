@@ -117,9 +117,10 @@ You'll walk the full path by hand:
    Waiting for authorization...
    </pre>
 4. 👉 Open that URL in your **laptop's** browser, sign in and the terminal unblocks:
-   ```
+
+   <pre>
    ✓ Authenticated via device code
-   ```
+   </pre>
 5. 👉 Run `openshell sandbox list` from the terminal — continue with 5.2.
 
    > 💡 **Tip** — Already registered from a previous day? Re-auth instead:
