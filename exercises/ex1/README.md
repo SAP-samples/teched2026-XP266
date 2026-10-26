@@ -22,17 +22,7 @@
 
 ## 🧰 The Diagnostic Toolbox portal
 
-👉 From the **Student's Portal**, open the **Diagnostic Tools** —
-
-```
-https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/
-```
-
-— or directly:
-
-```
-https://dev-toolbox.xp266-NNN.<tenant>.kyma.dev.sap/
-```
+👉 From the **Student's Portal**, open the **Diagnostic Tools**.
 
 <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
 <tbody>
