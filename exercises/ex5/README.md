@@ -88,17 +88,20 @@ You'll walk the full path by hand:
    </tbody>
    </table>
 
- > 💡 **Tip** — Clear the terminal screen at any point:
- > - ✅ **`Ctrl+L`** — fastest; clears the visible screen, keeps your prompt + scrollback buffer intact.
- > - ✅ **`clear`** — clears the visible screen (some setups also wipe the scrollback).
- > - ✅ **`clear -x`** — clears the visible screen but explicitly **keeps** the scrollback buffer.
- > - ✅ **`reset`** — full terminal re-init; use if the terminal freezes, shows broken escape codes, or is littered with binary artifacts.
- > - ✅ **`printf "\033c"`** — hard reset: wipes the screen AND flushes scrollback (nothing to scroll back to).
+   > 💡 **Tip** — Clear the terminal screen at any point:
+   > - ✅ **`Ctrl+L`** — fastest; clears the visible screen, keeps your prompt + scrollback buffer intact.
+   > - ✅ **`clear`** — clears the visible screen (some setups also wipe the scrollback).
+   > - ✅ **`clear -x`** — clears the visible screen but explicitly **keeps** the scrollback buffer.
+   > - ✅ **`reset`** — full terminal re-init; use if the terminal freezes, shows broken escape codes, or is littered with binary artifacts.
+   > - ✅ **`printf "\033c"`** — hard reset: wipes the screen AND flushes scrollback (nothing to scroll back to).
 
 3. 👉 Register the gateway.
-   - The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`).  
-   - The `$XP266_CLUSTER` + `$XP266_DOMAIN` env vars are **already set** in the web terminal.  
-   👉 `echo $XP266_CLUSTER $XP266_DOMAIN` to confirm.  
+
+   > 💡 **Tip**
+   > - The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`).
+   > - The `$XP266_CLUSTER` + `$XP266_DOMAIN` env vars are **already set** in the web terminal.
+   > - 👉 `echo $XP266_CLUSTER $XP266_DOMAIN` to confirm.
+
    ```bash
    OPENSHELL_NO_BROWSER=1 openshell gateway add http://openshell.openshell.svc.cluster.local:8080 \
      --oidc-issuer https://keycloak.$XP266_CLUSTER.$XP266_DOMAIN/realms/ateam-isveng \
@@ -118,11 +121,10 @@ You'll walk the full path by hand:
    ```
 5. 👉 Run `openshell sandbox list` from the terminal — continue with 5.2.
 
-
-> 💡 **Tip** — Already registered from a previous day? Re-auth instead:
-> ```bash
-> OPENSHELL_NO_BROWSER=1 openshell gateway login
-> ```
+   > 💡 **Tip** — Already registered from a previous day? Re-auth instead:
+   > ```bash
+   > OPENSHELL_NO_BROWSER=1 openshell gateway login
+   > ```
 
 ### 📦 5.2 - Create a sandbox with the agents + OpenRouter
 
