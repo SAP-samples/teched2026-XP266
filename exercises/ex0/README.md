@@ -27,11 +27,7 @@ In this exercise:
 - ✅ Everything starts at the **Student's Portal** — one launcher page for the whole TechEd fleet.  
 - ✅ From here you pick your runtime or jump straight into the right dashboard.  
 
-👉 Open the student's portal directly or look up its shortened URL:
-
-```
-https://busola.xp266-NNN.<tenant>.kyma.dev.sap/clusterdir/
-```
+👉 Open the student's portal directly from its shortened URL below:
 
 
 <details>
