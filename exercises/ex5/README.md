@@ -116,7 +116,7 @@ You'll walk the full path by hand:
      https://keycloak.xp266-NNN.&lt;tenant&gt;.kyma.dev.sap/realms/ateam-isveng/device?user_code=XXXX-XXXX
    Waiting for authorization...
    </pre>
-4. 👉 Open that URL in your **laptop's** browser, sign in and the terminal unblocks:
+4. 👉 Open that URL in your **laptop's** browser, sign in and the terminal unblocks printing:
 
    <pre>
    ✓ Authenticated via device code
