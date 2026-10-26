@@ -112,7 +112,7 @@ You'll walk the full path by hand:
 
 3. 👉 Register the gateway.
 
-   > [!TIP]
+   > 💡 **Tip**
    > - The terminal pod has **no browser**, so use the **device-code (headless) login** (`OPENSHELL_NO_BROWSER=1`).
    > - The `$XP266_CLUSTER` + `$XP266_DOMAIN` env vars are **already set** in the web terminal.
    > - 👉 `echo $XP266_CLUSTER $XP266_DOMAIN` to confirm.
