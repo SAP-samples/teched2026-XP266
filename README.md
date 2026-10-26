@@ -61,11 +61,6 @@ It also streams its **LLM** spend to **SAP Cloud Logging** — all routed throug
 👉 A prompt-injected or buggy agent hits the exact same walls as a well-behaved one — it cannot argue its way out, because the walls are not written in the prompt.  
 👉 That is why you can let it run unsupervised.
 
-> [!TIP]
-> The sandboxing story has its own deep-dive on the SAP Community:
-> [**Ship your own sandboxed AI operations agent to Kyma in two hours**](https://community.sap.com/t5/technology-blog-posts-by-sap/teched2026-xp266-ship-your-own-sandboxed-ai-operations-agent-to-kyma-in-two/ba-p/14492281).
-> _(The post was written against the OpenShell alpha; the workshop runs a newer beta — the sandbox model is the same.)_
-
 Everything is **already deployed and wired up for you** on your personal Kyma runtime — the provisioning and bootstrapping are done. Your two hours are spent **understanding how the pieces fit and playing with the running system**:
 
 - 🩺 **experiment with the diagnostics' prompts** and watch the Cluster Health Reports change ([Exercise 1](exercises/ex1/));
