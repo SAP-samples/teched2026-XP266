@@ -66,21 +66,21 @@ You (browser)  ──▶  Chat UI  ──▶  LiteLLM proxy :4001  ──▶  SA
    Explain what is NVIDIA OpenShell.
    ```
 
-<table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
-<tbody>
-<tr>
-<td>
-<div>
-<p float="left">
-  <a href="#">
-  <img src="images/chat-01.png" width="820" alt="OpenClaw chat UI — asked and answered" />
-  </a>
-</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
+   <table style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;" border="1">
+   <tbody>
+   <tr>
+   <td>
+   <div>
+   <p float="left">
+     <a href="#">
+     <img src="images/chat-01.png" width="820" alt="OpenClaw chat UI — asked and answered" />
+     </a>
+   </p>
+   </div>
+   </td>
+   </tr>
+   </tbody>
+   </table>
 
 <details>
 <summary>👉 Sample answer (click to expand)</summary>
