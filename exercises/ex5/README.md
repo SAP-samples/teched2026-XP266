@@ -110,11 +110,12 @@ You'll walk the full path by hand:
 
 
    It prints a verification URL and a short code, then waits:
-   ```
+
+   <pre>
    To authenticate, visit:
-     https://keycloak.xp266-NNN.<tenant>.kyma.dev.sap/realms/ateam-isveng/device?user_code=XXXX-XXXX
+     https://keycloak.xp266-NNN.&lt;tenant&gt;.kyma.dev.sap/realms/ateam-isveng/device?user_code=XXXX-XXXX
    Waiting for authorization...
-   ```
+   </pre>
 4. 👉 Open that URL in your **laptop's** browser, sign in and the terminal unblocks:
    ```
    ✓ Authenticated via device code
