@@ -323,5 +323,9 @@ You added an **external** LLM provider to the contained-sandbox model:
 - 🔐 while the real **API key stays in the gateway** — the sandbox never sees it.
 
 That's the OpenShell provider model generalizing from "the in-cluster proxy" to "any governed external endpoint."
+
+> [!TIP]
+> 📝 Deep-dive on the SAP Community: [**Bring your own agent to a contained SAP Kyma sandbox with OpenRouter**](https://community.sap.com/t5/technology-blog-posts-by-sap/teched2026-xp266-ship-your-own-sandboxed-ai-operations-agent-to-kyma-in-two/ba-p/14501247).
+
 Continue to - [Exercise 6 - Observability and spend](../ex6/README.md)  
 Back to - [Overview](../../README.md)

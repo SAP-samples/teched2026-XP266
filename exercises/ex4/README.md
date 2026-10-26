@@ -570,5 +570,8 @@ Under the hood it's a **🚦 gated control plane + 🔐 credential-injecting sup
 
 > 🛡️ *The sandbox is the guardrail.*
 
+> [!TIP]
+> 📝 Deep-dive on the SAP Community: [**Teched2026-XP266 | Giving an AI agent a shell — without giving away the keys to your cluster**](https://community.sap.com/t5/technology-blog-posts-by-sap/teched2026-xp266-ship-your-own-sandboxed-ai-operations-agent-to-kyma-in-two/ba-p/14492281).
+
 Continue to - [Exercise 5 - External agents: Pi, opencode & Qwen via OpenRouter](../ex5/README.md)  
 Back to - [Overview](../../README.md)
