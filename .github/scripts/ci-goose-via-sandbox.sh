@@ -176,7 +176,7 @@ if [ -n "$REFMT" ]; then
     # ANTHROPIC_BASE_URL / ANTHROPIC_MODEL / the enforcement flag are injected at sandbox-create via --env (the
     # provider never injects a base-URL env; egress is owned by the litellm provider profile). Here we only map the
     # provider-injected sentinel ($ANTHROPIC_API_KEY) into ANTHROPIC_AUTH_TOKEN (Bearer) → keyless, no real key in box.
-    export ANTHROPIC_AUTH_TOKEN="$ANTHROPIC_API_KEY"; unset ANTHROPIC_API_KEY
+    unset ANTHROPIC_API_KEY
     ST=$(grep -m1 "^## Health Status:" /tmp/raw_report.md | grep -oiE "HEALTHY|WARNING|CRITICAL" | head -1 | tr "[:lower:]" "[:upper:]")
     OUT=""
     [ -s /tmp/raw_report.md ] && OUT=$(claude -p "$(cat /tmp/refmt)" < /tmp/raw_report.md 2>/dev/null)
